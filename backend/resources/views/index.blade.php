@@ -6,11 +6,13 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <h3>かあスレッド</h3>
+          <h5>{{ Auth::user()->name }}さん、こんにちは。</h5>
         </div>
 
         <div class="card-body">
-          <h2>h2タイトル</h2>
+          @foreach ($posts as $post)
+            <p>message: {{ $post->message }}</p>
+          @endforeach
         </div>
 
       </div>
