@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 Use App\User;
 Use App\Models\Post;
+Use Auth;
 
 class PostController extends Controller
 {
@@ -15,7 +16,7 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::get();
+      $posts = Post::where('id','>',50)->get();
       // dd($posts);
       return view('index', compact('posts'));
     }
@@ -38,7 +39,39 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // バリデーション
+        $validate = $request->validate([
+          'message' => 'required|max:128',
+          'picture' => 'nullable|image',
+        ]);
+
+        // ファイルのアップロード
+        if ($request->hasFile('picture')) {
+          $picture = $request->file('picture');
+          $picture_name = uniqid('pic_') . '.' . $request->file('picture')->guessExtension();
+          // ストレージフォルダに保存する。
+          $path = storage_path('app/public/uploads');
+          $picture->move($path, $picture_name);
+        } else {
+          $picture_name = null;
+        }
+
+        if (isset($request->reply_post_id)) {
+          $reply_post_id = null;
+        } else {
+          $reply_post_id = $request->reply_post_id;
+        }
+
+        $create = Post::create([
+          'message' => $request->message,
+          'picture' => $picture_name,
+          'good' => 0,
+          'user_id' => Auth::id(),
+          'reply_post_id' => $reply_post_id,
+        ]);
+        $create->save();
+
+        return redirect('/');
     }
 
     /**

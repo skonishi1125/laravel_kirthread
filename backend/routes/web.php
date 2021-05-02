@@ -12,7 +12,9 @@
 */
 
 Auth::routes();
-
-Route::get('/','PostController@index')->name('/');
-
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::group(['middleware' => 'auth'], function () {
+  Route::get('/','PostController@index')->name('/');
+  Route::post('/store', 'PostController@store')->name('store');
+});
