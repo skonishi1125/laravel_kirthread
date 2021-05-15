@@ -17,9 +17,10 @@ Route::get('/','PostController@index')->name('/');
 
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');
+  Route::get('/destroy', 'PostController@destroy')->name('destroy');
+  Route::get('/show/{id}', 'PostController@show')->name('show');
 
   // プロフィール設定
   Route::get('/config/index', 'ConfigController@index')->name('config.index');
   Route::post('/config/store', 'ConfigController@store')->name('config.store');
-
 });

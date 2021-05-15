@@ -46,10 +46,6 @@ class PostController extends Controller
           'picture' => 'nullable|mimes:jpeg,JPEG,jpg,JPG,png,PNG,gif,GIF,heic,HEIC',
         ]);
 
-        if ($request->file('picture')->guessExtension() == 'HEIC') {
-
-        }
-
         // ファイルのアップロード
         if ($request->hasFile('picture')) {
           $picture = $request->file('picture');
@@ -88,6 +84,8 @@ class PostController extends Controller
     public function show($id)
     {
         //
+        $post = Post::find($id);
+        return view('show',compact('post'));
     }
 
     /**
@@ -122,5 +120,10 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+        $delete = Post::find($id);
+        $delete->delete();
+
+        return redirect('/');
+
     }
 }

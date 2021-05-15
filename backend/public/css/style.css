@@ -5,6 +5,10 @@
     border-radius: 50%;
 }
 
+.post-container {
+    position: relative;
+}
+
 .post-button {
     position: absolute;
     right: 1%;
