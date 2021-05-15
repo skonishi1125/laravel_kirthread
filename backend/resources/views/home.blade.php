@@ -14,10 +14,17 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    ログインに成功しました。数秒後にページ移動します...
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+<script type="text/javascript">
+  // 自動遷移
+  setTimeout(function(){
+    window.location.href = '{{ route('/') }}';
+  }, 1*1000);
+</script>
