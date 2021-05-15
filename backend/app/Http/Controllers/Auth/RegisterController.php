@@ -64,10 +64,26 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
+        // dd($data);
+        /*
+         $dataは単なる文字列(array)で定義されているため、hasFileやguessExtensionなどは使えない。
+         上記が使えるのはRequestとして呼び出した時だけ。
+         ひとまずアイコン画像の設定は別のコントローラで行うことにする。
+        */
+        // if ($data['icon'] !== null) {
+        //   $icon = $data['icon'];
+        //   $icon_name = uniqid('icon_') . '.' . $icon->guessExtension();
+        //   $path = storage_path('app/public/icons');
+        //   $icon->move($path, $icon_name);
+        // } else {
+        //   $icon_name = null;
+        // }
+
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'icon' => null,
         ]);
     }
 }

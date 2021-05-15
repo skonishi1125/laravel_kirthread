@@ -6,12 +6,12 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <h5>{{ Auth::user()->name }}さん、こんにちは。</h5>
+          <h5>みんなの投稿</h5>
         </div>
 
         <div class="card-body">
 
-          <div class="col-xs-12">
+          <div class="col-12">
             @if ($errors->any())
               <div class="alert alert-danger">
                 <ul>
@@ -23,25 +23,73 @@
             @endif
             <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
               @CSRF
-              <div class="form-group">
-                <label for="post-message">投稿する内容を記述しよう</label>
+              <div class="form-group" style="position: relative;">
+                @if (Auth::check() )
+                <label for="post-message">{{ Auth::user()->name }} さん、こんにちは。</label>
                 <textarea class="form-control" id="post-message" name="message"></textarea>
-                <label for="post-picture">画像を添付する</label>
-                <input type="file" name="picture" class="form-control-file" id="post-picture">
+                <small>
+                  <label for="post-picture">画像を添付する</label>
+                  <input type="file" name="picture" class="form-control-file" id="post-picture">
+                </small>
+
+                <button type="submit" class="btn btn-primary btn-sm post-button">投稿</button>
               </div>
-              <button type="submit" class="btn btn-primary btn-sm">投稿する</button>
+
+              @else
+              <label for="post-message">投稿するには<a href="{{ route('login') }}">ログイン</a>が必要です。</label>
+              @endif
+
             </form>
 
-            @foreach ($posts as $post)
-              <p>message: {{ $post->message }}</p>
-              @if (isset($post->picture))
-                <img src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
-              @endif
-            @endforeach
+            <hr class="my-3">
 
-          </div> <!-- col-xs-12 -->
-      </div><!-- card-body -->
-    </div>
+            @foreach ($posts as $post)
+            <div class="container">
+              <div class="row">
+
+                  <div class="col-auto">
+                    @if ( is_null(App\User::where('id',$post->user_id)->value('icon')) )
+                      <img class="profile-icon" src="{{asset('storage/icons/' . 'default.png')}}" alt="profileIcon">
+                    @else
+                      <img class="profile-icon" src="{{asset('storage/icons/' . App\User::where('id',$post->user_id)->value('icon'))}}" alt="profileIcon">
+                    @endif
+                  </div>
+                  <div class="col-auto">
+                    <span><b>{{App\User::where('id',$post->user_id)->value('name')}}</b></span>
+                    <br>
+                    <small><a href="#">id:[{{$post->id}}]</a></small>
+                    <small>{{$post->created_at}}</small>
+                  </div>
+
+                <div class="col-12">
+
+                  <p>{!! nl2br(e($post->message)) !!}</p>
+                  @if (isset($post->picture))
+                    <img class="img-thumbnail post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
+                  @endif
+                </div>
+              </div>
+            </div>
+
+            <div class="my-2" style="border-bottom:1px dotted #333;"></div>
+
+
+            @endforeach
+          </div> <!-- col-12 -->
+
+          <div class="mt-3 d-flex justify-content-center">
+            {{ $posts->links() }}
+          </div>
+
+
+
+
+
+        </div><!-- card-body -->
+      </div><!-- card -->
+
+    </div><!-- col-xs-12 -->
+
   </div>
 </div>
 <!-- jsを読み込むときは、backend/publicのパス記述を省略させる -->

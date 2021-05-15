@@ -13,8 +13,13 @@
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/','PostController@index')->name('/');
 
 Route::group(['middleware' => 'auth'], function () {
-  Route::get('/','PostController@index')->name('/');
   Route::post('/store', 'PostController@store')->name('store');
+
+  // プロフィール設定
+  Route::get('/config/index', 'ConfigController@index')->name('config.index');
+  Route::post('/config/store', 'ConfigController@store')->name('config.store');
+
 });

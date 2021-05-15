@@ -16,9 +16,10 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::where('id','>',50)->get();
+      $posts = Post::orderBy('id','desc')->paginate(10);
+      $users = User::get();
       // dd($posts);
-      return view('index', compact('posts'));
+      return view('index', compact('posts','users'));
     }
 
     /**
@@ -42,8 +43,12 @@ class PostController extends Controller
         // バリデーション
         $validate = $request->validate([
           'message' => 'required|max:128',
-          'picture' => 'nullable|image',
+          'picture' => 'nullable|mimes:jpeg,JPEG,jpg,JPG,png,PNG,gif,GIF,heic,HEIC',
         ]);
+
+        if ($request->file('picture')->guessExtension() == 'HEIC') {
+
+        }
 
         // ファイルのアップロード
         if ($request->hasFile('picture')) {
