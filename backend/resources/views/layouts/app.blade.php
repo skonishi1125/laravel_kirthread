@@ -35,7 +35,9 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <span id="now-time"></span>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -87,5 +89,6 @@
             @yield('content')
         </main>
     </div>
+    <script type="text/javascript" src="{{ asset('js/stopwatch.js') }}"></script>
 </body>
 </html>
