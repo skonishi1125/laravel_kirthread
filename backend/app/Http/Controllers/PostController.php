@@ -43,7 +43,7 @@ class PostController extends Controller
         // バリデーション
         $validate = $request->validate([
           'message' => 'required|max:128',
-          'picture' => 'nullable|mimes:jpeg,JPEG,jpg,JPG,png,PNG,gif,GIF,heic,HEIC',
+          'picture' => 'nullable|image',
         ]);
 
         // ファイルのアップロード
@@ -121,6 +121,7 @@ class PostController extends Controller
     {
         //
         $delete = Post::find($id);
+        // dd($delete);
         $delete->delete();
 
         return redirect('/');

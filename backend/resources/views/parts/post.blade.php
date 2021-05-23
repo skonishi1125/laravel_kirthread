@@ -15,7 +15,7 @@
         <small>{{$post->created_at}}</small>
         <!--  -->
         @if (Auth::id() === $post->user_id)
-        <small><a href="{{ route('destroy') }}">[削除]</a></small>
+        <small><a href="{{ route('destroy', ['id' => $post->id]) }}">[削除]</a></small>
         @endif
       </div>
 
