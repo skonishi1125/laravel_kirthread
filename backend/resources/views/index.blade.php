@@ -65,7 +65,9 @@
   </div>
 </div>
 <!-- jsを読み込むときは、backend/publicのパス記述を省略させる -->
+{{--
 <script type="text/javascript" src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/test.js') }}"></script>
+--}}
 
 @endsection
