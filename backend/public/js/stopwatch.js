@@ -2,6 +2,12 @@
 // リアルタイムで時間を更新させよう
 {
     console.log('読み込みテスト');
+    const image = 'image/pic00.png';
+    // console.log(image);
+    // console.log('base_url: ' + url);
+    // console.log('image: ' + image);
+    // console.log('base_url + image: ' + url + image);
+
     //
     // // jsはDate使用時、それぞれの単位を別々に取得していく
     // const date = new Date();

@@ -13,15 +13,16 @@
         <br>
         <small><a href="{{ route('show', ['id' => $post->id]) }}">id:[{{$post->id}}]</a></small>
         <small>{{$post->created_at}}</small>
-        <!--  -->
-        @if (Auth::id() === $post->user_id)
-        <small>
-          <a href="{{ route('destroy', ['id' => $post->id]) }}">
-            <span class="material-icons">delete</span>
-          </a>
-        </small>
-        @endif
-        <span class="material-icons">add_reaction</span>
+
+        <div class="reaction-wrapper">
+          @if (Auth::id() === $post->user_id)
+            <a href="{{ route('destroy', ['id' => $post->id]) }}" class="trash">
+              <span class="material-icons">delete</span>
+            </a>
+          @else
+            <span class="material-icons">add_reaction</span>
+          @endif
+        </div>
       </div>
 
     <div class="col-12">

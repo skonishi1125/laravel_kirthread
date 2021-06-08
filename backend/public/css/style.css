@@ -19,3 +19,18 @@
     max-width: 100%;
     max-height: 400px;
 }
+
+/* 削除, リアクション */
+.reaction-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.reaction-wrapper span {
+  color: #777;
+  position: absolute;
+  top: -17px;
+  font-size: 20px;
+  cursor: pointer;
+
+}

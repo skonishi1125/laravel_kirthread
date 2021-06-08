@@ -56,7 +56,6 @@
 
 
 
-
         </div><!-- card-body -->
       </div><!-- card -->
 
@@ -68,6 +67,11 @@
 {{--
 <script type="text/javascript" src="{{ asset('js/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/test.js') }}"></script>
+--}}
+{{-- 
+  <script type="text/javascript">
+    var url = '{{ asset('') }}';
+  </script> 
 --}}
 
 @endsection
