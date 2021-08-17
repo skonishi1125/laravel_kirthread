@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('/add_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@addReaction')->name('add_reaction');
   Route::get('/remove_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@removeReaction')->name('remove_reaction');
   Route::get('/select_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@selectReaction')->name('select_reaction');
+  Route::post('/select_reaction', 'PostController@selectReaction')->name('select_reaction');
 
   // プロフィール設定
   Route::get('/config/index', 'ConfigController@index')->name('config.index');

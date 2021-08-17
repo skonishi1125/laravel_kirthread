@@ -186,23 +186,23 @@ class PostController extends Controller
       return redirect()->route('/');
     }
 
-    public function selectReaction($user_id, $post_id, $reaction_number) {
-      $post = Post::find($post_id);
-      $bool = $post->isSetReaction($user_id, $post_id, $reaction_number);
+    public function selectReaction(Request $request) {
+      $post = Post::find($request->post_id);
+      $bool = $post->isSetReaction($request->user_id, $request->post_id, $request->reaction_number);
 
       if ($bool == true) {
         return redirect()
         ->route('remove_reaction', [
-          'user_id' => $user_id,
-          'post_id' => $post_id,
-          'reaction_number' => $reaction_number,
+          'user_id' => $request->user_id,
+          'post_id' => $request->post_id,
+          'reaction_number' => $request->reaction_number,
         ]);
       } else {
         return redirect()
         ->route('add_reaction', [
-          'user_id' => $user_id,
-          'post_id' => $post_id,
-          'reaction_number' => $reaction_number,
+          'user_id' => $request->user_id,
+          'post_id' => $request->post_id,
+          'reaction_number' => $request->reaction_number,
         ]);
       }
 

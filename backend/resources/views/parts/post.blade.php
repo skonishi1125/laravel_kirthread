@@ -19,12 +19,7 @@
           @if (Auth::id() === $post->user_id)
           <form action="{{ route('destroy', ['id' => $post->id]) }}" method="post" enctype="multipart/form-data">
             @CSRF
-            <button type="submit" style="background-color: transparent;
-            border: none;
-            cursor: pointer;
-            outline: none;
-            padding: 0;
-            appearance: none;">
+            <button type="submit" class="trash clearButton">
               <span class="material-icons">delete</span>
             </button>
           </form>
@@ -39,18 +34,51 @@
         @if (Auth::check())
           <div class="reaction-modal d-none">
             <ul class="reaction-icons">
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 1]) }}">👀 </a></li>
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 2]) }}">😢 </a></li>
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 3]) }}">❤️ </a></li>
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 4]) }}">❓ </a></li>
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 1])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">👀 </button>
+                </li>
+              </form>
 
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5]) }}">
-                  <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5">
-              </a></li>
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 2])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">😢 </button>
+                </li>
+              </form>
 
-              <li><a href="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6]) }}">
-                  <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6">
-              </a></li>
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 3])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">❤️ </button>
+                </li>
+              </form>
+
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 4])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">❓ </button>
+                </li>
+              </form>
+
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">
+                    <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5">
+                  </button>
+                </li>
+              </form>
+              
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">
+                    <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6">
+                  </button>
+                </li>
+              </form>
 
             </ul>
           </div>
