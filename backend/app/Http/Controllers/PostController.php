@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 Use App\User;
 Use App\Models\Post;
+Use App\Models\Reaction;
 Use Auth;
 
 class PostController extends Controller
@@ -16,10 +17,11 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::orderBy('id','desc')->paginate(10);
+      $posts = Post::orderBy('id','desc')->paginate(50);
       $users = User::get();
+      $reactions = Reaction::get();
       // dd($posts);
-      return view('index', compact('posts','users'));
+      return view('index', compact('posts','users','reactions'));
     }
 
     /**
@@ -117,14 +119,94 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
-        $delete = Post::find($id);
-        // dd($delete);
+        $delete = Post::find($request->id);
         $delete->delete();
-
         return redirect('/');
 
     }
+
+    public function addReaction($user_id, $post_id, $reaction_number)
+    {
+        // dd($user_id, $post_id, $reaction_number);
+        $reaction = Reaction::create([
+            'user_id' => $user_id,
+            'post_id' => $post_id,
+            'reaction_number' => $reaction_number,
+        ]);
+        // create, updateはsave()不要
+
+        // postのreactionに値を入れる
+        $post = Post::find($post_id);
+        // nullなら
+        if (is_null($post->reaction)) {
+            $post->update([
+                'reaction' => $reaction_number,
+            ]);
+        } else {
+          $post->update([
+              'reaction' => $post->reaction . ',' . $reaction_number,
+          ]);
+        }
+        return redirect()->route('/');
+    }
+
+    public function removeReaction($user_id, $post_id, $reaction_number)
+    {
+      // もしボタンを押したユーザがその投稿に同じリアクションをしていたら、ボタンで解除する
+      $post = Post::find($post_id);
+      $user = User::find($user_id);
+      $post_reactions = explode(",", $post->reaction);
+      
+      // postのリアクションから削除する
+      if (count($post_reactions) > 0) {
+        for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
+          if ( $post_reactions[$i] == $reaction_number) {
+            // dd($post_reactions);
+            array_splice($post_reactions, $i, 1);
+            break;
+          }
+        }
+        // 判定のためバラバラにしたものをまたカンマで繋げ直す 1,2,3...
+        $post->reaction = implode(",", $post_reactions);
+        $post->save();
+      } else {
+        // post.reactionsを空にする
+        $post->reaction = null;
+      }
+      
+      // reactionsテーブルからも削除
+      $remove_reaction_number = Reaction::where('user_id', $user_id)
+          ->where('post_id', $post_id)
+          ->where('user_id', $user_id)
+          ->where('reaction_number', $reaction_number)
+          ->delete();
+
+      return redirect()->route('/');
+    }
+
+    public function selectReaction($user_id, $post_id, $reaction_number) {
+      $post = Post::find($post_id);
+      $bool = $post->isSetReaction($user_id, $post_id, $reaction_number);
+
+      if ($bool == true) {
+        return redirect()
+        ->route('remove_reaction', [
+          'user_id' => $user_id,
+          'post_id' => $post_id,
+          'reaction_number' => $reaction_number,
+        ]);
+      } else {
+        return redirect()
+        ->route('add_reaction', [
+          'user_id' => $user_id,
+          'post_id' => $post_id,
+          'reaction_number' => $reaction_number,
+        ]);
+      }
+
+    }
+
+
 }
