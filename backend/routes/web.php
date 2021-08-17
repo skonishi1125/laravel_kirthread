@@ -18,7 +18,7 @@ Route::get('/show/{id}', 'PostController@show')->name('show');
 
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');
-  Route::get('/destroy/{id}', 'PostController@destroy')->name('destroy');
+  Route::post('/destroy', 'PostController@destroy')->name('destroy');
   Route::get('/add_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@addReaction')->name('add_reaction');
   Route::get('/remove_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@removeReaction')->name('remove_reaction');
   Route::get('/select_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@selectReaction')->name('select_reaction');

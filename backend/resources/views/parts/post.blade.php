@@ -17,9 +17,17 @@
 
         <div class="reaction-wrapper">
           @if (Auth::id() === $post->user_id)
-            <a href="{{ route('destroy', ['id' => $post->id]) }}" class="trash">
+          <form action="{{ route('destroy', ['id' => $post->id]) }}" method="post" enctype="multipart/form-data">
+            @CSRF
+            <button type="submit" style="background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+            appearance: none;">
               <span class="material-icons">delete</span>
-            </a>
+            </button>
+          </form>
           @else
             @if (Auth::check())
               <span class="material-icons reaction" style="z-index: 10; user-select:none;">add_reaction</span>
