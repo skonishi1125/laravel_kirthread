@@ -15,7 +15,11 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/','PostController@index')->name('/');
 Route::get('/show/{id}', 'PostController@show')->name('show');
+  
+// かあスレッドとは
+Route::get('/about', 'PageController@about')->name('about');
 
+// Auth認証のかかるページ
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');
   Route::post('/destroy', 'PostController@destroy')->name('destroy');
