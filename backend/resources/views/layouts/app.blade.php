@@ -54,6 +54,9 @@
                                     <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
                                 </li>
                             @endif
+                            <li class="nav-item">
+                              <a href="{{ route('about') }}" class="nav-link">かあスレッドとは</a>
+                            </li>
                         @else
                             @if (isset(Auth::user()->icon))
                                 <img class="profile-icon" src="{{ asset('storage/icons/' . Auth::user()->icon) }}">
@@ -75,6 +78,8 @@
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+
+                                    <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
