@@ -19,6 +19,10 @@ Route::get('/show/{id}', 'PostController@show')->name('show');
 // かあスレッドとは
 Route::get('/about', 'PageController@about')->name('about');
 
+// ゲーム
+Route::get('/game', 'PageController@game')->name('game');
+Route::get('/game/panel', 'PageController@panel')->name('game_panel');
+
 // Auth認証のかかるページ
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');

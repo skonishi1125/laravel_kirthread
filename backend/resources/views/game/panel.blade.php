@@ -22,6 +22,35 @@
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
 </head>
+
+<style>
+  #table {
+    margin: 0 auto;
+  }
+
+  .panel {
+      width: 50px;
+      height: 50px;
+      display: inline-block;
+      margin: 2px;
+  }
+
+  .red {
+    background-color: red !important;
+  }
+
+  .red:hover {
+    background-color: rgb(255, 86, 86) !important;
+  }
+
+  .green {
+    background-color: green !important;
+  }
+
+  .green:hover {
+    background-color: rgb(59, 146, 59) !important;
+  }
+</style>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
@@ -56,10 +85,6 @@
                             @endif
                             <li class="nav-item">
                               <a href="{{ route('about') }}" class="nav-link">かあスレッドとは</a>
-                            </li>
-
-                            <li class="nav-item">
-                              <a href="{{ route('game') }}" class="nav-link">ゲーム</a>
                             </li>
                         @else
                             @if (isset(Auth::user()->icon))
@@ -98,10 +123,46 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h5>2色パネル</h5>
+                  </div>
+          
+                  <div class="card-body">
+          
+                    <div class="col-12">
+                      <p>
+                        クリックして色を揃えよう<br>
+                        クリックした四角とその周りの四角の色が反転する 色がどちらかに揃ったら完成
+                      </p>
+          
+                      <table id="table"></table>
+                      
+                    </div> <!-- col-12 -->
+                  </div><!-- card-body -->
+                </div><!-- card -->
+          
+              </div><!-- col-xs-12 -->
+          
+            </div>
+          </div>
         </main>
     </div>
     <script type="text/javascript" src="{{ asset('js/stopwatch.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/script.js') }}"></script>
+    
+    {{-- テンプレートにこれだけ入れるいい方法はないものか --}}
+    <script type="text/javascript" src="{{ asset('js/game/panel.js') }}"></script>
+
 </body>
 </html>
+
+
+
+
+
+
+
