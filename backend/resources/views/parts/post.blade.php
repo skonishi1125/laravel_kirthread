@@ -17,8 +17,9 @@
 
         <div class="reaction-wrapper">
           @if (Auth::id() === $post->user_id)
-          <form action="{{ route('destroy', ['id' => $post->id]) }}" method="post" enctype="multipart/form-data">
+          <form action="{{ route('destroy') }}" method="post" enctype="multipart/form-data">
             @CSRF
+            <input type="hidden" name="post_id" value="{{ $post->id }}">
             <button type="submit" class="trash clearButton">
               <span class="material-icons">delete</span>
             </button>

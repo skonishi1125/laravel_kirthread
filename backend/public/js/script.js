@@ -12,9 +12,9 @@
             // console.log(trash[i]); は動作しない
             // console.log(this.href);
             if ( confirm( '本当に削除しますか？' ) ) {
-              e.preventDefault();
-              let a = this.href;
-              location.href = a;
+              // e.preventDefault();
+              // let a = this.href;
+              // location.href = a;
             } else {
               // デフォルトの動作をキャンセルする(submitイベント(e)の本来の動作を止める)
               // これを記述しないとfalseの場合でもaタグのイベントが動作する

@@ -121,7 +121,8 @@ class PostController extends Controller
      */
     public function destroy(Request $request)
     {
-        $delete = Post::find($request->id);
+        // dd($request);
+        $delete = Post::find($request->post_id);
         $delete->delete();
         return redirect('/');
 
