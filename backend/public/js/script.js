@@ -28,7 +28,6 @@
     };
 
     // 非同期リアクション関係
-
     var reactions = Array.from(document.getElementsByClassName('reactions'));
     reactions.forEach (function (reaction) {
       $(reaction).on('click', function(e) {
@@ -63,20 +62,51 @@
               data['status'] = 1;
             }
             var parts = {
-              'reaction'       : "😢",
+              'reaction'       : "😭",
               'className' : "sads",
             }
             reactionAjaxExec(data, e, table, parts);
             break;
-          default : 
-            console.log('defaultでした');
+          case 3:
+            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction');
+            if (is_add) {
+              data['status'] = 1;
+            }
+            var parts = {
+              'reaction'       : "💕",
+              'className' : "hearts",
+            }
+            reactionAjaxExec(data, e, table, parts);
+            break;
+          case 4:
+            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button questions add-reaction');
+            if (is_add) {
+              data['status'] = 1;
+            }
+            var parts = {
+              'reaction'       : "❓",
+              'className' : "questions",
+            }
+            reactionAjaxExec(data, e, table, parts);
+            break;
+          case 5:
+            // var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button kaiddds add-reaction');
+            // if (is_add) {
+            //   data['status'] = 1;
+            // }
+            // var parts = {
+            //   'reaction'  : "🕶",
+            //   'path'      : path_to_image + 'storage/reaction_icons/pic_60c59198dc55e.png',
+            //   'className' : "kaiddds",
+            // }
+            // reactionAjaxExec(data, e, table, parts, true);
             break;
         }; // switch
       }); // addEve
     });// forEach
 
 
-    function reactionAjaxExec(data, e, table, parts) {
+    function reactionAjaxExec(data, e, table, parts, img_flag = false) {
       // console.log(data, e, table, parts);
 
       $.ajaxSetup({
