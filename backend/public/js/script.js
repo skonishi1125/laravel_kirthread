@@ -56,7 +56,6 @@
             reactionAjaxExec(data, e, table, parts);
             break;
           case 2 : 
-            // hasClass()は文字列検索なので、クラス付与の順番が間違っていると動作しない
             var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button sads add-reaction');
             if (is_add) {
               data['status'] = 1;

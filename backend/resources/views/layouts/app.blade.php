@@ -102,6 +102,10 @@
         </main>
     </div>
     <script type="text/javascript" src="{{ asset('js/stopwatch.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/script.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/script.js?20211110') }}"></script>
+    {{-- 画像までのローカルパス変数 --}}
+    <script type="text/javascript">
+      var path_to_image = '{{ asset('') }}';
+    </script>
 </body>
 </html>

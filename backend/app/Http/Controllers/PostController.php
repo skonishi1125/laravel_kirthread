@@ -87,7 +87,21 @@ class PostController extends Controller
     {
         //
         $post = Post::find($id);
-        return view('show',compact('post'));
+
+        $reactioned_user_ids = Reaction::where('post_id', $id)
+            ->groupBy('user_id')
+            ->get(['user_id']);
+
+        $users = [];
+        foreach($reactioned_user_ids as $u_id) {
+          $id = $u_id['user_id'];
+          $users[] = User::where('id', $id)->first();
+        }
+
+        return view('show')
+            ->with('post', $post)
+            ->with('users', $users)
+            ;
     }
 
     /**
@@ -207,6 +221,80 @@ class PostController extends Controller
         ]);
       }
 
+    }
+
+    public function ajaxReaction(Request $request) {
+      $data = $request->all();
+      $post = Post::find($data['post_id']);
+      $user = User::find($data['user_id']);
+
+      $reactions = explode(",", $post->reaction);
+      $counts = array_count_values($reactions); // 1(👀)のリアクションが何件か、などのデータ
+      $reactions = array_unique($reactions); // 1のリアクションがあるのかどうかだけを確認する
+
+      // そのpostにそのuserがそのreaction済みなのかどうか
+      $is_react = Reaction::where('user_id', $user->id)
+        ->where('post_id', $post->id)
+        ->where('reaction_number', $data['reaction_number'])
+        ->first();
+      if ($is_react !== null) {
+        $is_react = true;
+      } else {
+        $is_react = false;
+      }
+
+      // リアクションの追加
+      if ($data['status'] == 0) {
+        \Debugbar::info('追加します。対象は↓', $data['reaction_number']);
+        $reaction = Reaction::create([
+          'user_id' => $user->id,
+          'post_id' => $post->id,
+          'reaction_number' => $data['reaction_number'],
+        ]);
+        if (is_null($post->reaction)) {
+          $post->update([
+              'reaction' => $data['reaction_number'],
+          ]);
+        } else {
+          $post->update([
+              'reaction' => $post->reaction . ',' . $data['reaction_number'],
+          ]);
+        }
+      // リアクションの削除
+      } else {
+        \Debugbar::info('削除です。対象は↓', $data['reaction_number']);
+        $post_reactions = explode(",", $post->reaction);
+      
+        if (count($post_reactions) > 0) {
+          for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
+            if ( $post_reactions[$i] == $data['reaction_number']) {
+              array_splice($post_reactions, $i, 1);
+              break;
+            }
+          }
+
+          $post->reaction = implode(",", $post_reactions);
+          $post->save();
+        } else {
+          $post->reaction = null;
+        }
+        
+        $remove_reaction_number = Reaction::where('user_id', $user->id)
+            ->where('post_id', $post->id)
+            ->where('user_id', $user->id)
+            ->where('reaction_number', $data['reaction_number'])
+            ->delete();
+      }
+
+      \Debugbar::info($data, $post, $counts, $reactions, $is_react);
+      
+
+      $data = [
+        'post' => $post,
+        'is_react' => $is_react,
+      ];
+
+      return $data;
     }
 
 

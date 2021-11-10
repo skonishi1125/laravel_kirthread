@@ -26,6 +26,19 @@
 
             @include('parts.post',['post => $post'])
 
+            <div class="col-12">
+              @foreach ($users as $user)
+                @if ($user['icon'] !== null)
+                  <img class="profile-icon" style="border: 1px solid gray" src="{{asset('storage/icons/' . $user['icon'])}}" alt="">
+                  <span>{{ $user['name'] }}</span>
+                @else
+                  <img class="profile-icon" style="border: 1px solid gray" src="{{asset('storage/icons/default.png')}}" alt="">
+                  <span>{{ $user['name'] }}</span>
+                @endif
+              @endforeach
+              <span>さんがリアクションをつけています</span>
+            </div>
+
           </div> <!-- col-12 -->
 
         </div><!-- card-body -->

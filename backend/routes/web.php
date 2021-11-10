@@ -35,4 +35,8 @@ Route::group(['middleware' => 'auth'], function () {
   // プロフィール設定
   Route::get('/config/index', 'ConfigController@index')->name('config.index');
   Route::post('/config/store', 'ConfigController@store')->name('config.store');
+
+  // ajax
+  Route::post('/ajax', 'PostController@ajaxReaction');
+
 });
