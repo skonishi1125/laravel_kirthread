@@ -17,7 +17,7 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::orderBy('id','desc')->paginate(50);
+      $posts = Post::orderBy('id','desc')->paginate(100);
       $users = User::get();
       $reactions = Reaction::get();
       // dd($posts);
