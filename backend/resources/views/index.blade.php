@@ -50,7 +50,7 @@
           </div> <!-- col-12 -->
 
           <div class="mt-3 d-flex justify-content-center">
-            {{ $posts->links() }}
+            {{ $posts->links('vendor.pagination.original-pagination') }}
           </div>
 
 
