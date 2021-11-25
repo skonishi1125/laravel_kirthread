@@ -31,82 +31,87 @@
     var reactions = Array.from(document.getElementsByClassName('reactions'));
     reactions.forEach (function (reaction) {
       $(reaction).on('click', function(e) {
-        // リアクションがつく範囲を取得
-        var table = $(e.target).closest('.post-container').find('.reaction-buttons');
-        var post_id = this.dataset.postid;
-        var user_id = this.dataset.userid;
-        var reaction_number = $(e.target).data('reaction');
-        var data = {
-          'post_id'           : post_id,
-          'user_id'           : user_id,
-          'reaction_number'   : reaction_number,
-          'status'            : 0
-        };
-        switch ($(e.target).data('reaction')) {
-          case 1 :
-            // hasClass()は文字列検索なので、クラス付与の順番が間違っていると動作しない
-            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button eyes add-reaction');
-            if (is_add) {
-              data['status'] = 1;
-            }
-            var parts = {
-              'reaction'       : "👀",
-              'className' : "eyes",
-            }
-            reactionAjaxExec(data, e, table, parts);
-            break;
-          case 2 : 
-            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button sads add-reaction');
-            if (is_add) {
-              data['status'] = 1;
-            }
-            var parts = {
-              'reaction'       : "😭",
-              'className' : "sads",
-            }
-            reactionAjaxExec(data, e, table, parts);
-            break;
-          case 3:
-            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction');
-            if (is_add) {
-              data['status'] = 1;
-            }
-            var parts = {
-              'reaction'       : "💕",
-              'className' : "hearts",
-            }
-            reactionAjaxExec(data, e, table, parts);
-            break;
-          case 4:
-            var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button questions add-reaction');
-            if (is_add) {
-              data['status'] = 1;
-            }
-            var parts = {
-              'reaction'       : "❓",
-              'className' : "questions",
-            }
-            reactionAjaxExec(data, e, table, parts);
-            break;
-          case 5:
-            // var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button kaiddds add-reaction');
-            // if (is_add) {
-            //   data['status'] = 1;
-            // }
-            // var parts = {
-            //   'reaction'  : "🕶",
-            //   'path'      : path_to_image + 'storage/reaction_icons/pic_60c59198dc55e.png',
-            //   'className' : "kaiddds",
-            // }
-            // reactionAjaxExec(data, e, table, parts, true);
-            break;
-        }; // switch
-      }); // addEve
+
+        // 多重サブミット対策
+        if (!$(e.target).hasClass('disabled')) {
+          // リアクションがつく範囲を取得
+          var table = $(e.target).closest('.post-container').find('.reaction-buttons');
+          var post_id = this.dataset.postid;
+          var user_id = this.dataset.userid;
+          var reaction_number = $(e.target).data('reaction');
+          var data = {
+            'post_id'           : post_id,
+            'user_id'           : user_id,
+            'reaction_number'   : reaction_number,
+            'status'            : 0
+          };
+          switch ($(e.target).data('reaction')) {
+            case 1 :
+              // hasClass()は文字列検索なので、クラス付与の順番が間違っていると動作しない
+              var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button eyes add-reaction');
+              if (is_add) {
+                data['status'] = 1;
+              }
+              var parts = {
+                'reaction'       : "👀",
+                'className' : "eyes",
+              }
+              reactionAjaxExec(data, e, table, parts);
+              break;
+            case 2 : 
+              var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button sads add-reaction');
+              if (is_add) {
+                data['status'] = 1;
+              }
+              var parts = {
+                'reaction'       : "😭",
+                'className' : "sads",
+              }
+              reactionAjaxExec(data, e, table, parts);
+              break;
+            case 3:
+              var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction');
+              if (is_add) {
+                data['status'] = 1;
+              }
+              var parts = {
+                'reaction'       : "💕",
+                'className' : "hearts",
+              }
+              reactionAjaxExec(data, e, table, parts);
+              break;
+            case 4:
+              var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button questions add-reaction');
+              if (is_add) {
+                data['status'] = 1;
+              }
+              var parts = {
+                'reaction'       : "❓",
+                'className' : "questions",
+              }
+              reactionAjaxExec(data, e, table, parts);
+              break;
+            case 5:
+              // var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button kaiddds add-reaction');
+              // if (is_add) {
+              //   data['status'] = 1;
+              // }
+              // var parts = {
+              //   'reaction'  : "🕶",
+              //   'path'      : path_to_image + 'storage/reaction_icons/pic_60c59198dc55e.png',
+              //   'className' : "kaiddds",
+              // }
+              // reactionAjaxExec(data, e, table, parts, true);
+              break;
+          }; // switch
+        }; // if (!$(e.target).hasClass('disabled'))
+      }); // $(reaction).on('click', function(e)
     });// forEach
 
 
     function reactionAjaxExec(data, e, table, parts, img_flag = false) {
       // console.log(data, e, table, parts);
+      e.target.classList.add('disabled');
 
       $.ajaxSetup({
         headers: {
@@ -140,10 +145,12 @@
               var cnt = t.find('.add-reaction ' + parts['className']).data()['count'] - 1;
               t_find_className.data()["count"] = cnt;
               console.log('B');
+              e.target.classList.remove('disabled');
             }
             t.find('.add-reaction ' + parts['className']).text(react + ' x ' + cnt);
             t.find('.add-reaction ' + parts['className']).removeClass('add-reaction');
             console.log('C');
+            e.target.classList.remove('disabled');
 
 
           } else if( t_find_className.length == 1 ) {
@@ -152,10 +159,12 @@
               var cnt = t_find_className.data()["count"] + 1;
               t_find_className.data()["count"] = cnt;
               console.log('D');
+              e.target.classList.remove('disabled');
             } else {
               var cnt = t_find_className.data()["count"] - 1;
               t_find_className.data()["count"] = cnt;
               console.log('E');
+              e.target.classList.remove('disabled');
             }
             t_find_className.text(react + ' x ' + cnt);
             t_find_className.toggleClass('add-reaction');
@@ -164,9 +173,12 @@
               console.log('cntが0なのでremoveします。');
               t_find_className.remove();
             }
+            e.target.classList.remove('disabled');
 
           // リアクションがない状態で、😀+からリアクションをつけた時の処理
           } else {
+            console.log('リアクション無し。');
+            console.log(a, li, form, t);
             a.textContent = react + ' × 1';
             a.className = 'btn btn-info btn-sm reactions add-btn reactions-button ' + parts['className'] + ' add-reaction';
             a.dataset.postid = data['post_id'];
@@ -179,6 +191,7 @@
             form.name = "form_test";
             form.action = '/ajax';
             t.append(form);
+            e.target.classList.remove('disabled');
 
             // 増えたボタン用の処理（よくわからんがここ必要）
             var added_btn = document.getElementsByClassName('add-btn');

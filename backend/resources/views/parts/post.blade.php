@@ -3,9 +3,9 @@
 
       <div class="col-auto">
         @if ( is_null(App\User::where('id',$post->user_id)->value('icon')) )
-          <img class="profile-icon" src="{{asset('storage/icons/' . 'default.png')}}" alt="profileIcon">
+          <img class="profile-icon" src="{{asset('storage/icons/' . 'default.png')}}" alt="p_icon">
         @else
-          <img class="profile-icon" src="{{asset('storage/icons/' . App\User::where('id',$post->user_id)->value('icon'))}}" alt="profileIcon">
+          <img class="profile-icon" src="{{asset('storage/icons/' . App\User::where('id',$post->user_id)->value('icon'))}}" alt="p_icon">
         @endif
       </div>
       
@@ -35,10 +35,10 @@
         @if (Auth::check())
           <div class="reaction-modal d-none">
             <ul class="reaction-icons">
-              <li><a class="reactions eyes" data-reaction="1" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">👀</a></li>
-              <li><a class="reactions sads" data-reaction="2" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">😭</a></li>
-              <li><a class="reactions hearts" data-reaction="3" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">💕</a></li>
-              <li><a class="reactions questions" data-reaction="4" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">❓</a></li>
+              <li><a role="button" class="reactions eyes" data-reaction="1" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">👀</a></li>
+              <li><a role="button" class="reactions sads" data-reaction="2" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">😭</a></li>
+              <li><a role="button" class="reactions hearts" data-reaction="3" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">💕</a></li>
+              <li><a role="button" class="reactions questions" data-reaction="4" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">❓</a></li>
               {{-- <li><img class="reactions kaiddds" data-reaction="5" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" style="cursor: pointer" src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"></li> --}}
 
 
@@ -74,8 +74,8 @@
           <img class="img-thumbnail post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
         </div>
       @endif
+      <ul class="reaction-icons reaction-buttons">
       @if (isset($post->reaction))
-        <ul class="reaction-icons reaction-buttons">
         @php
             // リアクションされた数を数えたのち、重複している数値を削除する
             $reactions = explode(",", $post->reaction); 
@@ -197,8 +197,8 @@
           @endforeach
         @endif
 
-        </ul>
-      @endif {{-- isset($post->reaction) --}}
+        @endif {{-- isset($post->reaction) --}}
+      </ul>
     </div>
 
   </div>
