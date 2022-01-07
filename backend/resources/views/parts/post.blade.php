@@ -69,9 +69,20 @@
 
     <div class="col-12">
       <p>{!! nl2br($post->makeLink(e($post->message))) !!}</p>
+
+      @if (isset($post->youtube_url))
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $post->youtube_url }}" allowfullscreen></iframe>
+        </div>
+        <hr>
+
+        {{-- <p>{{ $post->youtube_url}}</p> --}}
+
+      @endif
+
       @if (isset($post->picture))
         <div class="text-center mb-3">
-          <img class="img-thumbnail post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
+          <img class="img-fluid post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
         </div>
       @endif
       <ul class="reaction-icons reaction-buttons">

@@ -87,6 +87,8 @@ return [
     'unique'               => 'その:attributeはすでに使われています。',
     'uploaded'             => ':attributeのアップロードに失敗しました。',
     'url'                  => ':attributeには正しい形式のURLを指定してください。',
+    'starts_with' => 'YouTubeは正しいURLから記述してください。例: https://www.youtube.com/...',
+
 
     /*
     |--------------------------------------------------------------------------

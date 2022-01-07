@@ -21,25 +21,34 @@
                 </ul>
               </div>
             @endif
-            <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
-              @CSRF
-              <div class="form-group" style="position: relative;">
-                @if (Auth::check() )
-                <label for="post-message">{{ Auth::user()->name }} さん、こんにちは。</label>
-                <textarea class="form-control" id="post-message" name="message"></textarea>
-                <small>
-                  <label for="post-picture">画像を添付する</label>
-                  <input type="file" name="picture" class="form-control-file" id="post-picture">
-                </small>
+            @if (Auth::check() )
+              <p>{{ Auth::user()->name }} さん、こんにちは。</p>
+              <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <div class="form-group">
+                  <textarea class="form-control" id="post-message" name="message" placeholder="投稿したい内容を記入"></textarea>
+                </div>
+                
+                <div class="form-group" style="font-size: small">
+                  <label for="youtube_url">YouTubeの動画を載せる</label>
+                  <input type="text" class="form-control form-control-sm" id="youtube_url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=QLXbggM1GXk">
+                </div>
 
-                <button type="submit" class="btn btn-primary btn-sm post-button">投稿</button>
-              </div>
+                <div class="form-group" style="font-size: small; width: 250px">
+                  <label for="post-picture">画像を添付する</label>
+                  <input type="file" name="picture" id="post-picture" class="form-control-file">
+                </div>
+
+
+                  <button type="submit" class="btn btn-primary btn-sm post-button">投稿</button>
+
+              </form>
 
               @else
               <label for="post-message">投稿するには<a href="{{ route('login') }}">ログイン</a>が必要です。</label>
               @endif
+            </div>
 
-            </form>
 
             <hr class="my-3">
 

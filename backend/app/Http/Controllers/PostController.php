@@ -20,7 +20,6 @@ class PostController extends Controller
       $posts = Post::orderBy('id','desc')->paginate(50);
       $users = User::get();
       $reactions = Reaction::get();
-      // dd($posts);
       return view('index', compact('posts','users','reactions'));
     }
 
@@ -46,6 +45,7 @@ class PostController extends Controller
         $validate = $request->validate([
           'message' => 'required|max:128',
           'picture' => 'nullable|image',
+          'youtube_url' => 'nullable|starts_with:https://www.youtube.com,https://m.youtube.com,https://youtu.be',
         ]);
 
         // ファイルのアップロード
@@ -65,9 +65,21 @@ class PostController extends Controller
           $reply_post_id = $request->reply_post_id;
         }
 
+        // YouTube処理
+        $youtube_id = null;
+        if (isset($request->youtube_url)) {
+          if (substr($request->youtube_url, 0, 16) == 'https://youtu.be') {
+            $youtube_id = substr($request->youtube_url, -11);
+          } else {
+            preg_match('/v=(\w+[-]\w+)/', $request->youtube_url, $match);
+            $youtube_id = $match[1];
+          }
+        }
+
         $create = Post::create([
           'message' => $request->message,
           'picture' => $picture_name,
+          'youtube_url' => $youtube_id,
           'good' => 0,
           'user_id' => Auth::id(),
           'reply_post_id' => $reply_post_id,
