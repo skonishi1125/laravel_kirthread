@@ -41,8 +41,6 @@
               <li><a role="button" class="reactions questions" data-reaction="4" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">❓</a></li>
               {{-- <li><img class="reactions kaiddds" data-reaction="5" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" style="cursor: pointer" src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"></li> --}}
 
-
-
               <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
@@ -57,6 +55,15 @@
                 <li>
                   <button type="submit" class="clearButton">
                     <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6">
+                  </button>
+                </li>
+              </form>
+
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7])  }}" method="post" enctype="multipart/form-data">
+                @CSRF
+                <li>
+                  <button type="submit" class="clearButton">
+                    <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7">
                   </button>
                 </li>
               </form>
@@ -176,6 +183,23 @@
                       </li>
                     @endif
                     @break
+
+                  @case(7)
+                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
+                      <li>
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-info btn-sm add-reaction">
+                          <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
+                        </a>
+                      </li>
+                      @else
+                      <li>
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-outline-info btn-sm">
+                          <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
+                        </a>
+                      </li>
+                    @endif
+                    @break
+                    
                   @endswitch
           @endforeach
         @else
@@ -202,6 +226,11 @@
               @case(6)
                 <li><a href="#" class="btn btn-outline-info btn-sm disabled">
                   <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
+                </a></li>
+              @break
+              @case(7)
+                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
+                  <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
                 </a></li>
               @break
             @endswitch

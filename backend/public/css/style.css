@@ -46,10 +46,10 @@ body {
 
 .reaction-modal {
   position: absolute;
-  top: -16px;
+  top: -46px;
   right: -91px;
   width: 190px;
-  height: 30px;
+  height: 60px;
   background-color: #e0edff;
 }
 
@@ -112,9 +112,9 @@ body {
 
   .reaction-modal {
     right: -32px;
-    top: -25px;
+    top: -45px;
     width: 180px;
-    height: 28px;
+    height: 50px;
   }
 
   .reaction-modal:before {
