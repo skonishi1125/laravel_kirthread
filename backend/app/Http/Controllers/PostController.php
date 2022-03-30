@@ -71,7 +71,7 @@ class PostController extends Controller
           if (substr($request->youtube_url, 0, 16) == 'https://youtu.be') {
             $youtube_id = substr($request->youtube_url, -11);
           } else {
-            preg_match('/v=((.*){11})/', $request->youtube_url, $match);
+            preg_match('/v=((.){11})/', $request->youtube_url, $match);
             $youtube_id = $match[1];
           }
         }
