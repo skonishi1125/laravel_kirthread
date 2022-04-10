@@ -17,6 +17,7 @@ class UserTest extends TestCase
     {
         $user = new User();
         $response = $user->find(12);
+        echo PHP_EOL . 'サンプルテストです' . PHP_EOL;
         $this->assertSame('山吹', $response['name']);
     }
 }
