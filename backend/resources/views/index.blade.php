@@ -26,12 +26,12 @@
               <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <div class="form-group">
-                  <textarea class="form-control" id="post-message" name="message" placeholder="投稿したい内容を記入"></textarea>
+                  <textarea class="form-control" id="post-message" name="message" placeholder="投稿したい内容を記入">{{ old('message') }}</textarea>
                 </div>
                 
                 <div class="form-group" style="font-size: small">
                   <label for="youtube_url">YouTubeの動画を載せる</label>
-                  <input type="text" class="form-control form-control-sm" id="youtube_url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=QLXbggM1GXk">
+                  <input type="text" class="form-control form-control-sm" id="youtube_url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=QLXbggM1GXk" value="{{ old('youtube_url') }}">
                 </div>
 
                 <div class="form-group" style="font-size: small; width: 250px">

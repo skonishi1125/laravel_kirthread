@@ -43,9 +43,15 @@ class PostController extends Controller
     {
         // バリデーション
         $validate = $request->validate([
-          'message' => 'required|max:128',
+          'message' => 'required_without_all:picture,youtube_url|max:255', // picture, youtube_urlと空白を入れてはいけない
           'picture' => 'nullable|image',
           'youtube_url' => 'nullable|starts_with:https://www.youtube.com,https://m.youtube.com,https://youtu.be',
+        ],
+        [
+          'message.required_without_all' => '投稿が未記入です。',
+          'message.max' => '投稿は最大255文字までです。',
+          'picture.image' => 'こちらの写真の拡張子は非対応です。',
+          'youtube_url.starts_with' => '動画URLの形式が誤っています。',
         ]);
 
         // ファイルのアップロード
