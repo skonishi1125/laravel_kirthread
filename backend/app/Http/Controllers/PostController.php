@@ -7,6 +7,7 @@ Use App\User;
 Use App\Models\Post;
 Use App\Models\Reaction;
 Use Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -91,6 +92,15 @@ class PostController extends Controller
           'reply_post_id' => $reply_post_id,
         ]);
         $create->save();
+
+        Log::channel('postlog')
+            ->debug('投稿が行われました。', [
+                'id' => $create->id,
+                'message' => $create->message,
+                'picture' => $create->picture,
+                'youtube_url' => $create->youtube_url,
+                'user_id' => $create->user_id
+            ]);
 
         return redirect('/');
     }
