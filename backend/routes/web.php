@@ -39,4 +39,8 @@ Route::group(['middleware' => 'auth'], function () {
   // ajax
   Route::post('/ajax', 'PostController@ajaxReaction');
 
+  // API
+  Route::get('/api/post','ApiController@getPost')
+    ->name('api_post');
+
 });
