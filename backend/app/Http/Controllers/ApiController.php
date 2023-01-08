@@ -45,7 +45,16 @@ class ApiController extends Controller
     }
 
     public function getJson() {
-        $url = "https://kir-thread.site/api/post?item=10";
+        // localhost / 127.0.0.1 環境だと正常に動作しないので、条件分岐しておく
+        if (config('app.env') != 'production') {
+            $url = "https://kir-thread.site/api/post?item=10";
+        } else {
+            $url_path = route('api_post');
+            $param = '?item=';
+            $item_num = 10;
+            $url = $url_path . $param . $item_num;
+        }
+
         $json_raw_data = file_get_contents($url);
         $json_convert_data = mb_convert_encoding($json_raw_data, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
         $array = json_decode($json_convert_data, false);
