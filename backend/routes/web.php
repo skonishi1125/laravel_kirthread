@@ -44,3 +44,5 @@ Route::group(['middleware' => 'auth'], function () {
 // API
 Route::get('/api/post','ApiController@getPost')
     ->name('api_post');
+Route::get('/api/json', 'ApiController@getJson')
+    ->name('api_json');
