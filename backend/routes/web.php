@@ -46,3 +46,7 @@ Route::get('/api/post','ApiController@getPost')
     ->name('api_post');
 Route::get('/api/json', 'ApiController@getJson')
     ->name('api_json');
+
+// 勉強用コントローラ
+Route::get('/study/monolog', 'StudyController@useMonolog')
+    ->name('study_monolog');
