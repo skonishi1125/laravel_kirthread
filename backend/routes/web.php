@@ -50,3 +50,7 @@ Route::get('/api/json', 'ApiController@getJson')
 // 勉強用コントローラ
 Route::get('/study/monolog', 'StudyController@useMonolog')
     ->name('study_monolog');
+Route::get('/study/transaction', 'StudyController@useTransaction')
+    ->name('study_transaction');
+Route::get('/study/not_use_transaction', 'StudyController@notUseTransaction')
+    ->name('study_not_use_transaction');
