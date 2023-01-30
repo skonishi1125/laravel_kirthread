@@ -85,6 +85,9 @@
 
                                     <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
                                     <a class="dropdown-item" href="{{ route('game') }}">ゲーム</a>
+                                    <a class="dropdown-item" href="{{ route('study_download_post_csv', ['user_id' => Auth::id()]) }}">
+                                        CSVでDL
+                                    </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf

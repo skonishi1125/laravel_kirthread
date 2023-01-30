@@ -77,4 +77,56 @@ class StudyController extends Controller
 
     }
 
+    public function downloadPostCsv($user_id) {
+        self::csvDownloadSample();
+
+    }
+
+    // サンプルcsv
+    private function csvDownloadSample() {
+        // ヘッダ行
+        $head = ['id', '名前', '説明', '価格'];
+
+        // データ行
+        $data = [
+            ["00001", 'りんご', '12個です', '1,200'],
+            ["00002", 'ぶどう', 'ひとつぶです', '10,200'],
+            ["00003", 'なし', '1個です', '120']
+        ];
+
+        $date = date("Ymd");
+        // header("Content-Type: application/octet-stream");
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=testdata.csv");
+        
+        // ヘッダ行の文字コード変換
+        foreach ($head as $key => $value) {
+            \Log::info('value, keys', [$value, $key]);
+            $head[$key] = mb_convert_encoding($value, "SJIS", "UTF-8");
+        }
+        
+        // データ行の文字コード変換・加工
+        foreach ($data as $data_key => $line) {
+            foreach ($line as $line_key => $value) {
+                // 0をエクセルで表示させたい
+                if ($line_key == 0) {
+                    $value = '="' . $value . '"';
+                }
+                // , があったらダブルクォーテーションで囲む
+                if (strpos($value, ',')) {
+                    $data[$data_key][$line_key] = mb_convert_encoding('"' . $value . '"', "SJIS", "UTF-8");
+                } else {
+                    $data[$data_key][$line_key] = mb_convert_encoding($value, "SJIS", "UTF-8");
+                }
+            }
+        }
+        echo implode($head, ",") . "\r\n";
+        
+        foreach ($data as $key => $line) {
+            \Log::info('line: ', [$line]);
+            echo implode($line, ",") . "\r\n";
+        }
+        exit;
+    }
+
 }
