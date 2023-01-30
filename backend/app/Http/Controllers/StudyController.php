@@ -78,7 +78,44 @@ class StudyController extends Controller
     }
 
     public function downloadPostCsv($user_id) {
-        self::csvDownloadSample();
+        // self::csvDownloadSample();
+
+        $posts = Post::select('id', 'message', 'picture', 'youtube_url', 'user_id', 'created_at')
+            ->where('user_id', $user_id)
+            ->orderByDesc('id')
+            ->get()
+            ->toArray();
+
+        $head = [
+            '投稿ID',
+            'メッセージ',
+            '画像名',
+            'YouTube URL',
+            ' ユーザーID',
+            '投稿日'
+        ];
+
+        $f = fopen(storage_path() . '/csv/post.csv', 'w');
+        if ($f) {
+            // カラム書き込み
+            mb_convert_variables('SJIS', 'UTF-8', $head);
+            fputcsv($f, $head);
+
+            // データ書き込み
+            foreach ($posts as $post) {
+                mb_convert_variables('SJIS', 'UTF-8', $post);
+                fputcsv($f, $post);
+            }
+        }
+        fclose($f);
+
+        // HTTPヘッダ
+        header("Content-Type: application/octet-stream");
+        header('Content-Length: '.filesize(storage_path() . '/csv/post.csv'));
+        header('Content-Disposition: attachment; filename=post.csv');
+        readfile(storage_path() . '/csv/post.csv');
+
+        // return redirect()->route('/');
 
     }
 

@@ -14,6 +14,7 @@
             }
         }, false );
     }
+    
 
     // 😁+を押したときの反応
     let reaction = document.getElementsByClassName('reaction');
