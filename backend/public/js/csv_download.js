@@ -5,7 +5,7 @@
     console.log('csvだよ');
     let csv_download_element = document.getElementById('csv-download');
     csv_download_element.addEventListener('click', function( e ) {
-        if ( confirm( '今までの投稿をcsv形式でダウンロードしますか？' ) ) {
+        if ( confirm( '今までのあなたの投稿をcsv形式でダウンロードしますか？' ) ) {
         } else {
           e.preventDefault();
         }
