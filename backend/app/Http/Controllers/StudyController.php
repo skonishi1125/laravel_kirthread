@@ -77,4 +77,93 @@ class StudyController extends Controller
 
     }
 
+    public function downloadPostCsv($user_id) {
+        // self::csvDownloadSample();
+
+        $posts = Post::select('id', 'message', 'picture', 'youtube_url', 'user_id', 'created_at')
+            ->where('user_id', $user_id)
+            ->orderByDesc('id')
+            ->get()
+            ->toArray();
+
+        $head = [
+            '投稿ID',
+            'メッセージ',
+            '画像名',
+            'YouTube URL',
+            ' ユーザーID',
+            '投稿日'
+        ];
+
+        $f = fopen(storage_path() . '/csv/post.csv', 'w');
+        if ($f) {
+            // カラム書き込み
+            mb_convert_variables('SJIS', 'UTF-8', $head);
+            fputcsv($f, $head);
+
+            // データ書き込み
+            foreach ($posts as $post) {
+                mb_convert_variables('SJIS', 'UTF-8', $post);
+                fputcsv($f, $post);
+            }
+        }
+        fclose($f);
+
+        // HTTPヘッダ
+        header("Content-Type: application/octet-stream");
+        header('Content-Length: '.filesize(storage_path() . '/csv/post.csv'));
+        header('Content-Disposition: attachment; filename=post.csv');
+        readfile(storage_path() . '/csv/post.csv');
+
+        // return redirect()->route('/');
+
+    }
+
+    // サンプルcsv
+    private function csvDownloadSample() {
+        // ヘッダ行
+        $head = ['id', '名前', '説明', '価格'];
+
+        // データ行
+        $data = [
+            ["00001", 'りんご', '12個です', '1,200'],
+            ["00002", 'ぶどう', 'ひとつぶです', '10,200'],
+            ["00003", 'なし', '1個です', '120']
+        ];
+
+        $date = date("Ymd");
+        // header("Content-Type: application/octet-stream");
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=testdata.csv");
+        
+        // ヘッダ行の文字コード変換
+        foreach ($head as $key => $value) {
+            \Log::info('value, keys', [$value, $key]);
+            $head[$key] = mb_convert_encoding($value, "SJIS", "UTF-8");
+        }
+        
+        // データ行の文字コード変換・加工
+        foreach ($data as $data_key => $line) {
+            foreach ($line as $line_key => $value) {
+                // 0をエクセルで表示させたい
+                if ($line_key == 0) {
+                    $value = '="' . $value . '"';
+                }
+                // , があったらダブルクォーテーションで囲む
+                if (strpos($value, ',')) {
+                    $data[$data_key][$line_key] = mb_convert_encoding('"' . $value . '"', "SJIS", "UTF-8");
+                } else {
+                    $data[$data_key][$line_key] = mb_convert_encoding($value, "SJIS", "UTF-8");
+                }
+            }
+        }
+        echo implode($head, ",") . "\r\n";
+        
+        foreach ($data as $key => $line) {
+            \Log::info('line: ', [$line]);
+            echo implode($line, ",") . "\r\n";
+        }
+        exit;
+    }
+
 }

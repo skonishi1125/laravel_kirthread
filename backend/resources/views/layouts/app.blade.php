@@ -85,6 +85,9 @@
 
                                     <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
                                     <a class="dropdown-item" href="{{ route('game') }}">ゲーム</a>
+                                    <a id="csv-download" class="dropdown-item" href="{{ route('study_download_post_csv', ['user_id' => Auth::id()]) }}">
+                                        CSVでDL
+                                    </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
@@ -103,6 +106,7 @@
     </div>
     <script type="text/javascript" src="{{ asset('js/stopwatch.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js/script.js?20211125') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/csv_download.js?20230130') }}"></script>
     {{-- 画像までのローカルパス変数 --}}
     <script type="text/javascript">
       var path_to_image = '{{ asset('') }}';
