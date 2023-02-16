@@ -11,6 +11,8 @@ use Monolog\Handler\StreamHandler;
 
 use Illuminate\Support\Facades\DB;
 
+use App\Jobs\WriteLogFile;
+
 class StudyController extends Controller
 {
     //
@@ -164,6 +166,11 @@ class StudyController extends Controller
             echo implode($line, ",") . "\r\n";
         }
         exit;
+    }
+
+    public function DispatchWriteLogJob() {
+        $message = 'controller test';
+        WriteLogFile::dispatch($message);
     }
 
 }

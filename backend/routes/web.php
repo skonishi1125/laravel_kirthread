@@ -56,3 +56,5 @@ Route::get('/study/not_use_transaction', 'StudyController@notUseTransaction')
     ->name('study_not_use_transaction');
 Route::get('study/download/post/{user_id}', 'StudyController@downloadPostCsv')
     ->name('study_download_post_csv');
+Route::get('study/job/write_log', 'StudyController@DispatchWriteLogJob')
+    ->name('study_job_write_log');
