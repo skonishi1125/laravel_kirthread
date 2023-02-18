@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Auth;
+use Illuminate\Support\Carbon;
 
 class Post extends Model
 {
-    //
+    // クラスプロパティには、動的な値は入れられない。
+    // https://qiita.com/H40831/items/15ebfbf7d9c05001b6df
+    // private $now = Carbon::now();
+
     protected $guarded = [
       'id',
     ];
@@ -25,5 +29,13 @@ class Post extends Model
       // true = つけている。 false = つけていない。
       return $is_set_reaction;
     }
+
+    // クエリスコープ
+    public function scopeRecently($query) {
+        $last_month = new Carbon('last month');
+        return $query->where('created_at', '>=', $last_month);
+    }
+
+    
 
 }

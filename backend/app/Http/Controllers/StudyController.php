@@ -173,4 +173,11 @@ class StudyController extends Controller
         WriteLogFile::dispatch($message);
     }
 
+    public function studyLocalScope() {
+        $recently_post_count = Post::Recently()->count();
+        
+        return '直近の投稿件数は' . $recently_post_count . '件です。';
+        
+    }
+
 }
