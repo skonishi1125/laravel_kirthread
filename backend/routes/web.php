@@ -60,3 +60,7 @@ Route::get('study/job/write_log', 'StudyController@DispatchWriteLogJob')
     ->name('study_job_write_log');
 Route::get('study/scope/local', 'StudyController@studyLocalScope')
     ->name('study_scope_local');
+Route::get('study/accessor', 'StudyController@studyAccessor')
+    ->name('study_accessor');
+Route::get('study/mutator', 'StudyController@studyMutator')
+    ->name('study_mutator');

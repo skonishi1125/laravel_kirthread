@@ -36,6 +36,23 @@ class Post extends Model
         return $query->where('created_at', '>=', $last_month);
     }
 
-    
+    public function getIsSetKaidddReactionAttribute() {
+        $reactions = array_unique(explode(',', $this->reaction));
+        $kaiddd_reactions = [5, 7];
+        foreach ($kaiddd_reactions as $k_r) {
+            if (in_array( $k_r, $reactions)) {
+                return true;
+            } else {
+                continue;
+            }
+        }
+        return false;
+    }
+
+    // ミューテタは他の部分の処理に影響が出るので、コメントアウトしておく。
+    // public function setMessageAttribute($value) {
+    //     $this->attributes['message'] = strtoupper($value);
+    // }
+
 
 }
