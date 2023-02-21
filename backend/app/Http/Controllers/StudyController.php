@@ -173,4 +173,28 @@ class StudyController extends Controller
         WriteLogFile::dispatch($message);
     }
 
+    public function studyLocalScope() {
+        $recently_post_count = Post::Recently()->count();
+        return '直近の投稿件数は' . $recently_post_count . '件です。';
+    }
+
+    public function studyAccessor() {
+        $recently_posts = Post::Recently()->get();
+        $kaiddd_count = 0;
+        foreach ($recently_posts as $p) {
+            if ($p->is_set_kaiddd_reaction) {
+                $kaiddd_count++;
+            }
+        }
+        return '直近1ヶ月の投稿でかいデデデさんのリアクションがついた投稿の件数は' . $kaiddd_count . '件です。';
+    }
+
+    // ミューテタは他の部分の処理に影響が出るので、コメントアウトしておく。
+    // public function studyMutator() {
+    //     $post = Post::find(1572);
+    //     $post->message = 'aaa kakikomi';
+    //     $post->save();
+    //     return redirect()->route('/');
+    // }
+
 }
