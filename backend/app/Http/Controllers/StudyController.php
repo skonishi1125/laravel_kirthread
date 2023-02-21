@@ -197,4 +197,21 @@ class StudyController extends Controller
     //     return redirect()->route('/');
     // }
 
+    public function testIframely() {
+        $twitter_url = 'https://twitter.com/skirplus';
+        $twitter_iframely_data = self::convertUrlToIframelyData($twitter_url);
+        // $pixiv_url = 'https://www.pixiv.net/users/18393576';
+        // $pixiv_iframely_data = self::convertUrlToIframelyData($pixiv_url);
+
+        return view('study/iframely')
+            ->with('twitter_iframely_data', $twitter_iframely_data);
+    }
+
+    private function convertUrlToIframelyData($url) {
+        $api_access_url = 'https://iframe.ly/api/iframely?api_key=' . env('IFRAMELY_API_KEY');
+        $json_raw_data = file_get_contents($api_access_url . '&url=' . $url); // 生データ取得
+        $json_convert_data = mb_convert_encoding($json_raw_data, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
+        return json_decode($json_convert_data, false);
+    }
+
 }

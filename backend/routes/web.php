@@ -64,3 +64,5 @@ Route::get('study/accessor', 'StudyController@studyAccessor')
     ->name('study_accessor');
 Route::get('study/mutator', 'StudyController@studyMutator')
     ->name('study_mutator');
+Route::get('study/iframely', 'StudyController@testIframely')
+    ->name('study_iframely');
