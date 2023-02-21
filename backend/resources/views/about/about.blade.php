@@ -34,11 +34,17 @@
             <h5><b>環境</b></h5>
             <p>
               インフラ: conoHa VPS <br>
-              使ってるもの: PHP(Laravel), MySQL <br>
-              かあスレ稼働料金: 500円 <br>
+              言語: Laravel6.x <br>
+              かあスレ稼働料金: 月600円 <br>
             </p>
 
-            <a href="{{ route('/') }}">もどる</a>
+            @php
+                if (isset($twitter_iframely_data->html)) echo $twitter_iframely_data->html;
+            @endphp
+
+            <div style="text-align: center; margin-top: 10px;">
+                <a style="text-align:center" href="{{ route('/') }}">かあスレッドトップページへ</a>
+            </div>
             
           </div> <!-- col-12 -->
         </div><!-- card-body -->
