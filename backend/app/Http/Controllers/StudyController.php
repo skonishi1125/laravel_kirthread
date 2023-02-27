@@ -12,6 +12,7 @@ use Monolog\Handler\StreamHandler;
 use Illuminate\Support\Facades\DB;
 
 use App\Jobs\WriteLogFile;
+use Carbon\Carbon;
 
 class StudyController extends Controller
 {
@@ -212,6 +213,66 @@ class StudyController extends Controller
         $json_raw_data = file_get_contents($api_access_url . '&url=' . $url); // 生データ取得
         $json_convert_data = mb_convert_encoding($json_raw_data, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
         return json_decode($json_convert_data, false);
+    }
+
+    public function importPostByCsvIndex() {
+        return view('study/import_csv/index');
+    }
+
+    public function importPostByCsvStore(Request $request) {
+        // バリデーション定義
+        $validatedData = $request->validate([
+            'importCsvFile' => 'required|mimes:csv,txt|mimetypes:text/plain'
+        ]);
+
+        // dd(
+        //     // input nameの値から、様々な操作ができる
+        //     $request->hasFile('importCsvFile'),
+        //     $request->importCsvFile,
+        //     $request->importCsvFile->get()
+        // );
+
+        /*  データ保存
+          * DB::transactionの中では保存は行えない。
+          * ファイルの保存などは、データベースの操作とは関係がないから。
+        */
+        $request->importCsvFile->storeAs('public/', "importCsvPosts.csv");
+
+        try {
+            DB::transaction(function ($request) {
+                //保存箇所からデータを取得する
+                $saved_csv_data = \Storage::disk('local')->get('public/importCsvPosts.csv');
+
+                // 改行コードを合わせてcsvデータのcollection化を行う
+                $saved_csv_data = str_replace(array("\r\n","\r"), "\n", $saved_csv_data);
+                $collection_csv_data = collect(explode("\n", $saved_csv_data));
+
+                // ヘッダーと値を分ける
+                $csv_header = $collection_csv_data->first();
+                $collection_csv_data = $collection_csv_data->filter(function ($value, $key) {
+                    return $key > 0;
+                });
+
+                foreach ($collection_csv_data as $c) {
+                    $c = explode(',', $c);
+                    // 連番$c[0]は不要なので無視。
+                    $message = $c[1];
+                    $user_id = (int)$c[2];
+                    Post::create([
+                        'message' => $message,
+                        'user_id' => $user_id,
+                        'good'    => 0
+                    ]);
+                }
+            });
+        } catch (Exception $e) {
+            \Log::error('csvの取り込みに失敗しました。', [$e->getMessage(), $e->getLine()]);
+            return redirect()->route('study_import_csv_index');
+        }
+
+        $request->session()->flash('status', 'Task was successful!');
+        return redirect()->route('study_import_csv_index');
+
     }
 
 }
