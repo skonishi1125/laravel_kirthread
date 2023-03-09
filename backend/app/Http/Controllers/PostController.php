@@ -21,9 +21,44 @@ class PostController extends Controller
     public function index()
     {
         // 投稿と、投稿したユーザーの取得
+        $user = Auth::user();
         $posts = Post::orderBy('id','desc')->paginate(50);
+        $reaction_icons = ReactionIcon::all();
+
+        $posts->map(function ($value) use ($user, $reaction_icons) {
+            // postにリアクションされた情報を付与する。
+            // * どのリアクションが付与されているか
+            // * そのリアクションのそれぞれの数はいくつか
+            $reaction_count_collection = collect();
+
+            // 投稿1件に、どのリアクションが何件付いているのかを調べる。
+            foreach ($reaction_icons as $r) {
+                $attached_r_count = Reaction::where('post_id', $value->id)
+                            ->where('reaction_icon_id', $r->id)
+                            ->count();
+                // dd($value, $value->user->id, $r->id, $attached_r_count);
+                $reaction_count_collection->push([
+                    'reaction_icon_id' => $r->id,
+                    'is_picture_icon'  => $r->is_picture_icon,
+                    'value'            => $r->value,
+                    'name'            => $r->name,
+                    'name_plural'            => $r->name_plural,
+                    'url'           => $r->url,
+                    'count'            => $attached_r_count
+                ]);
+            }
+
+            $value['attached_reactions'] = $reaction_count_collection;
+        });
+
+        // $reactions = explode(",", $post->reaction); 
+        // $counts = array_count_values($reactions);
+        // $reactions = array_unique($reactions);
+
+
         return view('index')
             ->with('posts', $posts)
+            ->with('reaction_icons', $reaction_icons)
         ;
     }
 
