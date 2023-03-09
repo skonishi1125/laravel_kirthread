@@ -39,11 +39,11 @@
           var table = $(e.target).closest('.post-container').find('.reaction-buttons');
           var post_id = this.dataset.postid;
           var user_id = this.dataset.userid;
-          var reaction_number = $(e.target).data('reaction');
+          var reaction_icon_id = $(e.target).data('reaction');
           var data = {
             'post_id'           : post_id,
             'user_id'           : user_id,
-            'reaction_number'   : reaction_number,
+            'reaction_icon_id'   : reaction_icon_id,
             'status'            : 0
           };
           switch ($(e.target).data('reaction')) {
@@ -202,7 +202,7 @@
                 var data2 = {
                   'post_id'           : data['post_id'],
                   'user_id'           : data['user_id'],
-                  'reaction_number'   : data['reaction_number'],
+                  'reaction_icon_id'   : data['reaction_icon_id'],
                   'status'            : 1,
                 }
                 $.ajax({

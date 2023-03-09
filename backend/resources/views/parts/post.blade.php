@@ -39,9 +39,8 @@
               <li><a role="button" class="reactions sads" data-reaction="2" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">😭</a></li>
               <li><a role="button" class="reactions hearts" data-reaction="3" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">💕</a></li>
               <li><a role="button" class="reactions questions" data-reaction="4" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">❓</a></li>
-              {{-- <li><img class="reactions kaiddds" data-reaction="5" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" style="cursor: pointer" src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"></li> --}}
 
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5])  }}" method="post" enctype="multipart/form-data">
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 5])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
                   <button type="submit" class="clearButton">
@@ -50,7 +49,7 @@
                 </li>
               </form>
               
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6])  }}" method="post" enctype="multipart/form-data">
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 6])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
                   <button type="submit" class="clearButton">
@@ -59,7 +58,7 @@
                 </li>
               </form>
 
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7])  }}" method="post" enctype="multipart/form-data">
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 7])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
                   <button type="submit" class="clearButton">
@@ -68,7 +67,7 @@
                 </li>
               </form>
 
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8])  }}" method="post" enctype="multipart/form-data">
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 8])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
                   <button type="submit" class="clearButton">
@@ -77,7 +76,7 @@
                 </li>
               </form>
 
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9])  }}" method="post" enctype="multipart/form-data">
+              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 9])  }}" method="post" enctype="multipart/form-data">
                 @CSRF
                 <li>
                   <button type="submit" class="clearButton">
@@ -174,13 +173,13 @@
 
                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
                       <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5]) }}" class="btn btn-info btn-sm add-reaction">
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 5]) }}" class="btn btn-info btn-sm add-reaction">
                           <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"> × {{ $counts[5] }}
                         </a>
                       </li>
                       @else
                       <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5]) }}" class="btn btn-outline-info btn-sm">
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 5]) }}" class="btn btn-outline-info btn-sm">
                           <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"> × {{ $counts[5] }}
                         </a>
                       </li>
@@ -189,13 +188,13 @@
                   @case(6)
                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
                       <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6]) }}" class="btn btn-info btn-sm add-reaction">
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 6]) }}" class="btn btn-info btn-sm add-reaction">
                           <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
                         </a>
                       </li>
                       @else
                       <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6]) }}" class="btn btn-outline-info btn-sm">
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 6]) }}" class="btn btn-outline-info btn-sm">
                           <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
                         </a>
                       </li>
@@ -205,13 +204,13 @@
                   @case(7)
                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
                       <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-info btn-sm add-reaction">
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 7]) }}" class="btn btn-info btn-sm add-reaction">
                           <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
                         </a>
                       </li>
                       @else
                       <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-outline-info btn-sm">
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 7]) }}" class="btn btn-outline-info btn-sm">
                           <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
                         </a>
                       </li>
@@ -221,13 +220,13 @@
                   @case(8)
                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
                       <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8]) }}" class="btn btn-info btn-sm add-reaction">
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 8]) }}" class="btn btn-info btn-sm add-reaction">
                           <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8"> × {{ $counts[8] }}
                         </a>
                       </li>
                       @else
                       <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8]) }}" class="btn btn-outline-info btn-sm">
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 8]) }}" class="btn btn-outline-info btn-sm">
                           <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8"> × {{ $counts[8] }}
                         </a>
                       </li>
@@ -237,13 +236,13 @@
                   @case(9)
                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
                       <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9]) }}" class="btn btn-info btn-sm add-reaction">
+                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 9]) }}" class="btn btn-info btn-sm add-reaction">
                           <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9"> × {{ $counts[9] }}
                         </a>
                       </li>
                       @else
                       <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9]) }}" class="btn btn-outline-info btn-sm">
+                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_icon_id' => 9]) }}" class="btn btn-outline-info btn-sm">
                           <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9"> × {{ $counts[9] }}
                         </a>
                       </li>

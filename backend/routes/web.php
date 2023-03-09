@@ -27,9 +27,9 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');
   Route::post('/destroy', 'PostController@destroy')->name('destroy');
-  Route::get('/add_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@addReaction')->name('add_reaction');
-  Route::get('/remove_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@removeReaction')->name('remove_reaction');
-  Route::get('/select_reaction/{user_id}/{post_id}/{reaction_number}', 'PostController@selectReaction')->name('select_reaction');
+  Route::get('/add_reaction/{user_id}/{post_id}/{reaction_icon_id}', 'PostController@addReaction')->name('add_reaction');
+  Route::get('/remove_reaction/{user_id}/{post_id}/{reaction_icon_id}', 'PostController@removeReaction')->name('remove_reaction');
+  Route::get('/select_reaction/{user_id}/{post_id}/{reaction_icon_id}', 'PostController@selectReaction')->name('select_reaction');
   Route::post('/select_reaction', 'PostController@selectReaction')->name('select_reaction');
 
   // プロフィール設定

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 Use App\User;
 Use App\Models\Post;
 Use App\Models\Reaction;
+use App\Models\ReactionIcon;
+use App\ReactionIcon as AppReactionIcon;
 Use Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -18,10 +20,11 @@ class PostController extends Controller
      */
     public function index()
     {
-      $posts = Post::orderBy('id','desc')->paginate(50);
-      $users = User::get();
-      $reactions = Reaction::get();
-      return view('index', compact('posts','users','reactions'));
+        // 投稿と、投稿したユーザーの取得
+        $posts = Post::orderBy('id','desc')->paginate(50);
+        return view('index')
+            ->with('posts', $posts)
+        ;
     }
 
     /**
@@ -170,13 +173,13 @@ class PostController extends Controller
 
     }
 
-    public function addReaction($user_id, $post_id, $reaction_number)
+    public function addReaction($user_id, $post_id, $reaction_icon_id)
     {
-        // dd($user_id, $post_id, $reaction_number);
+        // dd($user_id, $post_id, $reaction_icon_id);
         $reaction = Reaction::create([
             'user_id' => $user_id,
             'post_id' => $post_id,
-            'reaction_number' => $reaction_number,
+            'reaction_icon_id' => $reaction_icon_id,
         ]);
         // create, updateはsave()不要
 
@@ -185,17 +188,17 @@ class PostController extends Controller
         // nullなら
         if (is_null($post->reaction)) {
             $post->update([
-                'reaction' => $reaction_number,
+                'reaction' => $reaction_icon_id,
             ]);
         } else {
           $post->update([
-              'reaction' => $post->reaction . ',' . $reaction_number,
+              'reaction' => $post->reaction . ',' . $reaction_icon_id,
           ]);
         }
         return redirect()->route('/');
     }
 
-    public function removeReaction($user_id, $post_id, $reaction_number)
+    public function removeReaction($user_id, $post_id, $reaction_icon_id)
     {
       // もしボタンを押したユーザがその投稿に同じリアクションをしていたら、ボタンで解除する
       $post = Post::find($post_id);
@@ -205,7 +208,7 @@ class PostController extends Controller
       // postのリアクションから削除する
       if (count($post_reactions) > 0) {
         for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
-          if ( $post_reactions[$i] == $reaction_number) {
+          if ( $post_reactions[$i] == $reaction_icon_id) {
             // dd($post_reactions);
             array_splice($post_reactions, $i, 1);
             break;
@@ -220,10 +223,10 @@ class PostController extends Controller
       }
       
       // reactionsテーブルからも削除
-      $remove_reaction_number = Reaction::where('user_id', $user_id)
+      $remove_reaction_icon_id = Reaction::where('user_id', $user_id)
           ->where('post_id', $post_id)
           ->where('user_id', $user_id)
-          ->where('reaction_number', $reaction_number)
+          ->where('reaction_icon_id', $reaction_icon_id)
           ->delete();
 
       return redirect()->route('/');
@@ -231,21 +234,21 @@ class PostController extends Controller
 
     public function selectReaction(Request $request) {
       $post = Post::find($request->post_id);
-      $bool = $post->isSetReaction($request->user_id, $request->post_id, $request->reaction_number);
+      $bool = $post->isSetReaction($request->user_id, $request->post_id, $request->reaction_icon_id);
 
       if ($bool == true) {
         return redirect()
         ->route('remove_reaction', [
           'user_id' => $request->user_id,
           'post_id' => $request->post_id,
-          'reaction_number' => $request->reaction_number,
+          'reaction_icon_id' => $request->reaction_icon_id,
         ]);
       } else {
         return redirect()
         ->route('add_reaction', [
           'user_id' => $request->user_id,
           'post_id' => $request->post_id,
-          'reaction_number' => $request->reaction_number,
+          'reaction_icon_id' => $request->reaction_icon_id,
         ]);
       }
 
@@ -260,11 +263,14 @@ class PostController extends Controller
       $counts = array_count_values($reactions); // 1(👀)のリアクションが何件か、などのデータ
       $reactions = array_unique($reactions); // 1のリアクションがあるのかどうかだけを確認する
 
+      \Debugbar::info('テスト');
+
       // そのpostにそのuserがそのreaction済みなのかどうか
       $is_react = Reaction::where('user_id', $user->id)
         ->where('post_id', $post->id)
-        ->where('reaction_number', $data['reaction_number'])
+        ->where('reaction_icon_id', $data['reaction_icon_id'])
         ->first();
+      \Debugbar::info('テスト', [$is_react]);
       if ($is_react !== null) {
         $is_react = true;
       } else {
@@ -273,29 +279,29 @@ class PostController extends Controller
 
       // リアクションの追加
       if ($data['status'] == 0) {
-        \Debugbar::info('追加します。対象は↓', $data['reaction_number']);
+        \Debugbar::info('追加します。対象は↓', $data['reaction_icon_id']);
         $reaction = Reaction::create([
           'user_id' => $user->id,
           'post_id' => $post->id,
-          'reaction_number' => $data['reaction_number'],
+          'reaction_icon_id' => $data['reaction_icon_id'],
         ]);
         if (is_null($post->reaction)) {
           $post->update([
-              'reaction' => $data['reaction_number'],
+              'reaction' => $data['reaction_icon_id'],
           ]);
         } else {
           $post->update([
-              'reaction' => $post->reaction . ',' . $data['reaction_number'],
+              'reaction' => $post->reaction . ',' . $data['reaction_icon_id'],
           ]);
         }
       // リアクションの削除
       } else {
-        \Debugbar::info('削除です。対象は↓', $data['reaction_number']);
+        \Debugbar::info('削除です。対象は↓', $data['reaction_icon_id']);
         $post_reactions = explode(",", $post->reaction);
       
         if (count($post_reactions) > 0) {
           for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
-            if ( $post_reactions[$i] == $data['reaction_number']) {
+            if ( $post_reactions[$i] == $data['reaction_icon_id']) {
               array_splice($post_reactions, $i, 1);
               break;
             }
@@ -307,10 +313,10 @@ class PostController extends Controller
           $post->reaction = null;
         }
         
-        $remove_reaction_number = Reaction::where('user_id', $user->id)
+        $remove_reaction_icon_id = Reaction::where('user_id', $user->id)
             ->where('post_id', $post->id)
             ->where('user_id', $user->id)
-            ->where('reaction_number', $data['reaction_number'])
+            ->where('reaction_icon_id', $data['reaction_icon_id'])
             ->delete();
       }
 
