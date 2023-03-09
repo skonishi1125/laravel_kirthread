@@ -1,11 +1,12 @@
 <div class="container post-container">
   <div class="row">
 
+      {{-- アイコンの部分。未設定の場合、おばけのデフォルトアイコンを付与する --}}
       <div class="col-auto">
-        @if ( is_null(App\User::where('id',$post->user_id)->value('icon')) )
-          <img class="profile-icon" src="{{asset('storage/icons/' . 'default.png')}}" alt="p_icon">
+        @if (is_null($post->user->icon)) 
+          <img class="profile-icon" src="{{ asset('storage/icons/' . 'default.png') }}" alt="p_icon">
         @else
-          <img class="profile-icon" src="{{asset('storage/icons/' . App\User::where('id',$post->user_id)->value('icon'))}}" alt="p_icon">
+          <img class="profile-icon" src="{{ asset('storage/icons/' . $post->user->icon) }}" alt="p_icon">
         @endif
       </div>
       
@@ -15,6 +16,7 @@
         <small><a href="{{ route('show', ['id' => $post->id]) }}">id:[{{$post->id}}]</a></small>
         <small>{{$post->created_at}}</small>
 
+        {{-- ゴミ箱もしくは、リアクションアイコン --}}
         <div class="reaction-wrapper">
           @if (Auth::id() === $post->user_id)
           <form action="{{ route('destroy') }}" method="post" enctype="multipart/form-data">
@@ -32,7 +34,7 @@
         </div>
 
         {{-- 青い吹き出しのリアクションをつけるパーツ --}}
-        @include('parts.reaction.hukidashi',['post => $post', 'user_id => Auth::id()'])
+        @include('parts.reaction.hukidashi',['post => $post', 'user_id => Auth::id(), reaction_icons => $reaction_icons'])
 
       </div>
 
@@ -44,9 +46,6 @@
           <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $post->youtube_url }}" allowfullscreen></iframe>
         </div>
         <hr>
-
-        {{-- <p>{{ $post->youtube_url}}</p> --}}
-
       @endif
 
       @if (isset($post->picture))
@@ -54,6 +53,7 @@
           <img class="img-fluid post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
         </div>
       @endif
+
       <ul class="reaction-icons reaction-buttons">
       @if (isset($post->reaction))
         @php
