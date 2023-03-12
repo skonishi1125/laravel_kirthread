@@ -39,13 +39,14 @@
           var table = $(e.target).closest('.post-container').find('.reaction-buttons');
           var post_id = this.dataset.postid;
           var user_id = this.dataset.userid;
-          var reaction_number = $(e.target).data('reaction');
+          var reaction_icon_id = $(e.target).data('reaction');
           var data = {
             'post_id'           : post_id,
             'user_id'           : user_id,
-            'reaction_number'   : reaction_number,
+            'reaction_icon_id'   : reaction_icon_id,
             'status'            : 0
           };
+        //   console.log('etarget:' + $(e.target).data('reaction')); heartsなら3
           switch ($(e.target).data('reaction')) {
             case 1 :
               // hasClass()は文字列検索なので、クラス付与の順番が間違っていると動作しない
@@ -71,6 +72,7 @@
               reactionAjaxExec(data, e, table, parts);
               break;
             case 3:
+            //   console.log('is_add' + $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction'));
               var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction');
               if (is_add) {
                 data['status'] = 1;
@@ -92,17 +94,16 @@
               }
               reactionAjaxExec(data, e, table, parts);
               break;
-            case 5:
-              // var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button kaiddds add-reaction');
-              // if (is_add) {
-              //   data['status'] = 1;
-              // }
-              // var parts = {
-              //   'reaction'  : "🕶",
-              //   'path'      : path_to_image + 'storage/reaction_icons/pic_60c59198dc55e.png',
-              //   'className' : "kaiddds",
-              // }
-              // reactionAjaxExec(data, e, table, parts, true);
+            case 10:
+                var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button thumbs_ups add-reaction');
+                if (is_add) {
+                  data['status'] = 1;
+                }
+                var parts = {
+                  'reaction'       : "👍",
+                  'className' : "thumbs_ups",
+                }
+                reactionAjaxExec(data, e, table, parts);
               break;
           }; // switch
         }; // if (!$(e.target).hasClass('disabled'))
@@ -155,6 +156,7 @@
 
 
           } else if( t_find_className.length == 1 ) {
+            // console.log('status: ' + status);
             if (status == 0) {
               // 誰かが押しているリアクションボタンを押した時
               var cnt = t_find_className.data()["count"] + 1;
@@ -202,7 +204,7 @@
                 var data2 = {
                   'post_id'           : data['post_id'],
                   'user_id'           : data['user_id'],
-                  'reaction_number'   : data['reaction_number'],
+                  'reaction_icon_id'   : data['reaction_icon_id'],
                   'status'            : 1,
                 }
                 $.ajax({

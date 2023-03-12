@@ -1,20 +1,22 @@
 <div class="container post-container">
   <div class="row">
 
+      {{-- アイコンの部分。未設定の場合、おばけのデフォルトアイコンを付与する --}}
       <div class="col-auto">
-        @if ( is_null(App\User::where('id',$post->user_id)->value('icon')) )
-          <img class="profile-icon" src="{{asset('storage/icons/' . 'default.png')}}" alt="p_icon">
+        @if (is_null($post->user->icon)) 
+          <img class="profile-icon" src="{{ asset('storage/icons/' . 'default.png') }}" alt="p_icon">
         @else
-          <img class="profile-icon" src="{{asset('storage/icons/' . App\User::where('id',$post->user_id)->value('icon'))}}" alt="p_icon">
+          <img class="profile-icon" src="{{ asset('storage/icons/' . $post->user->icon) }}" alt="p_icon">
         @endif
       </div>
       
       <div class="col-auto name-wrapper">
-        <span><b>{{App\User::where('id',$post->user_id)->value('name')}}</b></span>
+        <span><b>{{ $post->user->name }}</b></span>
         <br>
         <small><a href="{{ route('show', ['id' => $post->id]) }}">id:[{{$post->id}}]</a></small>
         <small>{{$post->created_at}}</small>
 
+        {{-- ゴミ箱 | リアクションアイコン --}}
         <div class="reaction-wrapper">
           @if (Auth::id() === $post->user_id)
           <form action="{{ route('destroy') }}" method="post" enctype="multipart/form-data">
@@ -31,64 +33,9 @@
           @endif
         </div>
 
-        {{-- リアクションモーダル --}}
-        @if (Auth::check())
-          <div class="reaction-modal d-none">
-            <ul class="reaction-icons">
-              <li><a role="button" class="reactions eyes" data-reaction="1" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">👀</a></li>
-              <li><a role="button" class="reactions sads" data-reaction="2" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">😭</a></li>
-              <li><a role="button" class="reactions hearts" data-reaction="3" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">💕</a></li>
-              <li><a role="button" class="reactions questions" data-reaction="4" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}">❓</a></li>
-              {{-- <li><img class="reactions kaiddds" data-reaction="5" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" style="cursor: pointer" src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"></li> --}}
-
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5])  }}" method="post" enctype="multipart/form-data">
-                @CSRF
-                <li>
-                  <button type="submit" class="clearButton">
-                    <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5">
-                  </button>
-                </li>
-              </form>
-              
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6])  }}" method="post" enctype="multipart/form-data">
-                @CSRF
-                <li>
-                  <button type="submit" class="clearButton">
-                    <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6">
-                  </button>
-                </li>
-              </form>
-
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7])  }}" method="post" enctype="multipart/form-data">
-                @CSRF
-                <li>
-                  <button type="submit" class="clearButton">
-                    <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7">
-                  </button>
-                </li>
-              </form>
-
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8])  }}" method="post" enctype="multipart/form-data">
-                @CSRF
-                <li>
-                  <button type="submit" class="clearButton">
-                    <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8">
-                  </button>
-                </li>
-              </form>
-
-              <form action="{{ route('select_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9])  }}" method="post" enctype="multipart/form-data">
-                @CSRF
-                <li>
-                  <button type="submit" class="clearButton">
-                    <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9">
-                  </button>
-                </li>
-              </form>
-
-            </ul>
-          </div>
-        @endif
+        {{-- 青い吹き出しのリアクションをつけるパーツ --}}
+        {{-- includeは[]で引数などを指定しなくても、この先のbladeで同じ引数を使える --}}
+        @include('parts.reaction.hukidashi')
 
       </div>
 
@@ -100,9 +47,6 @@
           <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/{{ $post->youtube_url }}" allowfullscreen></iframe>
         </div>
         <hr>
-
-        {{-- <p>{{ $post->youtube_url}}</p> --}}
-
       @endif
 
       @if (isset($post->picture))
@@ -110,195 +54,22 @@
           <img class="img-fluid post-image" src="{{asset('storage/uploads/' . $post->picture)}}" alt="画像">
         </div>
       @endif
+
       <ul class="reaction-icons reaction-buttons">
-      @if (isset($post->reaction))
-        @php
-            // リアクションされた数を数えたのち、重複している数値を削除する
-            $reactions = explode(",", $post->reaction); 
-            $counts = array_count_values($reactions);
-            $reactions = array_unique($reactions);
-        @endphp
+        @if (isset($post->reaction))
+          {{--  リアクションボタン部分。ログインユーザーしか押せなくする --}}
+          @include('parts.reaction.button')
 
-        {{--  ログインチェック & ログインユーザが投稿したユーザと違う場合非表示？ --}}
-        @if (Auth::check())
-          @foreach ($reactions as $reaction)
-              @switch($reaction)
-                  @case(1)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      {{-- add-reactionの方 --}}
-                      <li><a class="reactions-button reactions btn btn-outline-info btn-sm reactions-button eyes add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[1] }}" data-reaction="1" >👀 × {{ $counts[1] }}</a></li>
-                    @else
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button eyes" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[1] }}" data-reaction="1" >👀 × {{ $counts[1] }}</a></li>
-                    @endif
-                    @break
-                  @case(2)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button sads add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[2] }}" data-reaction="2" >😭 × {{ $counts[2] }}</a></li>
-                    @else
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button sads" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[2] }}" data-reaction="2">😭 × {{ $counts[2] }}</a></li>
-                    @endif
-                    @break
-                  @case(3)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button hearts add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[3] }}" data-reaction="3" >💕 × {{ $counts[3] }}</a></li>
-                    @else
-                      <li>
-                        <a class="reactions btn btn-outline-info btn-sm reactions-button hearts" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[3] }}" data-reaction="3">💕 × {{ $counts[3] }}</a>
-                      </li>
-                    @endif
-                    @break
-                  @case(4)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button questions add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[4] }}" data-reaction="4" >❓ × {{ $counts[4] }}</a></li>
-                    @else
-                      <li><a class="reactions btn btn-outline-info btn-sm reactions-button questions" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[4] }}" data-reaction="4" >❓ × {{ $counts[4] }}</a></li>
-                    @endif
-                    @break
-                  @case(5)
-                    {{--
-                     @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a class="reactions btn btn-outline-info btn-sm reactions-button kaiddds add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[5] }}" data-reaction="5" >
-                          🕶 × {{ $counts[5] }}
-                        </a>
-                      </li>
-                    @else
-                      <li>
-                        <a class="reactions btn btn-outline-info btn-sm reactions-button kaiddds" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $counts[5] }}" data-reaction="5" >
-                          🕶 × {{ $counts[5] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break 
-                    --}}
-
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5]) }}" class="btn btn-info btn-sm add-reaction">
-                          <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"> × {{ $counts[5] }}
-                        </a>
-                      </li>
-                      @else
-                      <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 5]) }}" class="btn btn-outline-info btn-sm">
-                          <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"> × {{ $counts[5] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break
-                  @case(6)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6]) }}" class="btn btn-info btn-sm add-reaction">
-                          <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
-                        </a>
-                      </li>
-                      @else
-                      <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 6]) }}" class="btn btn-outline-info btn-sm">
-                          <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break
-
-                  @case(7)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-info btn-sm add-reaction">
-                          <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
-                        </a>
-                      </li>
-                      @else
-                      <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 7]) }}" class="btn btn-outline-info btn-sm">
-                          <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break
-
-                  @case(8)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8]) }}" class="btn btn-info btn-sm add-reaction">
-                          <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8"> × {{ $counts[8] }}
-                        </a>
-                      </li>
-                      @else
-                      <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 8]) }}" class="btn btn-outline-info btn-sm">
-                          <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8"> × {{ $counts[8] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break
-
-                  @case(9)
-                    @if ($post->isSetReaction(Auth::id(), $post->id, $reaction))
-                      <li>
-                        <a href="{{ route('remove_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9]) }}" class="btn btn-info btn-sm add-reaction">
-                          <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9"> × {{ $counts[9] }}
-                        </a>
-                      </li>
-                      @else
-                      <li>
-                        <a href="{{ route('add_reaction', ['user_id' => Auth::id(), 'post_id' => $post->id, 'reaction_number' => 9]) }}" class="btn btn-outline-info btn-sm">
-                          <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9"> × {{ $counts[9] }}
-                        </a>
-                      </li>
-                    @endif
-                    @break
-
-                  @endswitch
-          @endforeach
-        @else
-          {{-- 非ログインユーザから見えるリアクション？ --}}
-          @foreach ($reactions as $reaction)
-            @switch($reaction)
-              @case(1)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">👀 x {{ $counts[1] }}</a></li>
-              @break
-              @case(2)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">😢 x {{ $counts[2] }}</a></li>
-              @break
-              @case(3)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">❤️ x {{ $counts[3] }}</a></li>
-              @break
-              @case(4)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">❓ x {{ $counts[4] }}</a></li>
-              @break
-              @case(5)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
-                  <img src="{{ asset('storage/reaction_icons/pic_60c59198dc55e.png') }}" alt="reaction_5"> × {{ $counts[5] }}
-                </a></li>
-              @break
-              @case(6)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
-                  <img src="{{ asset('storage/reaction_icons/pic_haha56faeignae.png') }}" alt="reaction_6"> × {{ $counts[6] }}
-                </a></li>
-              @break
-              @case(7)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
-                  <img src="{{ asset('storage/reaction_icons/pic_10h382hj02f83f.png') }}" alt="reaction_7"> × {{ $counts[7] }}
-                </a></li>
-              @break
-              @case(8)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
-                  <img src="{{ asset('storage/reaction_icons/pic_iidaro.png') }}" alt="reaction_8"> × {{ $counts[8] }}
-                </a></li>
-              @break
-              @case(9)
-                <li><a href="#" class="btn btn-outline-info btn-sm disabled">
-                  <img src="{{ asset('storage/reaction_icons/pic_iina.png') }}" alt="reaction_9"> × {{ $counts[9] }}
-                </a></li>
-              @break
-            @endswitch
-          @endforeach
+          {{-- @php
+          // リアクションされた数を数えたのち、重複している数値を削除する
+          $reactions = explode(",", $post->reaction); 
+          $counts = array_count_values($reactions);
+          $reactions = array_unique($reactions);
+          @endphp
+          @include('parts.reaction.button_old') --}}
         @endif
-
-        @endif {{-- isset($post->reaction) --}}
       </ul>
+
     </div>
 
   </div>

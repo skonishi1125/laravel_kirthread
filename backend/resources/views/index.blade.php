@@ -52,8 +52,9 @@
 
             <hr class="my-3">
 
+            {{-- 投稿1つ１つのブロック --}}
             @foreach ($posts as $post)
-                @include('parts.post',['post => $post'])
+                @include('parts.post',['post => $post, reaction_icons => $reaction_icons'])
                 <div class="my-2" style="border-bottom:1px dotted #333;"></div>
             @endforeach
           </div> <!-- col-12 -->
