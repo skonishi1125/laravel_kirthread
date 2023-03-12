@@ -66,6 +66,7 @@
 
           {{--  リアクションボタン部分。ログインユーザーしか押せなくする --}}
           @include('parts.reaction.button')
+          {{-- @include('parts.reaction.button_old') --}}
         @endif
       </ul>
 

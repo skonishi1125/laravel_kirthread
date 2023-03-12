@@ -46,6 +46,7 @@
             'reaction_icon_id'   : reaction_icon_id,
             'status'            : 0
           };
+        //   console.log('etarget:' + $(e.target).data('reaction')); heartsなら3
           switch ($(e.target).data('reaction')) {
             case 1 :
               // hasClass()は文字列検索なので、クラス付与の順番が間違っていると動作しない
@@ -71,6 +72,7 @@
               reactionAjaxExec(data, e, table, parts);
               break;
             case 3:
+            //   console.log('is_add' + $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction'));
               var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button hearts add-reaction');
               if (is_add) {
                 data['status'] = 1;
@@ -155,6 +157,7 @@
 
 
           } else if( t_find_className.length == 1 ) {
+            // console.log('status: ' + status);
             if (status == 0) {
               // 誰かが押しているリアクションボタンを押した時
               var cnt = t_find_className.data()["count"] + 1;
