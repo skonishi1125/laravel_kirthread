@@ -105,7 +105,7 @@
         </main>
     </div>
     <script type="text/javascript" src="{{ asset('js/stopwatch.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('js/script.js?20211125') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/script.js?20230312') }}"></script>
     <script type="text/javascript" src="{{ asset('js/csv_download.js?20230130') }}"></script>
     {{-- 画像までのローカルパス変数 --}}
     <script type="text/javascript">

@@ -115,6 +115,26 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::find($id);
+
+        $reaction_icons = ReactionIcon::all();
+        $reaction_count_collection = collect();
+        // 投稿1件に、どのリアクションが何件付いているのかを調べる。
+        foreach ($reaction_icons as $r) {
+            $attached_r_count = Reaction::where('post_id', $post->id)
+                        ->where('reaction_icon_id', $r->id)
+                        ->count();
+            $reaction_count_collection->push([
+                'reaction_icon_id' => $r->id,
+                'is_picture_icon'  => $r->is_picture_icon,
+                'value'            => $r->value,
+                'name'             => $r->name,
+                'name_plural'      => $r->name_plural,
+                'url'              => $r->url,
+                'count'            => $attached_r_count
+            ]);
+        }
+        $post['attached_reactions'] = $reaction_count_collection;
+
         $reactioned_user_ids = Reaction::where('post_id', $id)
             ->groupBy('user_id')
             ->get(['user_id']);
@@ -126,6 +146,7 @@ class PostController extends Controller
         return view('show')
             ->with('post', $post)
             ->with('users', $users)
+            ->with('reaction_icons', $reaction_icons)
             ;
     }
 
