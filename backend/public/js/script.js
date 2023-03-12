@@ -94,17 +94,16 @@
               }
               reactionAjaxExec(data, e, table, parts);
               break;
-            case 5:
-              // var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button kaiddds add-reaction');
-              // if (is_add) {
-              //   data['status'] = 1;
-              // }
-              // var parts = {
-              //   'reaction'  : "🕶",
-              //   'path'      : path_to_image + 'storage/reaction_icons/pic_60c59198dc55e.png',
-              //   'className' : "kaiddds",
-              // }
-              // reactionAjaxExec(data, e, table, parts, true);
+            case 10:
+                var is_add = $(e.target).closest('.post-container').find('.reactions-button').hasClass('reactions-button thumbs_ups add-reaction');
+                if (is_add) {
+                  data['status'] = 1;
+                }
+                var parts = {
+                  'reaction'       : "👍",
+                  'className' : "thumbs_ups",
+                }
+                reactionAjaxExec(data, e, table, parts);
               break;
           }; // switch
         }; // if (!$(e.target).hasClass('disabled'))
