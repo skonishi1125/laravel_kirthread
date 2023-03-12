@@ -57,16 +57,16 @@
 
       <ul class="reaction-icons reaction-buttons">
         @if (isset($post->reaction))
-          @php
-            // リアクションされた数を数えたのち、重複している数値を削除する
-            $reactions = explode(",", $post->reaction); 
-            $counts = array_count_values($reactions);
-            $reactions = array_unique($reactions);
-          @endphp
-
           {{--  リアクションボタン部分。ログインユーザーしか押せなくする --}}
           @include('parts.reaction.button')
-          {{-- @include('parts.reaction.button_old') --}}
+
+          {{-- @php
+          // リアクションされた数を数えたのち、重複している数値を削除する
+          $reactions = explode(",", $post->reaction); 
+          $counts = array_count_values($reactions);
+          $reactions = array_unique($reactions);
+          @endphp
+          @include('parts.reaction.button_old') --}}
         @endif
       </ul>
 
