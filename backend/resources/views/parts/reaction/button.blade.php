@@ -21,7 +21,7 @@
         @if ($post->isSetReaction(Auth::id(), $post->id, $r['reaction_icon_id']))
         {{-- リアクションを外す(青い表示になっているボタン) --}}
         <li>
-          <a class="reactions btn btn-outline-info btn-sm reactions-button {{$r['name_plural']}} add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $r['count'] }}" data-reaction="{{$r['reaction_icon_id']}}" >h{{$r['value']}} × {{ $r['count'] }}</a>
+          <a class="reactions btn btn-outline-info btn-sm reactions-button {{$r['name_plural']}} add-reaction" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $r['count'] }}" data-reaction="{{$r['reaction_icon_id']}}" >{{$r['value']}} × {{ $r['count'] }}</a>
         </li>
         @else
         <li>
