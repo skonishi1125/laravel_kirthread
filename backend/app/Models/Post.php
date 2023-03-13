@@ -22,6 +22,10 @@ class Post extends Model
         return $this->belongsTo('App\User', 'user_id');
     }
 
+    public function reaction_icons() {
+        return $this->belongsToMany('App\Models\ReactionIcon', 'reactions', 'post_id', 'reaction_icon_id');
+    }
+
 
     public function makeLink($value) {
         return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)" , '<a href="\1\2">\1\2</a>' , $value);
