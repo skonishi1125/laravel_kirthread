@@ -12,6 +12,4 @@ class Reaction extends Model
       'id',
     ];
 
-    
-
 }
