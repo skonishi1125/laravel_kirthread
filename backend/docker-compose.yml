@@ -22,7 +22,7 @@ services:
     container_name: db
     environment: 
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: database
+      MYSQL_DATABASE: kir_thread
       MYSQL_USER: db-user
       MYSQL_PASSWORD: db-pass
       TZ: 'Asia/Tokyo' 
