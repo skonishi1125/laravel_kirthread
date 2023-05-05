@@ -1,13 +1,13 @@
 version: '3'
 services:
   app:
-    container_name: app
+    container_name: app_kirthread
     build: ./docker/php
     volumes:
       - .:/var/www/laravel_kirthread
   nginx:
     image: nginx 
-    container_name: nginx
+    container_name: nginx_kirthread
     ports:
       # - 8000:80 
       - 8080:80 
@@ -19,7 +19,7 @@ services:
       - app
   db:
     image: mysql:5.7 
-    container_name: db
+    container_name: db_kirthread
     environment: 
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: kir_thread
