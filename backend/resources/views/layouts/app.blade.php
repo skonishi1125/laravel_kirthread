@@ -7,7 +7,12 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>
+      @if  (config('app.env') !== 'production')
+        {{ config('app.env') }}
+      @endif
+      {{ config('app.name', 'Laravel') }}
+    </title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
