@@ -10,7 +10,9 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 ## 環境
 ### 開発環境の動作確認済ハード
-* MacBook Pro (16-inch, 2019) macOS Catalina(v10.15.7) ~ Monterey(v12.6.1)
+* MacBook Air (13-inch, 2020, intel) macOS Sonoma(v14.1)
+
+* MacBook Pro (16-inch, 2019, intel) macOS Catalina(v10.15.7) - Monterey(v12.6.1)
 
 * Windows 10 / 11 ※wsl2 ubuntu
 
@@ -24,7 +26,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 #### その他
 * MySQL v8.0.21 for Linux on x86_64 (Source distribution)    
 
-* Docker (version 20.10.10まで確認)
+* Docker (version 20.10.10あたりで動作確認)
 
 * CentOS 8 (conoha VPS)
 
