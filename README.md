@@ -1,6 +1,11 @@
 # laravel_kirthread
 色々弄って試すための掲示板プログラム。
 
+環境構築する場合は下記を参照する。
+
+https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E6%89%8B%E9%A0%86%E6%9B%B8
+
+
 ## 環境
 ### 開発環境の動作確認済ハード
 MacBook Pro (16-inch, 2019) macOS Catalina(v10.15.7) ~ Monterey(v12.6.1)
