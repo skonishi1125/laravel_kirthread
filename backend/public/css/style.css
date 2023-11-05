@@ -91,6 +91,11 @@ body {
   margin-bottom: 5px;
 }
 
+.not-like-link {
+  text-decoration: none;
+  color: #212529;
+}
+
 .add-reaction:hover {
   background-color: #c7d8ff;
 }

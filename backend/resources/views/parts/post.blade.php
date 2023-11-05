@@ -4,14 +4,20 @@
       {{-- アイコンの部分。未設定の場合、おばけのデフォルトアイコンを付与する --}}
       <div class="col-auto">
         @if (is_null($post->user->icon)) 
-          <img class="profile-icon" src="{{ asset('storage/icons/' . 'default.png') }}" alt="p_icon">
+          <a href="{{route('profile_show', ['user_id' => $post->user->id])}}" class="not-like-link">
+            <img class="profile-icon" src="{{ asset('storage/icons/' . 'default.png') }}" alt="p_icon">
+          </a>
         @else
-          <img class="profile-icon" src="{{ asset('storage/icons/' . $post->user->icon) }}" alt="p_icon">
+        <a href="{{route('profile_show', ['user_id' => $post->user->id])}}" class="not-like-link">
+            <img class="profile-icon" src="{{ asset('storage/icons/' . $post->user->icon) }}" alt="p_icon">
+          </a>
         @endif
       </div>
       
       <div class="col-auto name-wrapper">
-        <span><b>{{ $post->user->name }}</b></span>
+        <a href="{{route('profile_show', ['user_id' => $post->user->id])}}">
+          <span class="not-like-link"><b>{{ $post->user->name }}</b></span>
+        </a>
         <br>
         <small><a href="{{ route('show', ['id' => $post->id]) }}">id:[{{$post->id}}]</a></small>
         <small>{{$post->created_at}}</small>

@@ -32,6 +32,12 @@ Route::group(['middleware' => 'auth'], function () {
   Route::get('/select_reaction/{user_id}/{post_id}/{reaction_icon_id}', 'PostController@selectReaction')->name('select_reaction');
   Route::post('/select_reaction', 'PostController@selectReaction')->name('select_reaction');
 
+
+  // プロフィール画面
+  Route::get('/profile/{user_id}', 'ProfileController@show')->name('profile_show');
+  Route::get('/profile/{user_id}/edit', 'ProfileController@show')->name('profile_edit');
+  Route::get('/profile/{user_id}/reacted', 'ProfileController@show_reacted')->name('profile_show_reacted');
+
   // プロフィール設定
   Route::get('/config/index', 'ConfigController@index')->name('config.index');
   Route::post('/config/store', 'ConfigController@store')->name('config.store');
