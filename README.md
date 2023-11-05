@@ -8,7 +8,7 @@ MacBook Pro (16-inch, 2019) macOS Catalina(v10.15.7) ~ Monterey(v12.6.1)
 Windows 10 / 11
 
 
-### 導入ライブラリのバージョン
+### 各バージョン
 #### PHP
 PHP 7.4.33
 
@@ -35,7 +35,7 @@ conohaにて取得
 
 https://support.conoha.jp/v/domainwizard-v/
 
-#### 使用しているツールなど
+#### 使用中のクライアントツールなど
 vscode
 
 TablePlus
