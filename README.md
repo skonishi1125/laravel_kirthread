@@ -1,4 +1,6 @@
 # laravel_kirthread
+https://kir-thread.site/
+
 色々弄って試すための掲示板プログラム。
 
 環境構築する場合は下記を参照する。
