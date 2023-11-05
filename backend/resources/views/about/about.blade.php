@@ -12,12 +12,17 @@
         <div class="card-body">
 
           <div class="col-12">
+            <h5><b>githubリポジトリ</b></h5>
+            <a href="https://github.com/skonishi1125/laravel_kirthread">https://github.com/skonishi1125/laravel_kirthread</a>
+            <div class="py-2"></div>
+
             <h5><b>このサイトって？</b></h5>
             <p>
               ぼく (<a href="https://twitter.com/skirplus">@skirplus</a>) が勉強用に作っている掲示板サイトです。覚えた内容が機能として不定期にアップデートされていきます。<br>
               機能としては書き込み、画像のアップロードが主ですが自分の学習内容によってコンテンツが増えるかも。twitterで呟くことでもないことを良かったら書き込んでください。大抵僕が反応します。知り合いじゃなくても当たりに行きます。
             </p>
             <div class="py-2"></div>
+
             <h5><b>登録時の注意点</b></h5>
             <p>
               かあスレッドは登録しないと書き込めません。<br>
@@ -31,12 +36,15 @@
             </p>
             <div class="py-2"></div>
 
-            <h5><b>環境</b></h5>
+            <h5><b>稼働環境など</b></h5>
             <p>
-              インフラ: conoHa VPS <br>
-              言語: Laravel6.x <br>
-              かあスレ稼働料金: 月600円 <br>
+              <a target="_blank" href="https://github.com/skonishi1125/laravel_kirthread#%E7%92%B0%E5%A2%83">こちら</a>をどうぞ。<br>
+              稼働料金は月1000円くらい(staging / production環境,ドメイン料金こみこみで)
             </p>
+
+            <h5><b>ツイート</b></h5>
+            キャライラストの投稿がメインなのでプログラムの話は控えめです。
+            <div class="py-2"></div>
 
             @php
                 if (isset($twitter_iframely_data->html)) echo $twitter_iframely_data->html;
