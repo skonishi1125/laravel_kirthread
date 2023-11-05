@@ -2,7 +2,7 @@
 色々弄って試すための掲示板プログラム。
 
 ## 環境
-### 動作確認済ハードウェア
+### 開発環境の動作確認済ハード
 MacBook Pro (16-inch, 2019) macOS Catalina(v10.15.7) ~ Monterey(v12.6.1)
 
 Windows 10 / 11
