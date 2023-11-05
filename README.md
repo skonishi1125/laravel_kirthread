@@ -12,7 +12,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 ### 開発環境の動作確認済ハード
 MacBook Pro (16-inch, 2019) macOS Catalina(v10.15.7) ~ Monterey(v12.6.1)
 
-Windows 10 / 11
+Windows 10 / 11 ※wsl2
 
 
 ### 各バージョン
