@@ -22,12 +22,19 @@
                     <span>
                       <b>{{ $display_user->name }}</b>
                       <br>
-                      @if (isset($display_user->profile->birth_year) || isset($display_user->profile->birth_month) || isset($display_user->profile->birth_day))
-                        <small>🎂 {{$display_user->profile->birth_year}}.{{$display_user->profile->birth_month}}.{{$display_user->profile->birth_day}}</small>
-                      @endif
+                      <small>
+                        @if (isset($display_user->profile->birth_year) || isset($display_user->profile->birth_month) || isset($display_user->profile->birth_day))
+                          🎂 {{$display_user->profile->birth_year}}.{{$display_user->profile->birth_month}}.{{$display_user->profile->birth_day}}
+                        @endif
+                        @if (isset($display_user->profile->sns_url))
+                          <a href="{{$display_user->profile->sns_url}}"><span class="material-symbols-outlined">home</span></a>
+                        @endif
+                      </small>
                     </span>
                     <br>
                     <small>登録日: {{$display_user->created_at}}</small>
+                    <br>
+
                   </div>
                 <div class="col-12">
                   <p>{!! nl2br($display_user->profile->makeLink(e($display_user->profile->message))) !!}</p>
