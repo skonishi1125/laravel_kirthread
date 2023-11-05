@@ -84,6 +84,8 @@ class ProfileController extends Controller
                 'user_id'   =>  $display_user->id,
                 'message'   =>  'よろしくお願いします。'
               ]);
+              // todo: 新規のユーザーのところにアクセスすると5xxエラーに遭遇する
+              // リロードすれば治る。
           }
 
           return view('profile.show')

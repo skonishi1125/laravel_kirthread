@@ -11,6 +11,16 @@
 
         <div class="card-body">
 
+          @if ($errors->any())
+            <div class="alert alert-danger">
+              <ul>
+                @foreach ($errors->all() as $error)
+                  <li><small>{{ $error }}</small></li>
+                @endforeach
+              </ul>
+            </div>
+          @endif
+
           <div class="col-xs-12">
             <form action="{{ route('config_store') }}" method="post" enctype="multipart/form-data">
               @csrf

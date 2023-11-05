@@ -21,7 +21,7 @@ class ConfigController extends Controller
 
         $user = Auth::user();
         $validate = $request->validate([
-            'message' =>  'nullable|max:10',
+            'message' =>  'nullable|max:255',
             'icon'    =>  'nullable|image',
         ]);
 
