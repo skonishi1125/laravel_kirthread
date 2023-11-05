@@ -42,6 +42,10 @@
               </div>
             </div>
 
+            @if (Auth::id() === $display_user->id)
+              <a class="btn btn-success edit-button" href="{{ route('config_index')}}" role="button">編集</a>
+            @endif
+
           </div> <!-- col-12 -->
         </div><!-- card-body -->
       </div><!-- card -->
