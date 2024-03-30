@@ -275,4 +275,23 @@ class StudyController extends Controller
 
     }
 
+    public function checkSession(Request $request) {
+        $value = $request->session()->get('MKTgce9nB4asY3fiwOPqajwoDIiaWNDHoVrHplBl');
+        $data = $request->session()->all();
+
+        // 値の操作
+        $request->session()->put('users', 'skonishi');
+        $users = session('users');
+        $request->session()->forget('carts');
+
+        // 買い物カートに入れた情報を格納しておく例 URL?sessionで値を入れた場合だけ動作させる。
+        if ($request['session'] == 1) {
+            $array = array('りんご', 'みかん', 'ブドウ');
+            $request->session()->put('carts', $array);
+        }
+
+        return view('study/session/check')
+            ->with('carts', session('carts') ?? array());
+    }
+
 }
