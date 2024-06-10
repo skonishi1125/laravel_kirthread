@@ -233,77 +233,40 @@ class PostController extends Controller
     }
 
     public function ajaxReaction(Request $request) {
-        $data = $request->all();
-        $post = Post::find($data['post_id']);
-        $user = User::find($data['user_id']);
+      $data = $request->all();
 
-        $reactions = explode(",", $post->reaction);
-        $counts = array_count_values($reactions); // 1(👀)のリアクションが何件か、などのデータ
-        $reactions = array_unique($reactions); // 1のリアクションがあるのかどうかだけを確認する
+      // js側でpostIdなどの配列名を変えた場合もスムーズにコード修正ができるよう代入しておく。
+      $post_id          = $data['postId'];
+      $user_id          = $data['userId'];
+      $reaction_icon_id = $data['reactionIconId'];
+      $status           = $data['status']; // 0: 他人が押下済みのリアクション 1: 自分が押下済みのリアクション
 
-        \Debugbar::info('テスト');
-
-        // そのpostにそのuserがそのreaction済みなのかどうか
-        $is_react = Reaction::where('user_id', $user->id)
-            ->where('post_id', $post->id)
-            ->where('reaction_icon_id', $data['reaction_icon_id'])
-            ->first();
-        \Debugbar::info('テスト', [$is_react]);
-        if ($is_react !== null) {
-            $is_react = true;
-        } else {
-            $is_react = false;
-        }
-
-        // リアクションの追加
-        if ($data['status'] == 0) {
-            \Debugbar::info('追加します。対象は↓', $data['reaction_icon_id']);
-            $reaction = Reaction::create([
-                'user_id' => $user->id,
-                'post_id' => $post->id,
-                'reaction_icon_id' => $data['reaction_icon_id'],
-            ]);
-            if (is_null($post->reaction)) {
-                $post->update([
-                    'reaction' => $data['reaction_icon_id'],
-                ]);
-            } else {
-                $post->update([
-                    'reaction' => $post->reaction . ',' . $data['reaction_icon_id'],
-                ]);
-            }
-        // リアクションの削除
-        } else {
-        \Debugbar::info('削除です。対象は↓', $data['reaction_icon_id']);
-        $post_reactions = explode(",", $post->reaction);
-
-        if (count($post_reactions) > 0) {
-            for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
-                if ( $post_reactions[$i] == $data['reaction_icon_id']) {
-                    array_splice($post_reactions, $i, 1);
-                    break;
-                }
-            }
-
-            $post->reaction = implode(",", $post_reactions);
-            $post->save();
-        } else {
-            $post->reaction = null;
-        }
-
-        $remove_reaction_icon_id = Reaction::where('user_id', $user->id)
-            ->where('post_id', $post->id)
-            ->where('user_id', $user->id)
-            ->where('reaction_icon_id', $data['reaction_icon_id'])
-            ->delete();
+      if ($status == 0) {
+        \Debugbar::info('追加 | user_id: ' . $user_id . ' post_id: ' . $post_id . 'reaction_icon_id: ' . $reaction_icon_id);
+        $create_reaction = Reaction::create([
+          'user_id' => $user_id,
+          'post_id' => $post_id,
+          'reaction_icon_id' => $reaction_icon_id,
+        ]);
+      } else {
+        \Debugbar::info('削除 | user_id: ' . $user_id . ' post_id: ' . $post_id . 'reaction_icon_id: ' . $reaction_icon_id);
+        $remove_reaction = Reaction::where('user_id', $user_id)
+          ->where('post_id', $post_id)
+          ->where('user_id', $user_id)
+          ->where('reaction_icon_id', $reaction_icon_id)
+          ->delete();
       }
 
-        \Debugbar::info($data, $post, $counts, $reactions, $is_react);
+      // 24.6.10 現状使用していないが、操作したデータを改めて配列としてまとめておく
+      $adjusted_data = [
+        'post_id'           => $post_id,
+        'user_id'           => $user_id,
+        'reaction_icon_id'  => $reaction_icon_id,
+        'status'            => $status
+      ];
 
-        $data = [
-        'post' => $post,
-        'is_react' => $is_react,
-        ];
-        return $data;
+      // returnしているがjs側では使用していない。
+      return $adjusted_data;
     }
+
 }

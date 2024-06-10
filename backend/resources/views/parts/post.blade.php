@@ -34,13 +34,12 @@
           </form>
           @else
             @if (Auth::check())
-              <span class="material-icons reaction" style="z-index: 10; user-select:none;">add_reaction</span>
+              <span class="material-icons reaction reaction-display-icon" style="z-index: 10; user-select:none;">add_reaction</span>
             @endif
           @endif
         </div>
 
-        {{-- 青い吹き出しのリアクションをつけるパーツ --}}
-        {{-- includeは[]で引数などを指定しなくても、この先のbladeで同じ引数を使える --}}
+        {{--青い吹き出し関連のパーツ --}}
         @include('parts.reaction.hukidashi')
 
       </div>
@@ -61,18 +60,10 @@
         </div>
       @endif
 
-      <ul class="reaction-icons reaction-buttons">
+      <ul class="reaction-icons reaction-buttons below-post-reaction-buttons-container">
         @if (isset($post->reaction))
-          {{--  リアクションボタン部分。ログインユーザーしか押せなくする --}}
+          {{--  青ボタン関連のパーツ --}}
           @include('parts.reaction.button')
-
-          {{-- @php
-          // リアクションされた数を数えたのち、重複している数値を削除する
-          $reactions = explode(",", $post->reaction); 
-          $counts = array_count_values($reactions);
-          $reactions = array_unique($reactions);
-          @endphp
-          @include('parts.reaction.button_old') --}}
         @endif
       </ul>
 
