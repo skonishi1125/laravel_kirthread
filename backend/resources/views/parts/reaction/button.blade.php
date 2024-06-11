@@ -8,14 +8,20 @@
             @if ($r['value'])
               {{$r['value']}} × {{ $r['count'] }}
             @else
-              <img src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
+              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
             @endif
           </a>
         </li>
       @else
-        {{-- リアクションを付与するボタン --}}
+        {{-- リアクションを付与する(ログインしたユーザーがまだ押していない)ボタン --}}
         <li>
-          <a class="reactions btn btn-outline-info btn-sm reactions-button {{$r['name_plural']}}" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $r['count'] }}" data-reaction="{{$r['reaction_icon_id']}}" data-reactionname="{{ $r['name'] }}" data-reactionnameplural="{{ $r['name_plural'] }}" data-ispictureicon="{{ $r['is_picture_icon'] }}" data-value="{{ $r['value'] }}" >{{$r['value']}} × {{ $r['count'] }}</a>
+          <a class="reactions btn btn-outline-info btn-sm reactions-button {{$r['name_plural']}}" data-postid="{{ $post->id }}" data-userid="{{ Auth::user()->id }}" data-count="{{ $r['count'] }}" data-reaction="{{$r['reaction_icon_id']}}" data-reactionname="{{ $r['name'] }}" data-reactionnameplural="{{ $r['name_plural'] }}" data-ispictureicon="{{ $r['is_picture_icon'] }}" data-value="{{ $r['value'] }}" >
+            @if ($r['value'])
+              {{$r['value']}} × {{ $r['count'] }}
+            @else
+              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
+            @endif
+          </a>
         </li>
         @endif
       @endif

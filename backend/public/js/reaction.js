@@ -87,9 +87,6 @@
         data: belowPostReactionData,
         dataType: 'json',
         success: function (result) {
-
-          let t       = belowPostReactionButtonsContainer;
-
           let a       = document.createElement('a');
           let li      = document.createElement('li');
           let form    = document.createElement('form');
@@ -97,57 +94,81 @@
 
           let status  = belowPostReactionData['status'];
           let isPictureIcon = belowPostReactionData['isPictureIcon'];
-          let value   = belowPostReactionData['value']; // 元々reactという変数名
+          let value   = belowPostReactionData['value'];
+
           // クラス名はreactions.name_pluralを使う
           let className = belowPostReactionData['reactionNamePlural']; 
-          let t_find_className = t.find('.' + className);
+          
+          // クリックした吹き出しリアクションに該当する青ボタンの要素 24.6.11現在なら、↓
+          // <a class="reactions btn btn-outline-info btn-sm reactions-button {{$r['name_plural']}}" ...><img class="reaction_button_img_{{...}}></a>
+          let belowPostReactionButtonsContainer_button = belowPostReactionButtonsContainer.find('.' + className);
 
           console.log('-----------------------------------------');
+          // console.log('********debugdata*********');
           // console.log(
-          //   '文字のリアクション', 
-          //   className,
-          //   t.find('.add-reaction ' + className).length && t_find_className.length,
-          //   t.find('.add-reaction ' + className),
-          //   t.find('.add-reaction ' + className).length,
-          //   t_find_className,
-          //   t_find_className.length
+          //   belowPostReactionButtonsContainer_button,
+          //   t.find('.reaction_button_img_' + className).attr('src'),
           // );
 
-          // t_find_className.length の解説(例: 👍)
+          // belowPostReactionButtonsContainer_button.length の解説(例: 👍)
           // t(投稿下部の青ボタンの親div)の中から、class="thumbs_ups"と付与された青ボタンがあるかどうかを確認しているチェック
           // lengthはfindで見つかった要素の数を返すことができる。見つかればその数, 見つからなければ0を返す。 
           // lengthで存在チェックをすることは結構メジャーな使い方っぽい。
 
           // 押したリアクションの青ボタンが存在している場合の処理
-          if( t_find_className.length == 1 ) {
+          if( belowPostReactionButtonsContainer_button.length == 1 ) {
             // 誰かが押している青ボタンが存在していた場合、カウントを1増やす
             if (status == 0) {
-              var cnt = t_find_className.data()["count"] + 1;
-              t_find_className.data()["count"] = cnt;
+              var cnt = belowPostReactionButtonsContainer_button.data()["count"] + 1;
+              belowPostReactionButtonsContainer_button.data()["count"] = cnt;
               console.log('pushed someone reacted');
             // 自分が押した青ボタンが存在していた場合、カウントを1減らす
             } else {
-              var cnt = t_find_className.data()["count"] - 1;
-              t_find_className.data()["count"] = cnt;
+              var cnt = belowPostReactionButtonsContainer_button.data()["count"] - 1;
+              belowPostReactionButtonsContainer_button.data()["count"] = cnt;
               console.log('pushed myself reacted');
             }
-            t_find_className.text(value + ' x ' + cnt);
-            t_find_className.toggleClass('add-reaction');
+
+            // 画像リアクションなら、"<img> x cnt" の形に書き換える。
+            if (isPictureIcon == 1) {
+              console.log('pushed picture reaction');
+              let parent_a = belowPostReactionButtonsContainer_button; //<a><img></a>が格納されている
+              img.src   = belowPostReactionButtonsContainer.find('.reaction_button_img_' + className).attr('src');
+              img.alt   = belowPostReactionButtonsContainer.find('.reaction_button_img_' + className).attr('alt');
+              img.className = 'reaction_button_img_' + className;
+              // console.log('img: ', img);
+              // <a><img> x cnt</a>という形を、<a></a>という空の形に戻してから設定し直す
+              parent_a.empty();
+
+              // parent_a.append(img + ' x' + cnt)と書くと、HTMLElementのimgと文字列を連結することになりエラーになる
+              // (htmlimageelement x 1 というような形で表示される) 
+              // そのため、1つずつappendで空になったaタグに追加してやる
+              parent_a.append(img); 
+              let textNode = document.createTextNode(' × ' + cnt);
+              parent_a.append(textNode);
+            // 文字リアクションなら、aタグ内部のテキストを変えるだけで良い。
+            } else {
+              console.log('pushed text reaction');
+              belowPostReactionButtonsContainer_button.text(value + ' x ' + cnt);
+            }
+
+            belowPostReactionButtonsContainer_button.toggleClass('add-reaction');
             // cntが0になったなら、青ボタン自体をHTML要素から削除する
             if (cnt == 0) {
               console.log('Delete because cnt has reached 0.');
-              t_find_className.remove();
+              belowPostReactionButtonsContainer_button.remove();
             }
             e.currentTarget.classList.remove('disabled');
 
           // 青ボタンのdiv要素にリアクションがない状態で、吹き出し部分からリアクションをつけた時の処理
           } else {
+            console.log('new reaction');
             // console.log(
-            //   'リアクション無し。', t_find_className, t_find_className.length, className,
+            //   'リアクション無し。', belowPostReactionButtonsContainer_button, belowPostReactionButtonsContainer_button.length, className,
             //   a, li, form, t
             // );
 
-            // 青ボタン(押下済み)aタグの作成
+            // 青ボタン(※押下済み)aタグの作成
             a.className = 'btn btn-info btn-sm reactions add-btn reactions-button ' + className + ' add-reaction';
             a.dataset.postid              = belowPostReactionData['postId'];
             a.dataset.userid              = belowPostReactionData['userId'];
@@ -155,14 +176,15 @@
             a.dataset.reactionnameplural  = belowPostReactionData['reactionNamePlural'];
             a.dataset.ispictureicon       = belowPostReactionData['isPictureIcon'];
             a.dataset.value               = belowPostReactionData['value'];
-            a.dataset.reaction = 1;
-            a.dataset.count = 1;
+            a.dataset.reaction            = belowPostReactionData['reactionIconId']; // 現状未使用。
+            a.dataset.count               = 1; // 新規に付与されたリアクションのため、数量は1で確定
 
             // 画像リアクションだった場合、aタグの内部にimgタグを仕込む
             if (isPictureIcon == 1) {
               console.log('pushed picture reaction');
               img.src = e.target.getAttribute('src');
               img.alt = e.target.getAttribute('alt');
+              img.className = 'reaction_button_img_' + className;
               a.appendChild(img);
               let textNode = document.createTextNode(' × 1');
               a.appendChild(textNode);
@@ -176,7 +198,7 @@
             form.method = 'get';
             form.name = "form_test";
             form.action = '/ajax';
-            t.append(form);
+            belowPostReactionButtonsContainer.append(form);
             e.currentTarget.classList.remove('disabled');
 
             // 増やした青ボタンを押した場合でも、ajax処理に遷移するようにする
@@ -191,7 +213,7 @@
                   data: belowPostReactionData,
                   dataType: 'json',
                   success: function (result) {
-                    console.log('pushed added_btn');
+                    console.log('----- pushed added_btn -----');
                      // 増えたボタンを再度押す = 自分でつけたリアクションを消すことなので、クリック対象の要素を削除する
                     e.currentTarget.remove();
                   },
@@ -201,7 +223,7 @@
                 });
               });
             });
-          } // if( t_find_className.length == 1 ) 〆
+          } // if( belowPostReactionButtonsContainer_button.length == 1 ) 〆
         },
         error: function (result) {
           console.log('ajax error');

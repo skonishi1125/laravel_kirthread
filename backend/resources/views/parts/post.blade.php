@@ -61,10 +61,8 @@
       @endif
 
       <ul class="reaction-icons reaction-buttons below-post-reaction-buttons-container">
-        @if (isset($post->reaction))
-          {{--  青ボタン関連のパーツ --}}
-          @include('parts.reaction.button')
-        @endif
+        {{--  青ボタン関連のパーツ --}}
+        @include('parts.reaction.button')
       </ul>
 
     </div>

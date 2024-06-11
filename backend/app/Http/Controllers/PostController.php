@@ -16,18 +16,16 @@ class PostController extends Controller
     public function index()
     {
         // 投稿と、投稿したユーザーの取得
-        $user = Auth::user();
         $posts = Post::orderBy('id','desc')->paginate(50);
         $reaction_icons = ReactionIcon::all();
 
-        $posts->map(function ($value) use ($user, $reaction_icons) {
+        $posts->map(function ($value) use ($reaction_icons) {
             $reaction_count_collection = collect();
             // 投稿1件に、どのリアクションが何件付いているのかを調べる。
             foreach ($reaction_icons as $r) {
                 $attached_r_count = Reaction::where('post_id', $value->id)
                             ->where('reaction_icon_id', $r->id)
                             ->count();
-                // dd($value, $value->user->id, $r->id, $attached_r_count);
                 $reaction_count_collection->push([
                     'reaction_icon_id' => $r->id,
                     'is_picture_icon'  => $r->is_picture_icon,
@@ -157,80 +155,80 @@ class PostController extends Controller
         return redirect('/');
     }
 
-    public function addReaction($user_id, $post_id, $reaction_icon_id)
-    {
-        $reaction = Reaction::create([
-            'user_id' => $user_id,
-            'post_id' => $post_id,
-            'reaction_icon_id' => $reaction_icon_id,
-        ]);
+    // public function addReaction($user_id, $post_id, $reaction_icon_id)
+    // {
+    //     $reaction = Reaction::create([
+    //         'user_id' => $user_id,
+    //         'post_id' => $post_id,
+    //         'reaction_icon_id' => $reaction_icon_id,
+    //     ]);
 
-        $post = Post::find($post_id);
-        if (is_null($post->reaction)) {
-            $post->update([
-                'reaction' => $reaction_icon_id,
-            ]);
-        } else {
-          $post->update([
-              'reaction' => $post->reaction . ',' . $reaction_icon_id,
-          ]);
-        }
-        return redirect()->route('/');
-    }
+    //     $post = Post::find($post_id);
+    //     if (is_null($post->reaction)) {
+    //         $post->update([
+    //             'reaction' => $reaction_icon_id,
+    //         ]);
+    //     } else {
+    //       $post->update([
+    //           'reaction' => $post->reaction . ',' . $reaction_icon_id,
+    //       ]);
+    //     }
+    //     return redirect()->route('/');
+    // }
 
-    public function removeReaction($user_id, $post_id, $reaction_icon_id)
-    {
-        // もしボタンを押したユーザがその投稿に同じリアクションをしていたら、ボタンで解除する
-        $post = Post::find($post_id);
-        $user = User::find($user_id);
-        $post_reactions = explode(",", $post->reaction);
+    // public function removeReaction($user_id, $post_id, $reaction_icon_id)
+    // {
+    //     // もしボタンを押したユーザがその投稿に同じリアクションをしていたら、ボタンで解除する
+    //     $post = Post::find($post_id);
+    //     $user = User::find($user_id);
+    //     $post_reactions = explode(",", $post->reaction);
         
-        // postのリアクションから削除する
-        if (count($post_reactions) > 0) {
-            for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
-                if ( $post_reactions[$i] == $reaction_icon_id) {
-                    array_splice($post_reactions, $i, 1);
-                    break;
-                }
-            }
-            // 判定のためバラバラにしたものをまたカンマで繋げ直す 1,2,3...
-            $post->reaction = implode(",", $post_reactions);
-            $post->save();
-        } else {
-            // post.reactionsを空にする
-            $post->reaction = null;
-        }
+    //     // postのリアクションから削除する
+    //     if (count($post_reactions) > 0) {
+    //         for ($i = count($post_reactions) - 1; $i >= 0; $i-- ) {
+    //             if ( $post_reactions[$i] == $reaction_icon_id) {
+    //                 array_splice($post_reactions, $i, 1);
+    //                 break;
+    //             }
+    //         }
+    //         // 判定のためバラバラにしたものをまたカンマで繋げ直す 1,2,3...
+    //         $post->reaction = implode(",", $post_reactions);
+    //         $post->save();
+    //     } else {
+    //         // post.reactionsを空にする
+    //         $post->reaction = null;
+    //     }
       
-        // reactionsテーブルからも削除
-        $remove_reaction_icon_id = Reaction::where('user_id', $user_id)
-            ->where('post_id', $post_id)
-            ->where('user_id', $user_id)
-            ->where('reaction_icon_id', $reaction_icon_id)
-            ->delete();
+    //     // reactionsテーブルからも削除
+    //     $remove_reaction_icon_id = Reaction::where('user_id', $user_id)
+    //         ->where('post_id', $post_id)
+    //         ->where('user_id', $user_id)
+    //         ->where('reaction_icon_id', $reaction_icon_id)
+    //         ->delete();
 
-        return redirect()->route('/');
-    }
+    //     return redirect()->route('/');
+    // }
 
-    public function selectReaction(Request $request) {
-        $post = Post::find($request->post_id);
-        $bool = $post->isSetReaction($request->user_id, $request->post_id, $request->reaction_icon_id);
+    // public function selectReaction(Request $request) {
+    //     $post = Post::find($request->post_id);
+    //     $bool = $post->isSetReaction($request->user_id, $request->post_id, $request->reaction_icon_id);
 
-        if ($bool == true) {
-            return redirect()
-            ->route('remove_reaction', [
-            'user_id' => $request->user_id,
-            'post_id' => $request->post_id,
-            'reaction_icon_id' => $request->reaction_icon_id,
-            ]);
-        } else {
-            return redirect()
-            ->route('add_reaction', [
-            'user_id' => $request->user_id,
-            'post_id' => $request->post_id,
-            'reaction_icon_id' => $request->reaction_icon_id,
-            ]);
-        }
-    }
+    //     if ($bool == true) {
+    //         return redirect()
+    //         ->route('remove_reaction', [
+    //         'user_id' => $request->user_id,
+    //         'post_id' => $request->post_id,
+    //         'reaction_icon_id' => $request->reaction_icon_id,
+    //         ]);
+    //     } else {
+    //         return redirect()
+    //         ->route('add_reaction', [
+    //         'user_id' => $request->user_id,
+    //         'post_id' => $request->post_id,
+    //         'reaction_icon_id' => $request->reaction_icon_id,
+    //         ]);
+    //     }
+    // }
 
     public function ajaxReaction(Request $request) {
       $data = $request->all();
@@ -250,11 +248,12 @@ class PostController extends Controller
         ]);
       } else {
         \Debugbar::info('削除 | user_id: ' . $user_id . ' post_id: ' . $post_id . 'reaction_icon_id: ' . $reaction_icon_id);
-        $remove_reaction = Reaction::where('user_id', $user_id)
+        // バグや多重サブミットで同じユーザーからリアクションが複数付与されている場合があるのでついでに消す
+        $remove_reactions = Reaction::where('user_id', $user_id)
           ->where('post_id', $post_id)
-          ->where('user_id', $user_id)
           ->where('reaction_icon_id', $reaction_icon_id)
           ->delete();
+        // \DebugBar::info($remove_reactions);
       }
 
       // 24.6.10 現状使用していないが、操作したデータを改めて配列としてまとめておく
