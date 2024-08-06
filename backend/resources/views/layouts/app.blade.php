@@ -21,8 +21,9 @@
   @endphp
 
   <!-- Styles -->
-  <link href="{{ asset('css/app.css?' . $date) }}" rel="stylesheet">
   <link href="{{ asset('css/style.css?' . $date) }}" rel="stylesheet">
+  {{-- vue.js --}}
+  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
   <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -119,7 +120,6 @@
     </main>
   </div>
   {{-- Scripts head内に書くと動作しないことがあるため、分割する --}}
-  <script src="{{ asset('js/app.js') }}" defer></script>
   <script type="text/javascript" src="{{ asset('js/stopwatch.js?' . $date) }}"></script>
   <script type="text/javascript" src="{{ asset('js/script.js?' . $date) }}"></script>
   <script type="text/javascript" src="{{ asset('js/reaction.js?' . $date) }}"></script>
@@ -130,6 +130,8 @@
   <script type="text/javascript">
     var path_to_image = '{{ asset('') }}';
   </script>
+  {{-- vue.js --}}
+  <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>

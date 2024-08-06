@@ -294,4 +294,8 @@ class StudyController extends Controller
             ->with('carts', session('carts') ?? array());
     }
 
+    public function testVue() {
+      return view('study/vue/test');
+    }
+
 }
