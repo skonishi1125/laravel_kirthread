@@ -77,3 +77,5 @@ Route::post('study/import_csv/store', 'StudyController@importPostByCsvStore')
     ->name('study_import_csv_store');
 Route::get('study/session/check', 'StudyController@checkSession')
     ->name('study_cookie_check');
+Route::get('study/vue/test', 'StudyController@testVue')
+    ->name('study_vue_test');
