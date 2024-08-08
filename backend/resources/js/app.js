@@ -29,10 +29,12 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 
 import Vue from 'vue';
 import TestComponent from './components/TestComponent.vue';
+import MessageEditor from './components/MessageEditor.vue';
 
 const app = new Vue({
     el: '#app',
     components: {
-        TestComponent
+        'test-component': TestComponent,
+        'message-editor': MessageEditor
     }
 });

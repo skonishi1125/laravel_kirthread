@@ -79,3 +79,7 @@ Route::get('study/session/check', 'StudyController@checkSession')
     ->name('study_cookie_check');
 Route::get('study/vue/test', 'StudyController@testVue')
     ->name('study_vue_test');
+Route::get('study/vue/edit/{id}', 'StudyController@edit')
+    ->name('study_vue_edit');
+Route::post('study/vue/update', 'StudyController@update')
+    ->name('study_vue_update');
