@@ -83,3 +83,5 @@ Route::get('study/vue/edit/{id}', 'StudyController@edit')
     ->name('study_vue_edit');
 Route::post('study/vue/update', 'StudyController@update')
     ->name('study_vue_update');
+Route::get('study/vue/iftest', 'StudyController@iftest')
+    ->name('study_vue_iftest');

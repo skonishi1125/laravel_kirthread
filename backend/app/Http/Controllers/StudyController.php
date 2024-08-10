@@ -337,5 +337,9 @@ class StudyController extends Controller
       }
     }
 
+    public function iftest() {
+      return view('study/vue/iftest');
+    }
+
 
 }

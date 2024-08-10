@@ -30,11 +30,16 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 import Vue from 'vue';
 import TestComponent from './components/TestComponent.vue';
 import MessageEditor from './components/MessageEditor.vue';
+import IfTest from './components/IfTest.vue';
 
 const app = new Vue({
     el: '#app',
     components: {
         'test-component': TestComponent,
         'message-editor': MessageEditor
+    },
+    el: '#if_test',
+    components: {
+        'if-test': IfTest
     }
 });
