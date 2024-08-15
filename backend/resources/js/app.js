@@ -31,15 +31,26 @@ import Vue from 'vue';
 import TestComponent from './components/TestComponent.vue';
 import MessageEditor from './components/MessageEditor.vue';
 import IfTest from './components/IfTest.vue';
+import LoopTest from './components/study/techbook/vue/LoopTest.vue';
 
 const app = new Vue({
     el: '#app',
     components: {
         'test-component': TestComponent,
         'message-editor': MessageEditor
-    },
-    el: '#if_test',
-    components: {
-        'if-test': IfTest
     }
+});
+
+const ifTest = new Vue({
+  el: '#if_test', 
+  components: {
+      'if-test': IfTest
+  },
+});
+
+const loopTest = new Vue({
+  el: '#loop_test', // htmlのid部分 <div id="loop_test">
+  components: {
+      'loop-test': LoopTest // コンポーネントを呼ぶ値の部分 <loop-test>
+  }
 });

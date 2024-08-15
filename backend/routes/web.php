@@ -85,3 +85,9 @@ Route::post('study/vue/update', 'StudyController@update')
     ->name('study_vue_update');
 Route::get('study/vue/iftest', 'StudyController@iftest')
     ->name('study_vue_iftest');
+
+// StudyControllerが肥大化してきたので、技術書に関するものは分ける。
+Route::namespace('Study\Techbook')->group(function() {
+    Route::get('study/techbook/vue/chapter4', 'VueController@chapter4')
+    ->name('study_techbook_vue_chapter4');
+});
