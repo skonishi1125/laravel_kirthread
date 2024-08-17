@@ -2030,8 +2030,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      purchases: [
+        // 下記のデータをjsonから取得する
+        // {
+        //   date        : '2017-11-21',
+        //   price       : '25',
+        //   description : 'Dog Food'
+        // },
+        // {
+        //   date        : '2017-11-21',
+        //   price       : '50',
+        //   description : 'Restaurant Bill'
+        // },
+        // {
+        //   date        : '2017-11-20',
+        //   price       : '37',
+        //   description : 'Gasoline'
+        // }
+      ]
+    };
+  },
   mounted: function mounted() {
-    console.log('Component mounted.');
+    // DOMが呼ばれた際に実行するコード
+    this.getPurchases();
+  },
+  methods: {
+    getPurchases: function getPurchases() {
+      var _this = this;
+      axios.get('/study/techbook/vue/chapter8_purchases').then(function (response) {
+        // console.log(response.data);
+        _this.purchases = response.data;
+      });
+    }
   }
 });
 
@@ -2201,22 +2233,32 @@ __webpack_require__.r(__webpack_exports__);
 var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
-  return _vm._m(0);
+  return _c("div", {
+    staticClass: "panel-body"
+  }, [_vm.purchases.length === 0 ? _c("p", {
+    staticClass: "m-b-none"
+  }, [_vm._v("\n    You Have not created any purchases.\n  ")]) : _vm._e(), _vm._v(" "), _vm.purchases.length > 0 ? _c("table", {
+    staticClass: "table table-borderless m-b-none"
+  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.purchases, function (purchase) {
+    return _c("tr", [_c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
+    }, [_vm._v("\n          " + _vm._s(purchase.date) + "\n        ")]), _vm._v(" "), _c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
+    }, [_vm._v("\n          " + _vm._s(purchase.price) + "\n        ")]), _vm._v(" "), _c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
+    }, [_vm._v("\n          " + _vm._s(purchase.description) + "\n        ")])]);
+  }), 0)]) : _vm._e()]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("div", {
-    staticClass: "panel-heading"
-  }, [_c("div", {
-    staticStyle: {
-      display: "flex",
-      "justify-content": "space-between",
-      "align-items": "center"
-    }
-  }, [_c("span", [_vm._v("\n      Purchases\n    ")]), _vm._v(" "), _c("a", {
-    staticClass: "action-link"
-  }, [_vm._v("\n      Create New Purchase\n    ")])])]);
+  return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")])])]);
 }];
 render._withStripped = true;
 
