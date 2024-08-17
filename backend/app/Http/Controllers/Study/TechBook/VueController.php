@@ -10,4 +10,8 @@ class VueController extends Controller
   public function chapter4() {
     return view('study/techbook/vue/chapter4');
   }
+
+  public function chapter8() {
+    return view('study/techbook/vue/chapter8');
+  }
 }
