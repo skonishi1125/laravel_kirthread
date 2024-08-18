@@ -94,4 +94,6 @@ Route::namespace('Study\Techbook')->group(function() {
       ->name('study_techbook_vue_chapter8');
     Route::get('study/techbook/vue/chapter8_purchases', 'VueController@chapter8_purchases')
       ->name('study_techbook_vue_chapter8_purchases');
+    Route::post('study/techbook/vue/chapter8_purchases', 'VueController@store')
+      ->name('study_techbook_vue_chapter8_purchases');
 });

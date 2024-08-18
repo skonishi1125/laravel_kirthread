@@ -2029,6 +2029,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2049,12 +2050,21 @@ __webpack_require__.r(__webpack_exports__);
         //   price       : '37',
         //   description : 'Gasoline'
         // }
-      ]
+      ],
+      createForm: {
+        errors: [],
+        date: '',
+        price: '',
+        description: ''
+      }
     };
   },
   mounted: function mounted() {
     // DOMが呼ばれた際に実行するコード
     this.getPurchases();
+    $('#modal-create-purchase').on('shown.bs.modal', function () {
+      $('#create-purchase-date').focus();
+    });
   },
   methods: {
     getPurchases: function getPurchases() {
@@ -2062,6 +2072,30 @@ __webpack_require__.r(__webpack_exports__);
       axios.get('/study/techbook/vue/chapter8_purchases').then(function (response) {
         // console.log(response.data);
         _this.purchases = response.data;
+      });
+    },
+    showCreatePurchaseForm: function showCreatePurchaseForm() {
+      $('#modal-create-purchase').modal('show');
+    },
+    store: function store() {
+      this.persistPurchase('post', '/study/techbook/vue/chapter8_purchases', this.createForm, '#modal-create-purchase');
+    },
+    persistPurchase: function persistPurchase(method, uri, form, modal) {
+      var _this2 = this;
+      form.errors = [];
+      axios[method](uri, form).then(function (response) {
+        _this2.getPurchases();
+        form.date = '';
+        form.price = '';
+        form.description = '';
+        form.errors = [];
+        $(modal).modal('hide');
+      })["catch"](function (error) {
+        if (_typeof(error.response.data) === 'object') {
+          form.errors = _.flatten(_.toArray(error.response.data));
+        } else {
+          form.erros = ['Something went wrong. Please try again.'];
+        }
       });
     }
   }
@@ -2234,31 +2268,203 @@ var render = function render() {
   var _vm = this,
     _c = _vm._self._c;
   return _c("div", {
+    staticClass: "panel panel-default"
+  }, [_c("div", {
+    staticClass: "panel-heading"
+  }, [_c("div", {
+    staticStyle: {
+      display: "flex",
+      "justify-content": "space-between",
+      "align-items": "center"
+    }
+  }, [_c("span", [_vm._v("Purchases")]), _vm._v(" "), _c("a", {
+    staticClass: "action-link",
+    on: {
+      click: _vm.showCreatePurchaseForm
+    }
+  }, [_vm._v("Create New Purchase")])])]), _vm._v(" "), _c("div", {
     staticClass: "panel-body"
   }, [_vm.purchases.length === 0 ? _c("p", {
     staticClass: "m-b-none"
-  }, [_vm._v("\n    You Have not created any purchases.\n  ")]) : _vm._e(), _vm._v(" "), _vm.purchases.length > 0 ? _c("table", {
+  }, [_vm._v("\n      You Have not created any purchases.\n    ")]) : _vm._e(), _vm._v(" "), _vm.purchases.length > 0 ? _c("table", {
     staticClass: "table table-borderless m-b-none"
   }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.purchases, function (purchase) {
     return _c("tr", [_c("td", {
       staticStyle: {
         "vertical-align": "middle"
       }
-    }, [_vm._v("\n          " + _vm._s(purchase.date) + "\n        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n            " + _vm._s(purchase.date) + "\n          ")]), _vm._v(" "), _c("td", {
       staticStyle: {
         "vertical-align": "middle"
       }
-    }, [_vm._v("\n          " + _vm._s(purchase.price) + "\n        ")]), _vm._v(" "), _c("td", {
+    }, [_vm._v("\n            " + _vm._s(purchase.price) + "\n          ")]), _vm._v(" "), _c("td", {
       staticStyle: {
         "vertical-align": "middle"
       }
-    }, [_vm._v("\n          " + _vm._s(purchase.description) + "\n        ")])]);
-  }), 0)]) : _vm._e()]);
+    }, [_vm._v("\n            " + _vm._s(purchase.description) + "\n          ")])]);
+  }), 0)]) : _vm._e()]), _vm._v(" "), _c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "modal-create-purchase",
+      tabindex: "-1",
+      role: "dialog"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog",
+    attrs: {
+      role: "document"
+    }
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(1), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_vm.createForm.errors.length > 0 ? _c("div", {
+    staticClass: "alert alert-danger"
+  }, [_vm._m(2), _vm._v(" "), _c("br"), _vm._v(" "), _c("ul", _vm._l(_vm.createForm.errors, function (error) {
+    return _c("li", [_vm._v("\n                " + _vm._s(error) + "\n              ")]);
+  }), 0)]) : _vm._e(), _vm._v(" "), _c("form", {
+    staticClass: "form-horizontal",
+    attrs: {
+      role: "form"
+    }
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-rabel"
+  }, [_vm._v("Date")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.createForm.date,
+      expression: "createForm.date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      id: "create-purchase-date",
+      type: "text"
+    },
+    domProps: {
+      value: _vm.createForm.date
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.store.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.createForm, "date", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Price")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.createForm.price,
+      expression: "createForm.price"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "price"
+    },
+    domProps: {
+      value: _vm.createForm.price
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.store.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.createForm, "price", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Description")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.createForm.description,
+      expression: "createForm.description"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "description"
+    },
+    domProps: {
+      value: _vm.createForm.description
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.store.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.createForm, "description", $event.target.value);
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-default",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal"
+    }
+  }, [_vm._v("Close")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: _vm.store
+    }
+  }, [_vm._v("Create")])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h4", {
+    staticClass: "modal-title"
+  }, [_vm._v("Create Purchase")]), _vm._v(" "), _c("button", {
+    staticClass: "close",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal",
+      "aria-rabel": "Close"
+    }
+  }, [_c("span", {
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }, [_vm._v("×")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("p", [_c("strong", [_vm._v("Whoops!")]), _vm._v(" Something went wrong!")]);
 }];
 render._withStripped = true;
 

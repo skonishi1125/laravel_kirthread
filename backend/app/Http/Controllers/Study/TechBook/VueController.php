@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Study\TechBook;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 Use Auth;
+use App\Purchase;
 
 class VueController extends Controller
 {
@@ -38,7 +39,26 @@ class VueController extends Controller
   }
 
   public function chapter8() {
-
     return view('study/techbook/vue/chapter8');
   }
+
+  public function store(Request $request) {
+    // validate
+    $request->validate([
+      'date' => 'required|date',
+      'price' => 'required|numeric',
+      'description' => 'required'
+    ]);
+
+    $purchase = new Purchase;
+
+    $purchase->user_id = Auth::id();
+    $purchase->date = $request->date;
+    $purchase->price = $request->price;
+    $purchase->description = $request->description;
+
+    $purchase->save();
+
+  }
+
 }
