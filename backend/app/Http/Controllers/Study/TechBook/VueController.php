@@ -61,4 +61,26 @@ class VueController extends Controller
 
   }
 
+  public function update(Request $request, $id) {
+    $purchase = Auth::user()->purchases()->find($id);
+
+    if (!$purchase) {
+      return new Responst('', 404);
+    }
+
+    $request->validate([
+      'date' => 'required|date',
+      'price' => 'required|numeric',
+      'description' => 'required'
+    ]);
+
+    $purchase->user_id = Auth::id();
+    $purchase->date = $request->date;
+    $purchase->price = $request->price;
+    $purchase->description = $request->description;
+
+    $purchase->save();
+
+  }
+
 }

@@ -2056,6 +2056,13 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         date: '',
         price: '',
         description: ''
+      },
+      editForm: {
+        errors: [],
+        id: '',
+        date: '',
+        price: '',
+        description: ''
       }
     };
   },
@@ -2064,6 +2071,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     this.getPurchases();
     $('#modal-create-purchase').on('shown.bs.modal', function () {
       $('#create-purchase-date').focus();
+    });
+    $('#modal-edit-purchase').on('shown.bs.modal', function () {
+      $('#edit-purchase-date').focus();
     });
   },
   methods: {
@@ -2079,6 +2089,16 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     },
     store: function store() {
       this.persistPurchase('post', '/study/techbook/vue/chapter8_purchases', this.createForm, '#modal-create-purchase');
+    },
+    edit: function edit(purchase) {
+      this.editForm.id = purchase.id;
+      this.editForm.date = purchase.date;
+      this.editForm.price = purchase.price;
+      this.editForm.description = purchase.description;
+      $('#modal-edit-purchase').modal('show');
+    },
+    update: function update() {
+      this.persistPurchase('put', '/study/techbook/vue/chapter8_purchases/' + this.editForm.id, this.editForm, '#modal-edit-purchase');
     },
     persistPurchase: function persistPurchase(method, uri, form, modal) {
       var _this2 = this;
@@ -2301,7 +2321,18 @@ var render = function render() {
       staticStyle: {
         "vertical-align": "middle"
       }
-    }, [_vm._v("\n            " + _vm._s(purchase.description) + "\n          ")])]);
+    }, [_vm._v("\n            " + _vm._s(purchase.description) + "\n          ")]), _vm._v(" "), _c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
+    }, [_c("a", {
+      staticClass: "action-link",
+      on: {
+        click: function click($event) {
+          return _vm.edit(purchase);
+        }
+      }
+    }, [_vm._v("Edit")])])]);
   }), 0)]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "modal fade",
     attrs: {
@@ -2436,12 +2467,146 @@ var render = function render() {
     on: {
       click: _vm.store
     }
-  }, [_vm._v("Create")])])])])])]);
+  }, [_vm._v("Create")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "modal-edit-purchase",
+      tabindex: "-1",
+      role: "dialog"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog",
+    attrs: {
+      role: "document"
+    }
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(3), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_vm.editForm.errors.length > 0 ? _c("div", {
+    staticClass: "alert alert-danger"
+  }, [_vm._m(4), _vm._v(" "), _c("br"), _vm._v(" "), _c("ul", _vm._l(_vm.editForm.errors, function (error) {
+    return _c("li", [_vm._v("\n                " + _vm._s(error) + "\n              ")]);
+  }), 0)]) : _vm._e(), _vm._v(" "), _c("form", {
+    staticClass: "form-horizontal",
+    attrs: {
+      role: "form"
+    }
+  }, [_c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Date")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.editForm.date,
+      expression: "editForm.date"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      id: "edit-purchase-date",
+      type: "text"
+    },
+    domProps: {
+      value: _vm.editForm.date
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.update.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.editForm, "date", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Price")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.editForm.price,
+      expression: "editForm.price"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "price"
+    },
+    domProps: {
+      value: _vm.editForm.price
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.update.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.editForm, "price", $event.target.value);
+      }
+    }
+  })])]), _vm._v(" "), _c("div", {
+    staticClass: "form-group"
+  }, [_c("label", {
+    staticClass: "col-md-3 control-label"
+  }, [_vm._v("Description")]), _vm._v(" "), _c("div", {
+    staticClass: "col-md-7"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.editForm.description,
+      expression: "editForm.description"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      name: "description"
+    },
+    domProps: {
+      value: _vm.editForm.description
+    },
+    on: {
+      keyup: function keyup($event) {
+        if (!$event.type.indexOf("key") && _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")) return null;
+        return _vm.update.apply(null, arguments);
+      },
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.$set(_vm.editForm, "description", $event.target.value);
+      }
+    }
+  })])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-default",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal"
+    }
+  }, [_vm._v("Close")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-primary",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: _vm.update
+    }
+  }, [_vm._v("Save Changes")])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")])])]);
+  return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")]), _vm._v(" "), _c("th")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -2465,6 +2630,29 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("p", [_c("strong", [_vm._v("Whoops!")]), _vm._v(" Something went wrong!")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h4", {
+    staticClass: "modal-title"
+  }, [_vm._v("Edit Purchase")]), _vm._v(" "), _c("button", {
+    staticClass: "close",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  }, [_c("span", {
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }, [_vm._v("×")])])]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("p", [_c("strong", [_vm._v("Whoops! ")]), _vm._v("Something went wrong.")]);
 }];
 render._withStripped = true;
 

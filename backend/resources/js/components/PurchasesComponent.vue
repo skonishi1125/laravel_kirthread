@@ -28,6 +28,7 @@
             <th>Date</th>
             <th>Price</th>
             <th>Description</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -41,13 +42,16 @@
             <td style="vertical-align: middle;">
               {{ purchase.description }}
             </td>
+            <td style="vertical-align: middle;">
+              <a class="action-link" @click="edit(purchase)">Edit</a>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Create Purchase Modal -->
-     <div class="modal fade" id="modal-create-purchase" tabindex="-1" role="dialog">
+    <div class="modal fade" id="modal-create-purchase" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -57,7 +61,7 @@
 
           <div class="modal-body">
             <!-- Form Errors -->
-             <div class="alert alert-danger" v-if="createForm.errors.length > 0">
+            <div class="alert alert-danger" v-if="createForm.errors.length > 0">
               <p><strong>Whoops!</strong> Something went wrong!</p>
               <br>
               <ul>
@@ -65,8 +69,8 @@
                   {{ error }}
                 </li>
               </ul>
-             </div>
-             <!-- Create Purchase Form -->
+            </div>
+            <!-- Create Purchase Form -->
             <form class="form-horizontal" role="form">
               <!-- Date -->
                 <div class="form-group">
@@ -95,15 +99,71 @@
           </div>
 
           <!-- Modal Actions -->
-           <div class="modal-footer">
+          <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" @click="store">Create</button>
-           </div>
+          </div>
 
         </div>
       </div>
-     </div>
+    </div>
 
+    <!-- Edit Purchase Modal -->
+    <div class="modal fade" id="modal-edit-purchase" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Edit Purchase</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <!-- form errors -->
+            <div class="alert alert-danger" v-if="editForm.errors.length > 0">
+              <p><strong>Whoops! </strong>Something went wrong.</p>
+              <br>
+              <ul>
+                <li v-for="error in editForm.errors">
+                  {{ error }}
+                </li>
+              </ul>
+            </div>
+
+            <!-- Edit purchase form -->
+            <form class="form-horizontal" role="form">
+              <!-- Date -->
+              <div class="form-group">
+                <label class="col-md-3 control-label">Date</label>
+                <div class="col-md-7">
+                  <input id="edit-purchase-date" type="text" class="form-control" @keyup.enter="update" v-model="editForm.date">
+                </div>
+              </div>
+
+              <!-- Price -->
+              <div class="form-group">
+                <label class="col-md-3 control-label">Price</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" name="price" @keyup.enter="update" v-model="editForm.price">
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="form-group">
+                <label class="col-md-3 control-label">Description</label>
+                <div class="col-md-7">
+                  <input type="text" class="form-control" name="description" @keyup.enter="update" v-model="editForm.description">
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Modal Actions -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="update">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -134,6 +194,13 @@
           date: '',
           price: '',
           description: ''
+        },
+        editForm: {
+          errors: [],
+          id: '',
+          date: '',
+          price: '',
+          description: ''
         }
       }
     },
@@ -142,6 +209,9 @@
       $('#modal-create-purchase').on('shown.bs.modal', () => {
         $('#create-purchase-date').focus();
       });
+      $('#modal-edit-purchase').on('shown.bs.modal', () => {
+        $('#edit-purchase-date').focus();
+      })
     },
     methods: {
       getPurchases() {
@@ -158,6 +228,20 @@
         this.persistPurchase(
           'post', '/study/techbook/vue/chapter8_purchases',
           this.createForm, '#modal-create-purchase'
+        )
+      },
+      edit(purchase) {
+        this.editForm.id = purchase.id;
+        this.editForm.date = purchase.date;
+        this.editForm.price = purchase.price;
+        this.editForm.description = purchase.description;
+
+        $('#modal-edit-purchase').modal('show');
+      },
+      update() {
+        this.persistPurchase(
+          'put', '/study/techbook/vue/chapter8_purchases/' + this.editForm.id,
+          this.editForm, '#modal-edit-purchase'
         )
       },
       persistPurchase(method, uri, form, modal) {

@@ -96,4 +96,6 @@ Route::namespace('Study\Techbook')->group(function() {
       ->name('study_techbook_vue_chapter8_purchases');
     Route::post('study/techbook/vue/chapter8_purchases', 'VueController@store')
       ->name('study_techbook_vue_chapter8_purchases');
+    Route::put('study/techbook/vue/chapter8_purchases/{id}', 'VueController@update')
+      ->name('study_techbook_vue_chapter8_purchases');
 });
