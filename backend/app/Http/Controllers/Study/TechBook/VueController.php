@@ -83,4 +83,12 @@ class VueController extends Controller
 
   }
 
+  public function delete($id) {
+    $purchase = Auth::user()->purchases()->find($id);
+
+    if(!$purchase) return new Response('', 404);
+
+    $purchase->delete();
+  }
+
 }

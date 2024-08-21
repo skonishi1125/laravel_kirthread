@@ -29,10 +29,14 @@
             <th>Price</th>
             <th>Description</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="purchase in purchases">
+            <td style="vertical-align: middle;">
+              {{ purchase.id }}
+            </td>
             <td style="vertical-align: middle;">
               {{ purchase.date }}
             </td>
@@ -44,6 +48,10 @@
             </td>
             <td style="vertical-align: middle;">
               <a class="action-link" @click="edit(purchase)">Edit</a>
+            </td>
+            <td style="vertical-align: middle;">
+              <!-- <a class="action-link text-danger" @click="destroy(purchase)">Delete</a> -->
+              <a class="action-link text-danger" @click="confirm(purchase.id)">Delete</a>
             </td>
           </tr>
         </tbody>
@@ -164,6 +172,33 @@
         </div>
       </div>
     </div>
+
+    <!-- Edit Purchase Modal -->
+    <div class="modal fade" id="modal-confirm-delete" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Delete Purchase?</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+
+          <div class="modal-body">
+            <p>Are you sure you want to delete this purchase?</p>
+            <br>
+            <p>purchase id: '{{ this.deleteId }}' will be deleted.</p>
+          </div>
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" @click="destroy">Delete</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -201,7 +236,8 @@
           date: '',
           price: '',
           description: ''
-        }
+        },
+        deleteId: ''
       }
     },
     mounted() { // DOMが呼ばれた際に実行するコード
@@ -243,6 +279,26 @@
           'put', '/study/techbook/vue/chapter8_purchases/' + this.editForm.id,
           this.editForm, '#modal-edit-purchase'
         )
+      },
+      // 下記はAlertを使用した簡易的な実装
+      // destroy(purchase) {
+      //   if(confirm('Are you sure you want to delete this purchase?')) {
+      //     axios.delete('/study/techbook/vue/chapter8_purchases/' + purchase.id)
+      //       .then(response => {
+      //         this.getPurchases();
+      //       });
+      //   }
+      // },
+      destroy() {
+        axios.delete('/study/techbook/vue/chapter8_purchases/' + this.deleteId)
+          .then(response => {
+              this.getPurchases();
+          });
+        $('#modal-confirm-delete').modal('hide');
+      },
+      confirm(purchaseId) {
+        this.deleteId = purchaseId;
+        $('#modal-confirm-delete').modal('show');
       },
       persistPurchase(method, uri, form, modal) {
         form.errors = [];

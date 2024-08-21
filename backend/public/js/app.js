@@ -2063,7 +2063,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         date: '',
         price: '',
         description: ''
-      }
+      },
+      deleteId: ''
     };
   },
   mounted: function mounted() {
@@ -2100,11 +2101,31 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     update: function update() {
       this.persistPurchase('put', '/study/techbook/vue/chapter8_purchases/' + this.editForm.id, this.editForm, '#modal-edit-purchase');
     },
-    persistPurchase: function persistPurchase(method, uri, form, modal) {
+    // 下記はAlertを使用した簡易的な実装
+    // destroy(purchase) {
+    //   if(confirm('Are you sure you want to delete this purchase?')) {
+    //     axios.delete('/study/techbook/vue/chapter8_purchases/' + purchase.id)
+    //       .then(response => {
+    //         this.getPurchases();
+    //       });
+    //   }
+    // },
+    destroy: function destroy() {
       var _this2 = this;
+      axios["delete"]('/study/techbook/vue/chapter8_purchases/' + this.deleteId).then(function (response) {
+        _this2.getPurchases();
+      });
+      $('#modal-confirm-delete').modal('hide');
+    },
+    confirm: function confirm(purchaseId) {
+      this.deleteId = purchaseId;
+      $('#modal-confirm-delete').modal('show');
+    },
+    persistPurchase: function persistPurchase(method, uri, form, modal) {
+      var _this3 = this;
       form.errors = [];
       axios[method](uri, form).then(function (response) {
-        _this2.getPurchases();
+        _this3.getPurchases();
         form.date = '';
         form.price = '';
         form.description = '';
@@ -2313,6 +2334,10 @@ var render = function render() {
       staticStyle: {
         "vertical-align": "middle"
       }
+    }, [_vm._v("\n            " + _vm._s(purchase.id) + "\n          ")]), _vm._v(" "), _c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
     }, [_vm._v("\n            " + _vm._s(purchase.date) + "\n          ")]), _vm._v(" "), _c("td", {
       staticStyle: {
         "vertical-align": "middle"
@@ -2332,7 +2357,18 @@ var render = function render() {
           return _vm.edit(purchase);
         }
       }
-    }, [_vm._v("Edit")])])]);
+    }, [_vm._v("Edit")])]), _vm._v(" "), _c("td", {
+      staticStyle: {
+        "vertical-align": "middle"
+      }
+    }, [_c("a", {
+      staticClass: "action-link text-danger",
+      on: {
+        click: function click($event) {
+          return _vm.confirm(purchase.id);
+        }
+      }
+    }, [_vm._v("Delete")])])]);
   }), 0)]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "modal fade",
     attrs: {
@@ -2601,12 +2637,44 @@ var render = function render() {
     on: {
       click: _vm.update
     }
-  }, [_vm._v("Save Changes")])])])])])]);
+  }, [_vm._v("Save Changes")])])])])]), _vm._v(" "), _c("div", {
+    staticClass: "modal fade",
+    attrs: {
+      id: "modal-confirm-delete",
+      tabindex: "-1",
+      role: "dialog"
+    }
+  }, [_c("div", {
+    staticClass: "modal-dialog",
+    attrs: {
+      role: "document"
+    }
+  }, [_c("div", {
+    staticClass: "modal-content"
+  }, [_vm._m(5), _vm._v(" "), _c("div", {
+    staticClass: "modal-body"
+  }, [_c("p", [_vm._v("Are you sure you want to delete this purchase?")]), _vm._v(" "), _c("br"), _vm._v(" "), _c("p", [_vm._v("purchase id: '" + _vm._s(this.deleteId) + "' will be deleted.")])]), _vm._v(" "), _c("div", {
+    staticClass: "modal-footer"
+  }, [_c("button", {
+    staticClass: "btn btn-default",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal"
+    }
+  }, [_vm._v("Close")]), _vm._v(" "), _c("button", {
+    staticClass: "btn btn-danger",
+    attrs: {
+      type: "button"
+    },
+    on: {
+      click: _vm.destroy
+    }
+  }, [_vm._v("Delete")])])])])])]);
 };
 var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
-  return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")]), _vm._v(" "), _c("th")])]);
+  return _c("thead", [_c("tr", [_c("th", [_vm._v("Date")]), _vm._v(" "), _c("th", [_vm._v("Price")]), _vm._v(" "), _c("th", [_vm._v("Description")]), _vm._v(" "), _c("th"), _vm._v(" "), _c("th")])]);
 }, function () {
   var _vm = this,
     _c = _vm._self._c;
@@ -2653,6 +2721,25 @@ var staticRenderFns = [function () {
   var _vm = this,
     _c = _vm._self._c;
   return _c("p", [_c("strong", [_vm._v("Whoops! ")]), _vm._v("Something went wrong.")]);
+}, function () {
+  var _vm = this,
+    _c = _vm._self._c;
+  return _c("div", {
+    staticClass: "modal-header"
+  }, [_c("h4", {
+    staticClass: "modal-title"
+  }, [_vm._v("Delete Purchase?")]), _vm._v(" "), _c("button", {
+    staticClass: "close",
+    attrs: {
+      type: "button",
+      "data-dismiss": "modal",
+      "aria-label": "Close"
+    }
+  }, [_c("span", {
+    attrs: {
+      "aria-hidden": "true"
+    }
+  }, [_vm._v("×")])])]);
 }];
 render._withStripped = true;
 
