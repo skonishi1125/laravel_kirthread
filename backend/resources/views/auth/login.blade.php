@@ -7,6 +7,10 @@
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
 
+                <p style="text-align: center; margin-top: 25px;">
+                  登録されていない方は<a href="{{ route('register') }}">新規登録</a>からどうぞ
+                </p>
+
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf

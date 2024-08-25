@@ -85,6 +85,9 @@
                         </div>
                     </form>
                 </div>
+                <p style="text-align: center; margin-top: 10px; font-size: 12px;">
+                  ※このサイトなに？という方は<a href="{{ route('about') }}">こちらのページ</a>を参照ください
+                </p>
             </div>
         </div>
     </div>
