@@ -78,20 +78,12 @@ class PostController extends Controller
         }
 
         // YouTube処理
-        $youtube_id = null;
-        if (isset($request->youtube_url)) {
-            if (substr($request->youtube_url, 0, 16) == 'https://youtu.be') {
-                $youtube_id = substr($request->youtube_url, -11);
-            } else {
-                preg_match('/v=((.){11})/', $request->youtube_url, $match);
-                $youtube_id = $match[1];
-            }
-        }
+        $youtube_video_id = Post::extractYoutubeVideoId($request->youtube_url);
 
         $create = Post::create([
             'message' => $request->message,
             'picture' => $picture_name,
-            'youtube_url' => $youtube_id,
+            'youtube_url' => $youtube_video_id,
             'good' => 0,
             'user_id' => Auth::id(),
             'reply_post_id' => $reply_post_id,

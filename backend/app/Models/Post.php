@@ -71,5 +71,25 @@ class Post extends Model
         // dd($reaction, $this->id);
     }
 
+    public static function extractYoutubeVideoId ($youtube_url) {
+      // postにアップされる可能性のあるYouTubeのURL
+      // https://www.youtube.com (PCブラウザで開いたURL)
+      // https://m.youtube.com (モバイルで開いた際のURL)
+      // https://youtu.be (共有ボタンなどから発行されるURL)
+      // 動画IDは 11桁 が基本。
+
+      if (substr($youtube_url, 0, 16) == 'https://youtu.be') {
+        $yotube_video_id = substr($youtube_url, 17, 11);
+      } else {
+        preg_match('/v=((.){11})/', $youtube_url, $match);
+        if (isset($match)) {
+          $yotube_video_id = $match[1];
+        }
+      }
+
+      return $yotube_video_id;
+
+    }
+
 
 }

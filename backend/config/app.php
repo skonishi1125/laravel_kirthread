@@ -53,7 +53,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://kir-thread.site'),
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -228,5 +228,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
     ],
+
+    'iframely_api_key' => env('IFRAMELY_API_KEY', null),
+    'last_modify_js_file_date' => env('LAST_MODIFY_JS_FILE_DATE', '20240825')
 
 ];
