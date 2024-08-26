@@ -17,6 +17,7 @@
     {{ config('app.name', 'Laravel') }}
   </title>
 
+  {{-- css/jsをviteで読み込む --}}
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   <!-- Fonts -->
