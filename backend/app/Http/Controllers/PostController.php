@@ -78,7 +78,10 @@ class PostController extends Controller
         }
 
         // YouTube処理
-        $youtube_video_id = Post::extractYoutubeVideoId($request->youtube_url);
+        $youtube_video_id = null;
+        if (isset($request->youtube_url)) {
+          $youtube_video_id = Post::extractYoutubeVideoId($request->youtube_url);
+        }
 
         $create = Post::create([
             'message' => $request->message,
