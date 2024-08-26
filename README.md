@@ -28,6 +28,15 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 * Laravel Framework 11.21.0
 
+#### Vue
+* Vue.js v3.4
+
+* node.js(npmパッケージ導入用) v20.17.0
+
+* npm v10.8.2
+
+* vite v5.4.2 (laravel-mixから移行)
+
 #### OS / 使用しているツールなど
 * Amazon Linux 2023
 
