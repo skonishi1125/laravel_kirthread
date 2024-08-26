@@ -1,0 +1,52 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-B7QIegpZ.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-Lr9oiwQo.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/selfmade/reaction.js",
+      "resources/js/selfmade/script.js",
+      "resources/js/selfmade/stopwatch.js",
+      "resources/js/selfmade/csv_download.js"
+    ],
+    "css": [
+      "assets/app-BX2S-VZH.css"
+    ]
+  },
+  "resources/js/selfmade/csv_download.js": {
+    "file": "assets/csv_download-B4tSiEMh.js",
+    "name": "csv_download",
+    "src": "resources/js/selfmade/csv_download.js",
+    "isEntry": true
+  },
+  "resources/js/selfmade/game/panel.js": {
+    "file": "assets/panel-BqYylSjD.js",
+    "name": "panel",
+    "src": "resources/js/selfmade/game/panel.js",
+    "isEntry": true
+  },
+  "resources/js/selfmade/reaction.js": {
+    "file": "assets/reaction-CbwUKDwQ.js",
+    "name": "reaction",
+    "src": "resources/js/selfmade/reaction.js",
+    "isEntry": true
+  },
+  "resources/js/selfmade/script.js": {
+    "file": "assets/script-C_zgHiFS.js",
+    "name": "script",
+    "src": "resources/js/selfmade/script.js",
+    "isEntry": true
+  },
+  "resources/js/selfmade/stopwatch.js": {
+    "file": "assets/stopwatch-BxJJ_54V.js",
+    "name": "stopwatch",
+    "src": "resources/js/selfmade/stopwatch.js",
+    "isEntry": true
+  }
+}

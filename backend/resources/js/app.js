@@ -1,45 +1,28 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+import { createApp } from 'vue';
+import ExampleComponent from './components/ExampleComponent.vue';
+// BootstrapのJavaScriptとCSSをインポート
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-require('./bootstrap');
+// jQuery読み込み
+// ただしこれはapp.jsの範囲でjQueryを書けるだけで、
+// その他ファイルでjQueryを使う場合は都度importする必要がある。
+import $ from 'jquery';
+$(document).ready(function() {
+  console.log('vue3.4 and jQuery check and compile_in_app_container');
+});
 
-window.Vue = require('vue');
+// 汎用のjsファイルを読み込む
+// game/panel.jsはそのページでしか使わないので、そちらで読み込ませる。
+import './selfmade/script.js';
+import './selfmade/stopwatch.js';
+import './selfmade/csv_download.js';
+import './selfmade/reaction.js';
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
-
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
-
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-import Vue from 'vue';
-import TestComponent from './components/TestComponent.vue';
-import MessageEditor from './components/MessageEditor.vue';
-import IfTest from './components/IfTest.vue';
-
-const app = new Vue({
-    el: '#app',
-    components: {
-        'test-component': TestComponent,
-        'message-editor': MessageEditor
-    },
-    el: '#if_test',
-    components: {
-        'if-test': IfTest
-    }
+// ここで条件付きでマウントすることで、必要なページでのみコンポーネントを表示する
+document.addEventListener('DOMContentLoaded', () => {
+  const exampleComponentElement = document.getElementById('exampleComponent');
+  if (exampleComponentElement) {
+      createApp(ExampleComponent).mount('#exampleComponent');
+  }
 });

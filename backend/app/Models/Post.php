@@ -78,6 +78,8 @@ class Post extends Model
       // https://youtu.be (共有ボタンなどから発行されるURL)
       // 動画IDは 11桁 が基本。
 
+      if (!$youtube_url) return null;
+
       if (substr($youtube_url, 0, 16) == 'https://youtu.be') {
         $yotube_video_id = substr($youtube_url, 17, 11);
       } else {

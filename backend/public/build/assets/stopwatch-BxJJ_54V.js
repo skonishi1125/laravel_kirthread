@@ -1,0 +1,1 @@
+{let n=function(){const t=new Date,e=t.getDay(),o=String(t.getHours()).padStart(1,"0"),a=String(t.getMinutes()).padStart(2,"0"),s=String(t.getSeconds()).padStart(2,"0"),c=["日","月","火","水","木","金","土"],r=document.getElementById("now-time");setTimeout(()=>{n(),r.textContent=`${o}:${a}:${s} ${c[e]}曜日`},1e3)};var d=n;n()}
