@@ -24,20 +24,20 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 24.8.24 にインフラ周りの更新作業を行なった。 Pull Request: https://github.com/skonishi1125/laravel_kirthread/pull/34
 
 #### PHP
-* PHP 8.2.21
+* PHP v8.2.21
 
 * Laravel Framework 11.21.0
 
 #### Vue
 * Vue.js v3.4
 
-* node.js(npmパッケージ導入用) v20.17.0
+* node.js v20.17.0 ※npm導入用
 
 * npm v10.8.2
 
 * vite v5.4.2 (laravel-mixから移行)
 
-#### OS / 使用しているツールなど
+#### prod環境のOS / 開発に使用しているツールなど
 * Amazon Linux 2023
 
 * mysql  Ver 8.0.39 for Linux on x86_64 (MySQL Community Server - GPL)
@@ -48,7 +48,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 * Docker (version 20.10.10あたりで動作確認)
 
-* vscode
+* VSCode
 
 * TablePlus
 
