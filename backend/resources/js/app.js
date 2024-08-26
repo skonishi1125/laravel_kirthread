@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // その他ファイルでjQueryを使う場合は都度importする必要がある。
 import $ from 'jquery';
 $(document).ready(function() {
-  console.log('vue3.4 and jQuery check');
+  console.log('vue3.4 and jQuery check and compile_in_app_container');
 });
 
 // 汎用のjsファイルを読み込む
