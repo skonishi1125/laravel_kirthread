@@ -16,10 +16,9 @@
     @endif
     {{ config('app.name', 'Laravel') }}
   </title>
-  <!-- Styles -->
-  <link href="{{ asset('css/style.css?' . $date) }}" rel="stylesheet">
-  {{-- vue.js --}}
-  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+
   <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -113,19 +112,6 @@
       @yield('content')
     </main>
   </div>
-  {{-- Scripts head内に書くと動作しないことがあるため、分割する --}}
-  <script type="text/javascript" src="{{ asset('js/stopwatch.js?' . $date) }}"></script>
-  <script type="text/javascript" src="{{ asset('js/script.js?' . $date) }}"></script>
-  <script type="text/javascript" src="{{ asset('js/reaction.js?' . $date) }}"></script>
-  @if (Auth::check())
-    <script type="text/javascript" src="{{ asset('js/csv_download.js?' . $date) }}"></script>
-  @endif
-  {{-- 画像までのローカルパス変数 --}}
-  <script type="text/javascript">
-    var path_to_image = '{{ asset('') }}';
-  </script>
-  {{-- vue.js --}}
-  <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>
