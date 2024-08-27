@@ -209,7 +209,7 @@ class StudyController extends Controller
     }
 
     private function convertUrlToIframelyData($url) {
-        $api_access_url = 'https://iframe.ly/api/iframely?api_key=' . env('IFRAMELY_API_KEY');
+        $api_access_url = 'https://iframe.ly/api/iframely?api_key=' . config('app.iframely_api_key');
         $json_raw_data = file_get_contents($api_access_url . '&url=' . $url); // 生データ取得
         $json_convert_data = mb_convert_encoding($json_raw_data, 'UTF8', 'ASCII,JIS,UTF-8,EUC-JP,SJIS-WIN');
         return json_decode($json_convert_data, false);
@@ -297,49 +297,5 @@ class StudyController extends Controller
     public function testVue() {
       return view('study/vue/test');
     }
-
-    public function edit($id) {
-      $post = Post::where('id', $id)->first();
-      return view('study/vue/edit')
-        ->with('post', $post)
-      ;
-    }
-
-    public function update(Request $request) {
-      /**
-       * (親)message-editorからpost-id="..."として定義
-       * ->(子)MessageEditor.vueで<input v-model="postId">と、v-modelでバインドしつつ定義
-       * ->propsで親から子にpost-id(postId)を受け渡す。
-       * ->必要に応じてdata()で変数を加工する
-       * ->await axios.postを使ってlaravelのルーティング宛に渡す。(今回の場合、id: this.postIdとして渡した。)
-       */
-
-      $post_id = $request->input('id');
-      $message = $request->input('message');
-
-      \Debugbar::info('vueから受け取り。', $post_id, $message);
-
-      $post = Post::find($post_id);
-      if ($post) {
-        $post->message = $message;
-        $post->save();
-        // 成功レスポンスを返す
-        return response()->json([
-            'success' => true,
-            'message' => 'Message updated successfully!'
-        ]);
-      } else {
-          // レコードが存在しない場合、エラーレスポンスを返す
-          return response()->json([
-              'success' => false,
-              'message' => 'Post not found.'
-          ], 404); // 404 Not Found ステータスコード
-      }
-    }
-
-    public function iftest() {
-      return view('study/vue/iftest');
-    }
-
 
 }

@@ -1,13 +1,15 @@
+@php
+  // 最新のcss,jsファイルを読ませるようにする
+  $date = config('app.last_modify_js_file_date');
+@endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
-
   <title>
     @if (config('app.env') !== 'production')
       {{ config('app.env') }}
@@ -15,15 +17,8 @@
     {{ config('app.name', 'Laravel') }}
   </title>
 
-  @php
-    // 最新のcss,jsファイルを読ませるようにする
-    $date = Date('Ymd');
-  @endphp
-
-  <!-- Styles -->
-  <link href="{{ asset('css/style.css?' . $date) }}" rel="stylesheet">
-  {{-- vue.js --}}
-  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+  {{-- css/jsをviteで読み込む --}}
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
 
   <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -31,7 +26,6 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
 </head>
 
 <body>
@@ -40,7 +34,7 @@
       <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
           {{ config('app.name', 'Laravel') }}
-          <small>v1.2</small>
+          <small style="background: linear-gradient(to right,#e60000,#f39800,#fff100,#009944,#0068b7,#1d2088,#920783); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">v2.0</small>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -119,19 +113,6 @@
       @yield('content')
     </main>
   </div>
-  {{-- Scripts head内に書くと動作しないことがあるため、分割する --}}
-  <script type="text/javascript" src="{{ asset('js/stopwatch.js?' . $date) }}"></script>
-  <script type="text/javascript" src="{{ asset('js/script.js?' . $date) }}"></script>
-  <script type="text/javascript" src="{{ asset('js/reaction.js?' . $date) }}"></script>
-  @if (Auth::check())
-    <script type="text/javascript" src="{{ asset('js/csv_download.js?' . $date) }}"></script>
-  @endif
-  {{-- 画像までのローカルパス変数 --}}
-  <script type="text/javascript">
-    var path_to_image = '{{ asset('') }}';
-  </script>
-  {{-- vue.js --}}
-  <script src="{{ mix('js/app.js') }}"></script>
 </body>
 
 </html>

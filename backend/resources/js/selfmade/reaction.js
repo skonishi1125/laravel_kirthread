@@ -1,3 +1,6 @@
+// jQueryを使用するので読み込む
+import $ from 'jquery';
+
 {
   document.addEventListener( 'DOMContentLoaded' , function( e ) {
     'use strict';
