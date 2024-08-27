@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
-import ExampleComponent from './components/ExampleComponent.vue';
+// import ExampleComponent from './components/ExampleComponent.vue';
+import PurchasesComponent from './components/PurchasesComponent.vue';
 // BootstrapのJavaScriptとCSSをインポート
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,4 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (exampleComponentElement) {
       createApp(ExampleComponent).mount('#exampleComponent');
   }
+
+  // テストページ
+  const purchasesComponentElement = document.getElementById('purchasesComponent');
+  if (purchasesComponentElement) {
+    createApp(PurchasesComponent).mount('#purchasesComponent');
+  }
+
 });

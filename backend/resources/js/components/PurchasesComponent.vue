@@ -203,6 +203,8 @@
 </template>
 
 <script>
+  import $ from 'jquery';
+  import axios from 'axios';
   export default {
     data() {
       return {

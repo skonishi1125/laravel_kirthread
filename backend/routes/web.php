@@ -87,17 +87,19 @@ Route::get('study/vue/iftest', 'StudyController@iftest')
     ->name('study_vue_iftest');
 
 // StudyControllerが肥大化してきたので、技術書に関するものは分ける。
-Route::namespace('Study\Techbook')->group(function() {
-    Route::get('study/techbook/vue/chapter4', 'VueController@chapter4')
-      ->name('study_techbook_vue_chapter4');
-    Route::get('study/techbook/vue/chapter8', 'VueController@chapter8')
-      ->name('study_techbook_vue_chapter8');
-    Route::get('study/techbook/vue/chapter8_purchases', 'VueController@chapter8_purchases')
-      ->name('study_techbook_vue_chapter8_purchases_top');
-    Route::post('study/techbook/vue/chapter8_purchases', 'VueController@store')
-      ->name('study_techbook_vue_chapter8_purchases_store');
-    Route::put('study/techbook/vue/chapter8_purchases/{id}', 'VueController@update')
-      ->name('study_techbook_vue_chapter8_purchases_update');
-    Route::delete('study/techbook/vue/chapter8_purchases/{id}', 'VueController@delete')
-      ->name('study_techbook_vue_chapter8_purchases_delete');
-});
+if (config('app.env') === 'local') {
+  Route::namespace('Study\Techbook')->group(function() {
+      Route::get('study/techbook/vue/chapter4', 'VueController@chapter4')
+        ->name('study_techbook_vue_chapter4');
+      Route::get('study/techbook/vue/chapter8', 'VueController@chapter8')
+        ->name('study_techbook_vue_chapter8');
+      Route::get('study/techbook/vue/chapter8_purchases', 'VueController@chapter8_purchases')
+        ->name('study_techbook_vue_chapter8_purchases_top');
+      Route::post('study/techbook/vue/chapter8_purchases', 'VueController@store')
+        ->name('study_techbook_vue_chapter8_purchases_store');
+      Route::put('study/techbook/vue/chapter8_purchases/{id}', 'VueController@update')
+        ->name('study_techbook_vue_chapter8_purchases_update');
+      Route::delete('study/techbook/vue/chapter8_purchases/{id}', 'VueController@delete')
+        ->name('study_techbook_vue_chapter8_purchases_delete');
+  });
+}
