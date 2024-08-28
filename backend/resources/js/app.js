@@ -1,6 +1,8 @@
 import { createApp } from 'vue';
-// import ExampleComponent from './components/ExampleComponent.vue';
+import ExampleComponent from './components/ExampleComponent.vue';
 import PurchasesComponent from './components/PurchasesComponent.vue';
+import VueRouterTestApp from './components/study/vue-router/VueRouterTestApp.vue';
+
 // BootstrapのJavaScriptとCSSをインポート
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,8 +22,8 @@ import './selfmade/stopwatch.js';
 import './selfmade/csv_download.js';
 import './selfmade/reaction.js';
 
-// ここで条件付きでマウントすることで、必要なページでのみコンポーネントを表示する
 document.addEventListener('DOMContentLoaded', () => {
+// 条件付きでマウントすることで、必要なページでのみコンポーネントを表示する
   const exampleComponentElement = document.getElementById('exampleComponent');
   if (exampleComponentElement) {
       createApp(ExampleComponent).mount('#exampleComponent');
@@ -32,5 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (purchasesComponentElement) {
     createApp(PurchasesComponent).mount('#purchasesComponent');
   }
-
 });
+
+import router from './router'
+const vue_router_test_app = createApp(VueRouterTestApp);
+vue_router_test_app.use(router);
+vue_router_test_app.mount('#vue-router-test-app');

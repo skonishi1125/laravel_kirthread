@@ -101,5 +101,12 @@ if (config('app.env') === 'local') {
         ->name('study_techbook_vue_chapter8_purchases_update');
       Route::delete('study/techbook/vue/chapter8_purchases/{id}', 'VueController@delete')
         ->name('study_techbook_vue_chapter8_purchases_delete');
+
+      // vue-router動作テスト
+      // https://qiita.com/minato-naka/items/9241d9c7a7433985056d
+      Route::get('study/vue-router/{any}', function() {
+        return view('study/vue-router/app');
+      })->where('any', '.*');
+
   });
 }
