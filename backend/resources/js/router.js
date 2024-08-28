@@ -1,24 +1,15 @@
+import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 const BASE_URL = '';
 
-import About from './components/study/vue-router/About.vue';
-import NotFound from './components/study/vue-router/NotFound.vue';
-
+// ベースとなるコンポーネントに組み込むパーツとルーティングを定義
+// import About from './components/study/vue-router/About.vue';
 const routes = [
-  { 
-      path: '/study/vue-router/about',
-      name: 'study.vue-router.about',
-      component: About
-  },
-  {
-      path: '/study/vue-router/404',
-      name: 'study.vue-router.404',
-      component: NotFound
-  },
-  {
-      path: '/study/vue-router/:pathMatch(.*)',
-      redirect: '/study/vue-router/404',
-  }
+  // { 
+  //     path: '/study/vue-router/about',
+  //     name: 'study.vue-router.about',
+  //     component: About
+  // },
 ];
 
 // ルーター作成
@@ -27,4 +18,8 @@ const router = createRouter({
   routes,
 });
 
-export default router
+// ベースとなるコンポーネントをimportし、createApp, use, mountする
+// import VueRouterTestApp from './components/study/vue-router/VueRouterTestApp.vue';
+// const vue_router_test_app = createApp(VueRouterTestApp);
+// vue_router_test_app.use(test_router);
+// vue_router_test_app.mount('#vue-router-test-app');

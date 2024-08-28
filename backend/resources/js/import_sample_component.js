@@ -1,7 +1,3 @@
-// BootstrapのJavaScriptとCSSをインポート
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { createApp } from 'vue';
 import ExampleComponent from './components/ExampleComponent.vue';
 import PurchasesComponent from './components/PurchasesComponent.vue';

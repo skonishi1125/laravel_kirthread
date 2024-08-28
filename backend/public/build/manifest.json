@@ -5,18 +5,18 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Z1y8rxRf.js",
+    "file": "assets/app-Bu642aQB.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
+      "resources/js/selfmade/reaction.js",
       "resources/js/selfmade/script.js",
       "resources/js/selfmade/stopwatch.js",
-      "resources/js/selfmade/csv_download.js",
-      "resources/js/selfmade/reaction.js"
+      "resources/js/selfmade/csv_download.js"
     ],
     "css": [
-      "assets/app-p3tEikaz.css"
+      "assets/app-BX2S-VZH.css"
     ]
   },
   "resources/js/selfmade/csv_download.js": {
@@ -32,7 +32,7 @@
     "isEntry": true
   },
   "resources/js/selfmade/reaction.js": {
-    "file": "assets/reaction-CbwUKDwQ.js",
+    "file": "assets/reaction-BFEGUAjS.js",
     "name": "reaction",
     "src": "resources/js/selfmade/reaction.js",
     "isEntry": true
