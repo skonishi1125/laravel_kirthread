@@ -1,23 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
-const BASE_URL = '/study/vue-router';
+const BASE_URL = '';
 
 import About from './components/study/vue-router/About.vue';
 import NotFound from './components/study/vue-router/NotFound.vue';
 
 const routes = [
   { 
-      path: '/about',
+      path: '/study/vue-router/about',
       name: 'study.vue-router.about',
       component: About
   },
   {
-      path: '/404',
+      path: '/study/vue-router/404',
       name: 'study.vue-router.404',
       component: NotFound
   },
   {
-      path: '/:pathMatch(.*)',
-      redirect: '/404',
+      path: '/study/vue-router/:pathMatch(.*)',
+      redirect: '/study/vue-router/404',
   }
 ];
 
