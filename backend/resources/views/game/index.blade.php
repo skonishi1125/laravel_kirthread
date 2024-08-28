@@ -16,6 +16,7 @@
 
             <ul style="list-style-type: none">
               <li><a href="{{ route('game_panel') }}">2色パネル</a></li>
+              <li><a href="{{ route('game_rpg_index') }}">RPG</a></li>
             </ul>
 
 

@@ -23,6 +23,11 @@ Route::get('/about', 'PageController@about')->name('about');
 Route::get('/game', 'PageController@game')->name('game');
 Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 
+if (config('app.env') === 'local') {
+  // RPG関連のルーティング
+  Route::get('/game/rpg', 'Game\Rpg\IndexController@index')->name('game_rpg_index');
+}
+
 // Auth認証のかかるページ
 Route::group(['middleware' => 'auth'], function () {
   Route::post('/store', 'PostController@store')->name('store');

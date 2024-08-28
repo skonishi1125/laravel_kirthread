@@ -9,3 +9,5 @@ import './import_selfmade';
 // vue宣言
 import { createApp } from 'vue';
 import './router'; // 出すコンポーネントなどは`./router.js`で管理する。
+import $ from 'jquery';
+import axios from 'axios';
