@@ -147,7 +147,7 @@ body {
 /* スマホのフォントサイズ */
 @media screen and (max-width: 767px) {
   body {
-    font-size: 90%;
+    font-size: 90% !important;
   }
 
   .reaction-modal {
