@@ -25,7 +25,16 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 
 if (config('app.env') === 'local') {
   // RPG関連のルーティング
-  Route::get('/game/rpg', 'Game\Rpg\IndexController@index')->name('game_rpg_index');
+  // rpg/* のパスにアクセスした場合、トップページに飛ばす
+  // (その後はvue-router側で操作される)
+  Route::get('/game/rpg/{any?}', 'Game\Rpg\IndexController@index')
+    ->where('any', '.*')
+    ->name('game_rpg_index');
+
+  // RPG API関連
+  Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
+  Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
+  Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSaveData')->name('api_game_rpg_save_data');
 }
 
 // Auth認証のかかるページ
