@@ -33,6 +33,9 @@ if (config('app.env') === 'local') {
 
   // RPG API関連
   Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
+  Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
+
+
   Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
   Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSaveData')->name('api_game_rpg_save_data');
 }
