@@ -3,13 +3,25 @@ import { createRouter, createWebHistory } from 'vue-router';
 const BASE_URL = '';
 
 // ベースとなるコンポーネントに組み込むパーツとルーティングを定義
-// import About from './components/study/vue-router/About.vue';
+import Adventure from './components/RPG/Adventure.vue';
+import Shop from './components/RPG/Shop.vue';
+import Skill from './components/RPG/Skill.vue';
 const routes = [
-  // { 
-  //     path: '/study/vue-router/about',
-  //     name: 'study.vue-router.about',
-  //     component: About
-  // },
+  { 
+      path: '/game/rpg/adventure',
+      name: 'game.rpg.adventure',
+      component: Adventure
+  },
+  { 
+      path: '/game/rpg/shop',
+      name: 'game.rpg.shop',
+      component: Shop
+  },
+  { 
+      path: '/game/rpg/skill',
+      name: 'game.rpg.skill',
+      component: Skill
+  },
 ];
 
 // ルーター作成
@@ -19,7 +31,7 @@ const router = createRouter({
 });
 
 // ベースとなるコンポーネントをimportし、createApp, use, mountする
-// import VueRouterTestApp from './components/study/vue-router/VueRouterTestApp.vue';
-// const vue_router_test_app = createApp(VueRouterTestApp);
-// vue_router_test_app.use(test_router);
-// vue_router_test_app.mount('#vue-router-test-app');
+import App from './components/RPG/App.vue';
+const app = createApp(App);
+app.use(router);
+app.mount('#rpg-components-app');

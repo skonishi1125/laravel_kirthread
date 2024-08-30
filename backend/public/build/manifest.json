@@ -5,7 +5,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-Bu642aQB.js",
+    "file": "assets/app-D4Rc9PIv.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -16,7 +16,7 @@
       "resources/js/selfmade/csv_download.js"
     ],
     "css": [
-      "assets/app-BX2S-VZH.css"
+      "assets/app-B0IXKmAw.css"
     ]
   },
   "resources/js/selfmade/csv_download.js": {
@@ -32,7 +32,7 @@
     "isEntry": true
   },
   "resources/js/selfmade/reaction.js": {
-    "file": "assets/reaction-BFEGUAjS.js",
+    "file": "assets/reaction-BXCl3ODx.js",
     "name": "reaction",
     "src": "resources/js/selfmade/reaction.js",
     "isEntry": true
