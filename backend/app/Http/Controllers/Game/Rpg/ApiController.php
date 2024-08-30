@@ -25,9 +25,9 @@ class ApiController extends Controller
     // 決済処理
     // エラー時はthrow new Exceptionだとうまくvue側でcatchできないので、responseで返して受け取る。
     try {
-      // 数量が0で指定された場合はその旨を返す。
-      if ($number === 0) {
-        return response()->json(['error' => '数量を指定してください'], 400);
+      // 数量が0, マイナスで指定された場合はその旨を返す。
+      if ($number < 1) {
+        return response()->json(['error' => '数量を1以上指定してください'], 400);
       }
       $total_price = $item_price * $number;
       $after_payment_money = $money - $total_price;

@@ -4,7 +4,15 @@
   }
 </style>
 
+<!-- v-if系はtemplateの内部に書く。 -->
 <template>
+
+  <div class="row" v-if="this.after_purchase_array.after_purchase_flag">
+    <div class="col-sm-12" style="color: blue">
+      <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
+    </div>
+  </div>
+
   <div class="row">
     <div class="col-sm-12">
       <p>購入品を選択してください(所持金:{{ this.money }} G)</p>
@@ -39,18 +47,28 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Edit Purchase</h4>
+          <h4 class="modal-title">購入</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
+          <!-- error message -->
+          <div v-if="error_message">
+            <p style="color:red;">{{ error_message }}</p>
+          </div>
 
           <!-- Edit purchase form -->
           <form class="form-horizontal" role="form">
             <!-- Date -->
             <div class="form-group">
-              <label class="control-label">購入数を記載してください</label>
+              <label class="control-label">購入数を入力してください</label>
               <div style="max-width: 100px;">
-                <input id="purchase-number" type="number" class="form-control" v-model="number">
+                <!-- 
+                  inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
+                    https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
+                    https://www.softel.co.jp/blogs/tech/archives/3614?
+                  -->
+                <input type="text" style="display: none;">
+                <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
               </div>
             </div>
           </form>
@@ -74,28 +92,32 @@
     data() {
       return {
         shopListItems: [],
+        error_message: '',
         purchaseForm: {
           item_id: '',
+          name: '',
           price: '',
-          number: '',
         },
         money: 0,
         price: 0,
-        number: 0,
+        number: 1,
+        after_purchase_array: {
+          name: '',
+          number: 0,
+          after_purchase_flag: false,
+        },
       }
     },
     mounted() { // DOMが呼ばれた際に実行するコード
-      console.log('shop.vue');
       this.getShopList();
       this.getCurrentMoney();
-
       $('#modal-item-purchase').on('shown.bs.modal', () => {
         $('#purchase-number').focus();
       })
 
     },
     methods: {
-      // 販売物一覧をlaravel側APIから取得する。
+      // ショップ販売物一覧をlaravelAPIから取得
       getShopList() {
         axios.get('/api/game/rpg/shop/list')
           .then(response => {
@@ -110,12 +132,17 @@
           });
       },
 
-      // 購入モーダルの表示
-      // モーダルを開いた時の情報をjs側で定義したpurchaseFormに格納する。
+      // 購入モーダル表示
       showPurchaseForm(shopListItem) {
+        // アイテム情報をpurchaseForm配列に格納しておく。
         this.purchaseForm.item_id = shopListItem.id;
         this.purchaseForm.name = shopListItem.name;
         this.purchaseForm.price = shopListItem.price;
+
+        // エラーメッセージを消しておく
+        this.number = 1;
+        this.error_message = null;
+
         $('#modal-item-purchase').modal('show');
       },
 
@@ -123,28 +150,27 @@
       paymentItem() {
         let form = {
           money: this.money,
+          number: this.number,
+          name: this.purchaseForm.name,
           price: this.purchaseForm.price,
-          number: this.number
         }
 
         axios['post']('/api/game/rpg/shop/payment', form)
           .then(response => {
             // 所持金更新
             this.getCurrentMoney();
-            form.money = 0;
-            form.price = 0;
-            form.number = 0;
+
+            // 購入情報を配列に入れておく
+            this.after_purchase_array.after_purchase_flag = true;
+            this.after_purchase_array.name = form.name;
+            this.after_purchase_array.number = form.number;
 
             // モーダルを閉じる
             $('#modal-item-purchase').modal('hide');
-
-            // todo: 購入しましたと画面に出す
-
           })
           .catch(error => {
             console.log(error.response.data.error);
-            // todo: エラーメッセージをモーダルに出す
-
+            this.error_message = error.response.data.error;
           });
 
       },
