@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
+
+  // TODO: 
+  // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
+
   // ショップ
   public function shopList() {
     $shop_list_items = Item::getShopListItem();
@@ -37,6 +41,8 @@ class ApiController extends Controller
       }
 
       $savedata = SaveData::getLoginUserCurrentSaveData();
+
+      // TODO: アイテムが増える挙動も書く。その際はトランザクションを使う。
       $savedata->update([
         'money' => $after_payment_money
       ]);

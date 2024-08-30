@@ -47,7 +47,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">購入</h4>
+          <h4 class="modal-title">購入フォーム</h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
@@ -60,7 +60,9 @@
           <form class="form-horizontal" role="form">
             <!-- Date -->
             <div class="form-group">
-              <label class="control-label">購入数を入力してください</label>
+              <label class="control-label">
+                {{ purchaseForm.name }}をいくつ購入しますか？<br>
+              </label>
               <div style="max-width: 100px;">
                 <!-- 
                   inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
@@ -69,6 +71,11 @@
                   -->
                 <input type="text" style="display: none;">
                 <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
+
+              </div>
+              <hr>
+              <div style="text-align: right;">
+                合計: {{ purchaseForm.price * number }} G
               </div>
             </div>
           </form>
