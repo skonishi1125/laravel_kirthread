@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 
+// 戦闘状態の管理
 export default createStore({
   state: {
     isInBattle: false

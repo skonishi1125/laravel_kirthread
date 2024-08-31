@@ -22,7 +22,8 @@
   import { mapState } from 'vuex';
   export default {
     computed: {
-    ...mapState(['isInBattle'])
+    // スプレッド構文
+    ...mapState(['isInBattle'])// Vuex store.jsの状態を取得
     },
     data() {
       return {
@@ -30,6 +31,7 @@
     },
     mounted() { // DOMが呼ばれた際に実行するコード
       console.log('app.vue');
+      console.log(mapState);
     },
     methods: {
     }
