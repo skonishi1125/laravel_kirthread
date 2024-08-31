@@ -116,6 +116,7 @@
       }
     },
     mounted() { // DOMが呼ばれた際に実行するコード
+      this.$store.dispatch('setScreen', 'menu');
       this.getShopList();
       this.getCurrentMoney();
       $('#modal-item-purchase').on('shown.bs.modal', () => {

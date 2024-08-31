@@ -7,14 +7,40 @@
 
   <div class="row">
     <div class="col">
-      <ul>
-        <li><button>草原</button></li>
-        <li><button>海</button></li>
-        <li><button>砂地</button></li>
-        <li><button>火山</button></li>
-        <li><button>氷雪地帯</button></li>
-        <li><button>古城</button></li>
+      <ul v-for="field in fieldList">
+        <li><button @click="startBattle(field.id)">{{ field.name }}</button></li>
       </ul>
     </div>
   </div>
 </template>
+
+<script>
+  import axios from 'axios';
+  export default {
+    data() {
+      return {
+        fieldList:[],
+      }
+    },
+    mounted() { // DOMが呼ばれた際に実行するコード
+      console.log('Adventure.vue');
+      this.getFieldList();
+      this.$store.dispatch('setScreen', 'menu'); // これが無いと/game/rpg/adventure でリロードすると、メニュー画面が出ない。
+    },
+    methods: {
+      // フィールド一覧をlaravelAPIから取得
+      getFieldList() {
+        axios.get('/api/game/rpg/field/list')
+          .then(response => {
+            this.fieldList = response.data;
+          });
+      },
+
+      startBattle(stageId) {
+        // todo: currentScreenをbattleに。
+        this.$router.push(`/game/rpg/battle/${stageId}`);
+      }
+
+    }
+  }
+</script>

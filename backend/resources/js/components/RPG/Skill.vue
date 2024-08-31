@@ -15,3 +15,19 @@
     </div>
   </div>
 </template>
+
+<script>
+  import $ from 'jquery';
+  import axios from 'axios';
+  export default {
+    data() {
+      return {
+      }
+    },
+    mounted() { // DOMが呼ばれた際に実行するコード
+      console.log('skill.vue');
+    },
+    methods: {
+    }
+  }
+</script>

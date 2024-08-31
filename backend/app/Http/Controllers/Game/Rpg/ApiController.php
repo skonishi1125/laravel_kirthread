@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Game\Rpg;
 
 use App\Http\Controllers\Controller;
+use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\SaveData;
 Use Auth;
@@ -59,6 +60,11 @@ class ApiController extends Controller
   public function loginUserCurrentSaveData() {
     $current_save_data = SaveData::getLoginUserCurrentSaveData();
     return $current_save_data;
+  }
+
+  // フィールド
+  public function fieldList() {
+    return Field::get();
   }
 
 }

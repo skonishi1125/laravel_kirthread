@@ -7,7 +7,4 @@ import './import_sample_component'; // テストで作ったpurchaseなどの動
 // import './vue_router_test'; // vue-routerのサンプル
 
 // vue宣言
-import { createApp } from 'vue';
 import './router'; // 出すコンポーネントなどは`./router.js`で管理する。
-import $ from 'jquery';
-import axios from 'axios';
