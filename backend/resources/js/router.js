@@ -5,6 +5,7 @@ const BASE_URL = '';
 
 // ベースとなるコンポーネントに組み込むパーツとルーティングを定義
 import Title from './components/RPG/Title.vue';
+import Menu from './components/RPG/Menu.vue';
 import Adventure from './components/RPG/Adventure.vue';
 import Shop from './components/RPG/Shop.vue';
 import Skill from './components/RPG/Skill.vue';
@@ -16,22 +17,27 @@ const routes = [
       component: Title
   },
   { 
-      path: '/game/rpg/adventure',
-      name: 'game.rpg.adventure',
-      component: Adventure
+      path: '/game/rpg/menu',
+      name: 'game.rpg.menu',
+      component: Menu,
+      children: [
+        {
+          path: 'adventure',
+          component: Adventure
+        },
+        {
+          path: 'shop',
+          component: Shop
+        },
+        {
+          path: 'Skill',
+          component: Skill
+        }
+      ]
   },
   { 
-      path: '/game/rpg/shop',
-      name: 'game.rpg.shop',
-      component: Shop
-  },
-  { 
-      path: '/game/rpg/skill',
-      name: 'game.rpg.skill',
-      component: Skill
-  },
-  { 
-      path: '/game/rpg/battle/:field_id',
+      path: '/game/rpg/battle',
+      // path: '/game/rpg/battle/:field_id',
       name: 'game.rpg.battle',
       component: Battle
   },

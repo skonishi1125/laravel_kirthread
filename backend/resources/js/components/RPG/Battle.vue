@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-sm-12">
-      <p>Battle.vueというコンポーネントのtemplateです</p>
+      <p>Battle.vue</p>
       <button @click="endBattle">バトル終了</button>
     </div>
   </div>
@@ -10,14 +10,16 @@
 <script>
 export default {
   created() {
-    this.$store.dispatch('startBattle');
+    this.$store.dispatch('setScreen', 'battle');
+  },
+  mounted() {
+    console.log('Battle.vue');
   },
   methods: {
     endBattle() {
-      this.$store.dispatch('endBattle');  // バトル終了時に状態を更新
-      this.$router.push('/game/rpg/shop'); // 任意の画面に遷移
+      this.$store.dispatch('setScreen', 'menu');
+      this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
     }
   }
 }
-
 </script>

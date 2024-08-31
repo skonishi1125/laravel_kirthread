@@ -15,7 +15,7 @@
 
   <div class="row">
     <div class="col-sm-12">
-      <p>購入品を選択してください(所持金:{{ this.money }} G)</p>
+      <p>購入品を選択してください(所持金: {{ this.money }} G)</p>
     </div>
   </div>
 
@@ -115,14 +115,15 @@
         },
       }
     },
-    mounted() { // DOMが呼ばれた際に実行するコード
-      this.$store.dispatch('setScreen', 'menu');
+    created() {
       this.getShopList();
       this.getCurrentMoney();
+    },
+    mounted() {
+      console.log('shop.vue');
       $('#modal-item-purchase').on('shown.bs.modal', () => {
         $('#purchase-number').focus();
       })
-
     },
     methods: {
       // ショップ販売物一覧をlaravelAPIから取得
