@@ -25,6 +25,7 @@
     mounted() { // DOMが呼ばれた際に実行するコード
       console.log('Adventure.vue');
       this.getFieldList();
+      this.$store.dispatch('setScreen', 'menu'); // これが無いと/game/rpg/adventure でリロードすると、メニュー画面が出ない。
     },
     methods: {
       // フィールド一覧をlaravelAPIから取得
@@ -36,6 +37,7 @@
       },
 
       startBattle(stageId) {
+        // todo: currentScreenをbattleに。
         this.$router.push(`/game/rpg/battle/${stageId}`);
       }
 

@@ -18,8 +18,6 @@ export default {
       this.$router.push('/game/rpg/shop'); // 任意の画面に遷移
     }
   }
-
-
 }
 
 </script>
