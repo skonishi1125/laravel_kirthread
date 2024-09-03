@@ -17,14 +17,10 @@
 </template>
 
 <script>
-  import $ from 'jquery';
-  import axios from 'axios';
   export default {
-    data() {
-      return {
-      }
+    created() {
     },
-    mounted() { // DOMが呼ばれた際に実行するコード
+    mounted() {
       console.log('skill.vue');
     },
     methods: {

@@ -1,19 +1,21 @@
 <template>
   <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 600px;">
-    <h4 style="text-align: center;">App.vue</h4>
+    <h4 style="text-align: center;">App.vue 
+      <small style="font-size: 12px;">
+        {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
+        {{ battleSessionId }}
+      </small>
+    </h4>
 
     <div v-if="currentScreen == 'title'">
       <router-view></router-view>
     </div>
 
     <div v-else-if="currentScreen == 'menu'">
-      <div class="row">
-        <div class="col-sm-3"><button @click="$router.push('/game/rpg/adventure')">冒険へ行く</button></div>
-        <div class="col-sm-3"><button @click="$router.push('/game/rpg/shop')">ショップ</button></div>
-        <div class="col-sm-3"><button @click="$router.push('/game/rpg/skill')">スキル振り</button></div>
-        <div class="col-sm-3"><button @click="endGame">タイトル</button></div>
-      </div>
-      <div class="mb-5"></div>
+      <router-view></router-view>
+    </div>
+
+    <div v-else-if="currentScreen == 'battle'">
       <router-view></router-view>
     </div>
 
@@ -21,30 +23,24 @@
 </template>
 
 <script>
-  import $ from 'jquery';
-  import axios from 'axios';
   import { mapState } from 'vuex';
   export default {
-    computed: {
-    ...mapState(['isInBattle']),
-    ...mapState(['currentScreen'])
+    data() { // script内で使用する変数を定義する。
+      return {}
     },
-    data() {
-      return {
-      }
+    computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
+    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
+    ...mapState(['currentScreen']),
+    ...mapState(['battleStatus']),
+    ...mapState(['selectedCommands']),
+    ...mapState(['battleSessionId']),
     },
-    mounted() { // DOMが呼ばれた際に実行するコード
-      console.log('app.vue',this.isInBattle, this.currentScreen);
+    created() { // DOMに依存しない処理を書く(state処理など。)
     },
-    methods: {
-      startGame() {
-        this.$store.dispatch('setScreen', 'menu');
-        this.$router.push('/game/rpg/adventure');
-      },
-      endGame() {
-        this.$store.dispatch('setScreen', 'title');
-        this.$router.push('/game/rpg');
-      }
+    mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
+      console.log('app.vue', this.currentScreen);
+    },
+    methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
     }
   }
 </script>

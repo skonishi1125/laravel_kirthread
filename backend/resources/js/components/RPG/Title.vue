@@ -9,19 +9,18 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
   export default {
-    mounted() {
-      console.log('title.vue', this.currentScreen);
+    created() {
+      // デフォルト値がtitleなので不要とも言えるが。
       this.$store.dispatch('setScreen', 'title');
     },
-    computed: {
-    ...mapState(['currentScreen'])
+    mounted() {
+      console.log('title.vue');
     },
     methods: {
       startGame() {
         this.$store.dispatch('setScreen', 'menu');
-        this.$router.push('/game/rpg/adventure');
+        this.$router.push('/game/rpg/menu');
       }
     },
   }

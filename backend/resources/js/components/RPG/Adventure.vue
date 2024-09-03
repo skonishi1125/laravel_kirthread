@@ -1,3 +1,9 @@
+<style scoped>
+  .action-link {
+    cursor: pointer;
+  }
+</style>
+
 <template>
   <div class="row">
     <div class="col-sm-12">
@@ -6,10 +12,24 @@
   </div>
 
   <div class="row">
-    <div class="col">
-      <ul v-for="field in fieldList">
-        <li><button @click="startBattle(field.id)">{{ field.name }}</button></li>
-      </ul>
+    <div class="col-sm-12">
+      <table class="table table-borderless">
+        <thead>
+            <tr>
+              <th>名前</th>
+              <th>難易度</th>
+              <th></th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr v-for="field in fieldList">
+            <td>{{ field.name }}</td>
+            <td>{{ field.difficulty }}</td>
+            <td><a class="action-link" @click="startBattle(field.id)">行く</a></td>
+          </tr>
+        </tbody>
+      </table>
+
     </div>
   </div>
 </template>
@@ -22,10 +42,14 @@
         fieldList:[],
       }
     },
-    mounted() { // DOMが呼ばれた際に実行するコード
-      console.log('Adventure.vue');
+    created() {
+      // this.$store.dispatch('setScreen', 'menu');
+      // ↑本来はこちらが必要だが、親側のMenu.vueでstateをmenuにしているので不要。
+      // (通常adventure画面でreloadすると、stateがデフォルトのtitleに戻るためメニュー画面が出なくなる)
       this.getFieldList();
-      this.$store.dispatch('setScreen', 'menu'); // これが無いと/game/rpg/adventure でリロードすると、メニュー画面が出ない。
+    },
+    mounted() {
+      console.log('Adventure.vue');
     },
     methods: {
       // フィールド一覧をlaravelAPIから取得
@@ -35,10 +59,10 @@
             this.fieldList = response.data;
           });
       },
-
       startBattle(stageId) {
-        // todo: currentScreenをbattleに。
-        this.$router.push(`/game/rpg/battle/${stageId}`);
+        this.$store.dispatch('setScreen', 'battle');
+        this.$router.push('/game/rpg/battle');
+        // this.$router.push(`/game/rpg/battle/${stageId}`);
       }
 
     }

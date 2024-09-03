@@ -85,17 +85,17 @@
                   <a class="dropdown-item" href="{{ route('config_index') }}">
                     {{ __('Config') }}
                   </a>
-                  <a class="dropdown-item" href="{{ route('logout') }}"
-                    onclick="event.preventDefault();
-                                                    document.getElementById('logout-form').submit();">
-                    {{ __('Logout') }}
+                  <a class="dropdown-item" href="{{ route('profile_show', ['user_id' => Auth::id()]) }}">
+                    プロフィール
                   </a>
-
-                  <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
                   <a class="dropdown-item" href="{{ route('game') }}">ゲーム</a>
+                  <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
                   <a id="csv-download" class="dropdown-item"
                     href="{{ route('study_download_post_csv', ['user_id' => Auth::id()]) }}">
                     CSVでDL
+                  </a>
+                  <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
                   </a>
 
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
