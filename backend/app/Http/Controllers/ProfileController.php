@@ -52,6 +52,14 @@ class ProfileController extends Controller
     public function show($id)
     {
           $display_user = User::find($id);
+          // profileがなければ新規作成する
+          if (!isset($display_user->profile)) {
+            $profile = Profile::create([
+              'user_id'   =>  $display_user->id,
+              'message'   =>  'よろしくお願いします。'
+            ]);
+          }
+
           $posts = Post::where('user_id', $display_user->id)
               ->orderby('created_at', 'desc')
               ->paginate(50);
@@ -77,16 +85,6 @@ class ProfileController extends Controller
             }
             $value['attached_reactions'] = $reaction_count_collection;
         });
-
-          // profileがなければ新規作成する
-          if (!isset($display_user->profile)) {
-              $profile = Profile::create([
-                'user_id'   =>  $display_user->id,
-                'message'   =>  'よろしくお願いします。'
-              ]);
-              // todo: 新規のユーザーのところにアクセスすると5xxエラーに遭遇する
-              // リロードすれば治る。
-          }
 
           return view('profile.show')
               ->with('display_user', $display_user)
