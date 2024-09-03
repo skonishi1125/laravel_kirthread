@@ -26,18 +26,19 @@ return new class extends Migration
 
         });
 
-        DB::table('rpg_savedatas')->insert([
-          [
-              'user_id' => 974, // テストくん
-              'money' => 1000,
-              'unspent_skill_points' => 3,
-              'play_time' => 0,
-              'save_timestamp' => null,
-              'difficulty' => 'Normal',
-              'created_at' => now(),
-              'updated_at' => now(),
-          ],
-      ]);
+        // 本番だとuser_idが外部キー制約に引っかかってエラーが発生するのでコメントアウトしておく。
+        // DB::table('rpg_savedatas')->insert([
+        //   [
+        //       'user_id' => 974, // テストくん
+        //       'money' => 1000,
+        //       'unspent_skill_points' => 3,
+        //       'play_time' => 0,
+        //       'save_timestamp' => null,
+        //       'difficulty' => 'Normal',
+        //       'created_at' => now(),
+        //       'updated_at' => now(),
+        //   ],
+        // ]);
 
     }
 
