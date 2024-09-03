@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Game\Rpg;
 
 use App\Http\Controllers\Controller;
+use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Enemy;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
+use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 Use Auth;
@@ -76,41 +78,86 @@ class ApiController extends Controller
     $fieid_id = 1; // todo:$requestから取得する
     $user_id = Auth::id();
 
-    $parties = Party::where('user_id', $user_id)->get();
-
-    // パーティ3人の名前, HP/MP, スキルを格納する
-    $players_data = collect();
-    foreach ($parties as $party) {
-      $learned_skill_ids = $party->skills()->pluck('rpg_skills.id');
-      $learned_skill = Skill::select('name', 'description')
-        ->whereIn('id', $learned_skill_ids)
-        ->get();
-
-      $player_data = collect([
-        'nickname' => $party->nickname,
-        'value_hp' => $party->value_hp,
-        'value_ap' => $party->value_ap,
-        'skills' => $learned_skill
-        // todo: 画像も。
+    // 戦闘中かどうかを判断する
+    $is_user_battle = BattleState::where('user_id', $user_id)->exists();
+    if(!$is_user_battle) {
+      $parties = Party::where('user_id', $user_id)->get();
+  
+      // パーティ3人の名前, HP/MP, スキルを格納する
+      $players_data = collect();
+      foreach ($parties as $party) {
+        $learned_skill_ids = $party->skills()->pluck('rpg_skills.id');
+        $learned_skill = Skill::select('name', 'description')
+          ->whereIn('id', $learned_skill_ids)
+          ->get();
+        $items = [];
+        $role_portrait = Role::find($party->rpg_role_id)->value('portrait_image_path');
+  
+        // vue側に渡すデータ
+        $player_data = collect([
+          'id' => $party->id,
+          'nickname' => $party->nickname,
+          'command' => null, // exec時に格納する
+          'target_enemy_index' => null, // exec時に格納する
+          'value_hp' => $party->value_hp,
+          'value_ap' => $party->value_ap,
+          'value_str' => $party->value_str,
+          'value_def' => $party->value_def,
+          'value_int' => $party->value_int,
+          'value_spd' => $party->value_spd,
+          'value_luc' => $party->value_luc,
+          'skills' => $learned_skill,
+          'items' => $items,
+          'role_portrait' => $role_portrait
+        ]);
+        $players_data->push($player_data);
+      }
+  
+      // 敵の名前、HP/MPを格納する
+      // todo: 出現させる敵は何かとか考えとく。
+      $enemies_data = collect();
+      $enemies = Enemy::where('appear_field_id', 1)->get();
+      foreach ($enemies as $enemy) {
+        $enemy_data = collect([
+          'id' => $enemy->id,
+          'name' => $enemy->name,
+          'command' => null, // exec時に格納する
+          'target_player_index' => null, // exec時に格納する
+          'value_hp' => $enemy->value_hp,
+          'value_ap' => $enemy->value_ap,
+          'value_str' => $enemy->value_str,
+          'value_def' => $enemy->value_def,
+          'value_int' => $enemy->value_int,
+          'value_spd' => $enemy->value_spd,
+          'value_luc' => $enemy->value_luc,
+          'portrait' => $enemy->portrait_image_path,
+        ]);
+        $enemies_data->push($enemy_data);
+      }
+  
+      // 戦闘データをセッションIDで一意に管理する
+      $session_id = \Str::uuid()->toString();
+      $battle_state = BattleState::create([
+        'user_id' => $user_id,
+        'session_id' => $session_id,
+        'players_json_data' => json_encode($players_data),
+        'enemies_json_data' => json_encode($enemies_data),
+        'status' => 'encount',
       ]);
-      $players_data->push($player_data);
+
+    } else {
+      // 戦闘中のデータを取得する
+      $battle_state = BattleState::where('user_id', $user_id)->first();
+      $session_id = $battle_state['session_id'];
+      $players_data = json_decode($battle_state['players_json_data']);
+      $enemies_data = json_decode($battle_state['enemies_json_data']);
     }
 
-    // 敵の名前、HP/MPを格納する
-    // todo: 出現させる敵は何かとか考えとく。
-    $enemies_data = collect();
-    $enemies = Enemy::where('appear_field_id', 1)->get();
-    foreach ($enemies as $enemy) {
-      $enemy_data = collect([
-        'name' => $enemy->name,
-        'image' => $enemy->portrait_image_path,
-      ]);
-      $enemies_data->push($enemy_data);
-    }
-
+    // vueに渡すデータ
     $all_data = collect();
     $all_data->push($players_data);
     $all_data->push($enemies_data);
+    $all_data->push($session_id);
 
     return $all_data;
   }
@@ -118,9 +165,75 @@ class ApiController extends Controller
   // 選択されたデータを元に、コマンド実行
   public function execBattleCommand(Request $request) {
 
-    $commands = $request->all();
-    Debugbar::info($commands);
+    $session_id = $request->session_id;
+    $battle_state = BattleState::where('session_id', $session_id)->first();
+    $battle_logs = collect(); // 結果を格納していく
 
+    $current_players_data = collect(json_decode($battle_state['players_json_data']));
+    $current_enemies_data = collect(json_decode($battle_state['enemies_json_data']));
+    $commands = collect($request->selectedCommands);
+
+    // players_json_data['id']と$coomands['partyId']を紐づける。
+    $current_players_data->transform(function ($data) use ($commands) {
+      // $commandsの中から、現在回しているjsonデータのidとpartyIdが最初に一致する配列を$commandとして入れる
+      $command = $commands->firstWhere('partyId', $data->id);
+      if ($command) {
+          // コマンドとenemyIndexを格納する
+          $data->command = $command['command'];
+          $data->target_enemy_index = $command['enemyIndex'];
+      }
+      return $data;
+    });
+    // Debugbar::info('------------------------');
+    $all_data = $current_players_data->concat($current_enemies_data);
+    // 速度順に並べる。
+    $all_data_sorted_by_speed = $all_data->sortByDesc('value_spd');
+
+    foreach($all_data_sorted_by_speed as $data) {
+      if (isset($data->target_enemy_index)) {
+        // 味方の行動の場合
+        if($data->command == "ATTACK") {
+          // ATTACK時のダメージ計算
+          $damage = BattleState::calculateAttackValue(
+            $data->value_str, 
+            $current_enemies_data[$data->target_enemy_index]->value_def
+          );
+          $current_enemies_data[$data->target_enemy_index]->value_hp -= $damage;
+          $battle_logs->push("{$data->nickname}の攻撃！{$current_enemies_data[$data->target_enemy_index]->name}に{$damage}のダメージ。");
+        // ATTACK以外
+        // todo:アイテムとかバフなら味方を選べるようにする
+        } else {
+          $battle_logs->push("{$data->nickname}は攻撃以外を選択した。");
+        }
+      // 敵の行動の場合
+      } else {
+        // ATTACK時のダメージ計算
+        $index = rand(0,2);
+        $damage = BattleState::calculateAttackValue(
+          $data->value_str, 
+          $current_players_data[$index]->value_def // とりあえず最初のメンバーに攻撃させる
+        );
+        $current_players_data[$index]->value_hp -= $damage;
+        $battle_logs->push("{$data->name}の攻撃！{$current_players_data[$index]->nickname}に{$damage}のダメージ。");
+      }
+    }
+
+    Debugbar::info('-----------戦闘終了後-------------');
+    Debugbar::info($current_players_data, $current_enemies_data, $battle_logs);
+
+    // rpg_battle_states更新
+    $updated_battle_state = $battle_state->update([
+        'players_json_data' => json_encode($current_players_data),
+        'enemies_json_data' => json_encode($current_enemies_data),
+    ]);
+
+    // vueに渡すデータ
+    $all_vue_data = collect();
+    $all_vue_data->push($current_players_data);
+    $all_vue_data->push($current_enemies_data);
+    $all_vue_data->push($battle_logs);
+
+    return $all_vue_data;
 
 
   }

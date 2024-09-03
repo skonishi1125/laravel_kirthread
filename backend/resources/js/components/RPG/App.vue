@@ -2,7 +2,8 @@
   <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 600px;">
     <h4 style="text-align: center;">App.vue 
       <small style="font-size: 12px;">
-        {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}
+        {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
+        {{ battleSessionId }}
       </small>
     </h4>
 
@@ -32,6 +33,7 @@
     ...mapState(['currentScreen']),
     ...mapState(['battleStatus']),
     ...mapState(['selectedCommands']),
+    ...mapState(['battleSessionId']),
     },
     created() { // DOMに依存しない処理を書く(state処理など。)
     },
