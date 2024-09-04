@@ -5,7 +5,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-C0dtiqjP.js",
+    "file": "assets/app-BrV7ekKc.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -16,7 +16,7 @@
       "resources/js/selfmade/csv_download.js"
     ],
     "css": [
-      "assets/app-DVMMTVmu.css"
+      "assets/app-DO27SYVr.css"
     ]
   },
   "resources/js/selfmade/csv_download.js": {
