@@ -27,7 +27,7 @@
 }
 
 .log-container {
-  height: 80px; /* 高さを設定して、スクロール可能にする */
+  height: 120px; /* 高さを設定して、スクロール可能にする */
   overflow-y: scroll; /* スクロールバーを常に表示 */
   background-color: white;
   /* border: 1px solid #ccc; 境界線を追加して見やすくする（任意） */
@@ -45,7 +45,7 @@
 }
 
 .log-item {
-  margin-bottom: 5px; /* 各ログアイテムの下に余白を追加（任意） */
+  margin-bottom: -15px; /* 各ログアイテムの下に余白を追加（任意） */
 }
 
 </style>
@@ -79,7 +79,7 @@
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
           <div v-if="battleStatus == 'outputLog'" class="log-container">
             <div v-for="(log, index) in this.battleLog" :key="index" class="log-item">
-              <p>{{ log }}</p>
+              <p>ターン{{ (index + 1) }} : {{ log }}</p>
             </div>
           </div>
           <p v-if="battleStatus == 'resultWin'">敵を倒した！</p>
@@ -88,18 +88,33 @@
 
         <!-- enemy -->
         <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 300px; margin-bottom: 50px;">
-          <div @click="selectEnemy(enemy.enemy_index)" style="width:100px; height:100px; border: 1px solid black; margin: auto;" v-for="(enemy, index) in enemyData" :key="index">
-            {{ enemy.name }} / {{ enemy.value_hp }}
+          <div style="margin: 20px 0 20px 0" v-for="(enemy, index) in enemyData" :key="index">
+            <div class="progress" style="width: 150px">
+              <div class="progress-bar bg-danger" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
+                <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
+              </div>
+            </div>
+            <div @click="selectEnemy(enemy.enemy_index)" style="width:100px; height:100px; border: 1px solid black; margin: auto; margin-top: 15px">
+              {{ enemy.name }} / {{ enemy.value_hp }}
+            </div>
           </div>
         </div>
 
+        <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 100px; z-index: 5;" >
-
-          <div style="margin: auto;" v-for="(partyMember, index) in partyData" :key="index">
-            <p>{{ partyMember.nickname }}</p>
-            <p>HP: {{ partyMember.value_hp }} | AP: {{ partyMember.value_ap }}</p>
+          <div style="margin: auto; text-align:center;" v-for="(partyMember, index) in partyData" :key="index">
+            <p style="font-size: 14px;">{{ partyMember.nickname }}</p>
+            <div class="progress" style="width: 150px; margin-bottom: 5px">
+              <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
+                HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
+              </div>
+            </div>
+            <div class="progress" style="width: 150px">
+              <div class="progress-bar" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_ap, partyMember.max_value_ap) + '%' }" aria-valuenow="partyMember.value_ap" aria-valuemin="0" :aria-valuemax="partyMember.max_value_ap">
+                HP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
+              </div>
+            </div>
           </div>
-
         </div>
 
       </div>
@@ -144,27 +159,30 @@ export default {
   },
   created() {
     this.$store.dispatch('setScreen', 'battle');
-    if (this.battleStatus !== 'escape') {
+    if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
       this.getEncountData();
     }
   },
   mounted() {
   },
   methods: {
+    calculatePercentage(currentValue, maxValue) {
+      return (currentValue / maxValue) * 100;
+    },
     getEncountData() {
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
-        axios.get('/api/game/rpg/battle/encount')
-          .then(response => {
-            let data = response.data;
-            this.partyData = data[0] || [];
-            this.enemyData = data[1] || [];
-            this.$store.dispatch('setBattleSessionId', data[2] || []);
-            // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
-            console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
-            // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
-            this.$store.dispatch('setBattleStatus', 'encount');
-          }
-        );
+      axios.get('/api/game/rpg/battle/encount')
+        .then(response => {
+          let data = response.data;
+          this.partyData = data[0] || [];
+          this.enemyData = data[1] || [];
+          this.$store.dispatch('setBattleSessionId', data[2] || []);
+          // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
+          console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
+          // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
+          this.$store.dispatch('setBattleStatus', 'encount');
+        }
+      );
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
     // todo:敵の読み込みが終わっていないのにクリックするとcommand状態で停止するので調整が必要。
@@ -172,6 +190,19 @@ export default {
       if (this.battleStatus == 'start') {
         // this.getEncountData();
       } else if (this.battleStatus == 'encount') {
+        // 敗北後に画面をリロードした場合などは、該当画面に遷移させる
+        if (this.partyData.length === 0) {
+          console.log('やられてしまった...');
+          this.$store.dispatch('setBattleStatus', 'resultLose');
+          return;
+        }
+        // ログ出力後、敵を全て倒していたら勝利とする
+        if (this.enemyData.length === 0) {
+          console.log('敵を全員倒しました');
+          this.$store.dispatch('setBattleStatus', 'resultWin');
+          return;
+        }
+
         // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
         while (true) {
           let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
@@ -186,6 +217,19 @@ export default {
         this.$store.dispatch('setBattleStatus', 'command');
       } else if (this.battleStatus == 'outputLog') {
         console.log('outputLogから押しました');
+        // ログ出力後、パーティが全滅していたら敗北とする
+        if (this.partyData.length === 0) {
+          console.log('やられてしまった...');
+          this.$store.dispatch('setBattleStatus', 'resultLose');
+          return;
+        }
+        // ログ出力後、敵を全て倒していたら勝利とする
+        if (this.enemyData.length === 0) {
+          console.log('敵を全員倒しました');
+          this.$store.dispatch('setBattleStatus', 'resultWin');
+          return;
+        }
+        // パーティ/敵が残っている場合はコマンド選択に戻す
         this.$store.dispatch('setBattleStatus', 'command');
       } else {
         console.log('encount/outoutLog以外の時に画面全体をクリックしました');
@@ -244,19 +288,20 @@ export default {
             console.log(party.nickname, party.is_defeated_flag);
             return !party.is_defeated_flag;
           });
-          if (this.partyData.length === 0) {
-            console.log('やられてしまった...');
-            this.$store.dispatch('setBattleStatus', 'resultLose');
-          }
+          // if (this.partyData.length === 0) {
+          //   console.log('やられてしまった...');
+          //   this.$store.dispatch('setBattleStatus', 'resultLose');
+          // }
 
           // 敵を倒した場合、画面から取り除く
           this.enemyData = this.enemyData.filter(enemy => {
             console.log(enemy.name, enemy.is_defeated_flag);
             return !enemy.is_defeated_flag;
           });
-          if (this.enemyData.length === 0) {
-            console.log('敵を全員倒しました');
-          }
+          // if (this.enemyData.length === 0) {
+          //   console.log('敵を全員倒しました');
+          //   this.$store.dispatch('setBattleStatus', 'resultWin');
+          // }
         }
       );
     },
@@ -288,14 +333,14 @@ export default {
           session_id: this.$store.state.battleSessionId,
         })
           .then(response => { 
-            this.$store.dispatch('setBattleStatus', 'escape');
+            this.$store.dispatch('resetAllBattleStatus');
             this.$store.dispatch('setScreen', 'menu');
             this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
          });
       } else {
         //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
         console.log('escape:セッションIDが設定されていないケース');
-        this.$store.dispatch('setBattleStatus', 'escape');
+        this.$store.dispatch('resetAllBattleStatus');
         this.$store.dispatch('setScreen', 'menu');
         this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
       }
