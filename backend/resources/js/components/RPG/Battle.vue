@@ -106,7 +106,7 @@
     </div>
   </div>
 
-  <button @click="endBattle">バトル終了</button>
+  <button @click="escapeBattle">逃げる</button>
 
 </template>
 
@@ -144,15 +144,15 @@ export default {
   },
   created() {
     this.$store.dispatch('setScreen', 'battle');
-    this.getEncountData();
+    if (this.battleStatus !== 'escape') {
+      this.getEncountData();
+    }
   },
   mounted() {
   },
   methods: {
     getEncountData() {
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
-      if(this.battleStatus !== 'stopMiddle') {
-        this.$store.dispatch('setBattleStatus', 'start');
         axios.get('/api/game/rpg/battle/encount')
           .then(response => {
             let data = response.data;
@@ -165,12 +165,13 @@ export default {
             this.$store.dispatch('setBattleStatus', 'encount');
           }
         );
-      }
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
     // todo:敵の読み込みが終わっていないのにクリックするとcommand状態で停止するので調整が必要。
     nextAction() {
-      if (this.battleStatus == 'encount') {
+      if (this.battleStatus == 'start') {
+        // this.getEncountData();
+      } else if (this.battleStatus == 'encount') {
         // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
         while (true) {
           let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
@@ -263,22 +264,44 @@ export default {
       console.log('戦闘終わり');
       if (this.$store.state.battleSessionId !== '') {
         console.log('セッションIDが設定されているケース');
-        axios.post('/api/game/rpg/battle/stop_middle', {
+        axios.post('/api/game/rpg/battle/escape', {
           session_id: this.$store.state.battleSessionId,
         })
           .then(response => { 
+            this.$store.dispatch('setBattleStatus', 'escape');
             this.$store.dispatch('setScreen', 'menu');
             this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-            // stopMiddleという状態を持ったまま戦闘を離れる必要があるので、関連stateはapp.vue側でリセットする。
-            // stopMiddleの状態を保たないと、created()のthis.getEncountData()が走ってしまうから。
          });
       } else {
         //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
         console.log('セッションIDが設定されていないケース');
+        this.$store.dispatch('setBattleStatus', 'escape');
         this.$store.dispatch('setScreen', 'menu');
         this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
       }
     },
+    escapeBattle() {
+      console.log('戦闘から逃げ出した。');
+      if (this.$store.state.battleSessionId !== '') {
+        console.log('escape:セッションIDが設定されているケース');
+        axios.post('/api/game/rpg/battle/escape', {
+          session_id: this.$store.state.battleSessionId,
+        })
+          .then(response => { 
+            this.$store.dispatch('setBattleStatus', 'escape');
+            this.$store.dispatch('setScreen', 'menu');
+            this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+         });
+      } else {
+        //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
+        console.log('escape:セッションIDが設定されていないケース');
+        this.$store.dispatch('setBattleStatus', 'escape');
+        this.$store.dispatch('setScreen', 'menu');
+        this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+      }
+    },
+
+
   }
 }
 </script>

@@ -5,7 +5,7 @@ export default createStore({
   state: {
     // メイン画面の状態 'title', 'menu', 'battle'
     currentScreen: 'title',
-    battleStatus: '', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'stopMiddle'
+    battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
     currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
@@ -58,12 +58,13 @@ export default createStore({
       state.selectedEnemies= [];
     },
 
-    // 戦闘を途中で終了する場合は初期ステータスに全て戻す
+    // 戦闘を途中で終了する(逃げる)場合は初期ステータスに全て戻す
+    // また別途DB側のbattle_statesを削除する
     resetAllBattleStatus(state) {
       state.currentPartyMemberIndex = 0;
       state.selectedCommands = [];
       state.selectedEnemies= [];
-      state.battleStatus = 'stopMiddle'; 
+      state.battleStatus = 'escape'; 
       state.battleSessionId =  '';
     }
 

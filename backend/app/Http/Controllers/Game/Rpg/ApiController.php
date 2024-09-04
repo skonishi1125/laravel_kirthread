@@ -265,6 +265,15 @@ class ApiController extends Controller
       }
     }
 
+
+    // 戦闘終了後、改めて戦闘不能の味方/敵を取り除く
+    $current_players_data =  $current_players_data->filter(function($member) {
+      return !$member->is_defeated_flag;
+    })->values(); 
+    $current_enemies_data =  $current_enemies_data->filter(function($member) {
+      return !$member->is_defeated_flag;
+    })->values();
+
     Debugbar::info('-----------戦闘終了後-------------');
     Debugbar::info($current_players_data, $current_enemies_data, $battle_logs);
 
@@ -284,7 +293,7 @@ class ApiController extends Controller
   }
 
   // 戦闘途中終了をした場合、戦闘データを消す
-  public function stopBattleMiddle(Request $request) {
+  public function escapeBattle(Request $request) {
     $session_id = $request->session_id;
     $battle_state = BattleState::where('session_id', $session_id)->first();
     Debugbar::info($battle_state);
