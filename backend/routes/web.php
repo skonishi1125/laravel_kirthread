@@ -36,6 +36,7 @@ if (config('app.env') === 'local') {
   Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
   Route::get('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
   Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
+  Route::post('/api/game/rpg/battle/stop_middle', 'Game\Rpg\ApiController@stopBattleMiddle')->name('api_game_rpg_battle_stop_middle');
 
 
   Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');

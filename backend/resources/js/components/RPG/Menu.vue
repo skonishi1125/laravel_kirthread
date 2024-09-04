@@ -40,6 +40,7 @@ export default {
   },
   created() {
     this.$store.dispatch('setScreen', 'menu');
+    this.$store.dispatch('setBattleStatus', '');
   },
   mounted() {
     console.log('Menu.vue');

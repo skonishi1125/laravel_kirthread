@@ -5,11 +5,11 @@ export default createStore({
   state: {
     // メイン画面の状態 'title', 'menu', 'battle'
     currentScreen: 'title',
-    battleStatus: 'encount', // 'battle'状態のサブステータス 'encount', 'command', 'enemySelect', 'exec', 'outputLog', 'result'
+    battleStatus: '', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'stopMiddle'
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
     currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
-    battleSessionId: null, // 戦闘データのセッション
+    battleSessionId: '', // 戦闘データのセッション
   },
   mutations: {
     setScreen(state, screen) {
@@ -58,6 +58,15 @@ export default createStore({
       state.selectedEnemies= [];
     },
 
+    // 戦闘を途中で終了する場合は初期ステータスに全て戻す
+    resetAllBattleStatus(state) {
+      state.currentPartyMemberIndex = 0;
+      state.selectedCommands = [];
+      state.selectedEnemies= [];
+      state.battleStatus = 'stopMiddle'; 
+      state.battleSessionId =  '';
+    }
+
   },
   actions: {
     // commitで引数を渡す場合
@@ -89,6 +98,10 @@ export default createStore({
 
     resetBattleStatus({ commit }) {
       commit('resetBattleStatus');
+    },
+
+    resetAllBattleStatus({ commit }) {
+      commit('resetAllBattleStatus');
     },
 
   },
