@@ -103,6 +103,7 @@ class ApiController extends Controller
           'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
           'max_value_hp' => $party->value_hp, // HP最大値
           'max_value_ap' => $party->value_ap, // AP最大値
+          // 'value_hp' => $party->value_hp,
           'value_hp' => $party->value_hp,
           'value_ap' => $party->value_ap,
           'value_str' => $party->value_str,
@@ -184,19 +185,6 @@ class ApiController extends Controller
 
     Debugbar::info('-----------戦闘開始-------------');
 
-    // 戦闘不能の味方を取り除き、valueでインデックスの再割り当て。
-    // [0,1,2]というメンバーで1が戦闘不能になった場合、[0,2]となるが、それを[0,1]に再割り当てしておく
-    // あとで敵が対象を選ぶときのtarget_index rand()で使う。
-    Debugbar::info('-----------味方整頓1-------------');
-    $current_players_data =  $current_players_data->filter(function($member) {
-      return !$member->is_defeated_flag;
-    })->values();
-
-    Debugbar::info('-----------敵整頓1-------------');
-    $current_enemies_data =  $current_enemies_data->filter(function($member) {
-      return !$member->is_defeated_flag;
-    })->values();
-
     Debugbar::info('-----------コマンド情報格納-------------');
     // コマンド情報格納
     // players_json_data['id']と$coomands['partyId']を紐づける。
@@ -219,16 +207,6 @@ class ApiController extends Controller
     Debugbar::info('戦闘実行！');
     foreach($all_data_sorted_by_speed as $data) {
 
-      // Debugbar::info('-----------味方整頓-------------');
-      // $current_players_data = $current_players_data->filter(function($member) {
-      //   return !$member->is_defeated_flag;
-      // })->values();
-      // Debugbar::info('-----------敵整頓-------------');
-      // $current_enemies_data = $current_enemies_data->filter(function($member) {
-      //   return !$member->is_defeated_flag;
-      // })->values();
-
-
       if (isset($data->target_enemy_index)) {
         Debugbar::info("-----------味方( {$data->nickname} )行動開始-------------");
         if ($data->is_defeated_flag == true) {
@@ -241,12 +219,6 @@ class ApiController extends Controller
         } 
         Debugbar::info("やられ、敵全員討伐チェックOK");
         if($data->command == "ATTACK") {
-          // Debugbar::info("-----------{$data->nickname} :ATTACK------------- str: {$data->value_str} 攻撃対象: {$current_enemies_data[$data->target_enemy_index]->name}");
-          // if (isset($current_enemies_data[$data->target_enemy_index])) {
-          //   Debugbar::info("攻撃対象: {$current_enemies_data}, インデックス: {$data->target_enemy_index}");
-          //   Debugbar::info("対象名: {$current_enemies_data[$data->target_enemy_index]->name}");;
-          // }
-
           // 攻撃対象をすでに倒している場合、別の敵を指定する
           if ($current_enemies_data[$data->target_enemy_index]->is_defeated_flag == true) {
             $new_target_index = $current_enemies_data->search(function ($enemy) {
@@ -344,13 +316,6 @@ class ApiController extends Controller
 
     Debugbar::info('-----------ダメージ計算完了-------------');
 
-    // 戦闘終了後、改めて戦闘不能の味方/敵を取り除く
-    $current_players_data =  $current_players_data->filter(function($member) {
-      return !$member->is_defeated_flag;
-    })->values(); 
-    $current_enemies_data =  $current_enemies_data->filter(function($member) {
-      return !$member->is_defeated_flag;
-    })->values();
 
     Debugbar::info('-----------戦闘結果-------------');
     Debugbar::info($current_players_data, $current_enemies_data, $battle_logs);

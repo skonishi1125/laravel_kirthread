@@ -93,9 +93,6 @@ export default createStore({
     incrementPartyMemberIndex({commit}) {
       commit('incrementPartyMemberIndex')
     },
-    // resetPartyMemberIndex({commit}) {
-    //   commit('resetPartyMemberIndex')
-    // },
 
     resetBattleStatus({ commit }) {
       commit('resetBattleStatus');

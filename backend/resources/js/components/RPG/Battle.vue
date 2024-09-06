@@ -87,8 +87,8 @@
         </div>
 
         <!-- enemy -->
-        <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 300px; margin-bottom: 50px;">
-          <div style="margin: 20px 0 20px 0" v-for="(enemy, index) in enemyData" :key="index">
+        <div style="display: flex; justify-content: space-evenly; background-color: beige; min-height: 300px; margin-bottom: 50px;">
+          <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
             <div class="progress" style="width: 150px">
               <div class="progress-bar bg-danger" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
                 <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
@@ -132,17 +132,9 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      // (例として1人目がATTACKを選択)流れ: 
-      // encount時にpartyDataとenemyDataにjsonの値を格納
-      // command時にhandleCommandSelectionでcurrentMemberにpartyData[0]を格納
-      //   stateのselectedCommandsに、currentMember.nicknameとATTACKを格納
-      // enemySelect時にselectEnemyでcurrentMemberにpartyData[0]を格納
-      //   setSelectedEnemyを使って先ほど格納したstateのselectedCommandsに敵のインデックスを追加
-      // 3人分格納できた時点でexecに移る。
       partyData: {},
       enemyData: {},
       battleLog: {},
-
     }
   },
   computed: {
@@ -170,6 +162,7 @@ export default {
       return (currentValue / maxValue) * 100;
     },
     getEncountData() {
+      console.log('getEncountData(): ----------------------------------');
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
       axios.get('/api/game/rpg/battle/encount')
         .then(response => {
@@ -185,96 +178,96 @@ export default {
       );
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
-    // todo:敵の読み込みが終わっていないのにクリックするとcommand状態で停止するので調整が必要。
     nextAction() {
-      if (this.battleStatus == 'start') {
-        // this.getEncountData();
-      } else if (this.battleStatus == 'encount') {
-        // 敗北後に画面をリロードした場合などは、該当画面に遷移させる
-        if (this.partyData.length === 0) {
-          console.log('やられてしまった...');
-          this.$store.dispatch('setBattleStatus', 'resultLose');
-          return;
-        }
-        // ログ出力後、敵を全て倒していたら勝利とする
-        if (this.enemyData.length === 0) {
-          console.log('敵を全員倒しました');
-          this.$store.dispatch('setBattleStatus', 'resultWin');
-          return;
-        }
-
-        // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
-        while (true) {
-          let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-          if (currentMember.is_defeated_flag == false) {
-            this.$store.dispatch('setBattleStatus', 'command');
-            break;
-          } else {
-            this.$store.dispatch('incrementPartyMemberIndex');
-            console.log('nextAction:このパーティメンバーはすでに戦闘不能です：', currentMember.nickname);
-          }
-        }
-        this.$store.dispatch('setBattleStatus', 'command');
-      } else if (this.battleStatus == 'outputLog') {
-        console.log('outputLogから押しました');
-        // ログ出力後、パーティが全滅していたら敗北とする
-        if (this.partyData.length === 0) {
-          console.log('やられてしまった...');
-          this.$store.dispatch('setBattleStatus', 'resultLose');
-          return;
-        }
-        // ログ出力後、敵を全て倒していたら勝利とする
-        if (this.enemyData.length === 0) {
-          console.log('敵を全員倒しました');
-          this.$store.dispatch('setBattleStatus', 'resultWin');
-          return;
-        }
-        // パーティ/敵が残っている場合はコマンド選択に戻す
-        this.$store.dispatch('setBattleStatus', 'command');
-      } else {
-        console.log('encount/outoutLog以外の時に画面全体をクリックしました');
-      }
-    },
-
-    handleCommandSelection(command) {
-      while (true) {
-        // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
-        let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-        if (currentMember.is_defeated_flag == false) {
-          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
-          this.$store.dispatch('setBattleStatus', 'enemySelect');
+      console.log('nextAction(): ----------------------------------');
+      switch (this.battleStatus) {
+        case 'encount':
+          console.log('encount.');
+          // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
+          this.battleCommandSetup(); // リロードして[0,1]が戦闘不能だった場合は、インクリメントする
+          // this.$store.dispatch('setBattleStatus', 'command');
           break;
-        } else {
-          this.$store.dispatch('incrementPartyMemberIndex');
-          console.log('handleCommandSelection:このパーティメンバーはすでに戦闘不能です：', currentMember.nickname);
-        }
+        case 'outputLog': 
+          console.log('outputLog.');
+          // ログ出力の後にコマンド画面に遷移するときに、現在のメンバーが戦闘不能かどうかをチェックする
+          // これがないと、最初のキャラ（メイジちゃん）のコマンド選択画面が出てしまうから。
+          this.battleCommandSetup(); 
+          // this.$store.dispatch('setBattleStatus', 'command'); // ここか？
+        default: 
+          console.log(`設定していない調整です。${this.battleStatus}`);
       }
     },
 
-    // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
-    selectEnemy(enemyIndex) {
-      if (this.battleStatus !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
-      const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-      this.$store.dispatch('setSelectedEnemy', { partyId: currentMember.id, enemyIndex: enemyIndex });
-      if (this.$store.state.currentPartyMemberIndex < this.partyData.length - 1) {
-        this.$store.dispatch('incrementPartyMemberIndex');
-        this.$store.dispatch('setBattleStatus', 'command');
+    // 敵選択後に、コマンド処理に戻る時に動かす処理
+    battleCommandSetup() {
+      console.log('battleCommandSetup(): ----------------------------------');
+
+      // 敵を全て討伐していた場合は、勝利画面に。
+      if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){
+        console.log('敵を全て討伐したので、勝利画面に移行します。');
+        this.$store.dispatch('setBattleStatus', 'resultWin');
+        return;
+      }
+
+      // パーティメンバーの分だけ回す。(現状は3人なので、0,1,2)
+      if (this.currentPartyMemberIndex <= 2) {
+        const currentMember = this.partyData[this.currentPartyMemberIndex];
+        console.log(`currentMember: ${currentMember} ${this.currentPartyMemberIndex}`);
+        // 次に選択するコマンドメンバーが戦闘不能の場合、インクリメントをあげてスキップする
+        if (currentMember.is_defeated_flag == true) {
+          console.log(`${currentMember.nickname}は戦闘不能のため、インクリメントしてスキップ。`);
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup();
+        }
+        // 最後のメンバーが戦闘不能の時、コマンド選択画面に遷移させるとbackgroundセットでエラーになるので、0,1の場合だけコマンド画面に遷移させる。
+        if (this.currentPartyMemberIndex <= 2) {
+          console.log(`コマンド選択画面へ遷移します。`);
+          this.$store.dispatch('setBattleStatus', 'command');
+        }
       } else {
+        // 全員選択が終わっているので、行動実行。
+        console.log(`全員の選択が終了しています。`);
+
+        // 自分たちがやられている場合は、敗北画面に。
+        if (this.partyData.every(member => member.is_defeated_flag === true)){
+          console.log('↑全滅している。');
+          this.$store.dispatch('setBattleStatus', 'resultLose');
+          return;
+        }
+
         this.$store.dispatch('setBattleStatus', 'exec');
         this.execBattleCommand();
       }
     },
-    nextEnemySelectAction() {
-      if (this.battleStatus == 'command') {
-        this.$store.dispatch('setBattleStatus', 'enemySelect');
-      }
+
+    handleCommandSelection(command) {
+      console.log('handleCommandSelection(): ----------------------------------');
+      // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
+      let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+      this.$store.dispatch('setBattleStatus', 'enemySelect');
     },
+
+    // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
+    selectEnemy(enemyIndex) {
+      console.log('selectEnemy(): ----------------------------------');
+      if (this.battleStatus !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      this.$store.dispatch('setSelectedEnemy', { partyId: currentMember.id, enemyIndex: enemyIndex });
+      // インクリメントして次のメンバーのセットアップに移行する
+      this.$store.dispatch('incrementPartyMemberIndex');
+      console.log('selectEnemy終わり');
+      this.battleCommandSetup(); // 0,1選択時に走らせる
+    },
+
     execBattleCommand() {
+      console.log('execBattleCommand(): ----------------------------------');
       axios.post('/api/game/rpg/battle/exec', {
         session_id: this.$store.state.battleSessionId,
         selectedCommands: this.$store.state.selectedCommands,
       })
         .then(response => {
+          console.log('通信成功');
           let data = response.data;
           this.partyData = data[0] || [];
           this.enemyData = data[1] || [];
@@ -284,20 +277,20 @@ export default {
           this.$store.dispatch('resetBattleStatus');
 
           // 味方が倒れた場合、行動できなくする(一旦取り除こうか)
-          this.partyData = this.partyData.filter(party => {
-            console.log(party.nickname, party.is_defeated_flag);
-            return !party.is_defeated_flag;
-          });
+          // this.partyData = this.partyData.filter(party => {
+          //   console.log(party.nickname, party.is_defeated_flag);
+          //   return !party.is_defeated_flag;
+          // });
           // if (this.partyData.length === 0) {
           //   console.log('やられてしまった...');
           //   this.$store.dispatch('setBattleStatus', 'resultLose');
           // }
 
           // 敵を倒した場合、画面から取り除く
-          this.enemyData = this.enemyData.filter(enemy => {
-            console.log(enemy.name, enemy.is_defeated_flag);
-            return !enemy.is_defeated_flag;
-          });
+          // this.enemyData = this.enemyData.filter(enemy => {
+          //   console.log(enemy.name, enemy.is_defeated_flag);
+          //   return !enemy.is_defeated_flag;
+          // });
           // if (this.enemyData.length === 0) {
           //   console.log('敵を全員倒しました');
           //   this.$store.dispatch('setBattleStatus', 'resultWin');
@@ -306,7 +299,7 @@ export default {
       );
     },
     endBattle() {
-      console.log('戦闘終わり');
+      console.log('endBattle(): ----------------------------------');
       if (this.$store.state.battleSessionId !== '') {
         console.log('セッションIDが設定されているケース');
         axios.post('/api/game/rpg/battle/escape', {
@@ -326,7 +319,7 @@ export default {
       }
     },
     escapeBattle() {
-      console.log('戦闘から逃げ出した。');
+      console.log('escapeBattle(): ----------------------------------');
       if (this.$store.state.battleSessionId !== '') {
         console.log('escape:セッションIDが設定されているケース');
         axios.post('/api/game/rpg/battle/escape', {
