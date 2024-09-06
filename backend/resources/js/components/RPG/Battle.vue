@@ -111,7 +111,7 @@
             </div>
             <div class="progress" style="width: 150px">
               <div class="progress-bar" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_ap, partyMember.max_value_ap) + '%' }" aria-valuenow="partyMember.value_ap" aria-valuemin="0" :aria-valuemax="partyMember.max_value_ap">
-                HP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
+                AP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
               </div>
             </div>
           </div>

@@ -216,7 +216,7 @@ class ApiController extends Controller
     $all_data = $current_players_data->concat($current_enemies_data);
     $all_data_sorted_by_speed = $all_data->sortByDesc('value_spd');
 
-    Debugbar::info('-----------行動実行-------------');
+    Debugbar::info('戦闘実行！');
     foreach($all_data_sorted_by_speed as $data) {
 
       // Debugbar::info('-----------味方整頓-------------');
@@ -230,38 +230,61 @@ class ApiController extends Controller
 
 
       if (isset($data->target_enemy_index)) {
-        Debugbar::info('-----------味方行動開始-------------');
-        if ($data->is_defeated_flag == true) continue; // 戦闘不能の場合は何も行わない
-        if ($current_enemies_data->isEmpty()) continue; // 敵が全滅している場合は何も行わない
+        Debugbar::info("-----------味方( {$data->nickname} )行動開始-------------");
+        if ($data->is_defeated_flag == true) {
+          Debugbar::info("{$data->nickname}は戦闘不能のためスキップします。");
+          continue; // 戦闘不能の場合は何も行わない
+        } 
+        if ($current_enemies_data->isEmpty()) {
+          Debugbar::info("敵を全員倒したのでスキップします。");
+          continue; // 敵が全滅している場合は何も行わない
+        } 
+        Debugbar::info("やられ、敵全員討伐チェックOK");
         if($data->command == "ATTACK") {
-          Debugbar::info('-----------ATTACK-------------',$data->value_str, isset($current_enemies_data[$data->target_enemy_index]));
-          // 攻撃対象をすでに倒している場合、target_indexを強制的に0にする
-          if (!isset($current_enemies_data[$data->target_enemy_index])) {
-            $data->target_enemy_index = 0;
-            Debugbar::info('-----------ATTACK_攻撃対象変更後-------------',$data->value_str, isset($current_enemies_data[$data->target_enemy_index]));
+          // Debugbar::info("-----------{$data->nickname} :ATTACK------------- str: {$data->value_str} 攻撃対象: {$current_enemies_data[$data->target_enemy_index]->name}");
+          // if (isset($current_enemies_data[$data->target_enemy_index])) {
+          //   Debugbar::info("攻撃対象: {$current_enemies_data}, インデックス: {$data->target_enemy_index}");
+          //   Debugbar::info("対象名: {$current_enemies_data[$data->target_enemy_index]->name}");;
+          // }
+
+          // 攻撃対象をすでに倒している場合、別の敵を指定する
+          if ($current_enemies_data[$data->target_enemy_index]->is_defeated_flag == true) {
+            $new_target_index = $current_enemies_data->search(function ($enemy) {
+              return $enemy->is_defeated_flag == false;
+            });
+            if ($new_target_index !== false) {
+              $data->target_enemy_index = $new_target_index;
+              Debugbar::info("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$current_enemies_data[$data->target_enemy_index]->name}");
+            } else {
+              Debugbar::info("すべての敵が討伐済みになりました。敵数: {$current_enemies_data->count()}");
+            }
           }
           // ATTACK時のダメージ計算
           $damage = BattleState::calculateAttackValue(
             $data->value_str, 
             $current_enemies_data[$data->target_enemy_index]->value_def
           );
-          Debugbar::info('-----------ダメージ実数値計算-------------', $damage);
+          Debugbar::info("-----------ダメージ実数値計算------------- ダメージ: {$damage}");
           if ($damage > 0) {
-            Debugbar::info('-----------ダメージ OK-------------');
+            Debugbar::info("-----------ダメージOK------------- 敵の体力: {$current_enemies_data[$data->target_enemy_index]->value_hp}");
             $current_enemies_data[$data->target_enemy_index]->value_hp -= $damage;
+            Debugbar::info("攻撃した。敵の残り体力: {$current_enemies_data[$data->target_enemy_index]->value_hp}");
             // 敵を倒した場合
             if ($current_enemies_data[$data->target_enemy_index]->value_hp <= 0 ) {
               $current_enemies_data[$data->target_enemy_index]->value_hp = 0; // マイナスになるのを防ぐ。
               $current_enemies_data[$data->target_enemy_index]->is_defeated_flag = true;
               $battle_logs->push("{$data->nickname}の攻撃！{$current_enemies_data[$data->target_enemy_index]->name}に{$damage}のダメージ。");
               $battle_logs->push("{$current_enemies_data[$data->target_enemy_index]->name}を倒した！");
+              Debugbar::info("{$current_enemies_data[$data->target_enemy_index]->name}を倒した。敵の残り体力: {$current_enemies_data[$data->target_enemy_index]->value_hp} 敵討伐フラグ: {$current_enemies_data[$data->target_enemy_index]->is_defeated_flag} ");
             } else {
               $battle_logs->push("{$data->nickname}の攻撃！{$current_enemies_data[$data->target_enemy_index]->name}に{$damage}のダメージ。");
+              Debugbar::info("{$current_enemies_data[$data->target_enemy_index]->name}はまだ生存している。敵の残り体力: {$current_enemies_data[$data->target_enemy_index]->value_hp} 敵討伐フラグ: {$current_enemies_data[$data->target_enemy_index]->is_defeated_flag} ");
             }
           // ダメージを与えられなかった場合
           } else {
-            Debugbar::info('-----------ダメージ NG-------------');
+            Debugbar::info('-----------ダメージなし-------------');
             $battle_logs->push("{$data->nickname}の攻撃！しかし{$current_enemies_data[$data->target_enemy_index]->name}にダメージを与えられない！");
+            Debugbar::info("攻撃が通らなかった。{$current_enemies_data[$data->target_enemy_index]->name}は当然生存している。敵の残り体力: {$current_enemies_data[$data->target_enemy_index]->value_hp} 敵討伐フラグ: {$current_enemies_data[$data->target_enemy_index]->is_defeated_flag} ");
           }
         // ATTACK以外
         // todo:アイテムとかバフなら味方を選べるようにする
@@ -270,29 +293,51 @@ class ApiController extends Controller
         }
       // 敵の行動の場合
       } else {
+        Debugbar::info("-----------敵行動開始-------------");
         // ATTACK時の対象味方をランダムに指定
+        if ($data->is_defeated_flag == true) {
+          Debugbar::info("{$data->name}はすでにやられているので行動をスキップします。");
+          continue; // 行動する敵がやられている場合は何も行わない
+        } 
+        if ($current_enemies_data->isEmpty()) {
+          Debugbar::info("敵はすべて討伐済みです。");
+          continue; // 敵が全滅している場合は何も行わない
+        }
         $index = rand(0, $current_players_data->count() - 1);
-        // 攻撃対象の味方がすでに倒れている場合、target_indexを強制的に0(左端)にする
-        if (!isset($current_enemies_data[$index])) {
-          $index = 0;
-          Debugbar::info('-----------(敵)ATTACK_攻撃対象変更後-------------',$data->value_str, isset($current_enemies_data[$index]));
+        Debugbar::info("------------{$data->name}:攻撃開始 攻撃対象: {$current_players_data[$index]->nickname}---------------");
+        // 攻撃対象の味方がすでに倒れている場合、別の味方を指定する
+        if ($current_players_data[$index]->is_defeated_flag == true) {
+          $new_target_index = $current_players_data->search(function ($player) {
+            return $player->is_defeated_flag == false;
+          });
+          if ($new_target_index !== false) {
+            $index = $new_target_index;
+            Debugbar::info("攻撃対象の味方がすでに倒れているため、対象を変更。改めて攻撃対象: {$current_players_data[$index]->nickname}");
+          } else {
+            Debugbar::info("すべての味方が倒れました。敵数: {$current_players_data->count()}");
+          }
         } 
         $damage = BattleState::calculateAttackValue(
           $data->value_str, 
           $current_players_data[$index]->value_def
         );
+        Debugbar::info("-----------ダメージ実数値計算------------- ダメージ: {$damage}");
         if ($damage > 0) {
           $current_players_data[$index]->value_hp -= $damage;
+          Debugbar::info("攻撃された。味方の残り体力: {$current_players_data[$index]->value_hp}");
           if ($current_players_data[$index]->value_hp <= 0 ) {
             $current_players_data[$index]->value_hp = 0;
             $current_players_data[$index]->is_defeated_flag = true;
             $battle_logs->push("{$data->name}の攻撃！{$current_players_data[$index]->nickname}は{$damage}のダメージを受けた！");
             $battle_logs->push("{$current_players_data[$index]->nickname}はやられてしまった！");
+            Debugbar::info("{$current_players_data[$index]->nickname}がやられた。味方の残り体力: {$current_players_data[$index]->value_hp} 味方やられフラグ: {$current_players_data[$index]->is_defeated_flag} ");
           } else {
             $battle_logs->push("{$data->name}の攻撃！{$current_players_data[$index]->nickname}は{$damage}のダメージを受けた！");
+            Debugbar::info("{$current_players_data[$index]->nickname}はまだ生存している。味方の残り体力: {$current_players_data[$index]->value_hp} 味方やられフラグ: {$current_players_data[$index]->is_defeated_flag} ");
           }
         } else {
           $battle_logs->push("{$data->name}の攻撃！しかし{$current_players_data[$index]->nickname}は攻撃を防いだ！");
+          Debugbar::info("攻撃が通らなかった。{$current_players_data[$index]->nickname}は当然生存している。味方の残り体力: {$current_players_data[$index]->value_hp} 味方やられフラグ: {$current_players_data[$index]->is_defeated_flag} ");
         }
       }
     }
