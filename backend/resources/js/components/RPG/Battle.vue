@@ -73,7 +73,7 @@
           <<{{ this.currentPartyMemberIndex }} 人目選択中>>
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].nickname }}はどうする？
+            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
           </p>
           <p v-if="battleStatus == 'enemySelect'">対象を選択してください</p>
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
@@ -103,7 +103,7 @@
         <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 100px; z-index: 5;" >
           <div style="margin: auto; text-align:center;" v-for="(partyMember, index) in partyData" :key="index">
-            <p style="font-size: 14px;">{{ partyMember.nickname }}</p>
+            <p style="font-size: 14px;">{{ partyMember.name }}</p>
             <div class="progress" style="width: 150px; margin-bottom: 5px">
               <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
                 HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
@@ -179,22 +179,20 @@ export default {
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
     nextAction() {
-      console.log('nextAction(): ----------------------------------');
       switch (this.battleStatus) {
         case 'encount':
-          console.log('encount.');
+          console.log('nextAction.encount(): ----------------------------------');
           // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
           this.battleCommandSetup(); // リロードして[0,1]が戦闘不能だった場合は、インクリメントする
-          // this.$store.dispatch('setBattleStatus', 'command');
           break;
         case 'outputLog': 
-          console.log('outputLog.');
+          console.log('nextAction.outputLog(): ----------------------------------');
           // ログ出力の後にコマンド画面に遷移するときに、現在のメンバーが戦闘不能かどうかをチェックする
           // これがないと、最初のキャラ（メイジちゃん）のコマンド選択画面が出てしまうから。
           this.battleCommandSetup(); 
-          // this.$store.dispatch('setBattleStatus', 'command'); // ここか？
+          break;
         default: 
-          console.log(`設定していない調整です。${this.battleStatus}`);
+          console.log(`nextAction()で指定のない状態です。${this.battleStatus}`);
       }
     },
 
@@ -215,7 +213,7 @@ export default {
         console.log(`currentMember: ${currentMember} ${this.currentPartyMemberIndex}`);
         // 次に選択するコマンドメンバーが戦闘不能の場合、インクリメントをあげてスキップする
         if (currentMember.is_defeated_flag == true) {
-          console.log(`${currentMember.nickname}は戦闘不能のため、インクリメントしてスキップ。`);
+          console.log(`${currentMember.name}は戦闘不能のため、インクリメントしてスキップ。`);
           this.$store.dispatch('incrementPartyMemberIndex');
           this.battleCommandSetup();
         }
@@ -230,7 +228,7 @@ export default {
 
         // 自分たちがやられている場合は、敗北画面に。
         if (this.partyData.every(member => member.is_defeated_flag === true)){
-          console.log('↑全滅している。');
+          console.log('→全滅していることで選択が終了したため、敗北画面に遷移します。');
           this.$store.dispatch('setBattleStatus', 'resultLose');
           return;
         }
@@ -250,8 +248,8 @@ export default {
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
     selectEnemy(enemyIndex) {
-      console.log('selectEnemy(): ----------------------------------');
       if (this.battleStatus !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      console.log('selectEnemy(): ----------------------------------');
       const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
       this.$store.dispatch('setSelectedEnemy', { partyId: currentMember.id, enemyIndex: enemyIndex });
       // インクリメントして次のメンバーのセットアップに移行する
@@ -275,26 +273,6 @@ export default {
           this.$store.dispatch('setBattleStatus', 'outputLog');
           // stateのリセット
           this.$store.dispatch('resetBattleStatus');
-
-          // 味方が倒れた場合、行動できなくする(一旦取り除こうか)
-          // this.partyData = this.partyData.filter(party => {
-          //   console.log(party.nickname, party.is_defeated_flag);
-          //   return !party.is_defeated_flag;
-          // });
-          // if (this.partyData.length === 0) {
-          //   console.log('やられてしまった...');
-          //   this.$store.dispatch('setBattleStatus', 'resultLose');
-          // }
-
-          // 敵を倒した場合、画面から取り除く
-          // this.enemyData = this.enemyData.filter(enemy => {
-          //   console.log(enemy.name, enemy.is_defeated_flag);
-          //   return !enemy.is_defeated_flag;
-          // });
-          // if (this.enemyData.length === 0) {
-          //   console.log('敵を全員倒しました');
-          //   this.$store.dispatch('setBattleStatus', 'resultWin');
-          // }
         }
       );
     },
