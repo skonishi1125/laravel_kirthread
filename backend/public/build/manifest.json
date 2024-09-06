@@ -5,7 +5,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-C3fyP8OK.js",
+    "file": "assets/app-DdGAjtyT.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -16,10 +16,7 @@
       "resources/js/selfmade/csv_download.js"
     ],
     "css": [
-      "assets/app-Qv-av5GX.css"
-    ],
-    "assets": [
-      "assets/RPG_sample-DQTa8UZD.png"
+      "assets/app-DO27SYVr.css"
     ]
   },
   "resources/js/selfmade/csv_download.js": {
@@ -51,9 +48,5 @@
     "name": "stopwatch",
     "src": "resources/js/selfmade/stopwatch.js",
     "isEntry": true
-  },
-  "storage/app/public/RPG_sample.png": {
-    "file": "assets/RPG_sample-DQTa8UZD.png",
-    "src": "storage/app/public/RPG_sample.png"
   }
 }
