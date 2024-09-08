@@ -330,6 +330,7 @@ class ApiController extends Controller
       });
 
       // 各種処理が終わったらセッションデータを破棄する。
+      // ここの処理をコメントアウトすれば戦闘勝利部分のデバッグができる
       $battle_state->delete();
       Debugbar::debug("戦闘データを削除しました。");
 
@@ -348,12 +349,7 @@ class ApiController extends Controller
     $session_id = $request->session_id;
     $battle_state = BattleState::where('session_id', $session_id)->first();
     Debugbar::debug($battle_state);
-    return response()->json(
-      [], 
-      404, 
-      ['Content-Type' => 'application/json'], 
-      JSON_UNESCAPED_UNICODE
-    );
+    if (!$battle_state) return response()->json([], 404, ['Content-Type' => 'application/json'], JSON_UNESCAPED_UNICODE);
     $battle_state->delete();
   }
 

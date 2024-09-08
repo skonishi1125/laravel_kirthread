@@ -133,11 +133,12 @@
 
 <script>
 import { mapState } from 'vuex';
-import $ from 'jquery';
 import axios from 'axios';
 export default {
   data() {
     return {
+      fieldId: this.$route.params.fieldId,
+      stageId: this.$route.params.stageId,
       partyData: {},
       enemyData: {},
       battleLog: {},
@@ -163,21 +164,19 @@ export default {
   mounted() {
     if (this.battleStatus == 'start') {
       console.log('mounted() ------------------------')
-      this.getEncountData();
+      this.getEncountData(this.fieldId, this.stageId);
     }
   },
   methods: {
     calculatePercentage(currentValue, maxValue) {
       return (currentValue / maxValue) * 100;
     },
-    getEncountData() {
-      console.log('getEncountData(): ----------------------------------');
+    getEncountData(fieldId, stageId) {
+      console.log(`getEncountData(): fieldId:${fieldId} stageId:${stageId} ----------------------------------`);
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
-      let fieldId = this.$route.params.fieldId;
-      let stageId = this.$route.params.stageId;
       axios.post(`/api/game/rpg/battle/encount`,{
         field_id: fieldId,
-        stage_id: stageId
+        stage_id: stageId,
       })
         .then(response => {
           let data = response.data;
@@ -314,6 +313,13 @@ export default {
     nextBattle() {
       // 戦闘終了後、次のステージに進む。
       // 1-1 > 1-2 > 1-3という感じで。
+      const fieldId = this.$route.params.fieldId;
+      const stageId = this.$route.params.stageId;
+      console.log('nextBattle(): --------------------', fieldId, stageId);
+      this.$store.dispatch('resetAllBattleStatus');
+      this.$store.dispatch('setBattleStatus', 'start');
+      const nextStageId = parseInt(stageId) + 1;
+      this.$router.push(`/game/rpg/battle/${fieldId}/${nextStageId}`); // 任意の画面に遷移
     },
 
     // endBattle() {
@@ -362,8 +368,19 @@ export default {
         this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
       }
     },
-
-
+  },
+  beforeRouteUpdate(to, from, next) {
+    console.log('beforeRouteUpdate(): URL変更を確認しました ----------------------------------');
+    // 戦闘ステータスが変更されたときにデータを再取得
+    // `to` 引数を使って新しいルートのパラメータを取得
+    const newFieldId = to.params.fieldId;
+    const newStageId = to.params.stageId;
+    console.log(`新しいfieldId: ${newFieldId} stageId: ${newStageId} `);
+    if (newFieldId && newStageId) {
+      console.log('エンカウントデータを再取得します。');
+      this.getEncountData(newFieldId, newStageId);
+    }
+    next();
   }
 }
 </script>
