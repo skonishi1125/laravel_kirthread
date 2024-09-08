@@ -1,6 +1,6 @@
 <template>
   <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 600px;">
-    <h4 style="text-align: center;">App.vue 
+    <h4 style="text-align: center; height: 60px;">App.vue 
       <small style="font-size: 12px;">
         {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
         {{ battleSessionId }}

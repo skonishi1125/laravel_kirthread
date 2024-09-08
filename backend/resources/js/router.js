@@ -37,8 +37,8 @@ const routes = [
   },
   { 
       // path: '/game/rpg/battle',
-      path: '/game/rpg/battle/:field_id',
-      // path: '/game/rpg/battle/:field_id/:stage_id',
+      // path: '/game/rpg/battle/:field_id',
+      path: '/game/rpg/battle/:fieldId/:stageId',
       name: 'game.rpg.battle',
       component: Battle
   },
