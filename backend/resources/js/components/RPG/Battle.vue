@@ -27,7 +27,7 @@
 }
 
 .log-container {
-  height: 120px; /* 高さを設定して、スクロール可能にする */
+  height: 70px; /* 高さを設定して、スクロール可能にする */
   overflow-y: scroll; /* スクロールバーを常に表示 */
   background-color: white;
   /* border: 1px solid #ccc; 境界線を追加して見やすくする（任意） */
@@ -69,11 +69,12 @@
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: beige; margin-bottom: 50px;">
-          <<{{ this.currentPartyMemberIndex }} 人目選択中>>
+        <div style="background-color: white; margin-bottom: 30px; height: 90px;">
+          <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
+           【バトルログ】
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].nickname }}はどうする？
+            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
           </p>
           <p v-if="battleStatus == 'enemySelect'">対象を選択してください</p>
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
@@ -82,13 +83,18 @@
               <p>ターン{{ (index + 1) }} : {{ log }}</p>
             </div>
           </div>
-          <p v-if="battleStatus == 'resultWin'">敵を倒した！</p>
-          <p v-if="battleStatus == 'resultLose'" @click="endBattle">全滅した...</p>
+          <div v-if="battleStatus == 'resultWin'" class="log-container">
+            <div v-for="(log, index) in this.resultLog" :key="index" class="log-item">
+              <p>{{ log }}</p>
+            </div>
+            <a @click="nextBattle">次の戦闘へ進む</a>
+          </div>
+          <p v-if="battleStatus == 'resultLose'">全滅した...</p>
         </div>
 
         <!-- enemy -->
-        <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 300px; margin-bottom: 50px;">
-          <div style="margin: 20px 0 20px 0" v-for="(enemy, index) in enemyData" :key="index">
+        <div style="display: flex; justify-content: space-evenly; background-color: beige; min-height: 300px; margin-bottom: 50px;">
+          <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
             <div class="progress" style="width: 150px">
               <div class="progress-bar bg-danger" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
                 <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
@@ -103,7 +109,7 @@
         <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 100px; z-index: 5;" >
           <div style="margin: auto; text-align:center;" v-for="(partyMember, index) in partyData" :key="index">
-            <p style="font-size: 14px;">{{ partyMember.nickname }}</p>
+            <p style="font-size: 14px;">{{ partyMember.name }}</p>
             <div class="progress" style="width: 150px; margin-bottom: 5px">
               <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
                 HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
@@ -132,17 +138,10 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      // (例として1人目がATTACKを選択)流れ: 
-      // encount時にpartyDataとenemyDataにjsonの値を格納
-      // command時にhandleCommandSelectionでcurrentMemberにpartyData[0]を格納
-      //   stateのselectedCommandsに、currentMember.nicknameとATTACKを格納
-      // enemySelect時にselectEnemyでcurrentMemberにpartyData[0]を格納
-      //   setSelectedEnemyを使って先ほど格納したstateのselectedCommandsに敵のインデックスを追加
-      // 3人分格納できた時点でexecに移る。
       partyData: {},
       enemyData: {},
       battleLog: {},
-
+      resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
     }
   },
   computed: {
@@ -159,19 +158,27 @@ export default {
   },
   created() {
     this.$store.dispatch('setScreen', 'battle');
-    if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
-      this.getEncountData();
-    }
+    // if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
   },
   mounted() {
+    if (this.battleStatus == 'start') {
+      console.log('mounted() ------------------------')
+      this.getEncountData();
+    }
   },
   methods: {
     calculatePercentage(currentValue, maxValue) {
       return (currentValue / maxValue) * 100;
     },
     getEncountData() {
+      console.log('getEncountData(): ----------------------------------');
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
-      axios.get('/api/game/rpg/battle/encount')
+      let fieldId = this.$route.params.fieldId;
+      let stageId = this.$route.params.stageId;
+      axios.post(`/api/game/rpg/battle/encount`,{
+        field_id: fieldId,
+        stage_id: stageId
+      })
         .then(response => {
           let data = response.data;
           this.partyData = data[0] || [];
@@ -185,96 +192,98 @@ export default {
       );
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
-    // todo:敵の読み込みが終わっていないのにクリックするとcommand状態で停止するので調整が必要。
     nextAction() {
-      if (this.battleStatus == 'start') {
-        // this.getEncountData();
-      } else if (this.battleStatus == 'encount') {
-        // 敗北後に画面をリロードした場合などは、該当画面に遷移させる
-        if (this.partyData.length === 0) {
-          console.log('やられてしまった...');
-          this.$store.dispatch('setBattleStatus', 'resultLose');
-          return;
+      switch (this.battleStatus) {
+        case 'encount':
+          console.log('nextAction() encount: ----------------------------------');
+          // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
+          this.battleCommandSetup(); // リロードして[0,1]が戦闘不能だった場合は、インクリメントする
+          break;
+        case 'outputLog': 
+          console.log('nextAction() outputLog: ----------------------------------');
+          // ログ出力の後にコマンド画面に遷移するときに、現在のメンバーが戦闘不能かどうかをチェックする
+          // これがないと、最初のキャラ（メイジちゃん）のコマンド選択画面が出てしまうから。
+          this.battleCommandSetup(); 
+          break;
+        // case 'resultWin':
+        //   console.log('nextAction() resultWin: ----------------------------------');
+        //   this.resultWin();
+        default: 
+          console.log(`nextAction()で指定のない状態です。${this.battleStatus}`);
+      }
+    },
+
+    // 敵選択後に、コマンド処理に戻る時に動かす処理
+    battleCommandSetup() {
+      console.log('battleCommandSetup(): ----------------------------------');
+
+      // 敵を全て討伐していた場合は、勝利画面に。
+      if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){
+        console.log('敵を全て討伐したので、勝利画面に移行します。');
+        this.$store.dispatch('setBattleStatus', 'resultWin');
+        this.resultWin();
+        return;
+      }
+
+      // パーティメンバーの分だけ回す。(現状は3人なので、0,1,2)
+      if (this.currentPartyMemberIndex <= 2) {
+        const currentMember = this.partyData[this.currentPartyMemberIndex];
+        console.log(`currentMember: ${currentMember} ${this.currentPartyMemberIndex}`);
+        // 次に選択するコマンドメンバーが戦闘不能の場合、インクリメントをあげてスキップする
+        if (currentMember.is_defeated_flag == true) {
+          console.log(`${currentMember.name}は戦闘不能のため、インクリメントしてスキップ。`);
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup();
         }
-        // ログ出力後、敵を全て倒していたら勝利とする
-        if (this.enemyData.length === 0) {
-          console.log('敵を全員倒しました');
-          this.$store.dispatch('setBattleStatus', 'resultWin');
+        // 最後のメンバーが戦闘不能の時、コマンド選択画面に遷移させるとbackgroundセットでエラーになるので、0,1の場合だけコマンド画面に遷移させる。
+        if (this.currentPartyMemberIndex <= 2) {
+          console.log(`コマンド選択画面へ遷移します。`);
+          this.$store.dispatch('setBattleStatus', 'command');
+        }
+      } else {
+        // 全員選択が終わっているので、行動実行。
+        console.log(`全員の選択が終了しています。`);
+
+        // 自分たちがやられている場合は、敗北画面に。
+        if (this.partyData.every(member => member.is_defeated_flag === true)){
+          console.log('→全滅していることで選択が終了したため、敗北画面に遷移します。');
+          this.$store.dispatch('setBattleStatus', 'resultLose');
           return;
         }
 
-        // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
-        while (true) {
-          let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-          if (currentMember.is_defeated_flag == false) {
-            this.$store.dispatch('setBattleStatus', 'command');
-            break;
-          } else {
-            this.$store.dispatch('incrementPartyMemberIndex');
-            console.log('nextAction:このパーティメンバーはすでに戦闘不能です：', currentMember.nickname);
-          }
-        }
-        this.$store.dispatch('setBattleStatus', 'command');
-      } else if (this.battleStatus == 'outputLog') {
-        console.log('outputLogから押しました');
-        // ログ出力後、パーティが全滅していたら敗北とする
-        if (this.partyData.length === 0) {
-          console.log('やられてしまった...');
-          this.$store.dispatch('setBattleStatus', 'resultLose');
-          return;
-        }
-        // ログ出力後、敵を全て倒していたら勝利とする
-        if (this.enemyData.length === 0) {
-          console.log('敵を全員倒しました');
-          this.$store.dispatch('setBattleStatus', 'resultWin');
-          return;
-        }
-        // パーティ/敵が残っている場合はコマンド選択に戻す
-        this.$store.dispatch('setBattleStatus', 'command');
-      } else {
-        console.log('encount/outoutLog以外の時に画面全体をクリックしました');
+        this.$store.dispatch('setBattleStatus', 'exec');
+        this.execBattleCommand();
       }
     },
 
     handleCommandSelection(command) {
-      while (true) {
-        // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
-        let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-        if (currentMember.is_defeated_flag == false) {
-          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
-          this.$store.dispatch('setBattleStatus', 'enemySelect');
-          break;
-        } else {
-          this.$store.dispatch('incrementPartyMemberIndex');
-          console.log('handleCommandSelection:このパーティメンバーはすでに戦闘不能です：', currentMember.nickname);
-        }
-      }
+      console.log('handleCommandSelection(): ----------------------------------');
+      // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
+      let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+      this.$store.dispatch('setBattleStatus', 'enemySelect');
     },
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
     selectEnemy(enemyIndex) {
       if (this.battleStatus !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      console.log('selectEnemy(): ----------------------------------');
       const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
       this.$store.dispatch('setSelectedEnemy', { partyId: currentMember.id, enemyIndex: enemyIndex });
-      if (this.$store.state.currentPartyMemberIndex < this.partyData.length - 1) {
-        this.$store.dispatch('incrementPartyMemberIndex');
-        this.$store.dispatch('setBattleStatus', 'command');
-      } else {
-        this.$store.dispatch('setBattleStatus', 'exec');
-        this.execBattleCommand();
-      }
+      // インクリメントして次のメンバーのセットアップに移行する
+      this.$store.dispatch('incrementPartyMemberIndex');
+      console.log('selectEnemy終わり');
+      this.battleCommandSetup(); // 0,1選択時に走らせる
     },
-    nextEnemySelectAction() {
-      if (this.battleStatus == 'command') {
-        this.$store.dispatch('setBattleStatus', 'enemySelect');
-      }
-    },
+
     execBattleCommand() {
+      console.log('execBattleCommand(): ----------------------------------');
       axios.post('/api/game/rpg/battle/exec', {
         session_id: this.$store.state.battleSessionId,
         selectedCommands: this.$store.state.selectedCommands,
       })
         .then(response => {
+          console.log('通信成功');
           let data = response.data;
           this.partyData = data[0] || [];
           this.enemyData = data[1] || [];
@@ -282,51 +291,53 @@ export default {
           this.$store.dispatch('setBattleStatus', 'outputLog');
           // stateのリセット
           this.$store.dispatch('resetBattleStatus');
-
-          // 味方が倒れた場合、行動できなくする(一旦取り除こうか)
-          this.partyData = this.partyData.filter(party => {
-            console.log(party.nickname, party.is_defeated_flag);
-            return !party.is_defeated_flag;
-          });
-          // if (this.partyData.length === 0) {
-          //   console.log('やられてしまった...');
-          //   this.$store.dispatch('setBattleStatus', 'resultLose');
-          // }
-
-          // 敵を倒した場合、画面から取り除く
-          this.enemyData = this.enemyData.filter(enemy => {
-            console.log(enemy.name, enemy.is_defeated_flag);
-            return !enemy.is_defeated_flag;
-          });
-          // if (this.enemyData.length === 0) {
-          //   console.log('敵を全員倒しました');
-          //   this.$store.dispatch('setBattleStatus', 'resultWin');
-          // }
         }
       );
     },
-    endBattle() {
-      console.log('戦闘終わり');
-      if (this.$store.state.battleSessionId !== '') {
-        console.log('セッションIDが設定されているケース');
-        axios.post('/api/game/rpg/battle/escape', {
-          session_id: this.$store.state.battleSessionId,
-        })
-          .then(response => { 
-            this.$store.dispatch('setBattleStatus', 'escape');
-            this.$store.dispatch('setScreen', 'menu');
-            this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-         });
-      } else {
-        //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
-        console.log('セッションIDが設定されていないケース');
-        this.$store.dispatch('setBattleStatus', 'escape');
-        this.$store.dispatch('setScreen', 'menu');
-        this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-      }
+
+    resultWin() {
+      // 経験値と獲得ゴールドを加算させ、レベルアップ処理を行う
+      console.log('resultWin: ----------------------------------');
+      axios.post('/api/game/rpg/battle/result-win', {
+        session_id: this.$store.state.battleSessionId,
+        is_win: true,
+      })
+        .then(response => {
+          console.log('リザルト結果処理完了。');
+          let data = response.data;
+          this.resultLog = data; //戦闘結果を取得する
+          console.dir(response.data);
+        }
+      );
     },
+
+    nextBattle() {
+      // 戦闘終了後、次のステージに進む。
+      // 1-1 > 1-2 > 1-3という感じで。
+    },
+
+    // endBattle() {
+    //   console.log('endBattle(): ----------------------------------');
+    //   if (this.$store.state.battleSessionId !== '') {
+    //     console.log('セッションIDが設定されているケース');
+    //     axios.post('/api/game/rpg/battle/escape', {
+    //       session_id: this.$store.state.battleSessionId,
+    //     })
+    //       .then(response => { 
+    //         this.$store.dispatch('setBattleStatus', 'escape');
+    //         this.$store.dispatch('setScreen', 'menu');
+    //         this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+    //      });
+    //   } else {
+    //     //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
+    //     console.log('セッションIDが設定されていないケース');
+    //     this.$store.dispatch('setBattleStatus', 'escape');
+    //     this.$store.dispatch('setScreen', 'menu');
+    //     this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+    //   }
+    // },
     escapeBattle() {
-      console.log('戦闘から逃げ出した。');
+      console.log('escapeBattle(): ----------------------------------');
       if (this.$store.state.battleSessionId !== '') {
         console.log('escape:セッションIDが設定されているケース');
         axios.post('/api/game/rpg/battle/escape', {
@@ -336,7 +347,13 @@ export default {
             this.$store.dispatch('resetAllBattleStatus');
             this.$store.dispatch('setScreen', 'menu');
             this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-         });
+         })
+         .catch(error => {
+          // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
+          this.$store.dispatch('resetAllBattleStatus');
+          this.$store.dispatch('setScreen', 'menu');
+          this.$router.push('/game/rpg/menu');
+          });
       } else {
         //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
         console.log('escape:セッションIDが設定されていないケース');

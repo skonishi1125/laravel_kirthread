@@ -16,16 +16,20 @@
       <table class="table table-borderless">
         <thead>
             <tr>
-              <th>名前</th>
+              <th>フィールド名</th>
               <th>難易度</th>
-              <th></th>
+              <th>ステージ</th>
             </tr>
         </thead>
         <tbody>
           <tr v-for="field in fieldList">
             <td>{{ field.name }}</td>
             <td>{{ field.difficulty }}</td>
-            <td><a class="action-link" @click="startBattle(field.id)">行く</a></td>
+            <td>
+              <a v-for="stage_id in 5" :key="stage_id" class="action-link" @click="startBattle(field.id, stage_id)" style="margin:0 10px; display: inline-block; min-width: 30px;">
+                {{ field.id }}-{{ stage_id }}
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -59,10 +63,10 @@
             this.fieldList = response.data;
           });
       },
-      startBattle(stageId) {
+      startBattle(fieldId, stageId) {
         this.$store.dispatch('setScreen', 'battle');
-        this.$router.push('/game/rpg/battle');
-        // this.$router.push(`/game/rpg/battle/${stageId}`);
+        // this.$router.push('/game/rpg/battle');
+        this.$router.push(`/game/rpg/battle/${fieldId}/${stageId}`);
       }
 
     }

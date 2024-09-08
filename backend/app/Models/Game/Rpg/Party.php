@@ -10,6 +10,10 @@ class Party extends Model
     use HasFactory;
     protected $table = 'rpg_parties';
 
+    protected $guarded = [
+      'id',
+    ];
+
     public function skills() {
       return $this->belongsToMany(Skill::class, 'rpg_party_learned_skills', 'rpg_party_id', 'rpg_skill_id');
     }
