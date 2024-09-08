@@ -75,7 +75,8 @@ class ApiController extends Controller
   // 戦闘
   // 戦闘開始
   public function setEncountElement(Request $request) {
-    $field_id = 3; // todo:$requestから取得する
+    $field_id = $request->field_id;
+    Debugbar::debug("setEncountElement(). field_id: {$field_id} ---------------");
     $user_id = Auth::id();
 
     // 戦闘中かどうかを判断する

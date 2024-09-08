@@ -151,11 +151,13 @@ export default {
   },
   created() {
     this.$store.dispatch('setScreen', 'battle');
-    if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
-      this.getEncountData();
-    }
+    // if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
   },
   mounted() {
+    if (this.battleStatus == 'start') {
+      console.log('mounted() ------------------------')
+      this.getEncountData();
+    }
   },
   methods: {
     calculatePercentage(currentValue, maxValue) {
@@ -164,7 +166,10 @@ export default {
     getEncountData() {
       console.log('getEncountData(): ----------------------------------');
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
-      axios.get('/api/game/rpg/battle/encount')
+      let field_id = this.$route.params.field_id;  // URLからフィールドIDを取得
+      axios.post(`/api/game/rpg/battle/encount`,{
+        field_id: field_id
+      })
         .then(response => {
           let data = response.data;
           this.partyData = data[0] || [];

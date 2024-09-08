@@ -61,8 +61,8 @@
       },
       startBattle(stageId) {
         this.$store.dispatch('setScreen', 'battle');
-        this.$router.push('/game/rpg/battle');
-        // this.$router.push(`/game/rpg/battle/${stageId}`);
+        // this.$router.push('/game/rpg/battle');
+        this.$router.push(`/game/rpg/battle/${stageId}`);
       }
 
     }
