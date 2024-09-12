@@ -23,7 +23,6 @@
 }
 .command-list-row:hover {
   background-color: beige;
-
 }
 
 .character-picture {
@@ -33,6 +32,24 @@
   top: -10%;
   width: 60%;
   min-height: 110%;
+}
+
+.enemy-picture {
+  background-size: cover;
+  width: 180px;
+  height: 180px;
+  margin-top: 20px;
+}
+
+/* battleStatus === 'enemySelect'の場合のみ割り当てる */
+.enemy-hover-active {
+  cursor: pointer;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.enemy-hover-active:hover {
+  border: 2px solid #ffcc00;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .log-container {
@@ -110,8 +127,11 @@
                 <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
               </div>
             </div>
-            <!-- todo: 敵ごとに変える -->
-            <div @click="selectEnemy(enemy.enemy_index)" style="background-image: url('/storage/rpg/enemy/srara.png'); background-size: cover; width:180px; height:180px; margin: auto;">
+            <div 
+            @click="selectEnemy(enemy.enemy_index)" 
+            :style="{ backgroundImage: 'url(/storage/rpg/enemy/' + enemy.portrait + ')'}" 
+            :class="{ 'enemy-picture': true, 'enemy-hover-active': battleStatus === 'enemySelect'}"
+            >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
           </div>
@@ -119,7 +139,7 @@
 
         <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: none; height: 100px; z-index: 5; margin-bottom: 20px;" >
-          <div style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: 1px solid;" v-for="(partyMember, index) in partyData" :key="index">
+          <div style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" v-for="(partyMember, index) in partyData" :key="index">
             <p style="font-size: 14px;">{{ partyMember.name }}</p>
             <div class="progress" style="width: 150px; margin-bottom: 5px">
               <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
