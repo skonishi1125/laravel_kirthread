@@ -17,13 +17,22 @@
   text-align: center;
 }
 
+.command-list-row {
+  padding: 6% 0%;
+  cursor: pointer;
+}
+.command-list-row:hover {
+  background-color: beige;
+
+}
+
 .character-picture {
   position: absolute;
   background-size: cover;
-  right: 10%;
-  top: 12%;
-  width: 30%;
-  height: 80%;
+  right: 0%;
+  top: -10%;
+  width: 60%;
+  min-height: 110%;
 }
 
 .log-container {
@@ -52,24 +61,25 @@
 
 <template>
   <div class="row" @click="nextAction">
-    <div class="col-12" style="background-color: green; border: 1px solid red; position: relative;">
-      <div style="display: flex; flex-flow: column; justify-content: space-between; background-color: pink;">
+    <!-- todo: ステージごとに背景を変える -->
+    <div class="col-12" style="background-image: url('/storage/rpg/field/grassland.png'); background-size: cover;  position: relative;">
+      <div style="display: flex; flex-flow: column; justify-content: space-between;">
 
         <!-- command 普段は非表示で、battleStatusがcommandの場合のみ出す。 -->
          <div v-if="battleStatus == 'command'">
            <div class="command-list">
-            <div style="margin: auto;"><button @click="handleCommandSelection('ATTACK')">ATTACK</button></div>
-            <div style="margin: auto;"><button @click="handleCommandSelection('SPECIAL')">SPECIAL</button></div>
-            <div style="margin: auto;"><button @click="handleCommandSelection('DEFENCE')">DEFENCE</button></div>
-            <div style="margin: auto;"><button @click="handleCommandSelection('ITEM')">ITEM</button></div>
-            <div style="margin: auto;"><button @click="handleCommandSelection('ESCAPE')">ESCAPE</button></div>
+            <div class="command-list-row" @click="handleCommandSelection('ATTACK')">ATTACK</div>
+            <div class="command-list-row" @click="handleCommandSelection('SPECIAL')">SPECIAL</div>
+            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')">DEFENCE</div>
+            <div class="command-list-row" @click="handleCommandSelection('ITEM')">ITEM</div>
+            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')">ESCAPE</div>
            </div>
            <!-- 味方の立ち絵を出す -->
            <div class="character-picture" :style="backgroundImageStyle"></div>
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin-bottom: 30px; height: 90px;">
+        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
            【バトルログ】
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
@@ -93,22 +103,23 @@
         </div>
 
         <!-- enemy -->
-        <div style="display: flex; justify-content: space-evenly; background-color: beige; min-height: 300px; margin-bottom: 50px;">
+        <div style="display: flex; justify-content: space-evenly; min-height: 300px; margin-bottom: 50px;">
           <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
-            <div class="progress" style="width: 150px">
+            <div class="progress">
               <div class="progress-bar bg-danger" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
                 <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
               </div>
             </div>
-            <div @click="selectEnemy(enemy.enemy_index)" style="width:100px; height:100px; border: 1px solid black; margin: auto; margin-top: 15px">
-              {{ enemy.name }} / {{ enemy.value_hp }}
+            <!-- todo: 敵ごとに変える -->
+            <div @click="selectEnemy(enemy.enemy_index)" style="background-image: url('/storage/rpg/enemy/srara.png'); background-size: cover; width:180px; height:180px; margin: auto;">
+              <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
           </div>
         </div>
 
         <!-- partyのステータス -->
-        <div style="display: flex; justify-content: space-evenly; background-color: beige; height: 100px; z-index: 5;" >
-          <div style="margin: auto; text-align:center;" v-for="(partyMember, index) in partyData" :key="index">
+        <div style="display: flex; justify-content: space-evenly; background-color: none; height: 100px; z-index: 5; margin-bottom: 20px;" >
+          <div style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: 1px solid;" v-for="(partyMember, index) in partyData" :key="index">
             <p style="font-size: 14px;">{{ partyMember.name }}</p>
             <div class="progress" style="width: 150px; margin-bottom: 5px">
               <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
