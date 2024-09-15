@@ -72,7 +72,18 @@ class ApiController extends Controller
 
   // フィールド
   public function fieldList() {
-    return Field::get();
+    $fields = Field::get();
+    $field_json_data = collect();
+
+    foreach ($fields as $field) {
+      $field_json_data->push([
+        'id' => $field->id,
+        'name' => $field->name,
+        'difficulty' => $field->convertDifficultyStars(),
+      ]);
+    }
+
+    return $field_json_data;
   }
 
   // 戦闘
@@ -83,8 +94,33 @@ class ApiController extends Controller
     Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
     $user_id = Auth::id();
 
-    // 戦闘中かどうかを判断する
+    // 戦闘中かどうかの判定
     $is_user_battle = BattleState::where('user_id', $user_id)->exists();
+
+    // stage_idが1以外なら、URLベタ打ちでなく戦闘後に正しく遷移してきたかを確認する。
+    // 現在1-2なら、clearStageに'1-1'が入っていたら通せば良い。1-3なら、'1-2'をクリアしていたら通す
+    // ただしstage_id = 2以降の時点で間違えて画面更新をした場合とかはclear_stageがnullになるのでスルーする
+    // todo: オムニバス形式にするなら、火山に入ったときに「草原をクリアしたか」とかも設定する必要あり。
+    if ($stage_id != 1 && $is_user_battle == null) {
+      Debugbar::debug("ステージ2以降の処理。 ---------------");
+      $clear_stage = $request->clear_stage;
+      Debugbar::debug($clear_stage);
+      if ($clear_stage == null) {
+        Debugbar::debug("$clear_stage null error");
+        return abort(500,'clearStageがnullです');
+      } 
+      // クリアしたfield_idと現在のfield_idが一致する場合 &&
+      // クリアしたstage_idと現在のstage_id - 1の値が一致する場合は処理を継続。
+      // そうでない場合は500レスポンスを返す。
+      // 1-3 -> 1-4に遷移したならば、 1 == 1 || 3 == (4-1) になるはず
+      $explode_clear_stage = explode('-', $clear_stage);
+      if ($explode_clear_stage[0] == $field_id && $explode_clear_stage[1] == ($stage_id - 1)) {
+        Debugbar::debug("クリア判定しました。現在: {$field_id}-{$stage_id} クリア: {$clear_stage} ---------------");
+      } else {
+        return abort(500,'予期しない形でステージ遷移が行われました');
+      }
+    }
+
     if(!$is_user_battle) {
       Debugbar::debug("戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------");
       $parties = Party::where('user_id', $user_id)->get();
@@ -176,13 +212,24 @@ class ApiController extends Controller
         'session_id' => $session_id,
         'players_json_data' => json_encode($players_data),
         'enemies_json_data' => json_encode($enemies_data),
-        'status' => 'encount',
+        'current_field_id' => $field_id,
+        'current_stage_id' => $stage_id,
       ]);
 
     } else {
       // 戦闘中のデータを取得する
       Debugbar::debug("戦闘中です。セッションIDから戦闘履歴を取得します。  ---------------");
       $battle_state = BattleState::where('user_id', $user_id)->first();
+
+      // $battle_stateの情報と現在のfield_id, stage_idが一致しているか確認する
+      // 例えば /game/rpg/battle/1/2 に正常進行 -> 1/3にURLベタ打ちすると1-2のstateがある状態で1-3に遷移できる
+      // この場合、1-2の敵データをクリアすると1-4に進行することができてしまう
+      if ($battle_state->current_field_id == $field_id && $battle_state->current_stage_id == $stage_id) {
+        Debugbar::debug("現URLとbattle_stateのデータの整合性が確認できました。現在: {$field_id}-{$stage_id} battle_state: {$battle_state->current_field_id}-{$battle_state->current_stage_id}");
+      } else {
+        return abort(500, '現URLとbattle_stateのデータの整合性が確認できませんでした。');
+      }
+
       $session_id = $battle_state['session_id'];
       $players_data = json_decode($battle_state['players_json_data']);
       $enemies_data = json_decode($battle_state['enemies_json_data']);
@@ -256,13 +303,13 @@ class ApiController extends Controller
     // 戦闘が正常に終了したかのチェック
     // vue側でresultWinBattle()からもらえるis_winか、もしくはjsonの敵情報のis_defeated_flagを全て見るかどっちか。
     // 一旦リクエストでもらえる値を参考にする
-    if (!$is_win) return redirect()->route('game_rpg_index');
+    if (!$is_win) return abort(500, 'is_win error');
 
     $battle_state = BattleState::where('session_id', $session_id)->first();
 
     // ※ 戦闘勝利の処理を繰り返せてしまうとリロードなどで稼がれる可能性がある。
     // そのためトランザクションで挟んだのち、処理後に戦闘キャッシュを消して管理する。
-    if (!$battle_state) return redirect()->route('game_rpg_index'); 
+    if (!$battle_state) return abort(500, 'not exist battle state');
 
     $savedata = SaveData::where('user_id', Auth::id())->first();
     $parties = Party::where('user_id', Auth::id())->get();
