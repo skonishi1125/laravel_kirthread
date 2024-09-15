@@ -317,10 +317,10 @@ class ApiController extends Controller
             // 例えばlv1からlv4に上がった時、 lv2, lv3, lv4としてステータスを回したい。
             //  ($i = 2; $i <= 4; $i++) で合計3回。
             for ($i = $current_party_level + 1; $i <= $new_level; $i++) {
-              // todo: 各ステータスを上げる処理を作る。今はとりあえず力を上げるだけ。
-              $str_increase = rand(1, 3);
-              $party->increment('value_str', $str_increase);
-              Debugbar::debug("STRが{$str_increase}アップ。");
+              // ステータス上昇処理
+              $increase_values = Party::calculateGaussianGrowth($party);
+
+              Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
             }
             // レベル反映
             $party->update(['level' => $new_level]);
@@ -330,6 +330,7 @@ class ApiController extends Controller
       });
 
       // 各種処理が終わったらセッションデータを破棄する。
+      // ここの処理をコメントアウトすれば戦闘勝利部分のデバッグができる
       $battle_state->delete();
       Debugbar::debug("戦闘データを削除しました。");
 
@@ -348,12 +349,7 @@ class ApiController extends Controller
     $session_id = $request->session_id;
     $battle_state = BattleState::where('session_id', $session_id)->first();
     Debugbar::debug($battle_state);
-    return response()->json(
-      [], 
-      404, 
-      ['Content-Type' => 'application/json'], 
-      JSON_UNESCAPED_UNICODE
-    );
+    if (!$battle_state) return response()->json([], 404, ['Content-Type' => 'application/json'], JSON_UNESCAPED_UNICODE);
     $battle_state->delete();
   }
 
