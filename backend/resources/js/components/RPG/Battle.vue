@@ -103,9 +103,11 @@
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px; padding: 10px;">
+        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px; padding: 5px 10px; font-size: 14px; position: relative;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
-           【バトルログ】
+           <div style="position: absolute; right: 0%; bottom: 0%;">
+            【バトルログ】
+           </div>
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
             {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
@@ -160,12 +162,13 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <button @click="escapeBattle">逃げる</button>
+  <div v-if="battleStatus !== 'resultWin'">
+    <button @click="escapeBattle">逃げる</button>
+  </div>
 
 </template>
 
@@ -344,6 +347,7 @@ export default {
     resultWin() {
       // 経験値と獲得ゴールドを加算させ、レベルアップ処理を行う
       console.log('resultWin: ----------------------------------');
+      this.resultLog = null;
       this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
       axios.post('/api/game/rpg/battle/result-win', {
         session_id: this.$store.state.battleSessionId,
@@ -377,29 +381,20 @@ export default {
 
     escapeBattle() {
       console.log('escapeBattle(): ----------------------------------');
-      if (this.$store.state.battleSessionId !== '') {
-        console.log('escape:セッションIDが設定されているケース');
-        axios.post('/api/game/rpg/battle/escape', {
-          session_id: this.$store.state.battleSessionId,
-        })
-          .then(response => { 
-            this.$store.dispatch('resetAllBattleStatus');
-            this.$store.dispatch('setScreen', 'menu');
-            this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-         })
-         .catch(error => {
-          // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
+      axios.post('/api/game/rpg/battle/escape', {
+        session_id: this.$store.state.battleSessionId,
+      })
+        .then(response => { 
           this.$store.dispatch('resetAllBattleStatus');
           this.$store.dispatch('setScreen', 'menu');
-          this.$router.push('/game/rpg/menu');
-          });
-      } else {
-        //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
-        console.log('escape:セッションIDが設定されていないケース');
+          this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+        })
+        .catch(error => {
+        // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
         this.$store.dispatch('resetAllBattleStatus');
         this.$store.dispatch('setScreen', 'menu');
-        this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-      }
+        this.$router.push('/game/rpg/menu');
+        });
     },
   },
   beforeRouteUpdate(to, from, next) {

@@ -50,10 +50,10 @@ class BattleState extends Model
             $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
           } else {
             $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
-            // 回復によって最大体力を超えた場合は最大体力にする
-            if ($buffed_hp > $player_data->max_value_hp) {
-              $buffed_hp = $player_data->max_value_hp;
-            }
+          }
+          // 回復によって最大体力を超えた場合は最大体力にする
+          if ($buffed_hp > $player_data->max_value_hp) {
+            $buffed_hp = $player_data->max_value_hp;
           }
 
           $status = collect([
@@ -260,7 +260,8 @@ class BattleState extends Model
             $self_data->target_enemy_index = $new_target_index;
             Debugbar::debug("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$opponents_data[$self_data->target_enemy_index]->name}");
           } else {
-            Debugbar::debug("すべての敵が討伐済みになりました。敵数: {$opponents_data->count()}");
+            Debugbar::debug("すべての敵が討伐済みになったので、ATTACKを終了します。敵数: {$opponents_data->count()}");
+            return;
           }
         }
         // ATTACK時のダメージ計算

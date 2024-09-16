@@ -230,6 +230,8 @@ class ApiController extends Controller
     $exp_tables = Exp::get();
     $result_logs = collect();
 
+    $when_cleared_players_data = collect(json_decode($battle_state->players_json_data));
+
     // 合計獲得ゴールド,expを取得する
     $enemies_json_data = collect(json_decode($battle_state['enemies_json_data']));
     $total_aquire_exp = 0;
@@ -246,14 +248,16 @@ class ApiController extends Controller
     $result_logs->push("敵を倒した！{$total_aquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
 
     try {
-      DB::transaction(function () use ($savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs) {
+      DB::transaction(function () use (
+        $savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs, $when_cleared_players_data
+      ) {
         // 金額処理
         $savedata->increment('money', $total_aquire_money);
         Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
         Debugbar::debug("ループ対象のパーティの数: {$parties->count()} 人");
         // 経験値処理
-        foreach ($parties as $party) {
+        foreach ($parties as $index => $party) {
           Debugbar::debug("ループ処理開始: {$party->nickname}に経験値:{$per_exp}を振り分けます。##############");
           $party->increment('total_exp', $per_exp);
           $current_party_exp = $party->total_exp;
@@ -277,18 +281,45 @@ class ApiController extends Controller
             // レベルが上がった分だけforで回す。
             // 例えばlv1からlv4に上がった時、 lv2, lv3, lv4としてステータスを回したい。
             //  ($i = 2; $i <= 4; $i++) で合計3回。
+            $total_growth = [
+              'hp' => 0, 'ap' => 0, 'str' => 0,
+              'def' => 0, 'int' => 0, 'spd' => 0, 'luc' => 0,
+            ];
             for ($i = $current_party_level + 1; $i <= $new_level; $i++) {
               // ステータス上昇処理
               $increase_values = Party::calculateGaussianGrowth($party);
               Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
 
-              // レベルが上がった時、減っているHP/APも回復させてあげたい
-              
+              $total_growth = [
+                'hp' => $total_growth['hp'] += $increase_values['growth_hp'],
+                'ap' => $total_growth['ap'] += $increase_values['growth_ap'],
+                'str' => $total_growth['str'] += $increase_values['growth_str'],
+                'def' => $total_growth['def'] += $increase_values['growth_def'],
+                'int' => $total_growth['int'] += $increase_values['growth_int'],
+                'spd' => $total_growth['spd'] += $increase_values['growth_spd'],
+                'luc' => $total_growth['luc'] += $increase_values['growth_luc'],
+              ];
 
             }
             // レベル反映
             $party->update(['level' => $new_level]);
-            $result_logs->push("{$party->nickname}はレベルが{$current_party_level}から{$new_level}にアップ！");
+            $result_logs->push("{$party->nickname}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']}");
+
+            // レベルが上がった時、減っているHP/APも回復させてあげたい
+            // 選択中のキャラの現在のjsonデータの max_value_hp/ap と value_hp/ap を調整してやれば良い
+            $when_cleared_players_data[$index]->max_value_hp = $party->value_hp;
+            $when_cleared_players_data[$index]->value_hp = $party->value_hp;
+            $when_cleared_players_data[$index]->max_value_ap = $party->value_ap;
+            $when_cleared_players_data[$index]->value_ap = $party->value_ap;
+
+            Debugbar::debug("
+              HPとAPを全回復。
+              HP:{$when_cleared_players_data[$index]->value_hp} 
+              AP:{$when_cleared_players_data[$index]->value_ap}
+            ");
+            // Debugbar::info($when_cleared_players_data[$index]);
+            // Debugbar::info($party);
+
           }
         }
       });
@@ -299,7 +330,6 @@ class ApiController extends Controller
       $field_id = $battle_state->current_field_id;
       $next_stage_id = $battle_state->current_stage_id + 1;
 
-      $when_cleared_players_data = collect(json_decode($battle_state->players_json_data));
       $next_players_data = BattleState::createPlayersData(Auth::id(), $when_cleared_players_data);
       $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
       $create_next_battle_state = BattleState::createBattleState(
@@ -320,11 +350,22 @@ class ApiController extends Controller
 
   // 戦闘途中終了をした場合、戦闘データを消す
   public function escapeBattle(Request $request) {
+    Debugbar::debug("escapeBattle(): ---------------------");
     $session_id = $request->session_id;
     $battle_state = BattleState::where('session_id', $session_id)->first();
-    Debugbar::debug($battle_state);
-    if (!$battle_state) return response()->json([], 404, ['Content-Type' => 'application/json'], JSON_UNESCAPED_UNICODE);
-    $battle_state->delete();
+
+    // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて削除する
+    if (!$battle_state) {
+      Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、ユーザーIDで検索をかけ削除します。");
+      $battle_state = BattleState::where('user_id', Auth::id())->get();
+      foreach ($battle_state as $b) {
+        $b->delete();
+      }
+    } else {
+      $battle_state->delete();
+    }
+
+    Debugbar::debug("戦闘セッションを削除しました。");
   }
 
 
