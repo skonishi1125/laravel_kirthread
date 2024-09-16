@@ -3,11 +3,14 @@
 namespace App\Models\Game\Rpg;
 
 use App\Models\Game\Rpg\Enemy;
+use App\Models\Game\Rpg\Exp;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
+use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
+use App\Models\Game\Rpg\PresetAppearingEnemy;
 Use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +25,112 @@ class BattleState extends Model
     protected $guarded = [
       'id',
     ];
+
+    // エンカウント時の処理
+    public static function createPlayersData($user_id) {
+      $parties = Party::where('user_id', $user_id)->get();
+      $players_data = collect();
+      foreach ($parties as $player_index => $party) {
+        $learned_skill_ids = $party->skills()->pluck('rpg_skills.id');
+        $learned_skill = Skill::select('name', 'description')
+          ->whereIn('id', $learned_skill_ids)
+          ->get();
+        $items = [];
+        $role = Role::find($party->rpg_role_id);
+        $role_portrait = $role->portrait_image_path;
+        DebugBar::debug($role_portrait);
+  
+        // vue側に渡すデータ
+        $player_data = collect([
+          'id' => $party->id,
+          'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
+          'command' => null, // exec時に格納する
+          'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
+          'max_value_hp' => $party->value_hp, // HP最大値
+          'max_value_ap' => $party->value_ap, // AP最大値
+          'value_hp' => $party->value_hp,
+          'value_ap' => $party->value_ap,
+          'value_str' => $party->value_str,
+          'value_def' => $party->value_def,
+          'value_int' => $party->value_int,
+          'value_spd' => $party->value_spd,
+          'value_luc' => $party->value_luc,
+          'skills' => $learned_skill,
+          'items' => $items,
+          'role_portrait' => $role_portrait,
+          'is_defeated_flag' => false,
+          'player_index' => $player_index, // 味方のパーティ中での並び。
+          'is_enemy' => false,
+        ]);
+        $players_data->push($player_data);
+      }
+
+      return $players_data;
+
+    }
+
+    public static function createEnemiesData($field_id, $stage_id) {
+
+      $enemies = collect();
+      $enemies_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
+
+      Debugbar::debug('敵のプリセットデータを読み込みます。model----------');
+      $preset_appearing_enemies = PresetAppearingEnemy::where('field_id', $field_id)
+        ->where('stage_id', $stage_id)
+        ->get();
+      foreach ($preset_appearing_enemies as $preset) {
+        $preset_enemy = Enemy::find($preset->enemy_id);
+        if ($preset_enemy) {
+          for ($i = 0; $i < $preset->number; $i++) {
+            $enemies->push($preset_enemy);
+          }
+        }
+      }
+      Debugbar::debug($preset_appearing_enemies, $enemies);
+
+      foreach ($enemies as $enemy_index => $enemy) {
+        $enemy_data = collect([
+          'id' => $enemy->id,
+          'name' => $enemy->name,
+          'command' => null, // exec時に格納する
+          'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
+          'max_value_hp' => $enemy->value_hp, // HP最大値
+          'max_value_ap' => $enemy->value_ap, // AP最大値
+          'value_hp' => $enemy->value_hp,
+          'value_ap' => $enemy->value_ap,
+          'value_str' => $enemy->value_str,
+          'value_def' => $enemy->value_def,
+          'value_int' => $enemy->value_int,
+          'value_spd' => $enemy->value_spd,
+          'value_luc' => $enemy->value_luc,
+          'portrait' => $enemy->portrait_image_path,
+          'is_defeated_flag' => false,
+          'enemy_index' => $enemy_index, // 敵の並び。
+          'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+          'exp' => $enemy->exp,
+          'drop_money' => $enemy->drop_money,
+        ]);
+        $enemies_data->push($enemy_data);
+      }
+      return $enemies_data;
+    }
+
+    public static function createBattleState($user_id, $players_data, $enemies_data, $field_id, $stage_id) {
+      $session_id = \Str::uuid()->toString();
+      $created_battle_state = BattleState::create([
+        'user_id' => $user_id,
+        'session_id' => $session_id,
+        'players_json_data' => json_encode($players_data),
+        'enemies_json_data' => json_encode($enemies_data),
+        'current_field_id' => $field_id,
+        'current_stage_id' => $stage_id,
+      ]);
+
+      return $created_battle_state;
+
+    }
+
+
 
     // 敵と味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
     public static function sortByBattleExec($players_and_enemies_data) {
