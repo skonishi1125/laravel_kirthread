@@ -26,11 +26,64 @@ class BattleState extends Model
       'id',
     ];
 
+    // 戦闘後に回復させるHPの倍率
+    // 基本的に最大体力の20%治療する。 戦闘不能の場合は10%だけ治療する。
+    const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
+    const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
+
     // エンカウント時の処理
-    public static function createPlayersData($user_id) {
+    public static function createPlayersData($user_id, $when_cleared_players_data = null) {
+      Debugbar::debug("プレイヤーのエンカウントデータ(battlestates.playeys_json_data)を作成します。----------");
       $parties = Party::where('user_id', $user_id)->get();
       $players_data = collect();
+
+      // クリア後にbattlestateのplayers_dataを作成する場合、HP/APを戦闘後の状態にしておく
+      $players_hp_and_ap_status = collect();
+      if (isset($when_cleared_players_data)) {
+        Debugbar::debug("ステージクリア後の作成です。");
+        foreach($when_cleared_players_data as $player_index => $player_data) {
+          Debugbar::debug("################# {$player_data->name} | クリア時点でのHP: {$player_data->value_hp} AP: {$player_data->value_ap}");
+
+          $buffed_hp = $player_data->value_hp;
+          if ($player_data->is_defeated_flag) {
+            Debugbar::debug("戦闘不能のため、最大HPの10%で回復させます。");
+            $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
+          } else {
+            $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
+            // 回復によって最大体力を超えた場合は最大体力にする
+            if ($buffed_hp > $player_data->max_value_hp) {
+              $buffed_hp = $player_data->max_value_hp;
+            }
+          }
+
+          $status = collect([
+            'id' => $player_data->id,
+            'name' => $player_data->name, // jsonから撮っているので、nicknameではなくname
+            'current_hp' => $buffed_hp,
+            'current_ap' => $player_data->value_ap,
+          ]);
+          $players_hp_and_ap_status->push($status);
+
+          Debugbar::debug("調整後:{$status['name']} | HP: {$status['current_hp']} AP: {$status['current_ap']}");
+
+        }
+      // 新規戦闘の場合は、デフォルトのHP/APを格納する
+      } else {
+        Debugbar::debug('新規作成です');
+        foreach($parties as $player_index => $player_data) {
+          $status = collect([
+            'id' => $player_data->id,
+            'name' => $player_data->nickname,
+            'current_hp' => $player_data->value_hp,
+            'current_ap' => $player_data->value_ap,
+          ]);
+          $players_hp_and_ap_status->push($status);
+        }
+      }
+
+      Debugbar::debug("players_json_data登録開始。");
       foreach ($parties as $player_index => $party) {
+      Debugbar::debug("################# {$player_index} 人目");
         $learned_skill_ids = $party->skills()->pluck('rpg_skills.id');
         $learned_skill = Skill::select('name', 'description')
           ->whereIn('id', $learned_skill_ids)
@@ -38,8 +91,6 @@ class BattleState extends Model
         $items = [];
         $role = Role::find($party->rpg_role_id);
         $role_portrait = $role->portrait_image_path;
-        DebugBar::debug($role_portrait);
-  
         // vue側に渡すデータ
         $player_data = collect([
           'id' => $party->id,
@@ -48,8 +99,10 @@ class BattleState extends Model
           'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
           'max_value_hp' => $party->value_hp, // HP最大値
           'max_value_ap' => $party->value_ap, // AP最大値
-          'value_hp' => $party->value_hp,
-          'value_ap' => $party->value_ap,
+          // 'value_hp' => $party->value_hp,
+          // 'value_ap' => $party->value_ap,
+          'value_hp' => $players_hp_and_ap_status[$player_index]['current_hp'],
+          'value_ap' => $players_hp_and_ap_status[$player_index]['current_ap'],
           'value_str' => $party->value_str,
           'value_def' => $party->value_def,
           'value_int' => $party->value_int,
@@ -63,6 +116,7 @@ class BattleState extends Model
           'is_enemy' => false,
         ]);
         $players_data->push($player_data);
+        DebugBar::debug("{$player_data['name']} 登録完了。");
       }
 
       return $players_data;
@@ -74,7 +128,7 @@ class BattleState extends Model
       $enemies = collect();
       $enemies_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
 
-      Debugbar::debug('敵のプリセットデータを読み込みます。model----------');
+      Debugbar::debug('敵のプリセットデータを読み込みます。----------');
       $preset_appearing_enemies = PresetAppearingEnemy::where('field_id', $field_id)
         ->where('stage_id', $stage_id)
         ->get();

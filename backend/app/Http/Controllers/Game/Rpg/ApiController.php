@@ -125,7 +125,7 @@ class ApiController extends Controller
       Debugbar::debug("戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------");
 
       // パーティ3人の情報(ステータス,スキル,アイテム)を格納する
-      $players_data = BattleState::createPlayersData($user_id);
+      $players_data = BattleState::createPlayersData($user_id, null);
 
       // ステージの敵情報を読み込む
       $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
@@ -280,8 +280,11 @@ class ApiController extends Controller
             for ($i = $current_party_level + 1; $i <= $new_level; $i++) {
               // ステータス上昇処理
               $increase_values = Party::calculateGaussianGrowth($party);
-
               Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
+
+              // レベルが上がった時、減っているHP/APも回復させてあげたい
+              
+
             }
             // レベル反映
             $party->update(['level' => $new_level]);
@@ -292,11 +295,18 @@ class ApiController extends Controller
 
       // 各種処理が終わったらセッションデータを破棄する。
       // ここの処理をコメントアウトすれば戦闘勝利部分のデバッグができる
-      // battle_stateが生きている時点で、次ステップの情報を作るとか？
 
+      $field_id = $battle_state->current_field_id;
+      $next_stage_id = $battle_state->current_stage_id + 1;
 
+      $when_cleared_players_data = collect(json_decode($battle_state->players_json_data));
+      $next_players_data = BattleState::createPlayersData(Auth::id(), $when_cleared_players_data);
+      $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+      $create_next_battle_state = BattleState::createBattleState(
+        Auth::id(), $next_players_data, $next_enemies_data, $field_id, $next_stage_id
+      );
       $battle_state->delete();
-      Debugbar::debug("戦闘データを削除しました。");
+      Debugbar::debug("現在の戦闘データを削除しました。");
 
     } catch(\Exception $e) {
       Debugbar::debug("例外処理を検知しました。");
