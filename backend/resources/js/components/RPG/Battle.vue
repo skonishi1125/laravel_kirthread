@@ -32,6 +32,7 @@
   top: -10%;
   width: 60%;
   min-height: 110%;
+  z-index: 4;
 }
 
 .enemy-picture {
@@ -123,7 +124,6 @@
             <div v-for="(log, index) in this.resultLog" :key="index" class="log-item">
               <p>{{ log }}</p>
             </div>
-            <a @click="nextBattle">次の戦闘へ進む</a>
           </div>
           <p v-if="battleStatus == 'resultLose'">全滅した...</p>
         </div>
@@ -145,6 +145,13 @@
             </div>
           </div>
         </div>
+
+          <!-- 勝利時、次の戦闘に遷移 -->
+          <div v-if="battleStatus == 'resultWin'"  style="position: relative;">
+            <div style="position: absolute; right: 8%; bottom: 0%; background-color: white; padding: 5px 10px; cursor: pointer;">
+              <a @click="nextBattle">次の戦闘へ進む</a>
+            </div>
+          </div>
 
         <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: none; height: 100px; z-index: 5; margin-bottom: 20px;" >

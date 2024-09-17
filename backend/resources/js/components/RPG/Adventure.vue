@@ -7,7 +7,7 @@
 <template>
   <div class="row">
     <div class="col-sm-12">
-      <p>いきたい場所を選択してください</p>
+      <p>どこに向かおうか？</p>
     </div>
   </div>
 
