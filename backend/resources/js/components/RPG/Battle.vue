@@ -32,6 +32,7 @@
   top: -10%;
   width: 60%;
   min-height: 110%;
+  z-index: 4;
 }
 
 .enemy-picture {
@@ -80,6 +81,13 @@
   <div class="row" @click="nextAction">
     <!-- todo: ステージごとに背景を変える -->
     <div class="col-12" style="background-image: url('/storage/rpg/field/grassland.png'); background-size: cover;  position: relative;">
+
+      <div v-if="battleStatus == 'error'">
+        <div style="cursor: pointer; background-color: white;">
+          <p @click="escapeBattle" >エラーが発生しました。このメッセージをクリックして一度戻ってください</p>
+        </div>
+      </div>
+
       <div style="display: flex; flex-flow: column; justify-content: space-between;">
 
         <!-- command 普段は非表示で、battleStatusがcommandの場合のみ出す。 -->
@@ -96,9 +104,11 @@
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px;">
+        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px; padding: 5px 10px; font-size: 14px; position: relative;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
-           【バトルログ】
+           <div style="position: absolute; right: 0%; bottom: 0%;">
+            【バトルログ】
+           </div>
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
             {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
@@ -114,7 +124,6 @@
             <div v-for="(log, index) in this.resultLog" :key="index" class="log-item">
               <p>{{ log }}</p>
             </div>
-            <a @click="nextBattle">次の戦闘へ進む</a>
           </div>
           <p v-if="battleStatus == 'resultLose'">全滅した...</p>
         </div>
@@ -137,6 +146,13 @@
           </div>
         </div>
 
+          <!-- 勝利時、次の戦闘に遷移 -->
+          <div v-if="battleStatus == 'resultWin'"  style="position: relative;">
+            <div style="position: absolute; right: 8%; bottom: 0%; background-color: white; padding: 5px 10px; cursor: pointer;">
+              <a @click="nextBattle">次の戦闘へ進む</a>
+            </div>
+          </div>
+
         <!-- partyのステータス -->
         <div style="display: flex; justify-content: space-evenly; background-color: none; height: 100px; z-index: 5; margin-bottom: 20px;" >
           <div style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" v-for="(partyMember, index) in partyData" :key="index">
@@ -153,12 +169,13 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <button @click="escapeBattle">逃げる</button>
+  <div v-if="battleStatus !== 'resultWin'">
+    <button @click="escapeBattle">逃げる</button>
+  </div>
 
 </template>
 
@@ -178,6 +195,7 @@ export default {
   },
   computed: {
     ...mapState(['battleStatus']),
+    ...mapState(['clearStage']),
     ...mapState(['selectedCommands']),
     ...mapState(['currentPartyMemberIndex']),
     ...mapState(['battleSessionId']),
@@ -194,32 +212,40 @@ export default {
   },
   mounted() {
     if (this.battleStatus == 'start') {
-      console.log('mounted() ------------------------')
-      this.getEncountData(this.fieldId, this.stageId);
+      console.log('mounted() ------------------------');
+      this.getEncountData(this.fieldId, this.stageId, this.clearStage);
     }
   },
   methods: {
     calculatePercentage(currentValue, maxValue) {
       return (currentValue / maxValue) * 100;
     },
-    getEncountData(fieldId, stageId) {
-      console.log(`getEncountData(): fieldId:${fieldId} stageId:${stageId} ----------------------------------`);
+    getEncountData(fieldId, stageId, clearStage) {
+      console.log(`getEncountData(): fieldId:${fieldId} stageId:${stageId} clearStage:${clearStage}----------------------------------`);
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
       axios.post(`/api/game/rpg/battle/encount`,{
         field_id: fieldId,
         stage_id: stageId,
+        clear_stage: clearStage,
       })
-        .then(response => {
-          let data = response.data;
-          this.partyData = data[0] || [];
-          this.enemyData = data[1] || [];
-          this.$store.dispatch('setBattleSessionId', data[2] || []);
-          // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
-          console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
-          // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
-          this.$store.dispatch('setBattleStatus', 'encount');
-        }
-      );
+      .then(response => {
+        let data = response.data;
+        this.partyData = data[0] || [];
+        this.enemyData = data[1] || [];
+        this.$store.dispatch('setBattleSessionId', data[2] || []);
+        // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
+        console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
+        // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
+        this.$store.dispatch('setBattleStatus', 'encount');
+      })
+      .catch(error => {
+          if (error.response && error.response.status === 500) {
+            console.log(`500エラー: ${error.response.data.message}`);
+          } else {
+            console.log(`その他エラー: ${error.response.data.message}`);
+          }
+          this.$store.dispatch('setBattleStatus', 'error');
+      })
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
     nextAction() {
@@ -328,6 +354,8 @@ export default {
     resultWin() {
       // 経験値と獲得ゴールドを加算させ、レベルアップ処理を行う
       console.log('resultWin: ----------------------------------');
+      this.resultLog = null;
+      this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
       axios.post('/api/game/rpg/battle/result-win', {
         session_id: this.$store.state.battleSessionId,
         is_win: true,
@@ -346,58 +374,34 @@ export default {
       // 1-1 > 1-2 > 1-3という感じで。
       const fieldId = this.$route.params.fieldId;
       const stageId = this.$route.params.stageId;
-      console.log('nextBattle(): --------------------', fieldId, stageId);
+
+      // どのステージをクリアしたのかの値を作る。
+      this.$store.dispatch('setClearStage', fieldId + '-' + stageId);
+      console.log(`clearStage: ${this.clearStage}`);
+
+      console.log('nextBattle(): --------------------', fieldId, stageId, this.clearStage);
       this.$store.dispatch('resetAllBattleStatus');
       this.$store.dispatch('setBattleStatus', 'start');
       const nextStageId = parseInt(stageId) + 1;
       this.$router.push(`/game/rpg/battle/${fieldId}/${nextStageId}`); // 任意の画面に遷移
     },
 
-    // endBattle() {
-    //   console.log('endBattle(): ----------------------------------');
-    //   if (this.$store.state.battleSessionId !== '') {
-    //     console.log('セッションIDが設定されているケース');
-    //     axios.post('/api/game/rpg/battle/escape', {
-    //       session_id: this.$store.state.battleSessionId,
-    //     })
-    //       .then(response => { 
-    //         this.$store.dispatch('setBattleStatus', 'escape');
-    //         this.$store.dispatch('setScreen', 'menu');
-    //         this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-    //      });
-    //   } else {
-    //     //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
-    //     console.log('セッションIDが設定されていないケース');
-    //     this.$store.dispatch('setBattleStatus', 'escape');
-    //     this.$store.dispatch('setScreen', 'menu');
-    //     this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-    //   }
-    // },
     escapeBattle() {
       console.log('escapeBattle(): ----------------------------------');
-      if (this.$store.state.battleSessionId !== '') {
-        console.log('escape:セッションIDが設定されているケース');
-        axios.post('/api/game/rpg/battle/escape', {
-          session_id: this.$store.state.battleSessionId,
-        })
-          .then(response => { 
-            this.$store.dispatch('resetAllBattleStatus');
-            this.$store.dispatch('setScreen', 'menu');
-            this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-         })
-         .catch(error => {
-          // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
+      axios.post('/api/game/rpg/battle/escape', {
+        session_id: this.$store.state.battleSessionId,
+      })
+        .then(response => { 
           this.$store.dispatch('resetAllBattleStatus');
           this.$store.dispatch('setScreen', 'menu');
-          this.$router.push('/game/rpg/menu');
-          });
-      } else {
-        //セッションIDが設定されていないケースは、DBで消す必要はなくそのままメニュー画面に飛ばす。
-        console.log('escape:セッションIDが設定されていないケース');
+          this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+        })
+        .catch(error => {
+        // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
         this.$store.dispatch('resetAllBattleStatus');
         this.$store.dispatch('setScreen', 'menu');
-        this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
-      }
+        this.$router.push('/game/rpg/menu');
+        });
     },
   },
   beforeRouteUpdate(to, from, next) {
@@ -409,7 +413,7 @@ export default {
     console.log(`新しいfieldId: ${newFieldId} stageId: ${newStageId} `);
     if (newFieldId && newStageId) {
       console.log('エンカウントデータを再取得します。');
-      this.getEncountData(newFieldId, newStageId);
+      this.getEncountData(newFieldId, newStageId, this.clearStage);
     }
     next();
   }

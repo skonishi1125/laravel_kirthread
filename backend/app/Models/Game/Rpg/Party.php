@@ -5,6 +5,8 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
+
 class Party extends Model
 {
     use HasFactory;
@@ -73,6 +75,7 @@ class Party extends Model
         }
       }
 
+      Debugbar::debug('calculateGaussianGrowth()---------------正常終了。');
       // レベルアップ上昇値をログに記載するため、上昇値の配列を返す
       return $increase_values;
     }
@@ -89,13 +92,39 @@ class Party extends Model
       foreach($all_parties as $party) {
         $role_class = $party->role->class;
         switch ($role_class) {
+          case 'mage':
+            $party->update([
+              'level' => 1,
+              'value_hp' => '20',
+              'value_ap' => '25',
+              'value_str' => '10',
+              'value_def' => '15',
+              'value_int' => '25',
+              'value_spd' => '15',
+              'total_exp' => '0',
+              'value_luc' => '10',
+            ]);
+            break;
+          case 'paradin':
+            $party->update([
+              'level' => 1,
+              'value_hp' => '50',
+              'value_ap' => '5',
+              'value_str' => '15',
+              'value_def' => '20',
+              'value_int' => '5',
+              'value_spd' => '5',
+              'value_luc' => '10',
+              'total_exp' => '0',
+              ]);
+              break;
           case 'striker':
             $party->update([
               'level' => 1,
               'value_hp' => '40',
               'value_ap' => '10',
               'value_str' => '25',
-              'value_def' => '5',
+              'value_def' => '10',
               'value_int' => '5',
               'value_spd' => '20',
               'value_luc' => '10',
@@ -115,32 +144,6 @@ class Party extends Model
               'total_exp' => '0',
               ]);
               break;
-          case 'paradin':
-            $party->update([
-              'level' => 1,
-              'value_hp' => '50',
-              'value_ap' => '5',
-              'value_str' => '15',
-              'value_def' => '25',
-              'value_int' => '5',
-              'value_spd' => '5',
-              'value_luc' => '10',
-              'total_exp' => '0',
-              ]);
-              break;
-          case 'mage':
-            $party->update([
-              'level' => 1,
-              'value_hp' => '20',
-              'value_ap' => '25',
-              'value_str' => '5',
-              'value_def' => '10',
-              'value_int' => '25',
-              'value_spd' => '15',
-              'total_exp' => '0',
-              'value_luc' => '10',
-            ]);
-            break;
         }
       }
       echo '初期値設定完了'. PHP_EOL;

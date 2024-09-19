@@ -9,11 +9,15 @@ export default createStore({
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
     currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
+    clearStage: '', // 1-1, 1-2, 2-1という文字列で記入される
     battleSessionId: '', // 戦闘データのセッション
   },
   mutations: {
     setScreen(state, screen) {
       state.currentScreen = screen;
+    },
+    setClearStage(state, stage) {
+      state.clearStage = stage;
     },
     setBattleSessionId(state, sessionId) {
       state.battleSessionId = sessionId;
@@ -73,6 +77,9 @@ export default createStore({
     // commitで引数を渡す場合
     setScreen({ commit }, screen) {
       commit('setScreen', screen);
+    },
+    setClearStage({ commit }, stage) {
+      commit('setClearStage', stage)
     },
     setBattleSessionId({ commit }, sessionId) {
       commit('setBattleSessionId', sessionId)

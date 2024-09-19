@@ -65,7 +65,7 @@ class VueController extends Controller
     $purchase = Auth::user()->purchases()->find($id);
 
     if (!$purchase) {
-      return new Responst('', 404);
+      return new Response('', 404);
     }
 
     $request->validate([

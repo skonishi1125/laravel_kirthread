@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('session_id')->unique();
             $table->json('players_json_data');
             $table->json('enemies_json_data');
-            $table->string('status')->comment('戦闘の状態(使わないかもしれないが。)');
+            $table->integer('current_field_id')->unsigned()->comment('現在プレイ中のフィールドID');
+            $table->integer('current_stage_id')->unsigned()->comment('現在プレイ中のステージID');
             $table->timestamps();
         });
     }
