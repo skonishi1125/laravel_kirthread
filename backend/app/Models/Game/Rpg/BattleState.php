@@ -84,10 +84,8 @@ class BattleState extends Model
       Debugbar::debug("players_json_data登録開始。");
       foreach ($parties as $player_index => $party) {
       Debugbar::debug("################# {$player_index} 人目");
-        $learned_skill_ids = $party->skills()->pluck('rpg_skills.id');
-        $learned_skill = Skill::select('name', 'description')
-          ->whereIn('id', $learned_skill_ids)
-          ->get();
+        // 会得しているスキルの取得
+        $learned_skill = $party->skills->select('id', 'name', 'description');
         $items = [];
         $role = Role::find($party->rpg_role_id);
         $role_portrait = $role->portrait_image_path;

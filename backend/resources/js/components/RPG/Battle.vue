@@ -25,6 +25,16 @@
   background-color: beige;
 }
 
+.command-list-row-skills {
+  width: 300px;
+  text-align: left;
+  padding: 10px 30px;
+  cursor: pointer;
+}
+.command-list-row-skills:hover {
+  background-color: beige;
+}
+
 .character-picture {
   position: absolute;
   background-size: cover;
@@ -94,7 +104,21 @@
          <div v-if="battleStatus == 'command'">
            <div class="command-list">
             <div class="command-list-row" @click="handleCommandSelection('ATTACK')">ATTACK</div>
-            <div class="command-list-row" @click="handleCommandSelection('SPECIAL')">SPECIAL</div>
+
+            <div class="btn-group dropright">
+              <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a>SKILL</a>
+              </div>
+              <div class="dropdown-menu">
+                <div 
+                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class="command-list-row-skills"
+                   @mouseover="showSkillDescription(skill.description)" @mouseleave="clearSkillDescription"
+                >
+                  <span @click="handleCommandSelection('SKILL', skill.id)">{{ skill.name }}</span>
+                </div>
+              </div>
+            </div>
+
             <div class="command-list-row" @click="handleCommandSelection('DEFENCE')">DEFENCE</div>
             <div class="command-list-row" @click="handleCommandSelection('ITEM')">ITEM</div>
             <div class="command-list-row" @click="handleCommandSelection('ESCAPE')">ESCAPE</div>
@@ -111,7 +135,13 @@
            </div>
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
+            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？<br>
+            <div>
+              <span v-if="hoveredSkillDescription != null">
+                <hr>
+              </span>
+              <span v-html="hoveredSkillDescription"></span>
+            </div>
           </p>
           <p v-if="battleStatus == 'enemySelect'">対象を選択してください</p>
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
@@ -188,6 +218,7 @@ export default {
       fieldId: this.$route.params.fieldId,
       stageId: this.$route.params.stageId,
       partyData: {},
+      hoveredSkillDescription: null, // 現在マウスオーバーしているスキルの説明
       enemyData: {},
       battleLog: {},
       resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
@@ -217,9 +248,18 @@ export default {
     }
   },
   methods: {
+    // HP, APの表示
     calculatePercentage(currentValue, maxValue) {
       return (currentValue / maxValue) * 100;
     },
+    // スキルにmouseoverした時、ちなんだ説明文を表示
+    showSkillDescription(description) {
+      this.hoveredSkillDescription = description;
+    },
+    clearSkillDescription() {
+      this.hoveredSkillDescription = null;
+    },
+
     getEncountData(fieldId, stageId, clearStage) {
       console.log(`getEncountData(): fieldId:${fieldId} stageId:${stageId} clearStage:${clearStage}----------------------------------`);
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
@@ -294,6 +334,7 @@ export default {
         // 最後のメンバーが戦闘不能の時、コマンド選択画面に遷移させるとbackgroundセットでエラーになるので、0,1の場合だけコマンド画面に遷移させる。
         if (this.currentPartyMemberIndex <= 2) {
           console.log(`コマンド選択画面へ遷移します。`);
+          console.dir(this.partyData[this.currentPartyMemberIndex].skills);
           this.$store.dispatch('setBattleStatus', 'command');
         }
       } else {
@@ -312,7 +353,7 @@ export default {
       }
     },
 
-    handleCommandSelection(command) {
+    handleCommandSelection(command, skill_id) {
       console.log('handleCommandSelection(): ----------------------------------');
       // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
       let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
