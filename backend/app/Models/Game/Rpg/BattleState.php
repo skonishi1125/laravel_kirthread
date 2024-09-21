@@ -274,29 +274,13 @@ class BattleState extends Model
           }
         }
         // ATTACK時のダメージ計算
-        $damage = self::calculateDamage($self_data->value_str, $opponents_data[$self_data->target_enemy_index]->value_def);
+        $damage = self::calculateDamage(
+          $self_data->value_str, $opponents_data[$self_data->target_enemy_index]->value_def
+        );
         Debugbar::debug("ダメージ実数値計算。 ダメージ: {$damage}");
-        if ($damage > 0) {
-          Debugbar::debug("ダメージが1以上なので攻撃。敵の現在体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
-          $opponents_data[$self_data->target_enemy_index]->value_hp -= $damage;
-          Debugbar::debug("攻撃した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
-          // 敵を倒した場合
-          if ($opponents_data[$self_data->target_enemy_index]->value_hp <= 0 ) {
-            $opponents_data[$self_data->target_enemy_index]->value_hp = 0; // マイナスになるのを防ぐ。
-            $opponents_data[$self_data->target_enemy_index]->is_defeated_flag = true;
-            $logs->push("{$self_data->name}の攻撃！{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ。");
-            $logs->push("{$opponents_data[$self_data->target_enemy_index]->name}を倒した！");
-            Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}を倒した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
-          } else {
-            $logs->push("{$self_data->name}の攻撃！{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ。");
-            Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}はまだ生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
-          }
-        // ダメージを与えられなかった場合
-        } else {
-          Debugbar::debug("ダメージを与えられない。");
-          $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$self_data->target_enemy_index]->name}にダメージを与えられない！");
-          Debugbar::debug("攻撃が通らなかった。{$opponents_data[$self_data->target_enemy_index]->name}は当然生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
-        }
+        // 画面に表示するログの記録
+        self::storePartyDamage('ATTACK', $self_data, $opponents_data, $logs, $damage);
+
       // 敵の場合
       } else {
         Debugbar::warning("------------{$self_data->name}:攻撃開始 攻撃対象: {$opponents_data[$index]->name}---------------");
@@ -311,27 +295,15 @@ class BattleState extends Model
           } else {
             Debugbar::warning("すべての味方が倒れました。敵数: {$opponents_data->count()}");
           }
-        } 
-        $damage = self::calculateDamage($self_data->value_str, $opponents_data[$index]->value_def);
-        Debugbar::warning("ダメージ実数値計算. ダメージ: {$damage}");
-        if ($damage > 0) {
-          Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$index]->value_hp}");
-          $opponents_data[$index]->value_hp -= $damage;
-          Debugbar::warning("攻撃された。味方の残り体力: {$opponents_data[$index]->value_hp}");
-          if ($opponents_data[$index]->value_hp <= 0 ) {
-            $opponents_data[$index]->value_hp = 0;
-            $opponents_data[$index]->is_defeated_flag = true;
-            $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
-            $logs->push("{$opponents_data[$index]->name}はやられてしまった！");
-            Debugbar::warning("{$opponents_data[$index]->name}がやられた。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
-          } else {
-            $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
-            Debugbar::warning("{$opponents_data[$index]->name}はまだ生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
-          }
-        } else {
-          $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$index]->name}は攻撃を防いだ！");
-          Debugbar::warning("攻撃が通らなかった。{$opponents_data[$index]->name}は当然生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
         }
+        // ATTACK時のダメージ計算
+        $damage = self::calculateDamage(
+          $self_data->value_str, $opponents_data[$index]->value_def
+        );
+        Debugbar::warning("ダメージ実数値計算. ダメージ: {$damage}");
+
+        // 画面に表示するログの記録
+        self::storeEnemyDamage('ATTACK', $self_data, $opponents_data, $logs, $damage, $index);
       }
     }
 
@@ -356,6 +328,94 @@ class BattleState extends Model
       } else {
         // todo: 敵もこの処理で技を使えるようにする
       }
-  }
+    }
+
+    // コマンドを実行した際、画面に表示させるダメージなどのログ入力
+    // opponents_dataは攻撃する敵のデータが入る
+    public static function storePartyDamage($command, $self_data, $opponents_data, $logs, $damage) {
+      switch ($command) {
+        case "ATTACK":
+          Debugbar::debug("storePartyDamage(): ATTACK");
+          if ($damage > 0) {
+            Debugbar::debug("【ATTACK】ダメージが1以上。敵の現在体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
+            $opponents_data[$self_data->target_enemy_index]->value_hp -= $damage;
+            Debugbar::debug("攻撃した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
+            // 敵を倒した場合
+            if ($opponents_data[$self_data->target_enemy_index]->value_hp <= 0 ) {
+              $opponents_data[$self_data->target_enemy_index]->value_hp = 0; // マイナスになるのを防ぐ。
+              $opponents_data[$self_data->target_enemy_index]->is_defeated_flag = true;
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ。");
+              $logs->push("{$opponents_data[$self_data->target_enemy_index]->name}を倒した！");
+              Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}を倒した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+            } else {
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ。");
+              Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}はまだ生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+            }
+          // ダメージを与えられなかった場合
+          } else {
+            Debugbar::debug("ダメージを与えられない。");
+            $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$self_data->target_enemy_index]->name}にダメージを与えられない！");
+            Debugbar::debug("攻撃が通らなかった。{$opponents_data[$self_data->target_enemy_index]->name}は当然生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+          }
+          break;
+        case "SKILL":
+          Debugbar::debug("storePartyDamage(): SKILL");
+          if ($damage > 0) {
+            Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
+            $opponents_data[$self_data->target_enemy_index]->value_hp -= $damage;
+            Debugbar::debug("攻撃した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp}");
+            // 敵を倒した場合
+            if ($opponents_data[$self_data->target_enemy_index]->value_hp <= 0 ) {
+              $opponents_data[$self_data->target_enemy_index]->value_hp = 0; // マイナスになるのを防ぐ。
+              $opponents_data[$self_data->target_enemy_index]->is_defeated_flag = true;
+              $logs->push("{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ！");
+              $logs->push("{$opponents_data[$self_data->target_enemy_index]->name}を倒した！");
+              Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}を倒した。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+            } else {
+              $logs->push("{$opponents_data[$self_data->target_enemy_index]->name}に{$damage}のダメージ！");
+              Debugbar::debug("{$opponents_data[$self_data->target_enemy_index]->name}はまだ生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+            }
+          // ダメージを与えられなかった場合
+          } else {
+            Debugbar::debug("ダメージを与えられない。");
+            $logs->push("しかし{$opponents_data[$self_data->target_enemy_index]->name}にダメージは与えられなかった！");
+            Debugbar::debug("攻撃が通らなかった。{$opponents_data[$self_data->target_enemy_index]->name}は当然生存している。敵の残り体力: {$opponents_data[$self_data->target_enemy_index]->value_hp} 敵討伐フラグ: {$opponents_data[$self_data->target_enemy_index]->is_defeated_flag} ");
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    // opponents_dataは攻撃されるプレイヤーのデータが入る
+    public static function storeEnemyDamage($command, $self_data, $opponents_data, $logs, $damage, $index) {
+      switch ($command) {
+        case "ATTACK":
+          Debugbar::warning("storeEnemyDamage(): ATTACK");
+          if ($damage > 0) {
+            Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$index]->value_hp}");
+            $opponents_data[$index]->value_hp -= $damage;
+            Debugbar::warning("攻撃された。味方の残り体力: {$opponents_data[$index]->value_hp}");
+            if ($opponents_data[$index]->value_hp <= 0 ) {
+              $opponents_data[$index]->value_hp = 0;
+              $opponents_data[$index]->is_defeated_flag = true;
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
+              $logs->push("{$opponents_data[$index]->name}はやられてしまった！");
+              Debugbar::warning("{$opponents_data[$index]->name}がやられた。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+            } else {
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
+              Debugbar::warning("{$opponents_data[$index]->name}はまだ生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+            }
+          } else {
+            $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$index]->name}は攻撃を防いだ！");
+            Debugbar::warning("攻撃が通らなかった。{$opponents_data[$index]->name}は当然生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+          }
+          break;
+        case "SKILL":
+          break;
+        default:
+          break;
+      }
+    }
 
 }
