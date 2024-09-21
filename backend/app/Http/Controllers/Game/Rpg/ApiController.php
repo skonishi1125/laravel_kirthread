@@ -176,7 +176,9 @@ class ApiController extends Controller
       $command = $commands->firstWhere('partyId', $data->id);
       if ($command) {
           $data->command = $command['command'];
-          $data->target_enemy_index = $command['enemyIndex'];
+          $data->target_enemy_index = $command['enemyIndex'] ?? null;
+          $data->selected_skill_id = $command['skillId'] ?? null;
+          // todo: item。
       }
       return $data;
     });

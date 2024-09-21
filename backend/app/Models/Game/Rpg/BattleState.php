@@ -85,13 +85,14 @@ class BattleState extends Model
       foreach ($parties as $player_index => $party) {
       Debugbar::debug("################# {$player_index} 人目");
         // 会得しているスキルの取得
-        $learned_skill = $party->skills->select('id', 'name', 'description');
+        $learned_skills = Skill::getLearnedSkill($party);
         $items = [];
         $role = Role::find($party->rpg_role_id);
         $role_portrait = $role->portrait_image_path;
         // vue側に渡すデータ
         $player_data = collect([
           'id' => $party->id,
+          'role_id' => $party->rpg_role_id,
           'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
           'command' => null, // exec時に格納する
           'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
@@ -106,7 +107,8 @@ class BattleState extends Model
           'value_int' => $party->value_int,
           'value_spd' => $party->value_spd,
           'value_luc' => $party->value_luc,
-          'skills' => $learned_skill,
+          'skills' => $learned_skills,
+          'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
           'items' => $items,
           'role_portrait' => $role_portrait,
           'is_defeated_flag' => false,
@@ -206,12 +208,17 @@ class BattleState extends Model
             continue; // 敵が全滅している場合は何も行わない
           } 
           Debugbar::debug("やられ、敵全員討伐チェックOK");
-          /* ATAACK */
-          if ($data->command == "ATTACK") {
-            self::execCommandAttack($data, $enemies_data, false, null, $logs);
-          /* todo:ATAACK以外 アイテムとかバフなら味方を選べるようにする */
-          } else {
-            $logs->push("{$data->name}は攻撃以外を選択した。");
+          /* ATTACK */
+          switch ($data->command) {
+            case "ATTACK":
+              self::execCommandAttack($data, $enemies_data, false, null, $logs);
+              break;
+            case "SKILL":
+              self::execCommandSkill($data, $enemies_data, false, null, $logs);
+              break;
+            default:
+              $logs->push("{$data->name}は攻撃以外を選択した。");
+              break;
           }
 
         // 敵の行動
@@ -225,7 +232,7 @@ class BattleState extends Model
             Debugbar::warning("味方はすべて倒れています。戦闘に敗北しています。");
             continue; // 敵が全滅している場合は何も行わない
           }
-          Debugbar::debug("敵やられ、味方全員やられチェックOK");
+          Debugbar::warning("敵やられ、味方全員やられチェックOK");
           // コマンド対象となる相手をランダムに指定
           $index = rand(0, $players_data->count() - 1);
           // todo: 敵の行動コマンド指定方法を考える
@@ -245,6 +252,10 @@ class BattleState extends Model
      * コマンドとして"ATTACK"を選択した時の処理
      * $self_data: 攻撃を行うキャラクター/敵のデータ
      * $opponent_data: 攻撃対象とするキャラクター/敵のデータ
+     * $is_enemy: 敵の行動かどうかを判断するフラグ 敵がtrue.
+     * $index: 敵が行動する際、対象とする相手のindex 味方行動の場合はnull
+     * $logs: 戦闘結果を格納するログ
+     * 
     */
     private static function execCommandAttack($self_data, $opponents_data, $is_enemy, $index, $logs){
 
@@ -326,9 +337,25 @@ class BattleState extends Model
 
     // ATTACK選択時の攻撃力を計算
     private static function calculateDamage($self_str, $opponent_def) {
-      $damage = $self_str - $opponent_def;
+      $damage = ceil($self_str - $opponent_def);
       return $damage;
     }
 
+    /*
+     コマンドとして"SKILL"を選択した時の処理
+     * $self_data: 攻撃を行うキャラクター/敵のデータ
+     * $opponent_data: 攻撃対象とするキャラクター/敵のデータ
+    */
+    private static function execCommandSkill($self_data, $opponents_data, $is_enemy, $index, $logs){
+      Debugbar::debug("execCommandSkill(): ----------------------");
+      $selected_skill = collect($self_data->skills)->firstWhere('id', $self_data->selected_skill_id);
+
+      if ($is_enemy == false) {
+        // どの職業の、どのスキル
+        Skill::decideExecSkill($self_data->role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $index, $logs);
+      } else {
+        // todo: 敵もこの処理で技を使えるようにする
+      }
+  }
 
 }

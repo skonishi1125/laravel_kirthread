@@ -64,7 +64,7 @@
 }
 
 .log-container {
-  height: 70px; /* 高さを設定して、スクロール可能にする */
+  height: 100%; /* 高さを設定して、スクロール可能にする */
   overflow-y: scroll; /* スクロールバーを常に表示 */
   background-color: white;
   /* border: 1px solid #ccc; 境界線を追加して見やすくする（任意） */
@@ -111,10 +111,17 @@
               </div>
               <div class="dropdown-menu">
                 <div 
-                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class="command-list-row-skills"
+                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class=""
                    @mouseover="showSkillDescription(skill.description)" @mouseleave="clearSkillDescription"
                 >
-                  <span @click="handleCommandSelection('SKILL', skill.id)">{{ skill.name }}</span>
+                  <div @click="handleCommandSelection('SKILL', skill.id)" class="command-list-row-skills">
+                    <div style="display: flex; justify-content: space-between;">
+                      <span>{{ skill.name }}</span>
+                      <span>{{ skill.ap_cost }}</span>
+                    </div>
+                    <div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -128,7 +135,7 @@
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px; padding: 5px 10px; font-size: 14px; position: relative;">
+        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
            <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
@@ -147,7 +154,7 @@
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
           <div v-if="battleStatus == 'outputLog'" class="log-container">
             <div v-for="(log, index) in this.battleLog" :key="index" class="log-item">
-              <p>ターン{{ (index + 1) }} : {{ log }}</p>
+              <p>{{ (index + 1) }}: {{ log }}</p>
             </div>
           </div>
           <div v-if="battleStatus == 'resultWin'" class="log-container">
@@ -309,9 +316,10 @@ export default {
       }
     },
 
-    // 敵選択後に、コマンド処理に戻る時に動かす処理
+    // 敵選択後もしくは DEFENCEなど敵選択の必要がない処理を選択後、コマンド処理に戻る時に動かす処理
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
+      this.hoveredSkillDescription = null; // スキルの説明文を消しておく
 
       // 敵を全て討伐していた場合は、勝利画面に。
       if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){
@@ -353,12 +361,45 @@ export default {
       }
     },
 
-    handleCommandSelection(command, skill_id) {
+    // on_the_selected_command_id は都度変化する
+    // skillを選んだならそのスキルのID, アイテムならそのアイテムのIDを格納する
+    handleCommandSelection(command, on_the_selected_command_id) {
       console.log('handleCommandSelection(): ----------------------------------');
-      // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
+      // 現在コマンド選択中のパーティデータをcurrentPartyMemberIndexに格納する
       let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-      this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
-      this.$store.dispatch('setBattleStatus', 'enemySelect');
+      switch (command) {
+        case ("ATTACK") :
+          console.log('ATTACK選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          this.$store.dispatch('setBattleStatus', 'enemySelect');
+          break;
+        case ("SKILL") :
+          console.log(`SKILL選択。 skill_id: ${on_the_selected_command_id}`);
+          this.$store.dispatch(
+            'setSelectedCommandSkill', 
+            { partyId: currentMember.id, command, skillId: on_the_selected_command_id }
+          );
+          // todo: 全体攻撃のスキルなら敵選択画面を不要とする。
+          // さらに、味方選択系のスキルならそのステータスを作る
+          // if スキルタイプが単体攻撃なら、そのままenemySelectへ
+          this.$store.dispatch('setBattleStatus', 'enemySelect');
+          // else ならパーティメンバーのインデックスを上げる
+          // this.$store.dispatch('incrementPartyMemberIndex');
+          break;
+        case ("DEFENCE") :
+          console.log('DEFENCE選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          // 防御は敵を指定する必要がないので、enemySelectに遷移させない。
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup(); 
+          break;
+        case ("ITEM") :
+          console.log('ITEM選択。');
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup(); 
+          break;
+      }
+
     },
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)

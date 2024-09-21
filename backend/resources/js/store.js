@@ -30,6 +30,10 @@ export default createStore({
       // この時点でコマンド状態: 
       // [ { "partyId": "1", "command": "ATTACK" } ]
     },
+    setSelectedCommandSkill(state, { partyId, command, skillId }) {
+      state.selectedCommands.push({ partyId, command, skillId });
+    },
+    // todo: ITEM選択
     clearSelectedCommands(state) {
       state.selectedCommands = {};
     },
@@ -87,9 +91,15 @@ export default createStore({
     setBattleStatus({ commit }, status) {
       commit('setBattleStatus', status);
     },
+    // ATTACK, DEFENCE選択
     setSelectedCommand({ commit }, { partyId, command }) {
       commit('setSelectedCommand', { partyId, command  });
     },
+    // SKILL選択
+    setSelectedCommandSkill({ commit }, { partyId, command, skillId }) {
+      commit('setSelectedCommandSkill', { partyId, command, skillId  });
+    },
+
     clearSelectedCommands({ commit }) {
       commit('clearSelectedCommands')
     },

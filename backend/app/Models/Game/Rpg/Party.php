@@ -17,7 +17,11 @@ class Party extends Model
     ];
 
     public function skills() {
-      return $this->belongsToMany(Skill::class, 'rpg_party_learned_skills', 'rpg_party_id', 'rpg_skill_id');
+      // pivotの定義により、$party->skills[0]->pivot->skill_level というような形で中間tableの値を取得できる
+      return $this
+        ->belongsToMany(Skill::class, 'rpg_party_learned_skills', 'rpg_party_id', 'rpg_skill_id')
+        ->withPivot('skill_level') 
+        ;
     }
 
     public function role() {
