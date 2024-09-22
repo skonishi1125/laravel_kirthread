@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\BattleState;
+use App\Models\Game\Rpg\Role;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -81,24 +82,24 @@ class Skill extends Model
       // todo: 回復系スキルの場合、敵全てが討伐済みになっても発動しちゃうかも
 
       switch ($role_id) {
-        case "1":
+        case Role::ROLE_STRIKER :
           Debugbar::debug('decideExecSkill(): 格闘家');
           $logs->push("{$self_data->name}は格闘家スキルを選択。");
           break;
-        case "2":
+        case Role::ROLE_MEDIC :
           Debugbar::debug('decideExecSkill(): 治療師');
           break;
-        case "3":
+        case Role::ROLE_PARADIN :
           Debugbar::debug('decideExecSkill(): 重騎士');
           $logs->push("{$self_data->name}は重騎士スキルを選択。");
           break;
-        case "4":
+        case Role::ROLE_MAGE :
           Debugbar::debug('decideExecSkill(): 魔導士');
           self::decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs);
           break;
-        case "5":
+        case Role::ROLE_RANGER :
           break;
-        case "6":
+        case Role::ROLE_BUFFER :
           break;
         default:
           break;
@@ -126,25 +127,25 @@ class Skill extends Model
 
       // スキル処理
       switch ($skill_id) {
-        case "2":
+        case 40 :
           // 回復量 = (INT * ダメージ%)
-          Debugbar::debug('ヒールメイド');
+          Debugbar::debug('ミニヒール');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
           $heal_point = ($self_int * $damage_percent);
           break;
-        case "4":
+        case 41 :
           // 回復量 = (INT * ダメージ%)
-          Debugbar::debug('ヒールエクステンド');
+          Debugbar::debug('ポップヒール');
           $logs->push("{$self_data->name}の{$selected_skill->name}！癒しの霧が味方を包む！");
           $heal_point = ($self_int * $damage_percent);
           break;
-        case "7":
+        case 42 :
           // 威力 = (INT * ダメージ%)
           Debugbar::debug('プチブラスト');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！魔力の粒が相手を襲う！");
           $damage = ($self_int * $damage_percent) - $opponent_mdef;
           break;
-        case "8":
+        case 43 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ50
           Debugbar::debug('クラッシュボルト');
           // レベルごとに文章を変えられたら熱い

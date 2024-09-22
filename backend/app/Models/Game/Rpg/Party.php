@@ -5,6 +5,8 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Game\Rpg\Role;
+
 use Barryvdh\Debugbar\Facades\Debugbar;
 
 class Party extends Model
@@ -96,58 +98,84 @@ class Party extends Model
       foreach($all_parties as $party) {
         $role_class = $party->role->class;
         switch ($role_class) {
-          case 'mage':
+          case Role::ROLE_STRIKER_CLASS_NAME :
             $party->update([
               'level' => 1,
-              'value_hp' => '20',
-              'value_ap' => '25',
-              'value_str' => '10',
-              'value_def' => '15',
-              'value_int' => '25',
-              'value_spd' => '15',
-              'total_exp' => '0',
+              'value_hp' => '40',
+              'value_ap' => '10',
+              'value_str' => '25',
+              'value_def' => '5',
+              'value_int' => '5',
+              'value_spd' => '25',
               'value_luc' => '10',
+              'total_exp' => '0',
             ]);
             break;
-          case 'paradin':
+          case Role::ROLE_MEDIC_CLASS_NAME :
+            $party->update([
+              'level' => 1,
+              'value_hp' => '30',
+              'value_ap' => '20',
+              'value_str' => '10',
+              'value_def' => '15',
+              'value_int' => '20',
+              'value_spd' => '10',
+              'value_luc' => '10',
+              'total_exp' => '0',
+              ]);
+              break;
+          case Role::ROLE_PARADIN_CLASS_NAME :
             $party->update([
               'level' => 1,
               'value_hp' => '50',
-              'value_ap' => '5',
+              'value_ap' => '15',
               'value_str' => '15',
-              'value_def' => '20',
+              'value_def' => '25',
               'value_int' => '5',
               'value_spd' => '5',
               'value_luc' => '10',
               'total_exp' => '0',
               ]);
               break;
-          case 'striker':
+          case Role::ROLE_MAGE_CLASS_NAME :
+            $party->update([
+              'level' => 1,
+              'value_hp' => '20',
+              'value_ap' => '25',
+              'value_str' => '5',
+              'value_def' => '10',
+              'value_int' => '25',
+              'value_spd' => '15',
+              'value_luc' => '10',
+              'total_exp' => '0',
+            ]);
+            break;
+          case Role::ROLE_RANGER_CLASS_NAME :
             $party->update([
               'level' => 1,
               'value_hp' => '40',
-              'value_ap' => '10',
-              'value_str' => '25',
+              'value_ap' => '15',
+              'value_str' => '15',
               'value_def' => '10',
-              'value_int' => '5',
+              'value_int' => '10',
               'value_spd' => '20',
               'value_luc' => '10',
               'total_exp' => '0',
             ]);
             break;
-          case 'medic':
+          case Role::ROLE_BUFFER_CLASS_NAME :
             $party->update([
               'level' => 1,
-              'value_hp' => '20',
-              'value_ap' => '30',
-              'value_str' => '10',
+              'value_hp' => '30',
+              'value_ap' => '20',
+              'value_str' => '5',
               'value_def' => '15',
-              'value_int' => '25',
-              'value_spd' => '10',
+              'value_int' => '15',
+              'value_spd' => '20',
               'value_luc' => '10',
               'total_exp' => '0',
-              ]);
-              break;
+            ]);
+            break;
         }
       }
       echo '初期値設定完了'. PHP_EOL;
