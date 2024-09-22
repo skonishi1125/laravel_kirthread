@@ -134,7 +134,7 @@ class SkillTableSeeder extends Seeder
           'name' => 'ポップヒール',
           'available_role_id' => Role::ROLE_MAGE,
           'skill_category' => Skill::SKILL_CATEGORY_HEAL,
-          'target_range' => Skill::TARGET_RANGE_SINGLE,
+          'target_range' => Skill::TARGET_RANGE_ALL,
           'lv1_percent' => 0.5,
           'lv1_ap_cost' => 10,
           'lv2_percent' => 0.7,

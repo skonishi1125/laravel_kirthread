@@ -27,9 +27,11 @@ class BattleState extends Model
     ];
 
     // 戦闘後に回復させるHPの倍率
-    // 基本的に最大体力の20%治療する。 戦闘不能の場合は10%だけ治療する。
+    // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
     const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
+    const AFTER_CLEARED_RECOVERY_AP_MULTIPLIER = 0.30;
     const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
+    const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
     // エンカウント時の処理
     public static function createPlayersData($user_id, $when_cleared_players_data = null) {
@@ -45,22 +47,28 @@ class BattleState extends Model
           Debugbar::debug("################# {$player_data->name} | クリア時点でのHP: {$player_data->value_hp} AP: {$player_data->value_ap}");
 
           $buffed_hp = $player_data->value_hp;
+          $buffed_ap = $player_data->value_ap;
           if ($player_data->is_defeated_flag) {
-            Debugbar::debug("戦闘不能のため、最大HPの10%で回復させます。");
+            Debugbar::debug("戦闘不能のため、最大HPの10%, 最大APの15%で回復させます。");
             $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
+            $buffed_ap += ceil($player_data->max_value_ap * self::AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER);
           } else {
             $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
+            $buffed_ap += ceil($player_data->max_value_ap * self::AFTER_CLEARED_RECOVERY_AP_MULTIPLIER);
           }
           // 回復によって最大体力を超えた場合は最大体力にする
           if ($buffed_hp > $player_data->max_value_hp) {
             $buffed_hp = $player_data->max_value_hp;
+          }
+          if ($buffed_ap > $player_data->max_value_ap) {
+            $buffed_ap = $player_data->max_value_ap;
           }
 
           $status = collect([
             'id' => $player_data->id,
             'name' => $player_data->name, // jsonから撮っているので、nicknameではなくname
             'current_hp' => $buffed_hp,
-            'current_ap' => $player_data->value_ap,
+            'current_ap' => $buffed_ap,
           ]);
           $players_hp_and_ap_status->push($status);
 
