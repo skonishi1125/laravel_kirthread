@@ -177,6 +177,7 @@ class ApiController extends Controller
       if ($command) {
           $data->command = $command['command'];
           $data->target_enemy_index = $command['enemyIndex'] ?? null;
+          $data->target_player_index = $command['playerIndex'] ?? null;
           $data->selected_skill_id = $command['skillId'] ?? null;
           // todo: item。
       }

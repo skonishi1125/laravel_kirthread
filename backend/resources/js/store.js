@@ -5,7 +5,7 @@ export default createStore({
   state: {
     // メイン画面の状態 'title', 'menu', 'battle'
     currentScreen: 'title',
-    battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
+    battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
     currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
@@ -46,10 +46,30 @@ export default createStore({
       // });
       if (commandIndex !== -1) {
         state.selectedCommands[commandIndex].enemyIndex = enemyIndex;
-        // 1人選んだ時点でのコマンド状態:
-        // [ { "partyId": 1, "command": "ATTACK", "enemyIndex": 1 } ]
-        // 3人選んだ状態だと下記。
-        // [ { "partyId": 1, "command": "ATTACK", "enemyIndex": 1 }, { "partyId": 2, "command": "ATTACK", "enemyIndex": 1 }, { "partyId": 3, "command": "ATTACK", "enemyIndex": 1 } ]
+        /* 
+          1人選んだ時点でのコマンド状態:
+          [ { "partyId": 1, "command": "ATTACK", "enemyIndex": 1 } ]
+          3人選んだ状態だと下記。
+          [ 
+            { "partyId": 1, "command": "ATTACK", "enemyIndex": 1 },
+            { "partyId": 2, "command": "ATTACK", "enemyIndex": 1 },
+            { "partyId": 3, "command": "ATTACK", "enemyIndex": 1 } 
+          ]
+        */
+      }
+    },
+    // playerIndexは、jsonでエンカウント時に作成したパーティの並び順
+    setSelectedParty(state, { partyId, playerIndex }) {
+      const commandIndex = state.selectedCommands.findIndex(c => c.partyId === partyId);
+      if (commandIndex !== -1) {
+        state.selectedCommands[commandIndex].playerIndex = playerIndex;
+      /* 
+        [ 
+          { "partyId": 1, "command": "SKILL", "playerIndex": 1 },
+          { "partyId": 2, "command": "SKILL", "playerIndex": 1 },
+          { "partyId": 3, "command": "SKILL", "playerIndex": 1 } 
+        ]
+      */
       }
     },
     incrementPartyMemberIndex(state) {
@@ -106,6 +126,9 @@ export default createStore({
 
     setSelectedEnemy({ commit },  { partyId, enemyIndex }) {
       commit('setSelectedEnemy', { partyId, enemyIndex})
+    },
+    setSelectedParty({ commit },  { partyId, playerIndex }) {
+      commit('setSelectedParty', { partyId, playerIndex})
     },
     incrementPartyMemberIndex({commit}) {
       commit('incrementPartyMemberIndex')

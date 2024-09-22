@@ -95,6 +95,7 @@ class BattleState extends Model
           'role_id' => $party->rpg_role_id,
           'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
           'command' => null, // exec時に格納する
+          'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
           'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
           'max_value_hp' => $party->value_hp, // HP最大値
           'max_value_ap' => $party->value_ap, // AP最大値
@@ -214,7 +215,18 @@ class BattleState extends Model
               self::execCommandAttack($data, $enemies_data, false, null, $logs);
               break;
             case "SKILL":
-              self::execCommandSkill($data, $enemies_data, false, null, $logs);
+              // 対象が味方の場合があるので、$opponents_dataとして定義する
+              $opponents_data = collect();
+              if (($data->target_enemy_index !== null)) {
+                Debugbar::debug("target_enemy_indexが入っているので敵グループを対象として格納。");
+                $opponents_data = $enemies_data;
+                $opponents_index = $data->target_enemy_index;
+              } else {
+                Debugbar::debug("target_player_indexが入っているので味方グループを対象として選択。");
+                $opponents_data = $players_data;
+                $opponents_index = $data->target_player_index;
+              }
+              self::execCommandSkill($data, $opponents_data, false, $opponents_index, $logs);
               break;
             default:
               $logs->push("{$data->name}は攻撃以外を選択した。");
@@ -315,16 +327,17 @@ class BattleState extends Model
 
     /*
      コマンドとして"SKILL"を選択した時の処理
-     * $self_data: 攻撃を行うキャラクター/敵のデータ
-     * $opponent_data: 攻撃対象とするキャラクター/敵のデータ
+     * $self_data: 行動実行するキャラクター/敵のデータ
+     * $opponent_data: 対象とするキャラクター/敵のデータ
+     * $opponents_index: 対象とするキャラクター/敵のインデックス。 真ん中の味方に向けた場合は[1]などが入る
     */
-    private static function execCommandSkill($self_data, $opponents_data, $is_enemy, $index, $logs){
+    private static function execCommandSkill($self_data, $opponents_data, $is_enemy, $opponents_index, $logs){
       Debugbar::debug("execCommandSkill(): ----------------------");
       $selected_skill = collect($self_data->skills)->firstWhere('id', $self_data->selected_skill_id);
 
       if ($is_enemy == false) {
         // どの職業の、どのスキル
-        Skill::decideExecSkill($self_data->role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $index, $logs);
+        Skill::decideExecSkill($self_data->role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs);
       } else {
         // todo: 敵もこの処理で技を使えるようにする
       }
@@ -416,6 +429,52 @@ class BattleState extends Model
         default:
           break;
       }
+    }
+
+    // スキル回復時もしくは、アイテム回復の時に使う
+    public static function storePartyHeal($command, $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $target_range) {
+      switch ($command) {
+        case "SKILL":
+          Debugbar::debug("回復スキル発動。");
+          if ($target_range == Skill::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
+
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+              $opponents_data[$opponents_index]->value_hp += $heal_point;
+              if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
+                $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+              }
+              $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+            }
+
+          } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
+            // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
+            Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$self_data->name}");
+            foreach ($opponents_data as $opponent_data) {
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
+              } else {
+                $opponent_data->value_hp += $heal_point;
+                if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                  $opponent_data->value_hp = $opponent_data->max_value_hp;
+                }
+                Debugbar::debug("{$opponent_data->name}回復。");
+              }
+            }
+
+            $logs->push("全員のHPを{$heal_point}ポイント回復！");
+          }
+          break;
+        case "ITEM":
+          break;
+        default:
+          break;
+      }
+
     }
 
 }

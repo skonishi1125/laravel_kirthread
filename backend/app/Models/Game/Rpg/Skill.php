@@ -14,6 +14,13 @@ class Skill extends Model
     use HasFactory;
     protected $table = 'rpg_skills';
 
+    const SKILL_CATEGORY_ATTACK = 1; // 攻撃系スキル
+    const SKILL_CATEGORY_HEAL   = 2; // 治療系スキル
+    const SKILL_CATEGORY_BUFF   = 3; // バフ系スキル
+
+    const TARGET_RANGE_SINGLE = 1; // 単体を対象
+    const TARGET_RANGE_ALL    = 2; // 全体を対象
+
     public function parties() {
       return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'rpg_skill_id', 'rpg_party_id');
     }
@@ -41,6 +48,8 @@ class Skill extends Model
             'id' => $skill->id,
             'name' => $skill->name,
             'description' => $skill->description,
+            'skill_category' => $skill->skill_category,
+            'target_range' => $skill->target_range,
             'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
             'ap_cost' => $ap_cost,
             'damage_percent' => $damage_percent,
@@ -50,21 +59,26 @@ class Skill extends Model
     }
 
     // 今からどのメソッドでこのスキルを処理するのか決める
-    public static function decideExecSkill($role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $index, $logs) {
+    public static function decideExecSkill($role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs) {
 
-      // スキル発動前に敵が討伐済みの場合、敵の選択を変更
-      if ($opponents_data[$self_data->target_enemy_index]->is_defeated_flag == true) {
-        $new_target_index = $opponents_data->search(function ($enemy) {
-          return $enemy->is_defeated_flag == false;
-        });
-        if ($new_target_index !== false) {
-          $self_data->target_enemy_index = $new_target_index;
-          Debugbar::debug("(スキル)攻撃対象が討伐済みのため対象を変更。改めて攻撃対象: {$opponents_data[$self_data->target_enemy_index]->name}");
-        } else {
-          Debugbar::debug("すべての敵が討伐済みになったので、SKILLを使わず終了します。敵数: {$opponents_data->count()}");
-          return;
+      // 攻撃系スキルの場合
+      if ($selected_skill->skill_category == self::SKILL_CATEGORY_ATTACK) {
+        // スキル発動前に敵が討伐済みの場合、敵の選択を変更
+        if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+          $new_target_index = $opponents_data->search(function ($enemy) {
+            return $enemy->is_defeated_flag == false;
+          });
+          if ($new_target_index !== false) {
+            $opponents_index = $new_target_index;
+            Debugbar::debug("(スキル)攻撃対象が討伐済みのため対象を変更。改めて攻撃対象: {$opponents_data[$opponents_index]->name}");
+          } else {
+            Debugbar::debug("すべての敵が討伐済みになったので、SKILLを使わず終了します。敵数: {$opponents_data->count()}");
+            return;
+          }
         }
       }
+
+      // todo: 回復系スキルの場合、敵全てが討伐済みになっても発動しちゃうかも
 
       switch ($role_id) {
         case "1":
@@ -80,7 +94,7 @@ class Skill extends Model
           break;
         case "4":
           Debugbar::debug('decideExecSkill(): 魔導士');
-          self::decideExecMageSkill($selected_skill, $self_data, $opponents_data, $index, $logs);
+          self::decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs);
           break;
         case "5":
           break;
@@ -95,20 +109,35 @@ class Skill extends Model
      * 魔導士
      */
 
-    public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $index, $logs) {
-      $skill_id = $selected_skill->id;
-      $self_int = $self_data->value_int;
-      $opponent_def = $opponents_data[$self_data->target_enemy_index]->value_def;
-      $opponent_int = $opponents_data[$self_data->target_enemy_index]->value_int;
+    public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
+      $skill_id       = $selected_skill->id;
+      $self_int       = $self_data->value_int;
+      // 範囲技の場合は後ほど個別に計算する。
+      // 個別技でも後でバトルログ格納の時に考えたほうがいいかも。
+      if ($opponents_index !== null) {
+        $opponent_def   = $opponents_data[$opponents_index]->value_def;
+        $opponent_int   = $opponents_data[$opponents_index]->value_int;
+        $opponent_mdef = ($opponent_def * 0.25) + ($opponent_int * 0.75);
+      }
       $damage_percent = $selected_skill->damage_percent;
 
-      $damage = 0;
-
-      // 魔法防御力: (DEF * 0.25) + (INT * 0.75)
-      $opponent_mdef = ($opponent_def * 0.25) + ($opponent_int * 0.75);
+      $damage     = null;
+      $heal_point = null;
 
       // スキル処理
       switch ($skill_id) {
+        case "2":
+          // 回復量 = (INT * ダメージ%)
+          Debugbar::debug('ヒールメイド');
+          $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
+          $heal_point = ($self_int * $damage_percent);
+          break;
+        case "4":
+          // 回復量 = (INT * ダメージ%)
+          Debugbar::debug('ヒールエクステンド');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！癒しの霧が味方を包む！");
+          $heal_point = ($self_int * $damage_percent);
+          break;
         case "7":
           // 威力 = (INT * ダメージ%)
           Debugbar::debug('プチブラスト');
@@ -126,15 +155,17 @@ class Skill extends Model
           break;
       }
 
-      // 四捨五入しておく
-      $damage = ceil($damage);
-      Debugbar::debug("ダメージ実数値計算。 ダメージ: {$damage}");
-
+      Debugbar::debug("実数値計算。 ダメージ: '{$damage}' | 回復量: '{$heal_point}'");
       // AP消費処理
       $self_data->value_ap -= $selected_skill->ap_cost;
 
-      // ダメージのHP計算, バトルログの格納
-      BattleState::storePartyDamage('SKILL', $self_data, $opponents_data, $logs, $damage);
+      if (!is_null($damage)) {
+        $damage = ceil($damage);
+        BattleState::storePartyDamage('SKILL', $self_data, $opponents_data, $logs, $damage);
+      } else if (!is_null($heal_point)) {
+        $heal_point = ceil($heal_point);
+        BattleState::storePartyHeal('SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range);
+      }
 
     }
 
