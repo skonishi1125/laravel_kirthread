@@ -15,9 +15,13 @@ class Skill extends Model
     use HasFactory;
     protected $table = 'rpg_skills';
 
-    const SKILL_CATEGORY_ATTACK = 1; // 攻撃系スキル
-    const SKILL_CATEGORY_HEAL   = 2; // 治療系スキル
-    const SKILL_CATEGORY_BUFF   = 3; // バフ系スキル
+    const ATTACK_NO_TYPE        = 0; // 分類なし(ワイドガードなどのスキル)
+    const ATTACK_PHYSICAL_TYPE  = 1; // 物理
+    const ATTACK_MAGIC_TYPE     = 2; // 魔法
+
+    const EFFECT_DAMAGE_TYPE = 1; // 攻撃系スキル
+    const EFFECT_HEAL_TYPE   = 2; // 治療系スキル
+    const EFFECT_BUFF_TYPE   = 3; // バフ系スキル
 
     const TARGET_RANGE_SINGLE = 1; // 単体を対象
     const TARGET_RANGE_ALL    = 2; // 全体を対象
@@ -49,7 +53,7 @@ class Skill extends Model
             'id' => $skill->id,
             'name' => $skill->name,
             'description' => $skill->description,
-            'skill_category' => $skill->skill_category,
+            'effect_type' => $skill->effect_type,
             'target_range' => $skill->target_range,
             'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
             'ap_cost' => $ap_cost,
@@ -65,7 +69,7 @@ class Skill extends Model
     ) {
       Debugbar::debug("decideExecSkill(): --------------------");
       // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
-      if ($selected_skill->skill_category == self::SKILL_CATEGORY_ATTACK && !is_null($opponents_index)) {
+      if ($selected_skill->effect_type == self::EFFECT_DAMAGE_TYPE && !is_null($opponents_index)) {
         // スキル発動前に敵が討伐済みの場合、敵の選択を変更
         if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
           $new_target_index = $opponents_data->search(function ($enemy) {

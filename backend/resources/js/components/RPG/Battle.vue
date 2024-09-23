@@ -134,7 +134,7 @@
                   v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class=""
                    @mouseover="showSkillDescription(skill.description)" @mouseleave="clearSkillDescription"
                 >
-                  <div @click="handleCommandSelection('SKILL', skill.id, skill.skill_category, skill.target_range)" class="command-list-row-skills">
+                  <div @click="handleCommandSelection('SKILL', skill.id, skill.effect_type, skill.target_range)" class="command-list-row-skills">
                     <div style="display: flex; justify-content: space-between;">
                       <span>{{ skill.name }}</span>
                       <span>{{ skill.ap_cost }}</span>
@@ -392,7 +392,7 @@ export default {
 
     // on_the_selected_command_id は都度変化する
     // skillを選んだならそのスキルのID, アイテムならそのアイテムのIDを格納する
-    handleCommandSelection(command, on_the_selected_command_id, skill_category, target_range) {
+    handleCommandSelection(command, on_the_selected_command_id, effect_type, target_range) {
       console.log('handleCommandSelection(): ----------------------------------');
       // 現在コマンド選択中のパーティデータをcurrentPartyMemberIndexに格納する
       let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
@@ -403,10 +403,10 @@ export default {
           this.$store.dispatch('setBattleStatus', 'enemySelect');
           break;
         case ("SKILL") :
-          // skill_category 1:攻撃 2:回復 3:バフ
+          // effect_type    1:攻撃 2:回復 3:バフ
           // target_range   1:単体 2:全体
           console.log(`SKILL選択。
-            skill_id: ${on_the_selected_command_id} カテゴリ: ${skill_category} 対象: ${target_range}`
+            skill_id: ${on_the_selected_command_id} effect_type: ${effect_type} 対象: ${target_range}`
           );
           this.$store.dispatch(
             'setSelectedCommandSkill', 
@@ -420,7 +420,7 @@ export default {
           }
 
           // 攻撃スキルなら、enemySelectへ
-          if (skill_category == 1) {
+          if (effect_type == 1) {
             console.log(`攻撃系単体スキル。enemySelectへ。`);
             this.$store.dispatch('setBattleStatus', 'enemySelect');
           // 回復, バフスキルなら、partySelectへ

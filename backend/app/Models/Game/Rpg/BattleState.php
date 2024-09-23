@@ -241,21 +241,21 @@ class BattleState extends Model
                 $opponents_index = null;
                 Debugbar::debug("target_player_indexが格納されていないため、範囲系のスキルが選択されました。");
 
-                $selected_skill_category = collect($data->skills)
+                $selected_skill_effect_type = collect($data->skills)
                   ->firstWhere('id', $data->selected_skill_id)
-                  ->skill_category;
-                switch ($selected_skill_category) {
-                  case Skill::SKILL_CATEGORY_ATTACK :
-                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。カテゴリ: {$selected_skill_category}");
+                  ->effect_type;
+                switch ($selected_skill_effect_type) {
+                  case Skill::EFFECT_DAMAGE_TYPE :
+                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
                     $opponents_data = $enemies_data;
                     break;
-                  case Skill::SKILL_CATEGORY_HEAL :
-                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。カテゴリ: {$selected_skill_category}");
+                  case Skill::EFFECT_HEAL_TYPE :
+                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
                     $opponents_data = $players_data;
                     break;
-                  case Skill::SKILL_CATEGORY_BUFF :
+                  case Skill::EFFECT_BUFF_TYPE :
                     // todo: デバフを採用するなら敵データを入れたいかも。
-                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。カテゴリ: {$selected_skill_category}");
+                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
                     $opponents_data = $players_data;
                     break;
                 }
