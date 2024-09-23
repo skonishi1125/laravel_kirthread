@@ -60,10 +60,12 @@ class Skill extends Model
     }
 
     // 今からどのメソッドでこのスキルを処理するのか決める
-    public static function decideExecSkill($role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs) {
-
-      // 攻撃系スキルの場合
-      if ($selected_skill->skill_category == self::SKILL_CATEGORY_ATTACK) {
+    public static function decideExecSkill(
+      $role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs
+    ) {
+      Debugbar::debug("decideExecSkill(): --------------------");
+      // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
+      if ($selected_skill->skill_category == self::SKILL_CATEGORY_ATTACK && !is_null($opponents_index)) {
         // スキル発動前に敵が討伐済みの場合、敵の選択を変更
         if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
           $new_target_index = $opponents_data->search(function ($enemy) {
@@ -79,7 +81,7 @@ class Skill extends Model
         }
       }
 
-      // todo: 回復系スキルの場合、敵全てが討伐済みになっても発動しちゃうかも
+      // todo: 回復系や全体攻撃スキルの場合、敵全てが討伐済みになっても発動しちゃうかも
 
       switch ($role_id) {
         case Role::ROLE_STRIKER :
@@ -91,7 +93,7 @@ class Skill extends Model
           break;
         case Role::ROLE_PARADIN :
           Debugbar::debug('decideExecSkill(): 重騎士');
-          $logs->push("{$self_data->name}は重騎士スキルを選択。");
+          self::decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs);
           break;
         case Role::ROLE_MAGE :
           Debugbar::debug('decideExecSkill(): 魔導士');
@@ -105,6 +107,57 @@ class Skill extends Model
           break;
       }
     }
+
+    /**
+     * 重騎士
+     */
+    public static function decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
+      $skill_id       = $selected_skill->id;
+      $self_str       = $self_data->value_str;
+      $self_def       = $self_data->value_def;
+      $damage_percent = $selected_skill->damage_percent;
+
+      $damage     = null;
+      $heal_point = null;
+
+      // スキル処理
+      switch ($skill_id) {
+        case 30 :
+          Debugbar::debug('ワイドスラスト');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！");
+          $damage = ($self_str * $damage_percent);
+          break;
+        case 31 :
+          Debugbar::debug('ワイドガード');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！");
+          $heal_point = 10;
+          break;
+        case 32 :
+          Debugbar::debug('ブレイヴスラッシュ');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！重厚な一撃が大地を揺らす！");
+          $damage = ($self_str * $damage_percent) + $self_def;
+          break;
+        default:
+          break;
+      }
+
+      // AP消費処理
+      $self_data->value_ap -= $selected_skill->ap_cost;
+
+      if (!is_null($damage)) {
+        $damage = ceil($damage);
+        BattleState::storePartyDamage(
+          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range
+        );
+      } else if (!is_null($heal_point)) {
+        $heal_point = ceil($heal_point);
+        BattleState::storePartyHeal(
+          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
+        );
+      }
+
+    }
+
 
     /**
      * 魔導士
@@ -162,10 +215,14 @@ class Skill extends Model
 
       if (!is_null($damage)) {
         $damage = ceil($damage);
-        BattleState::storePartyDamage('SKILL', $self_data, $opponents_data, $logs, $damage);
+        BattleState::storePartyDamage(
+          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range
+        );
       } else if (!is_null($heal_point)) {
         $heal_point = ceil($heal_point);
-        BattleState::storePartyHeal('SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range);
+        BattleState::storePartyHeal(
+          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
+        );
       }
 
     }
