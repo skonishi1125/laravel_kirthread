@@ -367,6 +367,12 @@ class BattleState extends Model
       Debugbar::debug("execCommandSkill(): ----------------------");
       $selected_skill = collect($self_data->skills)->firstWhere('id', $self_data->selected_skill_id);
 
+      // APがなければ、ログに入れて処理を終了する
+      if ($self_data->value_ap < $selected_skill->ap_cost) {
+        $logs->push("{$self_data->name}は{$selected_skill->name}を試みたがAPが足りなかった！");
+        return;
+      }
+
       if ($is_enemy == false) {
         // どの職業の、どのスキル
         Skill::decideExecSkill($self_data->role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs);

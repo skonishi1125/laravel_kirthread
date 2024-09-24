@@ -34,6 +34,13 @@
 .command-list-row-skills:hover {
   background-color: beige;
 }
+.command-list-row-skills_not_enough_ap {
+  width: 300px;
+  text-align: left;
+  padding: 10px 30px;
+  cursor: default;
+  background-color: #888;
+}
 
 .party-status-wrapper {
   display: flex; 
@@ -123,32 +130,46 @@
         <!-- command 普段は非表示で、battleStatusがcommandの場合のみ出す。 -->
          <div v-if="battleStatus == 'command'">
            <div class="command-list">
-            <div class="command-list-row" @click="handleCommandSelection('ATTACK')">ATTACK</div>
+            <div class="command-list-row" @click="handleCommandSelection('ATTACK')" @mouseover="showCommandDescription('ATTACK')" @mouseleave="clearAllDescription">ATTACK</div>
 
             <div class="btn-group dropright">
-              <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @mouseover="showCommandDescription('SKILL')" @mouseleave="clearAllDescription">
                 <a>SKILL</a>
               </div>
               <div class="dropdown-menu">
                 <div 
                   v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class=""
-                   @mouseover="showSkillDescription(skill.description)" @mouseleave="clearSkillDescription"
+                   @mouseover="showSkillDescription(skill.description)" @mouseleave="clearAllDescription"
                 >
-                  <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills">
-                    <div style="display: flex; justify-content: space-between;">
-                      <span>{{ skill.name }}</span>
-                      <span>{{ skill.ap_cost }}</span>
-                    </div>
-                    <div>
+                  <div v-if="this.partyData[this.currentPartyMemberIndex].value_ap < skill.ap_cost">
+                    <div class="command-list-row-skills_not_enough_ap">
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ skill.name }}</span>
+                        <span>{{ skill.ap_cost }}</span>
+                      </div>
+                      <div>
+                      </div>
                     </div>
                   </div>
+
+                  <div v-else>
+                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills">
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ skill.name }}</span>
+                        <span>{{ skill.ap_cost }}</span>
+                      </div>
+                      <div>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
 
-            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')">DEFENCE</div>
-            <div class="command-list-row" @click="handleCommandSelection('ITEM')">ITEM</div>
-            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')">ESCAPE</div>
+            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')" @mouseover="showCommandDescription('DEFENCE')" @mouseleave="clearAllDescription">DEFENCE</div>
+            <div class="command-list-row" @click="handleCommandSelection('ITEM')" @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">ITEM</div>
+            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')" @mouseover="showCommandDescription('ESCAPE')" @mouseleave="clearAllDescription">ESCAPE</div>
            </div>
            <!-- 味方の立ち絵を出す -->
            <div class="character-picture" :style="backgroundImageStyle"></div>
@@ -164,10 +185,10 @@
           <p v-if="battleStatus == 'command'">
             {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？<br>
             <div>
-              <span v-if="hoveredSkillDescription != null">
+              <span v-if="hoveredDescription != null">
                 <hr>
               </span>
-              <span v-html="hoveredSkillDescription"></span>
+              <span v-html="hoveredDescription"></span>
             </div>
           </p>
           <p v-if="battleStatus == 'enemySelect'">対象の敵を選択してください</p>
@@ -254,7 +275,7 @@ export default {
       fieldId: this.$route.params.fieldId,
       stageId: this.$route.params.stageId,
       partyData: {},
-      hoveredSkillDescription: null, // 現在マウスオーバーしているスキルの説明
+      hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       enemyData: {},
       battleLog: {},
       resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
@@ -289,11 +310,33 @@ export default {
       return (currentValue / maxValue) * 100;
     },
     // スキルにmouseoverした時、ちなんだ説明文を表示
-    showSkillDescription(description) {
-      this.hoveredSkillDescription = description;
+    showCommandDescription(command) {
+      let description = '';
+      switch (command) {
+        case 'ATTACK':
+          description = '敵単体に通常攻撃を行います。'
+          break;
+        case 'SKILL': 
+          description = 'APを消費した技を使うことで戦闘を優位に進めることができます。'
+          break;
+        case 'DEFENCE': 
+          description = '選択したターンの間、相手の攻撃を軽減します。'
+          break;
+        case 'ITEM': 
+          description = '所持中のアイテムを使用します。'
+          break;
+        case 'ESCAPE': 
+          description = '現在の戦闘から離脱し、街へ戻ります。'
+          break;
+      }
+      this.hoveredDescription = description;
     },
-    clearSkillDescription() {
-      this.hoveredSkillDescription = null;
+    showSkillDescription(description) {
+      this.hoveredDescription = description;
+    },
+    clearAllDescription() {
+      // コマンド、スキル、アイテムの説明文全ての表示を消す
+      this.hoveredDescription = null;
     },
 
     getEncountData(fieldId, stageId, clearStage) {
@@ -348,7 +391,7 @@ export default {
     // 敵選択後もしくは DEFENCEなど敵選択の必要がない処理を選択後、コマンド処理に戻る時に動かす処理
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
-      this.hoveredSkillDescription = null; // スキルの説明文を消しておく
+      this.hoveredDescription = null; // スキルの説明文を消しておく
 
       // 敵を全て討伐していた場合は、勝利画面に。
       if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){

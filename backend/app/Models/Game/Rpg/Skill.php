@@ -209,8 +209,7 @@ class Skill extends Model
 
       // 指定したスキルのAPを消費
       $self_data->value_ap -= $selected_skill->ap_cost;
-
-      //todo: MPが足りなければ処理を行わないようにする
+      if ($self_data->value_ap < 0) $self_data->value_ap = 0;
 
       // skills.effect_typeに応じて処理を分ける
       switch($selected_skill->effect_type) {
