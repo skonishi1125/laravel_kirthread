@@ -220,7 +220,7 @@ class BattleState extends Model
           /* ATTACK */
           switch ($data->command) {
             case "ATTACK":
-              self::execCommandAttack($data, $enemies_data, false, null, $logs);
+              self::execCommandAttack($data, $enemies_data, false, $data->target_enemy_index, $logs);
               break;
             case "SKILL":
               // 対象が味方の場合があるので、$opponents_dataとして定義する
@@ -303,64 +303,57 @@ class BattleState extends Model
      * $logs: 戦闘結果を格納するログ
      * 
     */
-    private static function execCommandAttack($self_data, $opponents_data, $is_enemy, $index, $logs){
+    private static function execCommandAttack($self_data, $opponents_data, $is_enemy, $opponents_index, $logs){
 
       if ($is_enemy == false) {
         // 攻撃対象をすでに倒している場合、別の敵を指定する
-        if ($opponents_data[$self_data->target_enemy_index]->is_defeated_flag == true) {
+        if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
           $new_target_index = $opponents_data->search(function ($enemy) {
             return $enemy->is_defeated_flag == false;
           });
           if ($new_target_index !== false) {
-            $self_data->target_enemy_index = $new_target_index;
-            Debugbar::debug("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$opponents_data[$self_data->target_enemy_index]->name}");
+            $opponents_index = $new_target_index;
+            Debugbar::debug("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$opponents_data[$opponents_index]->name}");
           } else {
             Debugbar::debug("すべての敵が討伐済みになったので、ATTACKを終了します。敵数: {$opponents_data->count()}");
             return;
           }
         }
-        // ATTACK時のダメージ計算
-        $damage = self::calculateDamage(
-          $self_data->value_str, $opponents_data[$self_data->target_enemy_index]->value_def
-        );
-        Debugbar::debug("ダメージ実数値計算。 ダメージ: {$damage}");
+        // ATTACK時のダメージ計算 相手の防御力などは後で考慮する
+        $damage = $self_data->value_str;
+        Debugbar::debug("純粋なダメージ量(STRの値。) ダメージ: {$damage}");
         // 画面に表示するログの記録
         self::storePartyDamage(
-          // 単体攻撃として扱う
-          'ATTACK', $self_data, $opponents_data, $self_data->target_enemy_index, $logs, $damage, Skill::TARGET_RANGE_SINGLE
+          // 単体・物理攻撃として扱う
+          'ATTACK', $self_data, $opponents_data, $opponents_index, $logs, $damage, Skill::TARGET_RANGE_SINGLE, Skill::ATTACK_PHYSICAL_TYPE
         );
 
       // 敵の場合
       } else {
-        Debugbar::warning("------------{$self_data->name}:攻撃開始 攻撃対象: {$opponents_data[$index]->name}---------------");
+        Debugbar::warning("------------{$self_data->name}:攻撃開始 攻撃対象: {$opponents_data[$opponents_index]->name}---------------");
         // 攻撃対象の味方がすでに倒れている場合、別の味方を指定する
-        if ($opponents_data[$index]->is_defeated_flag == true) {
+        if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
           $new_target_index = $opponents_data->search(function ($player) {
             return $player->is_defeated_flag == false;
           });
           if ($new_target_index !== false) {
-            $index = $new_target_index;
-            Debugbar::warning("攻撃対象の味方がすでに倒れているため、対象を変更。改めて攻撃対象: {$opponents_data[$index]->name}");
+            $opponents_index = $new_target_index;
+            Debugbar::warning("攻撃対象の味方がすでに倒れているため、対象を変更。改めて攻撃対象: {$opponents_data[$opponents_index]->name}");
           } else {
             Debugbar::warning("すべての味方が倒れました。敵数: {$opponents_data->count()}");
           }
         }
-        // ATTACK時のダメージ計算
-        $damage = self::calculateDamage(
-          $self_data->value_str, $opponents_data[$index]->value_def
-        );
-        Debugbar::warning("ダメージ実数値計算. ダメージ: {$damage}");
+        // ATTACK時のダメージ計算 相手の防御力などは後で考慮する
+        $damage = $self_data->value_str;
+        Debugbar::warning("純粋なダメージ量(STRの値。) ダメージ: {$damage}");
 
         // 画面に表示するログの記録
-        self::storeEnemyDamage('ATTACK', $self_data, $opponents_data, $logs, $damage, $index);
+        self::storeEnemyDamage(
+          'ATTACK', $self_data, $opponents_data, $opponents_index, $logs, $damage
+        );
       }
     }
 
-    // ATTACK選択時の攻撃力を計算
-    private static function calculateDamage($self_str, $opponent_def) {
-      $damage = ceil($self_str - $opponent_def);
-      return $damage;
-    }
 
     /*
      コマンドとして"SKILL"を選択した時の処理
@@ -385,11 +378,15 @@ class BattleState extends Model
     // コマンドを実行した際、画面に表示させるダメージなどのログ入力
     // opponents_dataは攻撃する敵のデータが入る
     public static function storePartyDamage(
-      $command, $self_data, $opponents_data, $opponents_index, $logs, $damage, $target_range
+      $command, $self_data, $opponents_data, $opponents_index, $logs, $damage, $target_range, $attack_type
     ) {
       switch ($command) {
         case "ATTACK":
           Debugbar::debug("storePartyDamage(): ATTACK");
+
+          // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
+          $damage = self::calculatePhysicalDamage($damage, $opponents_data[$opponents_index]->value_def);
+
           if ($damage > 0) {
             Debugbar::debug("【ATTACK】ダメージが1以上。敵の現在体力: {$opponents_data[$opponents_index]->value_hp}");
             $opponents_data[$opponents_index]->value_hp -= $damage;
@@ -413,10 +410,21 @@ class BattleState extends Model
           }
           break;
         case "SKILL":
-          // 単体攻撃の場合
           Debugbar::debug("storePartyDamage(): SKILL");
+          // 単体攻撃の場合
           if ($target_range == Skill::TARGET_RANGE_SINGLE) {
             Debugbar::debug("単体攻撃。");
+
+            // ダメージ計算 物理か魔法攻撃かで変える
+            if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
+              Debugbar::debug("物理。");
+              $damage = self::calculatePhysicalDamage($damage, $opponents_data[$opponents_index]->value_def);
+            } else if ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
+              Debugbar::debug("魔法。");
+              $opponent_mdef = self::calculateMagicDefenceValue($opponents_data[$opponents_index]->value_def, $opponents_data[$opponents_index]->value_int);
+              $damage -= $opponent_mdef;
+            }
+
             if ($damage > 0) {
               Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponents_data[$opponents_index]->value_hp}");
               $opponents_data[$opponents_index]->value_hp -= $damage;
@@ -441,20 +449,24 @@ class BattleState extends Model
           // 全体攻撃の場合
           } else {
             Debugbar::debug("全体攻撃ループ開始。#########");
-            $pure_damage = $damage; // ループ内で書くと攻撃のたびに威力が弱まってしまうので
-            // 対象1体ずつに対して、個別で防御などを改めて取得して処理する必要がある。
+            // ループ内で書くと攻撃のたびに威力が弱まってしまうので、個別で防御などを改めて取得して処理する。
+            $pure_damage = $damage;
             foreach ($opponents_data as $opponent_data) {
-              // todo: これ作ってから、下記どちらの仕様にするか決める(というかこちらの関数で決めたほうがいいと思うが。)
-              // 魔導士のスキルはスキル処理時点で防御などを計算した結果のダメージを出している(よくない気がする)
-              // 重騎士のスキルは純粋な威力だけを出して、その後ここで計算しようとしている
-
+              // 討伐判定チェック
               if ($opponent_data->is_defeated_flag == true) {
                 Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
-                continue; // returnにするとforeach自体が終了する。 continueだと次のforeachの処理に移行する
+                continue; // returnにするとforeach自体が終了するがcontinueだと次のforeachの処理に移行する
               }
-
-              // とりあえず物理スキルの場合
-              $damage = $pure_damage - $opponent_data->value_def;
+  
+              // ダメージ計算 物理か魔法攻撃かで変える
+              if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
+                Debugbar::debug("物理。");
+                $damage = self::calculatePhysicalDamage($pure_damage, $opponent_data->value_def);
+              } else if ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
+                Debugbar::debug("魔法。");
+                $opponent_mdef = self::calculateMagicDefenceValue($opponent_data->value_def, $opponent_data->value_int);
+                $damage = $pure_damage - $opponent_mdef;
+              }
 
               if ($damage > 0) {
                 Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
@@ -488,27 +500,31 @@ class BattleState extends Model
     }
 
     // opponents_dataは攻撃されるプレイヤーのデータが入る
-    public static function storeEnemyDamage($command, $self_data, $opponents_data, $logs, $damage, $index) {
+    public static function storeEnemyDamage($command, $self_data, $opponents_data, $opponents_index, $logs, $damage) {
       switch ($command) {
         case "ATTACK":
           Debugbar::warning("storeEnemyDamage(): ATTACK");
+
+          // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
+          $damage = self::calculatePhysicalDamage($self_data->value_str, $opponents_data[$opponents_index]->value_def);
+
           if ($damage > 0) {
-            Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$index]->value_hp}");
-            $opponents_data[$index]->value_hp -= $damage;
-            Debugbar::warning("攻撃された。味方の残り体力: {$opponents_data[$index]->value_hp}");
-            if ($opponents_data[$index]->value_hp <= 0 ) {
-              $opponents_data[$index]->value_hp = 0;
-              $opponents_data[$index]->is_defeated_flag = true;
-              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
-              $logs->push("{$opponents_data[$index]->name}はやられてしまった！");
-              Debugbar::warning("{$opponents_data[$index]->name}がやられた。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+            Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$opponents_index]->value_hp}");
+            $opponents_data[$opponents_index]->value_hp -= $damage;
+            Debugbar::warning("攻撃された。味方の残り体力: {$opponents_data[$opponents_index]->value_hp}");
+            if ($opponents_data[$opponents_index]->value_hp <= 0 ) {
+              $opponents_data[$opponents_index]->value_hp = 0;
+              $opponents_data[$opponents_index]->is_defeated_flag = true;
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$opponents_index]->name}は{$damage}のダメージを受けた！");
+              $logs->push("{$opponents_data[$opponents_index]->name}はやられてしまった！");
+              Debugbar::warning("{$opponents_data[$opponents_index]->name}がやられた。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
             } else {
-              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$index]->name}は{$damage}のダメージを受けた！");
-              Debugbar::warning("{$opponents_data[$index]->name}はまだ生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+              $logs->push("{$self_data->name}の攻撃！{$opponents_data[$opponents_index]->name}は{$damage}のダメージを受けた！");
+              Debugbar::warning("{$opponents_data[$opponents_index]->name}はまだ生存している。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
             }
           } else {
-            $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$index]->name}は攻撃を防いだ！");
-            Debugbar::warning("攻撃が通らなかった。{$opponents_data[$index]->name}は当然生存している。味方の残り体力: {$opponents_data[$index]->value_hp} 味方やられフラグ: {$opponents_data[$index]->is_defeated_flag} ");
+            $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$opponents_index]->name}は攻撃を防いだ！");
+            Debugbar::warning("攻撃が通らなかった。{$opponents_data[$opponents_index]->name}は当然生存している。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
           }
           break;
         case "SKILL":
@@ -561,7 +577,19 @@ class BattleState extends Model
         default:
           break;
       }
+    }
 
+    // 通常攻撃 (物理・単体)や物理スキルの計算
+    // 攻撃する側のSTR - 相手のDEF 安直すぎるので調整すること。
+    public static function calculatePhysicalDamage($pure_damage, $opponent_def) {
+      Debugbar::debug("calculatePhysicalDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_def}");
+      return ceil($pure_damage - $opponent_def);
+    }
+
+    // 魔法防御力 = (def * 0.25) + (int * 0.75)
+    public static function calculateMagicDefenceValue($opponent_def, $opponent_int) {
+      Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int}");
+      return ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
     }
 
 }

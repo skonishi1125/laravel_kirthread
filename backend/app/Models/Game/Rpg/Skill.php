@@ -53,10 +53,12 @@ class Skill extends Model
             'id' => $skill->id,
             'name' => $skill->name,
             'description' => $skill->description,
+            'attack_type' => $skill->attack_type,
             'effect_type' => $skill->effect_type,
             'target_range' => $skill->target_range,
             'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
             'ap_cost' => $ap_cost,
+            'elemental_id' => $skill->elemental_id,
             'damage_percent' => $damage_percent,
         ];
       });
@@ -116,20 +118,15 @@ class Skill extends Model
      * 重騎士
      */
     public static function decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
-      $skill_id       = $selected_skill->id;
-      $self_str       = $self_data->value_str;
-      $self_def       = $self_data->value_def;
-      $damage_percent = $selected_skill->damage_percent;
-
       $damage     = null;
       $heal_point = null;
 
       // スキル処理
-      switch ($skill_id) {
+      switch ($selected_skill->id) {
         case 30 :
           Debugbar::debug('ワイドスラスト');
           $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $damage = ($self_str * $damage_percent);
+          $damage = ($self_data->value_str * $selected_skill->damage_percent);
           break;
         case 31 :
           Debugbar::debug('ワイドガード');
@@ -138,27 +135,16 @@ class Skill extends Model
           break;
         case 32 :
           Debugbar::debug('ブレイヴスラッシュ');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！重厚な一撃が大地を揺らす！");
-          $damage = ($self_str * $damage_percent) + $self_def;
+          $logs->push("{$self_data->name}の{$selected_skill->name}！大地を揺がす一撃が炸裂する！");
+          $damage = ($self_data->value_str * $selected_skill->damage_percent) + $self_data->value_def;
           break;
         default:
           break;
       }
 
-      // AP消費処理
-      $self_data->value_ap -= $selected_skill->ap_cost;
-
-      if (!is_null($damage)) {
-        $damage = ceil($damage);
-        BattleState::storePartyDamage(
-          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range
-        );
-      } else if (!is_null($heal_point)) {
-        $heal_point = ceil($heal_point);
-        BattleState::storePartyHeal(
-          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
-        );
-      }
+      self::separateStoreProcessAccrodingToEffectType(
+        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point
+      );
 
     }
 
@@ -168,65 +154,81 @@ class Skill extends Model
      */
 
     public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
-      $skill_id       = $selected_skill->id;
-      $self_int       = $self_data->value_int;
-      // 範囲技の場合は後ほど個別に計算する。
-      // 個別技でも後でバトルログ格納の時に考えたほうがいいかも。
-      if ($opponents_index !== null) {
-        $opponent_def   = $opponents_data[$opponents_index]->value_def;
-        $opponent_int   = $opponents_data[$opponents_index]->value_int;
-        $opponent_mdef = ($opponent_def * 0.25) + ($opponent_int * 0.75);
-      }
-      $damage_percent = $selected_skill->damage_percent;
-
       $damage     = null;
       $heal_point = null;
 
       // スキル処理
-      switch ($skill_id) {
+      switch ($selected_skill->id) {
         case 40 :
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ミニヒール');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
-          $heal_point = ($self_int * $damage_percent);
+          $heal_point = $self_data->value_int * $selected_skill->damage_percent;
           break;
         case 41 :
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ポップヒール');
           $logs->push("{$self_data->name}の{$selected_skill->name}！癒しの霧が味方を包む！");
-          $heal_point = ($self_int * $damage_percent);
+          $heal_point = $self_data->value_int * $selected_skill->damage_percent;
           break;
         case 42 :
           // 威力 = (INT * ダメージ%)
           Debugbar::debug('プチブラスト');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！魔力の粒が相手を襲う！");
-          $damage = ($self_int * $damage_percent) - $opponent_mdef;
+          $damage = $self_data->value_int * $selected_skill->damage_percent ;
           break;
         case 43 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ50
           Debugbar::debug('クラッシュボルト');
           // レベルごとに文章を変えられたら熱い
-          $logs->push("{$self_data->name}の{$selected_skill->name}！マナの塊が大爆発を起こす！");
-          $damage = (($self_int * $damage_percent) + 50 ) - $opponent_mdef;
+          $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
+          $damage = ($self_data->value_int * $selected_skill->damage_percent) + 50;
+          break;
+        case 44 :
+          // 威力 = (INT * ダメージ%) + 基礎ダメージ30
+          Debugbar::debug('マナエクスプロージョン');
+          // レベルごとに文章を変えられたら熱い
+          $logs->push("{$self_data->name}の{$selected_skill->name}！解き放ったマナの塊が大爆発を起こす！");
+          $damage = ($self_data->value_int * $selected_skill->damage_percent) + 30;
           break;
         default:
           break;
       }
 
-      Debugbar::debug("実数値計算。 ダメージ: '{$damage}' | 回復量: '{$heal_point}'");
-      // AP消費処理
+      self::separateStoreProcessAccrodingToEffectType(
+        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point
+      );
+
+    }
+
+    public static function separateStoreProcessAccrodingToEffectType(
+      $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point 
+    ) {
+      Debugbar::debug("separateStoreProcessAccrodingToEffectType(): ----------------");
+      Debugbar::debug($selected_skill);
+
+      // 指定したスキルのAPを消費
       $self_data->value_ap -= $selected_skill->ap_cost;
 
-      if (!is_null($damage)) {
-        $damage = ceil($damage);
-        BattleState::storePartyDamage(
-          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range
-        );
-      } else if (!is_null($heal_point)) {
-        $heal_point = ceil($heal_point);
-        BattleState::storePartyHeal(
-          'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
-        );
+      //todo: MPが足りなければ処理を行わないようにする
+
+      // skills.effect_typeに応じて処理を分ける
+      switch($selected_skill->effect_type) {
+        case self::EFFECT_DAMAGE_TYPE :
+          $damage = ceil($damage);
+          BattleState::storePartyDamage(
+            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
+          );
+          break;
+        case self::EFFECT_HEAL_TYPE :
+          $heal_point = ceil($heal_point);
+          BattleState::storePartyHeal(
+            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range, $selected_skill->attack_type
+          );
+          break;
+        case self::EFFECT_BUFF_TYPE :
+          $logs->push('バフ系のスキルが選択された。');
+          break;
       }
 
     }
