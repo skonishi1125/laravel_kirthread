@@ -169,7 +169,7 @@
 
             <div class="command-list-row" @click="handleCommandSelection('DEFENCE')" @mouseover="showCommandDescription('DEFENCE')" @mouseleave="clearAllDescription">DEFENCE</div>
             <div class="command-list-row" @click="handleCommandSelection('ITEM')" @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">ITEM</div>
-            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')" @mouseover="showCommandDescription('ESCAPE')" @mouseleave="clearAllDescription">ESCAPE</div>
+            <div class="command-list-row" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">RETURN</div>
            </div>
            <!-- 味方の立ち絵を出す -->
            <div class="character-picture" :style="backgroundImageStyle"></div>
@@ -325,8 +325,8 @@ export default {
         case 'ITEM': 
           description = '所持中のアイテムを使用します。'
           break;
-        case 'ESCAPE': 
-          description = '現在の戦闘から離脱し、街へ戻ります。'
+        case 'RETURN': 
+          description = 'コマンドの選択を最初からやり直します。'
           break;
       }
       this.hoveredDescription = description;
@@ -484,6 +484,11 @@ export default {
           console.log('ITEM選択。');
           this.$store.dispatch('incrementPartyMemberIndex');
           this.battleCommandSetup(); 
+          break;
+        case ("RETURN") :
+          console.log('RETURN選択。');
+          this.$store.dispatch('resetSelectedCommands');
+          this.$store.dispatch('resetPartyMemberIndex');
           break;
       }
 

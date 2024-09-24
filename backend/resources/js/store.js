@@ -34,8 +34,13 @@ export default createStore({
       state.selectedCommands.push({ partyId, command, skillId });
     },
     // todo: ITEM選択
-    clearSelectedCommands(state) {
-      state.selectedCommands = {};
+
+    // RETURN選択
+    resetSelectedCommands(state) {
+      state.selectedCommands = [];
+    },
+    resetPartyMemberIndex(state) {
+      state.currentPartyMemberIndex = 0;
     },
 
     setSelectedEnemy(state, { partyId, enemyIndex }) {
@@ -74,9 +79,6 @@ export default createStore({
     },
     incrementPartyMemberIndex(state) {
       state.currentPartyMemberIndex += 1;
-    },
-    resetPartyMemberIndex(state) {
-      state.currentPartyMemberIndex = 0;
     },
 
     // コマンドが2週目以降続く場合、選択履歴をリセット
@@ -120,8 +122,12 @@ export default createStore({
       commit('setSelectedCommandSkill', { partyId, command, skillId  });
     },
 
-    clearSelectedCommands({ commit }) {
-      commit('clearSelectedCommands')
+    // RETURN選択
+    resetSelectedCommands({ commit }) {
+      commit('resetSelectedCommands')
+    },
+    resetPartyMemberIndex({ commit }) {
+      commit('resetPartyMemberIndex');
     },
 
     setSelectedEnemy({ commit },  { partyId, enemyIndex }) {

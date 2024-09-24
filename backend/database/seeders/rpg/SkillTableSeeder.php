@@ -60,6 +60,9 @@ class SkillTableSeeder extends Seeder
           'created_at' => $now,
           'updated_at' => $now
         ],
+
+        // トランスフォーム、タイタンブレイク
+
         // 治療師スキル
         // 重騎士スキル
         [
@@ -116,6 +119,10 @@ class SkillTableSeeder extends Seeder
           'created_at' => $now,
           'updated_at' => $now
         ],
+        // ブラッディムーン
+
+
+
         // 魔導士スキル
         [
           'id' => '40',
@@ -207,6 +214,7 @@ class SkillTableSeeder extends Seeder
           'created_at' => $now,
           'updated_at' => $now
         ],
+        // バトルメイジ
 
         // 敵の使用するスキル 100番以降
 
