@@ -153,6 +153,16 @@ class Skill extends Model
           $logs->push("{$self_data->name}の{$selected_skill->name}！大地を揺がす一撃が炸裂する！");
           $damage = ($self_data->value_str * $selected_skill->skill_percent) + $self_data->value_def;
           break;
+        case 33 :
+          Debugbar::debug('ガードアップ');
+          $logs->push("{$self_data->name}は{$selected_skill->name}を発動！");
+          $buffs = [
+            'buffed_skill_id' => $selected_skill->id,
+            'buffed_skill_name' => $selected_skill->name,
+            'buffed_def' => ceil($opponents_data[$opponents_index]->value_def * $selected_skill->skill_percent),
+            'remaining_turn' => $selected_skill->buff_turn,
+          ];
+          break;
         default:
           break;
       }

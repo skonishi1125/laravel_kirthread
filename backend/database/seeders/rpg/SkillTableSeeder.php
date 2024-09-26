@@ -122,7 +122,28 @@ class SkillTableSeeder extends Seeder
           'created_at' => $now,
           'updated_at' => $now
         ],
-        // ブラッディムーン
+        [
+          'id' => '33',
+          'name' => 'ガードアップ',
+          'available_role_id' => Role::ROLE_PARADIN,
+          'attack_type' => Skill::ATTACK_NO_TYPE,
+          'effect_type' => Skill::EFFECT_BUFF_TYPE,
+          'target_range' => Skill::TARGET_RANGE_SINGLE,
+          'lv1_percent' => 0.5,
+          'lv1_ap_cost' => 2,
+          'lv1_buff_turn' => 3,
+          'lv2_percent' => 0.7,
+          'lv2_ap_cost' => 2,
+          'lv2_buff_turn' => 3,
+          'lv3_percent' => 1.0,
+          'lv3_ap_cost' => 2,
+          'lv3_buff_turn' => 3,
+          'elemental_id' => 1,
+          'description' => '味方単体の守備力をアップさせる。',
+          'created_at' => $now,
+          'updated_at' => $now
+        ],
+        // ブラッドムーン
 
 
 
