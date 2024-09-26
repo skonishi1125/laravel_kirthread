@@ -175,11 +175,23 @@ class ApiController extends Controller
     $current_players_data->transform(function ($data) use ($commands) {
       $command = $commands->firstWhere('partyId', $data->id);
       if ($command) {
-          $data->command = $command['command'];
-          $data->target_enemy_index = $command['enemyIndex'] ?? null;
-          $data->target_player_index = $command['playerIndex'] ?? null;
-          $data->selected_skill_id = $command['skillId'] ?? null;
-          // todo: item。
+        $data->command = $command['command'];
+        $data->target_enemy_index = $command['enemyIndex'] ?? null;
+        $data->target_player_index = $command['playerIndex'] ?? null;
+        $data->selected_skill_id = $command['skillId'] ?? null;
+        
+        // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
+        if (!is_null($data->selected_skill_id)) {
+          Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
+          $selected_skill_effect_type = collect($data->skills)
+            ->firstWhere('id', $data->selected_skill_id)
+            ->effect_type;
+          $data->selected_skill_effect_type = $selected_skill_effect_type;
+        } else {
+          $data->selected_skill_effect_type = null;
+        }
+
+        // todo: item。
       }
       return $data;
     });

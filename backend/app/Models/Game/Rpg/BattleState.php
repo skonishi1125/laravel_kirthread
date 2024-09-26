@@ -194,11 +194,42 @@ class BattleState extends Model
     }
 
 
-
-    // 敵と味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
+    // 敵味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
+    // 条件: DEFENCE選択 > バフスキル選択 > 速度順
     public static function sortByBattleExec($players_and_enemies_data) {
       // 同速の場合、現状は味方が優先される
-      return $players_and_enemies_data->sortByDesc('value_spd')->values(); 
+      $sorted_data = $players_and_enemies_data->sort(function ($a, $b) {
+        
+        // 1. 'DEFENCE'コマンド選択
+        if ($a->command === 'DEFENCE' && $b->command !== 'DEFENCE') {
+          return -1; // $aが先に行動
+        }
+        if ($b->command === 'DEFENCE' && $a->command !== 'DEFENCE') {
+          return 1;  // $bが先に行動
+        }
+
+        // 2. バフスキル選択
+        $a_effect_type = $a->selected_skill_effect_type ?? null;
+        $b_effect_type = $b->selected_skill_effect_type ?? null;
+        if ($a_effect_type === Skill::EFFECT_BUFF_TYPE && $b_effect_type !== Skill::EFFECT_BUFF_TYPE) {
+          return -1;
+        }
+        if ($b_effect_type === Skill::EFFECT_BUFF_TYPE && $a_effect_type !== Skill::EFFECT_BUFF_TYPE) {
+          return 1;
+        }
+
+        // 3. 速度順で降順ソート
+        return $b->value_spd <=> $a->value_spd;
+
+      })->values();
+
+      // デバッグ用
+      $action_order = $sorted_data->map(function ($item) {
+        return $item->name;
+      })->implode(', ');
+      Debugbar::debug("行動順決定。{$action_order}");
+
+      return $sorted_data;
     }
 
     // 戦闘処理を実際に実行する。
@@ -241,21 +272,21 @@ class BattleState extends Model
                 $opponents_index = null;
                 Debugbar::debug("target_player_indexが格納されていないため、範囲系のスキルが選択されました。");
 
-                $selected_skill_effect_type = collect($data->skills)
-                  ->firstWhere('id', $data->selected_skill_id)
-                  ->effect_type;
-                switch ($selected_skill_effect_type) {
+                // $selected_skill_effect_type = collect($data->skills)
+                //   ->firstWhere('id', $data->selected_skill_id)
+                //   ->effect_type;
+                switch ($data->selected_skill_effect_type) {
                   case Skill::EFFECT_DAMAGE_TYPE :
-                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
+                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
                     $opponents_data = $enemies_data;
                     break;
                   case Skill::EFFECT_HEAL_TYPE :
-                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
+                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
                     $opponents_data = $players_data;
                     break;
                   case Skill::EFFECT_BUFF_TYPE :
                     // todo: デバフを採用するなら敵データを入れたいかも。
-                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$selected_skill_effect_type}");
+                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
                     $opponents_data = $players_data;
                     break;
                 }

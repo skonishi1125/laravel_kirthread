@@ -36,17 +36,17 @@ class Skill extends Model
 
         // レベルに応じた消費APのコスト計算 スキルの数だけ回すので、これはループの生成する必要がある
         $ap_cost_property = 'lv' . $skill->pivot->skill_level . '_ap_cost';
-        $damage_percent_property = 'lv' . $skill->pivot->skill_level . '_percent';
+        $skill_percent_property = 'lv' . $skill->pivot->skill_level . '_percent';
         $ap_cost = 99; // デフォルト値。エラーの場合は99にしてとりあえずわかるようにしとく
-        $damage_percent = 999; //デフォルト値。
+        $skill_percent = 999; //デフォルト値。
 
         $skill_attributes = $skill->getAttributes(); // DBの情報を全て配列として扱えるようにする
         // lv1ならlv1_ap_cost, lv2ならlv2_ap_costを取得
         if (array_key_exists($ap_cost_property, $skill_attributes)) {
           $ap_cost = $skill_attributes[$ap_cost_property];
         }
-        if (array_key_exists($damage_percent_property, $skill_attributes)) {
-          $damage_percent = $skill_attributes[$damage_percent_property];
+        if (array_key_exists($skill_percent_property, $skill_attributes)) {
+          $skill_percent = $skill_attributes[$skill_percent_property];
         }
 
         return [
@@ -59,7 +59,7 @@ class Skill extends Model
             'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
             'ap_cost' => $ap_cost,
             'elemental_id' => $skill->elemental_id,
-            'damage_percent' => $damage_percent,
+            'skill_percent' => $skill_percent,
         ];
       });
       return $learned_skills;
@@ -120,23 +120,33 @@ class Skill extends Model
     public static function decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
       $damage     = null;
       $heal_point = null;
+      $buff_statuses = collect([
+        'buff_hp'  => 0,
+        'buff_ap'  => 0,
+        'buff_str' => 0,
+        'buff_def' => 0,
+        'buff_int' => 0,
+        'buff_spd' => 0,
+        'buff_luc' => 0,
+      ]);
 
       // スキル処理
       switch ($selected_skill->id) {
         case 30 :
           Debugbar::debug('ワイドスラスト');
           $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $damage = ($self_data->value_str * $selected_skill->damage_percent);
+          $damage = ($self_data->value_str * $selected_skill->skill_percent);
           break;
         case 31 :
           Debugbar::debug('ワイドガード');
           $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $heal_point = 10;
+          $buff_statuses['buff_def'] = ($self_data->value_def * $selected_skill->skill_percent);
+          Debugbar::debug("{$buff_statuses}");
           break;
         case 32 :
           Debugbar::debug('ブレイヴスラッシュ');
           $logs->push("{$self_data->name}の{$selected_skill->name}！大地を揺がす一撃が炸裂する！");
-          $damage = ($self_data->value_str * $selected_skill->damage_percent) + $self_data->value_def;
+          $damage = ($self_data->value_str * $selected_skill->skill_percent) + $self_data->value_def;
           break;
         default:
           break;
@@ -156,6 +166,15 @@ class Skill extends Model
     public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
       $damage     = null;
       $heal_point = null;
+      $buff_statuses = collect([
+        'buff_hp'  => 0,
+        'buff_ap'  => 0,
+        'buff_str' => 0,
+        'buff_def' => 0,
+        'buff_int' => 0,
+        'buff_spd' => 0,
+        'buff_luc' => 0,
+      ]);
 
       // スキル処理
       switch ($selected_skill->id) {
@@ -163,33 +182,33 @@ class Skill extends Model
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ミニヒール');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
-          $heal_point = $self_data->value_int * $selected_skill->damage_percent;
+          $heal_point = $self_data->value_int * $selected_skill->skill_percent;
           break;
         case 41 :
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ポップヒール');
           $logs->push("{$self_data->name}の{$selected_skill->name}！癒しの霧が味方を包む！");
-          $heal_point = $self_data->value_int * $selected_skill->damage_percent;
+          $heal_point = $self_data->value_int * $selected_skill->skill_percent;
           break;
         case 42 :
           // 威力 = (INT * ダメージ%)
           Debugbar::debug('プチブラスト');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！魔力の粒が相手を襲う！");
-          $damage = $self_data->value_int * $selected_skill->damage_percent ;
+          $damage = $self_data->value_int * $selected_skill->skill_percent ;
           break;
         case 43 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ50
           Debugbar::debug('クラッシュボルト');
           // レベルごとに文章を変えられたら熱い
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
-          $damage = ($self_data->value_int * $selected_skill->damage_percent) + 50;
+          $damage = ($self_data->value_int * $selected_skill->skill_percent) + 50;
           break;
         case 44 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ30
           Debugbar::debug('マナエクスプロージョン');
           // レベルごとに文章を変えられたら熱い
           $logs->push("{$self_data->name}の{$selected_skill->name}！解き放ったマナの塊が大爆発を起こす！");
-          $damage = ($self_data->value_int * $selected_skill->damage_percent) + 30;
+          $damage = ($self_data->value_int * $selected_skill->skill_percent) + 30;
           break;
         default:
           break;
