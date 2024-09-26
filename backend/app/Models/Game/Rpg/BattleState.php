@@ -95,6 +95,19 @@ class BattleState extends Model
         // 会得しているスキルの取得
         $learned_skills = Skill::getLearnedSkill($party);
         $items = [];
+        $buffs = [
+          // [
+          //   'buffed_skill_id' => 31,
+          //   'buffed_def' => 20,
+          //   'buffed_int' => -10,
+          //   'remaining_turn' => 5,
+          // ],
+          // [
+          //   'buffed_skill_id' => 51,
+          //   'buffed_hp' => 30,
+          //   'remaining_turn' => 3,
+          // ],
+        ];
         $role = Role::find($party->rpg_role_id);
         $role_portrait = $role->portrait_image_path;
         // vue側に渡すデータ
@@ -107,8 +120,6 @@ class BattleState extends Model
           'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
           'max_value_hp' => $party->value_hp, // HP最大値
           'max_value_ap' => $party->value_ap, // AP最大値
-          // 'value_hp' => $party->value_hp,
-          // 'value_ap' => $party->value_ap,
           'value_hp' => $players_hp_and_ap_status[$player_index]['current_hp'],
           'value_ap' => $players_hp_and_ap_status[$player_index]['current_ap'],
           'value_str' => $party->value_str,
@@ -118,6 +129,7 @@ class BattleState extends Model
           'value_luc' => $party->value_luc,
           'skills' => $learned_skills,
           'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
+          'buffs' => $buffs,
           'items' => $items,
           'role_portrait' => $role_portrait,
           'is_defeated_flag' => false,
@@ -152,6 +164,8 @@ class BattleState extends Model
       Debugbar::debug($preset_appearing_enemies, $enemies);
 
       foreach ($enemies as $enemy_index => $enemy) {
+        $buffs = [];
+
         $enemy_data = collect([
           'id' => $enemy->id,
           'name' => $enemy->name,
@@ -167,6 +181,7 @@ class BattleState extends Model
           'value_spd' => $enemy->value_spd,
           'value_luc' => $enemy->value_luc,
           'portrait' => $enemy->portrait_image_path,
+          'buffs' => $buffs,
           'is_defeated_flag' => false,
           'enemy_index' => $enemy_index, // 敵の並び。
           'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
@@ -607,6 +622,66 @@ class BattleState extends Model
             }
 
             $logs->push("全員のHPを{$heal_point}ポイント回復！");
+          }
+          break;
+        case "ITEM":
+          break;
+        default:
+          break;
+      }
+    }
+
+    // バフスキルもしくは、アイテムでバフをかける時に使う
+    public static function storePartyBuff($command, $self_data, $opponents_data, $opponents_index, $logs, $new_buff, $target_range) {
+      switch ($command) {
+        case "SKILL":
+          Debugbar::debug("バフスキル発動。");
+          if ($target_range == Skill::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体バフ】使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+              // $opponents_data[$opponents_index]->value_hp += $heal_point;
+              // if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
+              //   $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+              // }
+              // $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+            }
+
+          } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
+            // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
+            Debugbar::debug("【全体バフ】使用者: {$self_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+            foreach ($opponents_data as $opponent_data) {
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
+              } else {
+                // 同じバフがかかっているかどうかをチェック
+                Debugbar::debug($opponent_data->buffs);
+                $buff_exists = false;
+
+                // $new_buffの方は配列なので['']で呼ばないとエラーになる
+                foreach ($opponent_data->buffs as &$already_buff) {
+                  if ($already_buff->buffed_skill_id === $new_buff['buffed_skill_id']) {
+                    Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                    $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $buff_exists = true;
+                    break;
+                  }
+                }
+
+                // 同じ buffed_skill_id がなければ、新しいバフを追加
+                if (!$buff_exists) {
+                  Debugbar::debug('新しいバフ追加');
+                  $opponent_data->buffs[] = $new_buff;
+                }
+
+              }
+            }
+
+            $logs->push("全員の特定の能力値が向上！");
           }
           break;
         case "ITEM":

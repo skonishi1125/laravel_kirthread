@@ -209,6 +209,37 @@ class ApiController extends Controller
     Debugbar::debug($current_players_data, $current_enemies_data, $battle_logs);
     Debugbar::debug("----------------------------------------------------------");
 
+    // 敵味方バフスキルのターン数を減らし、0になったなら消す
+    $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
+    foreach ($players_and_enemies_data as $data) {
+      $remaining_buffs = [];
+
+      // 戦闘不能の場合は全てのバフを解除する
+      // todo: 戦闘不能→生き返りの挙動があった時、バフが続いてしまうので戦闘不能になった瞬間にバフを外す修正が必要
+      if (count($data->buffs) > 0) {
+        Debugbar::debug("バフが1つ以上存在するので、バフに関する処理を開始。");
+        if($data->is_defeated_flag == true) {
+          Debugbar::debug("{$data->name}は戦闘不能のため全てのバフを削除しました");
+          $data->buffs = $remaining_buffs;
+          continue;
+        }
+        // 1人ずつ、付与されているバフのターン数を削っていく
+        foreach ($data->buffs as $buff) {
+          $buff = (object)$buff; // -> で値を呼べるようにオブジェクトにキャストしとく
+          $buff->remaining_turn -= 1;
+          if ($buff->remaining_turn > 0) {
+            Debugbar::debug("{$data->name}の バフ {$buff->buffed_skill_id} : 残り {$buff->remaining_turn}ターン");
+            $remaining_buffs[] = $buff;
+          } else {
+            Debugbar::debug("{$data->name}の バフ {$buff->buffed_skill_id} が消えました。");
+            $battle_logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた！");
+          }
+        }
+        $data->buffs = $remaining_buffs;
+      }
+
+    }
+
     // rpg_battle_states更新
     $updated_battle_state = $battle_state->update([
         'players_json_data' => json_encode($current_players_data),

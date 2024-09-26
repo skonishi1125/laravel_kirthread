@@ -37,8 +37,10 @@ class Skill extends Model
         // レベルに応じた消費APのコスト計算 スキルの数だけ回すので、これはループの生成する必要がある
         $ap_cost_property = 'lv' . $skill->pivot->skill_level . '_ap_cost';
         $skill_percent_property = 'lv' . $skill->pivot->skill_level . '_percent';
-        $ap_cost = 99; // デフォルト値。エラーの場合は99にしてとりあえずわかるようにしとく
+        $buff_turn_property = 'lv' . $skill->pivot->skill_level . '_buff_turn';
+        $ap_cost = 99;        // デフォルト値。エラーの場合は99にしてとりあえずわかるようにしとく
         $skill_percent = 999; //デフォルト値。
+        $buff_turn = 9;       //デフォルト値。
 
         $skill_attributes = $skill->getAttributes(); // DBの情報を全て配列として扱えるようにする
         // lv1ならlv1_ap_cost, lv2ならlv2_ap_costを取得
@@ -47,6 +49,9 @@ class Skill extends Model
         }
         if (array_key_exists($skill_percent_property, $skill_attributes)) {
           $skill_percent = $skill_attributes[$skill_percent_property];
+        }
+        if (array_key_exists($buff_turn_property, $skill_attributes)) {
+          $buff_turn = $skill_attributes[$buff_turn_property];
         }
 
         return [
@@ -58,6 +63,7 @@ class Skill extends Model
             'target_range' => $skill->target_range,
             'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
             'ap_cost' => $ap_cost,
+            'buff_turn' => $buff_turn,
             'elemental_id' => $skill->elemental_id,
             'skill_percent' => $skill_percent,
         ];
@@ -120,15 +126,9 @@ class Skill extends Model
     public static function decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
       $damage     = null;
       $heal_point = null;
-      $buff_statuses = collect([
-        'buff_hp'  => 0,
-        'buff_ap'  => 0,
-        'buff_str' => 0,
-        'buff_def' => 0,
-        'buff_int' => 0,
-        'buff_spd' => 0,
-        'buff_luc' => 0,
-      ]);
+
+      // BattleState::storePartyBuff()でこの配列をjsonで管理しているデータのbuffsにpushする
+      $buffs = []; 
 
       // スキル処理
       switch ($selected_skill->id) {
@@ -139,9 +139,14 @@ class Skill extends Model
           break;
         case 31 :
           Debugbar::debug('ワイドガード');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $buff_statuses['buff_def'] = ($self_data->value_def * $selected_skill->skill_percent);
-          Debugbar::debug("{$buff_statuses}");
+          $logs->push("{$self_data->name}の{$selected_skill->name}！全員の受ける物理ダメージが軽減する！");
+          $buffs = [
+            'buffed_skill_id' => $selected_skill->id,
+            'buffed_skill_name' => $selected_skill->name,
+            'buffed_def' => ceil($self_data->value_def * $selected_skill->skill_percent),
+            'remaining_turn' => $selected_skill->buff_turn,
+            // 'remaining_turn' => 3,
+          ];
           break;
         case 32 :
           Debugbar::debug('ブレイヴスラッシュ');
@@ -153,7 +158,7 @@ class Skill extends Model
       }
 
       self::separateStoreProcessAccrodingToEffectType(
-        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point
+        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
       );
 
     }
@@ -166,15 +171,8 @@ class Skill extends Model
     public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
       $damage     = null;
       $heal_point = null;
-      $buff_statuses = collect([
-        'buff_hp'  => 0,
-        'buff_ap'  => 0,
-        'buff_str' => 0,
-        'buff_def' => 0,
-        'buff_int' => 0,
-        'buff_spd' => 0,
-        'buff_luc' => 0,
-      ]);
+      // BattleState::storePartyBuff()でこの配列をjsonで管理しているデータのbuffsにpushする
+      $buffs = []; 
 
       // スキル処理
       switch ($selected_skill->id) {
@@ -215,13 +213,13 @@ class Skill extends Model
       }
 
       self::separateStoreProcessAccrodingToEffectType(
-        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point
+        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
       );
 
     }
 
     public static function separateStoreProcessAccrodingToEffectType(
-      $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point 
+      $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
     ) {
       Debugbar::debug("separateStoreProcessAccrodingToEffectType(): ----------------");
       Debugbar::debug($selected_skill);
@@ -241,11 +239,13 @@ class Skill extends Model
         case self::EFFECT_HEAL_TYPE :
           $heal_point = ceil($heal_point);
           BattleState::storePartyHeal(
-            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range, $selected_skill->attack_type
+            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
           );
           break;
         case self::EFFECT_BUFF_TYPE :
-          $logs->push('バフ系のスキルが選択された。');
+          BattleState::storePartyBuff(
+            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_skill->target_range
+          );
           break;
       }
 
