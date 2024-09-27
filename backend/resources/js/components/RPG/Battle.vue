@@ -489,6 +489,7 @@ export default {
           console.log('RETURN選択。');
           this.$store.dispatch('resetSelectedCommands');
           this.$store.dispatch('resetPartyMemberIndex');
+          this.battleCommandSetup();
           break;
       }
 
