@@ -447,7 +447,7 @@ export default {
           break;
         case ("SKILL") :
           // attack_type    0:無し 1:物理 2:魔法
-          // effect_type    1:攻撃 2:回復 3:バフ
+          // effect_type    0 特殊 1:攻撃 2:回復 3:バフ
           // target_range   0:自身 1:単体 2:全体
           console.log(`SKILL選択。
             skill_id: ${on_the_selected_command_id} attack_type: ${attack_type} effect_type: ${effect_type} 対象: ${target_range}`

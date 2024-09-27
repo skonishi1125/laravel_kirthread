@@ -141,7 +141,7 @@ class Skill extends Model
           break;
         case 31 :
           Debugbar::debug('ワイドガード');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！全員の受ける物理ダメージが軽減する！");
+          $logs->push("{$self_data->name}の{$selected_skill->name}！パーティは守りの壁に包まれた！");
           $buffs = [
             'buffed_skill_id' => $selected_skill->id,
             'buffed_skill_name' => $selected_skill->name,
@@ -152,7 +152,7 @@ class Skill extends Model
           break;
         case 32 :
           Debugbar::debug('ブレイヴスラッシュ');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！大地を揺がす一撃が炸裂する！");
+          $logs->push("{$self_data->name}の{$selected_skill->name}！天地を揺らす一撃！");
           $damage = ($self_data->value_str * $selected_skill->skill_percent) + $self_data->value_def;
           break;
         case 33 :
@@ -256,8 +256,7 @@ class Skill extends Model
       // skills.effect_typeに応じて処理を分ける
       switch($selected_skill->effect_type) {
         case self::EFFECT_SPECIAL_TYPE :
-          Debugbar::debug("特殊系スキル選択");
-          // 個別でスキル処理をしたほうが楽かも
+          BattleState::storePartySpecialSkill($self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_skill);
           break;
         case self::EFFECT_DAMAGE_TYPE :
           $damage = ceil($damage);
