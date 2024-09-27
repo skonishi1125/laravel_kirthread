@@ -18,9 +18,9 @@ return new class extends Migration
             $table->integer('lv2_buff_turn')->unsigned()->after('lv2_ap_cost')->nullable();
             $table->integer('lv3_ap_cost')->unsigned()->after('lv3_percent');
             $table->integer('lv3_buff_turn')->unsigned()->after('lv3_ap_cost')->nullable();
-            $table->integer('attack_type')->unsigned()->after('available_role_id')->comment('1:物理 2:魔法');
-            $table->renameColumn('type', 'effect_type');
-            $table->integer('target_range')->unsigned()->after('effect_type')->comment('1:単体 2:全体');
+            $table->integer('attack_type')->unsigned()->after('available_role_id')->comment('0:無し 1:物理 2:魔法');
+            $table->renameColumn('type', 'effect_type')->comment('0: 特殊系 1: 攻撃系 2:治療系 3:バフ系');
+            $table->integer('target_range')->unsigned()->after('effect_type')->comment('0:自身 1:単体 2:全体');
         });
     }
 

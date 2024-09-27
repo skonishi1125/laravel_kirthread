@@ -88,7 +88,7 @@ class SkillTableSeeder extends Seeder
           'name' => 'ワイドガード',
           'available_role_id' => Role::ROLE_PARADIN,
           'attack_type' => Skill::ATTACK_NO_TYPE,
-          'effect_type' => Skill::EFFECT_BUFF_TYPE,
+          'effect_type' => Skill::EFFECT_SPECIAL_TYPE,
           'target_range' => Skill::TARGET_RANGE_ALL,
           'lv1_percent' => 0.3,
           'lv1_ap_cost' => 3,
@@ -238,7 +238,27 @@ class SkillTableSeeder extends Seeder
           'created_at' => $now,
           'updated_at' => $now
         ],
-        // バトルメイジ
+        [
+          'id' => '45',
+          'name' => 'バトルメイジ',
+          'available_role_id' => Role::ROLE_MAGE,
+          'attack_type' => Skill::ATTACK_NO_TYPE,
+          'effect_type' => Skill::EFFECT_BUFF_TYPE,
+          'target_range' => Skill::TARGET_RANGE_SELF,
+          'lv1_percent' => 1.0,
+          'lv1_ap_cost' => 30,
+          'lv1_buff_turn' => 6,
+          'lv2_percent' => 1.5,
+          'lv2_ap_cost' => 40,
+          'lv2_buff_turn' => 6,
+          'lv3_percent' => 2.0,
+          'lv3_ap_cost' => 50,
+          'lv3_buff_turn' => 6,
+          'elemental_id' => 1,
+          'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
+          'created_at' => $now,
+          'updated_at' => $now
+        ],
 
         // 敵の使用するスキル 100番以降
 

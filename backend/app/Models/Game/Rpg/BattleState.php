@@ -653,9 +653,13 @@ class BattleState extends Model
 
               // $new_buffの方は配列なので['']で呼ばないとエラーになる
               foreach ($opponents_data[$opponents_index]->buffs as &$already_buff) {
-                if ($already_buff->buffed_skill_id === $new_buff['buffed_skill_id']) {
+                $already_buff = (array)$already_buff;
+                Debugbar::debug($new_buff['buffed_skill_id']); // 型キャストチェック
+                Debugbar::debug($already_buff['buffed_skill_id']); // 型キャストチェック
+
+                if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
                   Debugbar::debug("既にバフが付与されているためターン数を更新します。");
-                  $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                  $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
                   $buff_exists = true;
                   break;
                 }
@@ -703,6 +707,30 @@ class BattleState extends Model
             }
 
             $logs->push("全員の特定の能力値が向上！");
+          } else if ($target_range == Skill::TARGET_RANGE_SELF) {
+            // 自分に付与する
+            Debugbar::debug("【自分自身へのバフ】使用者: {$self_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+            // 同じバフがかかっているかどうかをチェック
+            Debugbar::debug($self_data->buffs);
+            $buff_exists = false;
+
+            // $new_buffの方は配列なので['']で呼ばないとエラーになる
+            foreach ($self_data->buffs as &$already_buff) {
+              if ($already_buff->buffed_skill_id === $new_buff['buffed_skill_id']) {
+                Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                $buff_exists = true;
+                break;
+              }
+            }
+
+            // 同じ buffed_skill_id がなければ、新しいバフを追加
+            if (!$buff_exists) {
+              Debugbar::debug('新しいバフ追加');
+              $self_data->buffs[] = $new_buff;
+            }
+
+            $logs->push("{$self_data->name}のステータスが向上！");
           }
           break;
         case "ITEM":
@@ -740,10 +768,10 @@ class BattleState extends Model
             $buff = (object)$buff; // -> で値を呼べるようにオブジェクトにキャストしとく
             $buff->remaining_turn -= 1;
             if ($buff->remaining_turn > 0) {
-              Debugbar::debug("{$data->name}の バフ {$buff->buffed_skill_id} : 残り {$buff->remaining_turn}ターン");
+              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
               $remaining_buffs[] = $buff;
             } else {
-              Debugbar::debug("{$data->name}の バフ {$buff->buffed_skill_id} が消えました。");
+              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
               $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
             }
           }

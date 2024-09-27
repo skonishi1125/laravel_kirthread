@@ -448,7 +448,7 @@ export default {
         case ("SKILL") :
           // attack_type    0:無し 1:物理 2:魔法
           // effect_type    1:攻撃 2:回復 3:バフ
-          // target_range   1:単体 2:全体
+          // target_range   0:自身 1:単体 2:全体
           console.log(`SKILL選択。
             skill_id: ${on_the_selected_command_id} attack_type: ${attack_type} effect_type: ${effect_type} 対象: ${target_range}`
           );
@@ -456,8 +456,8 @@ export default {
             'setSelectedCommandSkill', 
             { partyId: currentMember.id, command, skillId: on_the_selected_command_id }
           );
-          if (target_range == 2) {
-            console.log(`範囲スキルを選択したので対象選択をスキップ。`);
+          if (target_range == 0 || target_range == 2) {
+            console.log(`自身を選択するスキル, もしくは範囲スキルを選択したので対象選択をスキップ。`);
             this.$store.dispatch('incrementPartyMemberIndex');
             this.battleCommandSetup();
             return;

@@ -15,14 +15,16 @@ class Skill extends Model
     use HasFactory;
     protected $table = 'rpg_skills';
 
-    const ATTACK_NO_TYPE        = 0; // 分類なし(ワイドガードなどのスキル)
+    const ATTACK_NO_TYPE        = 0; // 分類なし(ワイドガードなど)
     const ATTACK_PHYSICAL_TYPE  = 1; // 物理
     const ATTACK_MAGIC_TYPE     = 2; // 魔法
 
-    const EFFECT_DAMAGE_TYPE = 1; // 攻撃系スキル
-    const EFFECT_HEAL_TYPE   = 2; // 治療系スキル
-    const EFFECT_BUFF_TYPE   = 3; // バフ系スキル
+    const EFFECT_SPECIAL_TYPE = 0; // 特殊系スキル(ワイドガードなど)
+    const EFFECT_DAMAGE_TYPE  = 1; // 攻撃系スキル
+    const EFFECT_HEAL_TYPE    = 2; // 治療系スキル
+    const EFFECT_BUFF_TYPE    = 3; // バフ系スキル
 
+    const TARGET_RANGE_SELF   = 0; // 自身を対象
     const TARGET_RANGE_SINGLE = 1; // 単体を対象
     const TARGET_RANGE_ALL    = 2; // 全体を対象
 
@@ -218,7 +220,20 @@ class Skill extends Model
           $logs->push("{$self_data->name}の{$selected_skill->name}！解き放ったマナの塊が大爆発を起こす！");
           $damage = ($self_data->value_int * $selected_skill->skill_percent) + 30;
           break;
+        case 45 :
+          // STR = (INT * ダメージ%)とする
+          Debugbar::debug('バトルメイジ');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！冒険の中で修めてきた全ての知力が{$self_data->name}の力と代わる！");
+          $buffs = [
+            'buffed_skill_id' => $selected_skill->id,
+            'buffed_skill_name' => $selected_skill->name,
+            'buffed_str' => ceil(($self_data->value_int * $selected_skill->skill_percent)),
+            'buffed_int' => ceil( - $self_data->value_int ), // intを0にする
+            'remaining_turn' => $selected_skill->buff_turn,
+          ];
+          break;
         default:
+          Debugbar::debug('存在しないスキルが選択されました。');
           break;
       }
 
@@ -240,6 +255,10 @@ class Skill extends Model
 
       // skills.effect_typeに応じて処理を分ける
       switch($selected_skill->effect_type) {
+        case self::EFFECT_SPECIAL_TYPE :
+          Debugbar::debug("特殊系スキル選択");
+          // 個別でスキル処理をしたほうが楽かも
+          break;
         case self::EFFECT_DAMAGE_TYPE :
           $damage = ceil($damage);
           BattleState::storePartyDamage(

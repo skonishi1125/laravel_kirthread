@@ -25,6 +25,7 @@ class PartyLearnedSkillTableSeeder extends Seeder
         ['rpg_party_id' => 1, 'rpg_skill_id' => 42, 'skill_level' => 1, 'created_at' => $now, 'updated_at' => $now],
         ['rpg_party_id' => 1, 'rpg_skill_id' => 43, 'skill_level' => 3, 'created_at' => $now, 'updated_at' => $now],
         ['rpg_party_id' => 1, 'rpg_skill_id' => 44, 'skill_level' => 2, 'created_at' => $now, 'updated_at' => $now],
+        ['rpg_party_id' => 1, 'rpg_skill_id' => 45, 'skill_level' => 1, 'created_at' => $now, 'updated_at' => $now],
         ['rpg_party_id' => 2, 'rpg_skill_id' => 30, 'skill_level' => 1, 'created_at' => $now, 'updated_at' => $now],
         ['rpg_party_id' => 2, 'rpg_skill_id' => 31, 'skill_level' => 2, 'created_at' => $now, 'updated_at' => $now],
         ['rpg_party_id' => 2, 'rpg_skill_id' => 32, 'skill_level' => 3, 'created_at' => $now, 'updated_at' => $now],
