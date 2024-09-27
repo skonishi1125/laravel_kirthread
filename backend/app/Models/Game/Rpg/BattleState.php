@@ -373,7 +373,8 @@ class BattleState extends Model
           }
         }
         // ATTACK時のダメージ計算 相手の防御力などは後で考慮する
-        $damage = $self_data->value_str;
+        $damage = self::calculateActualStatusValue($self_data, 'str');
+
         Debugbar::debug("（味方）純粋なダメージ量(STRの値。) : {$damage}");
         // 画面に表示するログの記録
         self::storePartyDamage(
@@ -397,7 +398,7 @@ class BattleState extends Model
           }
         }
         // ATTACK時のダメージ計算 相手の防御力などは後で考慮する
-        $damage = $self_data->value_str;
+        $damage = self::calculateActualStatusValue($self_data, 'str');
         Debugbar::warning("（敵）純粋なダメージ量(STRの値。) : {$damage}");
 
         // 画面に表示するログの記録
@@ -444,7 +445,10 @@ class BattleState extends Model
           Debugbar::debug("storePartyDamage(): ATTACK");
 
           // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
-          $calculated_damage = self::calculatePhysicalDamage($damage, $opponents_data[$opponents_index]->value_def);
+          $calculated_damage = self::calculatePhysicalDamage(
+            $damage, 
+            self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
+          );
 
           if ($calculated_damage > 0) {
             Debugbar::debug("【ATTACK】ダメージが1以上。敵の現在体力: {$opponents_data[$opponents_index]->value_hp}");
@@ -478,10 +482,16 @@ class BattleState extends Model
             // ダメージ計算 物理か魔法攻撃かで変える
             if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
               Debugbar::debug("物理。");
-              $calculated_damage = self::calculatePhysicalDamage($damage, $opponents_data[$opponents_index]->value_def);
+              $calculated_damage = self::calculatePhysicalDamage(
+                $damage, 
+                self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
+              );
             } else if ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
               Debugbar::debug("魔法。");
-              $opponent_mdef = self::calculateMagicDefenceValue($opponents_data[$opponents_index]->value_def, $opponents_data[$opponents_index]->value_int);
+              $opponent_mdef = self::calculateMagicDefenceValue(
+                self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
+                self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
+              );
               $calculated_damage = $damage -= $opponent_mdef;
             }
 
@@ -522,10 +532,16 @@ class BattleState extends Model
               // ダメージ計算 物理か魔法攻撃かで変える
               if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
                 Debugbar::debug("物理。");
-                $calculated_damage = self::calculatePhysicalDamage($base_damage, $opponent_data->value_def);
+                $calculated_damage = self::calculatePhysicalDamage(
+                  $base_damage, 
+                  self::calculateActualStatusValue($opponent_data, 'def')
+                );
               } else if ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
                 Debugbar::debug("魔法。");
-                $opponent_mdef = self::calculateMagicDefenceValue($opponent_data->value_def, $opponent_data->value_int);
+                $opponent_mdef = self::calculateMagicDefenceValue(
+                  self::calculateActualStatusValue($opponent_data, 'def'),
+                  self::calculateActualStatusValue($opponent_data, 'int')
+                );
                 $calculated_damage = $base_damage - $opponent_mdef;
               }
 
@@ -568,7 +584,10 @@ class BattleState extends Model
           Debugbar::warning("storeEnemyDamage(): ATTACK");
 
           // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
-          $calculated_damage = self::calculatePhysicalDamage($self_data->value_str, $opponents_data[$opponents_index]->value_def);
+          $calculated_damage = self::calculatePhysicalDamage(
+            self::calculateActualStatusValue($self_data, 'str'),
+            self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
+          );
 
           if ($calculated_damage > 0) {
             Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$opponents_index]->value_hp}");
@@ -756,7 +775,6 @@ class BattleState extends Model
       switch ($selected_skill->id) {
         case 31 :
           Debugbar::debug($opponents_data);
-
           foreach ($opponents_data as $opponent_data) {
             Debugbar::debug("付与対象:{$opponent_data->name}");
             // 戦闘不能ならスキップ
@@ -780,6 +798,7 @@ class BattleState extends Model
             }
           }
           break;
+
         default:
           break;
       }
@@ -935,8 +954,67 @@ class BattleState extends Model
 
     // 魔法防御力 = (def * 0.25) + (int * 0.75)
     public static function calculateMagicDefenceValue($opponent_def, $opponent_int) {
-      Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int}");
-      return ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
+      $mdef = ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
+      Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
+      return $mdef;
+    }
+
+    // 指定したのステータスのバフを含めた合計値を返す
+    public static function calculateActualStatusValue($data, $status_name) {
+
+      $actual_status_value = 0; // バフを考慮したステータスが入る
+      $actual_status_name = '';
+
+      Debugbar::debug("calculateActualStatusValue(): --- {$data->name}のバフ含めたステータス {$status_name} の計算");
+
+      switch($status_name) {
+        case 'hp' :
+          $actual_status_value = $data->value_hp;
+          $actual_status_name = 'buffed_hp';
+          break;
+        case 'ap' :
+          $actual_status_value = $data->value_ap;
+          $actual_status_name = 'buffed_ap';
+          break;
+        case 'str' :
+          $actual_status_value = $data->value_str;
+          $actual_status_name = 'buffed_str';
+          break;
+        case 'def' :
+          $actual_status_value = $data->value_def;
+          $actual_status_name = 'buffed_def';
+          break;
+        case 'int' :
+          $actual_status_value = $data->value_int;
+          $actual_status_name = 'buffed_int';
+          break;
+        case 'spd' :
+          $actual_status_value = $data->value_spd;
+          $actual_status_name = 'buffed_spd';
+          break;
+        case 'luc' :
+          $actual_status_value = $data->value_luc;
+          $actual_status_name = 'buffed_luc';
+          break;
+      }
+
+      if (!empty($data->buffs)) {
+        foreach ($data->buffs as $buff) {
+          // buffed_defが存在する場合だけ加算
+          if (isset($buff->$actual_status_name)) {
+            // バフの値がdoubleだった場合、加算処理が失敗する(エラーではなく、正しく足されない)のでceilで四捨五入する。
+            $actual_status_value += ceil($buff->$actual_status_name);
+          }
+        }
+      }
+
+      Debugbar::debug("バフを考慮した合計 {$status_name} : {$actual_status_value}");
+
+      Debugbar::info($data);
+      Debugbar::info($data->buffs);
+
+      return $actual_status_value;
+
     }
 
 }
