@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Role;
+use Illuminate\Support\Collection;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -74,8 +75,10 @@ class Skill extends Model
     }
 
     // 今からどのメソッドでこのスキルを処理するのか決める
+    // 全体効果スキルなら$opponents_indexはnullになりうるので、?intとする
     public static function decideExecSkill(
-      $role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs
+      int $role_id, Object $selected_skill, Object $self_data, Collection $opponents_data, 
+      bool $is_enemy, ?int $opponents_index, Collection $logs
     ) {
       Debugbar::debug("decideExecSkill(): --------------------");
       // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
@@ -125,12 +128,13 @@ class Skill extends Model
     /**
      * 重騎士
      */
-    public static function decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
+    public static function decideExecParadinSkill(
+      Object $selected_skill, Object $self_data, Collection $opponents_data, 
+      ?int $opponents_index, Collection $logs
+    ) {
       $damage     = null;
       $heal_point = null;
-
-      // BattleState::storePartyBuff()でこの配列をjsonで管理しているデータのbuffsにpushする
-      $buffs = []; 
+      $buffs      = null;
 
       // スキル処理
       switch ($selected_skill->id) {
@@ -172,6 +176,8 @@ class Skill extends Model
           break;
       }
 
+      // Debugbar::debug(gettype($damage), gettype($heal_point), gettype($buffs)); // int, int, array
+
       self::separateStoreProcessAccrodingToEffectType(
         $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
       );
@@ -186,8 +192,7 @@ class Skill extends Model
     public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
       $damage     = null;
       $heal_point = null;
-      // BattleState::storePartyBuff()でこの配列をjsonで管理しているデータのbuffsにpushする
-      $buffs = []; 
+      $buffs      = null;
 
       // スキル処理
       switch ($selected_skill->id) {
@@ -240,6 +245,8 @@ class Skill extends Model
           break;
       }
 
+      // Debugbar::debug(gettype($damage), gettype($heal_point), gettype($buffs)); // int, int, array
+
       self::separateStoreProcessAccrodingToEffectType(
         $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
       );
@@ -247,7 +254,8 @@ class Skill extends Model
     }
 
     public static function separateStoreProcessAccrodingToEffectType(
-      $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
+      Object $selected_skill, Object $self_data, Collection $opponents_data, 
+      ?int $opponents_index, Collection $logs, ?int $damage, ?int $heal_point, ?array $buffs
     ) {
       Debugbar::debug("separateStoreProcessAccrodingToEffectType(): ----------------");
       Debugbar::debug($selected_skill);

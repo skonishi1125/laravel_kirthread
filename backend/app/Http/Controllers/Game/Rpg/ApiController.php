@@ -198,11 +198,13 @@ class ApiController extends Controller
 
     Debugbar::debug("速度順に整理-------------");
     $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-    $battle_exec_array = BattleState::sortByBattleExec($players_and_enemies_data);
+    $sorted_players_and_enemies_data = BattleState::sortByBattleExec($players_and_enemies_data);
+
+    // Debugbar::debug(get_class($sorted_players_and_enemies_data), get_class($current_enemies_data), get_class( $current_players_data), get_class($battle_logs));
 
     Debugbar::debug("戦闘実行！ BattleState::execBattleCommand()----------------");
     BattleState::execBattleCommand(
-      $battle_exec_array, $current_players_data, $current_enemies_data, $battle_logs
+      $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $battle_logs
     );
 
     Debugbar::debug("--------------戦闘処理完了(ステータス一覧)----------------");

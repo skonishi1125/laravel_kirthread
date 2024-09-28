@@ -14,6 +14,7 @@ use App\Models\Game\Rpg\PresetAppearingEnemy;
 Use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -34,7 +35,7 @@ class BattleState extends Model
     const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
     // エンカウント時の処理
-    public static function createPlayersData($user_id, $when_cleared_players_data = null) {
+    public static function createPlayersData(int $user_id, Collection $when_cleared_players_data = null) {
       Debugbar::debug("プレイヤーのエンカウントデータ(battlestates.playeys_json_data)を作成します。----------");
       $parties = Party::where('user_id', $user_id)->get();
       $players_data = collect();
@@ -144,7 +145,7 @@ class BattleState extends Model
 
     }
 
-    public static function createEnemiesData($field_id, $stage_id) {
+    public static function createEnemiesData(int $field_id, int $stage_id) {
 
       $enemies = collect();
       $enemies_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
@@ -193,7 +194,9 @@ class BattleState extends Model
       return $enemies_data;
     }
 
-    public static function createBattleState($user_id, $players_data, $enemies_data, $field_id, $stage_id) {
+    public static function createBattleState(
+      int $user_id, Collection $players_data, Collection $enemies_data, int $field_id, int $stage_id
+    ) {
       $session_id = \Str::uuid()->toString();
       $created_battle_state = BattleState::create([
         'user_id' => $user_id,
@@ -211,7 +214,7 @@ class BattleState extends Model
 
     // 敵味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
     // 条件: DEFENCE選択 > 特殊スキル選択 > 速度順
-    public static function sortByBattleExec($players_and_enemies_data) {
+    public static function sortByBattleExec(Collection $players_and_enemies_data) {
       // 同速の場合、現状は味方が優先される
       $sorted_data = $players_and_enemies_data->sort(function ($a, $b) {
         
@@ -248,9 +251,14 @@ class BattleState extends Model
     }
 
     // 戦闘処理を実際に実行する。
-    public static function execBattleCommand($battle_exec_array, $players_data, $enemies_data, $logs) {
-      foreach($battle_exec_array as $index => $data) {
+    public static function execBattleCommand(
+      Collection $sorted_players_and_enemies_data, Collection $players_data, Collection $enemies_data, Collection $logs
+    ) {
+      // Debugbar::debug(get_class($sorted_players_and_enemies_data)); // この時点ではCollection
+      foreach($sorted_players_and_enemies_data as $index => $data) {
         Debugbar::debug("######### ループ: {$index}人目。 行動対象: {$data->name} 素早さ: {$data->value_spd} #########");
+        // Debugbar::debug(get_class($data)); // この時点ではstdClass (Object型)
+
         // 味方の行動
         if ($data->is_enemy == false) {
           Debugbar::debug("味方( {$data->name} )行動開始");
@@ -349,15 +357,17 @@ class BattleState extends Model
 
     /*
      * コマンドとして"ATTACK"を選択した時の処理
-     * $self_data: 攻撃を行うキャラクター/敵のデータ
+     * $self_data: 攻撃を行うキャラクター/敵のデータ foreach内の処理のため、stdClass
      * $opponent_data: 攻撃対象とするキャラクター/敵のデータ
      * $is_enemy: 敵の行動かどうかを判断するフラグ 敵がtrue.
      * $index: 敵が行動する際、対象とする相手のindex 味方行動の場合はnull
      * $logs: 戦闘結果を格納するログ
      * 
     */
-    private static function execCommandAttack($self_data, $opponents_data, $is_enemy, $opponents_index, $logs){
+    private static function execCommandAttack(Object $self_data, Collection $opponents_data, bool $is_enemy, int $opponents_index, Collection $logs){
 
+      // Debugbar::info(get_class($self_data), get_class($opponents_data), gettype($is_enemy), gettype($opponents_index), get_class($logs));
+      // Debugbar::info(get_class($opponents_data[$opponents_index])); // コレクションの中の値なので、stdClassと認識
       if ($is_enemy == false) {
         // 攻撃対象をすでに倒している場合、別の敵を指定する
         if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
@@ -376,9 +386,8 @@ class BattleState extends Model
         $damage = self::calculateActualStatusValue($self_data, 'str');
 
         Debugbar::debug("（味方）純粋なダメージ量(STRの値。) : {$damage}");
-        // 画面に表示するログの記録
+        // 単体・物理攻撃として扱う
         self::storePartyDamage(
-          // 単体・物理攻撃として扱う
           'ATTACK', $self_data, $opponents_data, $opponents_index, $logs, $damage, Skill::TARGET_RANGE_SINGLE, Skill::ATTACK_PHYSICAL_TYPE
         );
 
@@ -415,11 +424,14 @@ class BattleState extends Model
      * $opponent_data: 対象とするキャラクター/敵のデータ
      * $opponents_index: 
         対象とするキャラクター/敵のインデックス。 真ん中の味方に向けた場合は[1]などが入る
-        全体攻撃スキルを使った場合, $opponents_indexはnullである
+        全体攻撃スキルを使った場合, $opponents_indexはnullであるため許容しておく (?int)
     */
-    private static function execCommandSkill($self_data, $opponents_data, $is_enemy, $opponents_index, $logs){
+    private static function execCommandSkill(
+      Object $self_data, Collection $opponents_data, bool $is_enemy, ?int $opponents_index, Collection $logs
+    ){
       Debugbar::debug("execCommandSkill(): ----------------------");
       $selected_skill = collect($self_data->skills)->firstWhere('id', $self_data->selected_skill_id);
+      // Debugbar::debug(get_class($selected_skill)); // stdClass
 
       // APがなければ、ログに入れて処理を終了する
       if ($self_data->value_ap < $selected_skill->ap_cost) {
@@ -438,7 +450,9 @@ class BattleState extends Model
     // コマンドを実行した際、画面に表示させるダメージなどのログ入力
     // opponents_dataは攻撃する敵のデータが入る
     public static function storePartyDamage(
-      $command, $self_data, $opponents_data, $opponents_index, $logs, $damage, $target_range, $attack_type
+      string $command, Object $self_data, 
+      Collection $opponents_data, int $opponents_index, Collection $logs, 
+      int $damage, int $target_range, int $attack_type
     ) {
       switch ($command) {
         case "ATTACK":
@@ -578,15 +592,18 @@ class BattleState extends Model
     }
 
     // opponents_dataは攻撃されるプレイヤーのデータが入る
-    public static function storeEnemyDamage($command, $self_data, $opponents_data, $opponents_index, $logs, $damage) {
+    public static function storeEnemyDamage(
+      string $command, Object $self_data, Collection $opponents_data, 
+      int $opponents_index, Collection $logs, int $damage
+    ) {
       switch ($command) {
         case "ATTACK":
           Debugbar::warning("storeEnemyDamage(): ATTACK");
 
           // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
           $calculated_damage = self::calculatePhysicalDamage(
-            self::calculateActualStatusValue($self_data, 'str'),
-            self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
+            $damage, 
+            self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
           );
 
           if ($calculated_damage > 0) {
@@ -617,7 +634,10 @@ class BattleState extends Model
     }
 
     // スキル回復時もしくは、アイテム回復の時に使う
-    public static function storePartyHeal($command, $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $target_range) {
+    public static function storePartyHeal(
+      string $command, Object $self_data, Collection $opponents_data, 
+      ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range
+    ) {
       switch ($command) {
         case "SKILL":
           Debugbar::debug("回復スキル発動。");
@@ -662,7 +682,10 @@ class BattleState extends Model
     }
 
     // バフスキルもしくは、アイテムでバフをかける時に使う
-    public static function storePartyBuff($command, $self_data, $opponents_data, $opponents_index, $logs, $new_buff, $target_range) {
+    public static function storePartyBuff(
+      string $command, Object $self_data, Collection $opponents_data, 
+      ?int $opponents_index, Collection $logs, array $new_buff, int $target_range
+    ) {
       switch ($command) {
         case "SKILL":
           Debugbar::debug("バフスキル発動。");
@@ -767,7 +790,10 @@ class BattleState extends Model
       }
     }
 
-    public static function storePartySpecialSkill($self_data, $opponents_data, $opponents_index, $logs, $new_buff, $selected_skill) {
+    public static function storePartySpecialSkill(
+      Object $self_data, Object $opponents_data, ?int $opponents_index, 
+      Collection $logs, array $new_buff, Object $selected_skill
+    ) {
 
       Debugbar::debug("【特殊スキル】使用者: {$self_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
 
@@ -905,7 +931,7 @@ class BattleState extends Model
 
 
     // 攻撃で倒した時 / やられた時にバフを消す時の処理を書く
-    public static function clearBuff($data) {
+    public static function clearBuff(Object $data) {
       $remaining_buffs = [];
       if (count($data->buffs) > 0) {
         $data->buffs = $remaining_buffs;
@@ -914,7 +940,7 @@ class BattleState extends Model
     }
 
     // 戦闘処理実行後に呼び出す、バフのターンを1減らす関数
-    public static function afterExecCommandCalculateBuff($players_and_enemies_data, $logs) {
+    public static function afterExecCommandCalculateBuff(Collection $players_and_enemies_data, Collection $logs) {
       foreach ($players_and_enemies_data as $data) {
         $remaining_buffs = [];
   
@@ -947,21 +973,22 @@ class BattleState extends Model
 
     // 通常攻撃 (物理・単体)や物理スキルの計算
     // 攻撃する側のSTR - 相手のDEF 安直すぎるので調整すること。
-    public static function calculatePhysicalDamage($pure_damage, $opponent_def) {
+    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def) {
       Debugbar::debug("calculatePhysicalDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_def}");
       return ceil($pure_damage - $opponent_def);
     }
 
     // 魔法防御力 = (def * 0.25) + (int * 0.75)
-    public static function calculateMagicDefenceValue($opponent_def, $opponent_int) {
+    public static function calculateMagicDefenceValue(int $opponent_def, int $opponent_int) {
       $mdef = ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
       Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
       return $mdef;
     }
 
     // 指定したのステータスのバフを含めた合計値を返す
-    public static function calculateActualStatusValue($data, $status_name) {
+    public static function calculateActualStatusValue(Object $data, String $status_name) {
 
+      // Debugbar::debug(get_class($data), gettype($data)); 
       $actual_status_value = 0; // バフを考慮したステータスが入る
       $actual_status_name = '';
 
@@ -998,21 +1025,38 @@ class BattleState extends Model
           break;
       }
 
-      if (!empty($data->buffs)) {
-        foreach ($data->buffs as $buff) {
+      // $data->buffsとして処理をすると型がバラけてデバッグが面倒になるので、Collectionで固定させる。
+      $data_buffs_collection = collect($data->buffs) ?? collect();
+
+      //   // Debugbar::debug(gettype($data->buffs)); // array
+      //   // Debugbar::debug(gettype($data['buffs'])); // エラーになる
+      //   // Debugbar::debug(get_class($data->buffs)); // arrayなのでエラー(get_classにはObjectを渡さないといけない)
+
+      // if (!empty($data->buffs)) {
+      //   foreach ($data->buffs as $buff) {
+      //     // buffed_defが存在する場合だけ加算
+      //     if (isset($buff[$actual_status_name])) {
+      //       $actual_status_value += $buff[$actual_status_name];
+      //       Debugbar::debug("バフ値: {$buff[$actual_status_name]} ");
+      //     }
+      //   }
+
+      if (!$data_buffs_collection->isEmpty()) {
+        // Debugbar::debug(gettype($data_buffs_collection)); // Object
+        foreach ($data_buffs_collection as $buff) {
           // buffed_defが存在する場合だけ加算
           if (isset($buff->$actual_status_name)) {
-            // バフの値がdoubleだった場合、加算処理が失敗する(エラーではなく、正しく足されない)のでceilで四捨五入する。
-            $actual_status_value += ceil($buff->$actual_status_name);
+            $actual_status_value += $buff->$actual_status_name;
+            Debugbar::debug("バフ値: {$buff->$actual_status_name} ");
           }
         }
+
+        Debugbar::debug("バフを考慮した合計 {$status_name} : {$actual_status_value}");
+      } else {
+        Debugbar::debug("付与されたバフはありません。合計 {$status_name} : {$actual_status_value} ");
       }
 
-      Debugbar::debug("バフを考慮した合計 {$status_name} : {$actual_status_value}");
-
-      Debugbar::info($data);
-      Debugbar::info($data->buffs);
-
+      // Debugbar::debug(gettype($actual_status_value)); // int
       return $actual_status_value;
 
     }
