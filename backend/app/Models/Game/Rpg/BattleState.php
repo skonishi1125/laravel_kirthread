@@ -270,7 +270,7 @@ class BattleState extends Model
             Debugbar::debug("敵を全員倒したのでスキップします。戦闘に勝利しています。");
             continue; // 敵が全滅している場合は何も行わない
           } 
-          Debugbar::debug("やられ、敵全員討伐チェックOK");
+          Debugbar::debug("やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
           /* ATTACK */
           switch ($data->command) {
             case "ATTACK":

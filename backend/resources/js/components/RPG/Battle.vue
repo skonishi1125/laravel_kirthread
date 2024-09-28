@@ -482,6 +482,7 @@ export default {
           break;
         case ("ITEM") :
           console.log('ITEM選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
           this.$store.dispatch('incrementPartyMemberIndex');
           this.battleCommandSetup(); 
           break;
