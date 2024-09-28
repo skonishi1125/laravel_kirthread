@@ -141,8 +141,7 @@ class Skill extends Model
         case 30 :
           Debugbar::debug('ワイドスラスト');
           $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $damage = (
-            BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent
           );
           break;
         case 31 :
@@ -159,7 +158,7 @@ class Skill extends Model
         case 32 :
           Debugbar::debug('ブレイヴスラッシュ');
           $logs->push("{$self_data->name}の{$selected_skill->name}！天地を揺らす一撃！");
-          $damage = (BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent) + BattleState::calculateActualStatusValue($self_data, 'def')
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent) + BattleState::calculateActualStatusValue($self_data, 'def')
             ;
           break;
         case 33 :
@@ -200,33 +199,33 @@ class Skill extends Model
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ミニヒール');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
-          $heal_point = BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent;
+          $heal_point = ceil(BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent);
           break;
         case 41 :
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ポップヒール');
           $logs->push("{$self_data->name}の{$selected_skill->name}！癒しの霧が味方を包む！");
-          $heal_point = BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent;
+          $heal_point = ceil(BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent);
           break;
         case 42 :
           // 威力 = (INT * ダメージ%)
           Debugbar::debug('プチブラスト');
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！魔力の粒が相手を襲う！");
-          $damage = BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent ;
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent);
           break;
         case 43 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ50
           Debugbar::debug('クラッシュボルト');
           // レベルごとに文章を変えられたら熱い
           $logs->push("{$self_data->name}は{$selected_skill->name}を唱えた！");
-          $damage = (BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent) + 50;
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent) + 50;
           break;
         case 44 :
           // 威力 = (INT * ダメージ%) + 基礎ダメージ30
           Debugbar::debug('マナエクスプロージョン');
           // レベルごとに文章を変えられたら熱い
           $logs->push("{$self_data->name}の{$selected_skill->name}！解き放ったマナの塊が大爆発を起こす！");
-          $damage = (BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent) + 30;
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'int') * $selected_skill->skill_percent) + 30;
           break;
         case 45 :
           // STR = (INT * ダメージ%)とする

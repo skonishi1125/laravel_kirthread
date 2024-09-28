@@ -256,7 +256,7 @@ class BattleState extends Model
     ) {
       // Debugbar::debug(get_class($sorted_players_and_enemies_data)); // この時点ではCollection
       foreach($sorted_players_and_enemies_data as $index => $data) {
-        Debugbar::debug("######### ループ: {$index}人目。 行動対象: {$data->name} 素早さ: {$data->value_spd} #########");
+        Debugbar::debug("########################### ループ: {$index}人目。 行動対象: {$data->name} 素早さ: {$data->value_spd} ###########################");
         // Debugbar::debug(get_class($data)); // この時点ではstdClass (Object型)
 
         // 味方の行動
@@ -1042,12 +1042,25 @@ class BattleState extends Model
       //   }
 
       if (!$data_buffs_collection->isEmpty()) {
-        // Debugbar::debug(gettype($data_buffs_collection)); // Object
+        // Debugbar::debug(gettype($data_buffs_collection), $data_buffs_collection); // Object
         foreach ($data_buffs_collection as $buff) {
-          // buffed_defが存在する場合だけ加算
-          if (isset($buff->$actual_status_name)) {
-            $actual_status_value += $buff->$actual_status_name;
-            Debugbar::debug("バフ値: {$buff->$actual_status_name} ");
+
+          // $buffを付与した時点でのターンでは typeはarray だが、
+          // 次ターンからは$buffのtypeはObject(Collection)となっている。
+          // そのためCollectionだった場合は、arrayに戻しておかないとエラーになる
+          if (gettype($buff) !== 'array') {
+            $buff = (array) $buff; 
+          }
+          // Debugbar::debug("---------------------------------");
+          // Debugbar::debug($buff, gettype($buff)); // $buffはarray
+          // Debugbar::debug(
+          //   $buff[$actual_status_name], isset($buff[$actual_status_name]),  // バフの値, true
+          //   isset($buff->$actual_status_name), isset($buff->buffed_def) // false, false
+          // );
+          // Debugbar::debug("---------------------------------");
+          if (isset($buff[$actual_status_name])) {
+            $actual_status_value += $buff[$actual_status_name];
+            Debugbar::debug("バフ値: {$buff[$actual_status_name]} ");
           }
         }
 
