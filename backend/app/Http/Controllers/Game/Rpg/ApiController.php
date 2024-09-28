@@ -175,24 +175,45 @@ class ApiController extends Controller
     $current_players_data->transform(function ($data) use ($commands) {
       $command = $commands->firstWhere('partyId', $data->id);
       if ($command) {
-          $data->command = $command['command'];
-          $data->target_enemy_index = $command['enemyIndex'];
+        $data->command = $command['command'];
+        $data->target_enemy_index = $command['enemyIndex'] ?? null;
+        $data->target_player_index = $command['playerIndex'] ?? null;
+        $data->selected_skill_id = $command['skillId'] ?? null;
+        
+        // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
+        if (!is_null($data->selected_skill_id)) {
+          Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
+          $selected_skill_effect_type = collect($data->skills)
+            ->firstWhere('id', $data->selected_skill_id)
+            ->effect_type;
+          $data->selected_skill_effect_type = $selected_skill_effect_type;
+        } else {
+          $data->selected_skill_effect_type = null;
+        }
+
+        // todo: item。
       }
       return $data;
     });
 
     Debugbar::debug("速度順に整理-------------");
     $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-    $battle_exec_array = BattleState::sortByBattleExec($players_and_enemies_data);
+    $sorted_players_and_enemies_data = BattleState::sortByBattleExec($players_and_enemies_data);
+
+    // Debugbar::debug(get_class($sorted_players_and_enemies_data), get_class($current_enemies_data), get_class( $current_players_data), get_class($battle_logs));
 
     Debugbar::debug("戦闘実行！ BattleState::execBattleCommand()----------------");
     BattleState::execBattleCommand(
-      $battle_exec_array, $current_players_data, $current_enemies_data, $battle_logs
+      $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $battle_logs
     );
 
     Debugbar::debug("--------------戦闘処理完了(ステータス一覧)----------------");
     Debugbar::debug($current_players_data, $current_enemies_data, $battle_logs);
     Debugbar::debug("----------------------------------------------------------");
+
+    Debugbar::debug("バフターン数計算処理-------------------------------");
+    $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
+    BattleState::afterExecCommandCalculateBuff($players_and_enemies_data, $battle_logs);
 
     // rpg_battle_states更新
     $updated_battle_state = $battle_state->update([

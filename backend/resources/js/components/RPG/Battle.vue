@@ -25,6 +25,32 @@
   background-color: beige;
 }
 
+.command-list-row-skills {
+  width: 300px;
+  text-align: left;
+  padding: 10px 30px;
+  cursor: pointer;
+}
+.command-list-row-skills:hover {
+  background-color: beige;
+}
+.command-list-row-skills_not_enough_ap {
+  width: 300px;
+  text-align: left;
+  padding: 10px 30px;
+  cursor: default;
+  background-color: #888;
+}
+
+.party-status-wrapper {
+  display: flex; 
+  justify-content: space-evenly; 
+  background-color: none; 
+  height: 100px; 
+  z-index: 5; 
+  margin-bottom: 20px;
+}
+
 .character-picture {
   position: absolute;
   background-size: cover;
@@ -53,8 +79,19 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* battleStatus === 'partySelect'の場合のみ割り当てる */
+.party-hover-active {
+  cursor: pointer;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.party-hover-active:hover {
+  border: thick double #ffcc00 !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
 .log-container {
-  height: 70px; /* 高さを設定して、スクロール可能にする */
+  height: 100%; /* 高さを設定して、スクロール可能にする */
   overflow-y: scroll; /* スクロールバーを常に表示 */
   background-color: white;
   /* border: 1px solid #ccc; 境界線を追加して見やすくする（任意） */
@@ -93,31 +130,73 @@
         <!-- command 普段は非表示で、battleStatusがcommandの場合のみ出す。 -->
          <div v-if="battleStatus == 'command'">
            <div class="command-list">
-            <div class="command-list-row" @click="handleCommandSelection('ATTACK')">ATTACK</div>
-            <div class="command-list-row" @click="handleCommandSelection('SPECIAL')">SPECIAL</div>
-            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')">DEFENCE</div>
-            <div class="command-list-row" @click="handleCommandSelection('ITEM')">ITEM</div>
-            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')">ESCAPE</div>
+            <div class="command-list-row" @click="handleCommandSelection('ATTACK')" @mouseover="showCommandDescription('ATTACK')" @mouseleave="clearAllDescription">ATTACK</div>
+
+            <div class="btn-group dropright">
+              <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @mouseover="showCommandDescription('SKILL')" @mouseleave="clearAllDescription">
+                <a>SKILL</a>
+              </div>
+              <div class="dropdown-menu">
+                <div 
+                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class=""
+                   @mouseover="showSkillDescription(skill.description)" @mouseleave="clearAllDescription"
+                >
+                  <div v-if="this.partyData[this.currentPartyMemberIndex].value_ap < skill.ap_cost">
+                    <div class="command-list-row-skills_not_enough_ap">
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ skill.name }}</span>
+                        <span>{{ skill.ap_cost }}</span>
+                      </div>
+                      <div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div v-else>
+                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills">
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ skill.name }}</span>
+                        <span>{{ skill.ap_cost }}</span>
+                      </div>
+                      <div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')" @mouseover="showCommandDescription('DEFENCE')" @mouseleave="clearAllDescription">DEFENCE</div>
+            <div class="command-list-row" @click="handleCommandSelection('ITEM')" @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">ITEM</div>
+            <div class="command-list-row" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">RETURN</div>
            </div>
            <!-- 味方の立ち絵を出す -->
            <div class="character-picture" :style="backgroundImageStyle"></div>
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 90px; padding: 5px 10px; font-size: 14px; position: relative;">
+        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
            <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div>
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？
+            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？<br>
+            <div>
+              <span v-if="hoveredDescription != null">
+                <hr>
+              </span>
+              <span v-html="hoveredDescription"></span>
+            </div>
           </p>
-          <p v-if="battleStatus == 'enemySelect'">対象を選択してください</p>
+          <p v-if="battleStatus == 'enemySelect'">対象の敵を選択してください</p>
+          <p v-if="battleStatus == 'partySelect'">対象の味方を選択してください</p>
           <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
           <div v-if="battleStatus == 'outputLog'" class="log-container">
             <div v-for="(log, index) in this.battleLog" :key="index" class="log-item">
-              <p>ターン{{ (index + 1) }} : {{ log }}</p>
+              <p>{{ (index + 1) }}: {{ log }}</p>
             </div>
           </div>
           <div v-if="battleStatus == 'resultWin'" class="log-container">
@@ -154,19 +233,27 @@
           </div>
 
         <!-- partyのステータス -->
-        <div style="display: flex; justify-content: space-evenly; background-color: none; height: 100px; z-index: 5; margin-bottom: 20px;" >
-          <div style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" v-for="(partyMember, index) in partyData" :key="index">
-            <p style="font-size: 14px;">{{ partyMember.name }}</p>
-            <div class="progress" style="width: 150px; margin-bottom: 5px">
-              <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
-                HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
+        <div class="party-status-wrapper">
+          <div v-for="(partyMember, index) in partyData" :key="index">
+
+            <div 
+            @click="selectParty(partyMember.player_index)"
+            :class="{'party-hover-active': battleStatus === 'partySelect'}"
+            style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" 
+            >
+              <p style="font-size: 14px;">{{ partyMember.name }}</p>
+              <div class="progress" style="width: 150px; margin-bottom: 5px">
+                <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
+                  HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
+                </div>
+              </div>
+              <div class="progress" style="width: 150px">
+                <div class="progress-bar" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_ap, partyMember.max_value_ap) + '%' }" aria-valuenow="partyMember.value_ap" aria-valuemin="0" :aria-valuemax="partyMember.max_value_ap">
+                  AP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
+                </div>
               </div>
             </div>
-            <div class="progress" style="width: 150px">
-              <div class="progress-bar" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_ap, partyMember.max_value_ap) + '%' }" aria-valuenow="partyMember.value_ap" aria-valuemin="0" :aria-valuemax="partyMember.max_value_ap">
-                AP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
-              </div>
-            </div>
+
           </div>
         </div>
       </div>
@@ -188,6 +275,7 @@ export default {
       fieldId: this.$route.params.fieldId,
       stageId: this.$route.params.stageId,
       partyData: {},
+      hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       enemyData: {},
       battleLog: {},
       resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
@@ -217,9 +305,40 @@ export default {
     }
   },
   methods: {
+    // HP, APの表示
     calculatePercentage(currentValue, maxValue) {
       return (currentValue / maxValue) * 100;
     },
+    // スキルにmouseoverした時、ちなんだ説明文を表示
+    showCommandDescription(command) {
+      let description = '';
+      switch (command) {
+        case 'ATTACK':
+          description = '敵単体に通常攻撃を行います。'
+          break;
+        case 'SKILL': 
+          description = 'APを消費した技を使うことで戦闘を優位に進めることができます。'
+          break;
+        case 'DEFENCE': 
+          description = '選択したターンの間、相手の攻撃を軽減します。'
+          break;
+        case 'ITEM': 
+          description = '所持中のアイテムを使用します。'
+          break;
+        case 'RETURN': 
+          description = 'コマンドの選択を最初からやり直します。'
+          break;
+      }
+      this.hoveredDescription = description;
+    },
+    showSkillDescription(description) {
+      this.hoveredDescription = description;
+    },
+    clearAllDescription() {
+      // コマンド、スキル、アイテムの説明文全ての表示を消す
+      this.hoveredDescription = null;
+    },
+
     getEncountData(fieldId, stageId, clearStage) {
       console.log(`getEncountData(): fieldId:${fieldId} stageId:${stageId} clearStage:${clearStage}----------------------------------`);
       // 途中終了してメニューに戻った場合、このメソッドが走らないようにする
@@ -269,9 +388,10 @@ export default {
       }
     },
 
-    // 敵選択後に、コマンド処理に戻る時に動かす処理
+    // 敵選択後もしくは DEFENCEなど敵選択の必要がない処理を選択後、コマンド処理に戻る時に動かす処理
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
+      this.hoveredDescription = null; // スキルの説明文を消しておく
 
       // 敵を全て討伐していた場合は、勝利画面に。
       if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){
@@ -293,7 +413,8 @@ export default {
         }
         // 最後のメンバーが戦闘不能の時、コマンド選択画面に遷移させるとbackgroundセットでエラーになるので、0,1の場合だけコマンド画面に遷移させる。
         if (this.currentPartyMemberIndex <= 2) {
-          console.log(`コマンド選択画面へ遷移します。`);
+          console.log(`次のパーティコマンド選択画面へ遷移します。`);
+          // console.dir(this.partyData[this.currentPartyMemberIndex].skills);
           this.$store.dispatch('setBattleStatus', 'command');
         }
       } else {
@@ -312,12 +433,67 @@ export default {
       }
     },
 
-    handleCommandSelection(command) {
+    // on_the_selected_command_id は都度変化する
+    // skillを選んだならそのスキルのID, アイテムならそのアイテムのIDを格納する
+    handleCommandSelection(command, on_the_selected_command_id, attack_type, effect_type, target_range) {
       console.log('handleCommandSelection(): ----------------------------------');
-      // 現在コマンド選択中のデータをcurrentPartyMemberIndexに格納する
+      // 現在コマンド選択中のパーティデータをcurrentPartyMemberIndexに格納する
       let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
-      this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
-      this.$store.dispatch('setBattleStatus', 'enemySelect');
+      switch (command) {
+        case ("ATTACK") :
+          console.log('ATTACK選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          this.$store.dispatch('setBattleStatus', 'enemySelect');
+          break;
+        case ("SKILL") :
+          // attack_type    0:無し 1:物理 2:魔法
+          // effect_type    0 特殊 1:攻撃 2:回復 3:バフ
+          // target_range   0:自身 1:単体 2:全体
+          console.log(`SKILL選択。
+            skill_id: ${on_the_selected_command_id} attack_type: ${attack_type} effect_type: ${effect_type} 対象: ${target_range}`
+          );
+          this.$store.dispatch(
+            'setSelectedCommandSkill', 
+            { partyId: currentMember.id, command, skillId: on_the_selected_command_id }
+          );
+          if (target_range == 0 || target_range == 2) {
+            console.log(`自身を選択するスキル, もしくは範囲スキルを選択したので対象選択をスキップ。`);
+            this.$store.dispatch('incrementPartyMemberIndex');
+            this.battleCommandSetup();
+            return;
+          }
+
+          // 攻撃スキルなら、enemySelectへ
+          if (effect_type == 1) {
+            console.log(`攻撃系単体スキル。enemySelectへ。`);
+            this.$store.dispatch('setBattleStatus', 'enemySelect');
+          // 回復, バフスキルなら、partySelectへ
+          } else {
+            console.log(`回復・バフ系単体スキル。partySelectへ。`);
+            this.$store.dispatch('setBattleStatus', 'partySelect');
+          }
+          break;
+        case ("DEFENCE") :
+          console.log('DEFENCE選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          // 防御は敵を指定する必要がないので、enemySelectに遷移させない。
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup(); 
+          break;
+        case ("ITEM") :
+          console.log('ITEM選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup(); 
+          break;
+        case ("RETURN") :
+          console.log('RETURN選択。');
+          this.$store.dispatch('resetSelectedCommands');
+          this.$store.dispatch('resetPartyMemberIndex');
+          this.battleCommandSetup();
+          break;
+      }
+
     },
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
@@ -329,7 +505,19 @@ export default {
       // インクリメントして次のメンバーのセットアップに移行する
       this.$store.dispatch('incrementPartyMemberIndex');
       console.log('selectEnemy終わり');
-      this.battleCommandSetup(); // 0,1選択時に走らせる
+      this.battleCommandSetup();
+    },
+
+    // 選択した味方の順番を格納する
+    selectParty(playerIndex) {
+      if (this.battleStatus !== "partySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      console.log('selectParty(): ----------------------------------');
+      const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      this.$store.dispatch('setSelectedParty', { partyId: currentMember.id, playerIndex: playerIndex });
+      // インクリメントして次のメンバーのセットアップに移行する
+      this.$store.dispatch('incrementPartyMemberIndex');
+      console.log('selectParty終わり');
+      this.battleCommandSetup(); 
     },
 
     execBattleCommand() {
