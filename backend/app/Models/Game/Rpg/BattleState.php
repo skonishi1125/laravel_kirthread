@@ -266,11 +266,14 @@ class BattleState extends Model
             Debugbar::debug("{$data->name}は戦闘不能のためスキップします。");
             continue; // 戦闘不能の場合は何も行わない
           } 
-          if ($enemies_data->isEmpty()) {
-            Debugbar::debug("敵を全員倒したのでスキップします。戦闘に勝利しています。");
-            continue; // 敵が全滅している場合は何も行わない
-          } 
-          Debugbar::debug("やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
+
+          // 敵全滅チェック
+          if (Battlestate::confirmDataIsAllDefeated($enemies_data)) {
+            Debugbar::debug("敵は全員討伐済みのため、行動をスキップします。 コマンド: {$data->command}");
+            continue; // 敵が全滅していたら、コマンドを実行せずスキップ
+          }
+
+          Debugbar::debug("行動者やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
           /* ATTACK */
           switch ($data->command) {
             case "ATTACK":
@@ -295,9 +298,6 @@ class BattleState extends Model
                 $opponents_index = null;
                 Debugbar::debug("target_player_indexが格納されていないため、範囲系のスキルが選択されました。");
 
-                // $selected_skill_effect_type = collect($data->skills)
-                //   ->firstWhere('id', $data->selected_skill_id)
-                //   ->effect_type;
                 switch ($data->selected_skill_effect_type) {
                   case Skill::EFFECT_SPECIAL_TYPE :
                     Debugbar::debug("特殊系範囲スキル。");
@@ -335,10 +335,13 @@ class BattleState extends Model
             Debugbar::warning("{$data->name}はすでにやられているので行動をスキップします。");
             continue; // 行動する敵がやられている場合は何も行わない
           } 
-          if ($players_data->isEmpty()) {
-            Debugbar::warning("味方はすべて倒れています。戦闘に敗北しています。");
-            continue; // 敵が全滅している場合は何も行わない
+
+          // プレイヤー全滅チェック
+          if (Battlestate::confirmDataIsAllDefeated($players_data)) {
+            Debugbar::debug("パーティは全員戦闘不能のため、敵の行動をスキップします。 コマンド: {$data->command}");
+            continue; // 敵が全滅していたら、コマンドを実行せずスキップ
           }
+
           Debugbar::warning("敵やられ、味方全員やられチェックOK");
           // コマンド対象となる相手をランダムに指定
           $index = rand(0, $players_data->count() - 1);
@@ -360,11 +363,14 @@ class BattleState extends Model
      * $self_data: 攻撃を行うキャラクター/敵のデータ foreach内の処理のため、stdClass
      * $opponent_data: 攻撃対象とするキャラクター/敵のデータ
      * $is_enemy: 敵の行動かどうかを判断するフラグ 敵がtrue.
-     * $index: 敵が行動する際、対象とする相手のindex 味方行動の場合はnull
+     * $index: 敵が行動する際、対象とする相手のindex
      * $logs: 戦闘結果を格納するログ
      * 
     */
-    private static function execCommandAttack(Object $self_data, Collection $opponents_data, bool $is_enemy, int $opponents_index, Collection $logs){
+    private static function execCommandAttack(
+      Object $self_data, Collection $opponents_data, bool $is_enemy, 
+      int $opponents_index, Collection $logs
+    ){
 
       // Debugbar::info(get_class($self_data), get_class($opponents_data), gettype($is_enemy), gettype($opponents_index), get_class($logs));
       // Debugbar::info(get_class($opponents_data[$opponents_index])); // コレクションの中の値なので、stdClassと認識
@@ -1072,6 +1078,17 @@ class BattleState extends Model
       // Debugbar::debug(gettype($actual_status_value)); // int
       return $actual_status_value;
 
+    }
+
+    // 渡したパーティか敵を全滅しているかどうかをboolで判定する
+    public static function confirmDataIsAllDefeated(Collection $player_or_enemy_data): bool {
+      foreach ($player_or_enemy_data as $data) {
+        // 回しているデータに1つでもフラグが立っていなければ、falseを返せば良い
+        if (!$data->is_defeated_flag) {
+          return false;
+        }
+      }
+      return true;
     }
 
 }

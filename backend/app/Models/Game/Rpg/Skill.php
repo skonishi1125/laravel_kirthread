@@ -98,8 +98,6 @@ class Skill extends Model
         }
       }
 
-      // todo: 回復系や全体攻撃スキルの場合、敵全てが討伐済みになっても発動しちゃうかも
-
       switch ($role_id) {
         case Role::ROLE_STRIKER :
           Debugbar::debug('decideExecSkill(): 格闘家');
