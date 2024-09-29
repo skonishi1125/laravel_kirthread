@@ -8,7 +8,7 @@
             @if ($r['value'])
               {{$r['value']}} × {{ $r['count'] }}
             @else
-              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
+              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('image/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
             @endif
           </a>
         </li>
@@ -19,7 +19,7 @@
             @if ($r['value'])
               {{$r['value']}} × {{ $r['count'] }}
             @else
-              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
+              <img class="reaction_button_img_{{$r['name_plural']}}" src="{{ asset('image/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
             @endif
           </a>
         </li>
@@ -35,7 +35,7 @@
           @if ($r['value'])
             {{$r['value']}} × {{ $r['count'] }}
           @else
-            <img src="{{ asset('storage/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
+            <img src="{{ asset('image/reaction_icons/' . $r['url']) }}" alt="reaction_{{$r['reaction_icon_id']}}"> × {{ $r['count'] }}
           @endif
         </a>
       </li>
