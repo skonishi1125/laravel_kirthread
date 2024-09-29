@@ -7,7 +7,7 @@
             @if ($r->value)
               {{$r->value}}
             @else
-              <img src="{{ asset('storage/reaction_icons/' . $r->url) }}" alt="reaction_{{$r->id}}">
+              <img src="{{ asset('image/reaction_icons/' . $r->url) }}" alt="reaction_{{$r->id}}">
             @endif
           </a>
         </li>
