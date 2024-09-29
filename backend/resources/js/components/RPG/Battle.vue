@@ -117,7 +117,7 @@
 <template>
   <div class="row" @click="nextAction">
     <!-- todo: ステージごとに背景を変える -->
-    <div class="col-12" style="background-image: url('/storage/rpg/field/grassland.png'); background-size: cover;  position: relative;">
+    <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;">
 
       <div v-if="battleStatus == 'error'">
         <div style="cursor: pointer; background-color: white;">
@@ -217,7 +217,7 @@
             </div>
             <div 
             @click="selectEnemy(enemy.enemy_index)" 
-            :style="{ backgroundImage: 'url(/storage/rpg/enemy/' + enemy.portrait + ')'}" 
+            :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
             :class="{ 'enemy-picture': true, 'enemy-hover-active': battleStatus === 'enemySelect'}"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
@@ -290,7 +290,7 @@ export default {
     // コマンド選択時のキャラクターの立ち絵
     backgroundImageStyle() {
       return {
-        backgroundImage: `url(/storage/rpg/character/portrait/${this.partyData[this.currentPartyMemberIndex].role_portrait})`
+        backgroundImage: `url(/image/rpg/character/portrait/${this.partyData[this.currentPartyMemberIndex].role_portrait})`
       }
     }
   },
