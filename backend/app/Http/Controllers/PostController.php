@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
 use Illuminate\Http\Request;
 Use App\User;
 Use App\Models\Post;
@@ -10,6 +11,10 @@ use App\Models\ReactionIcon;
 use App\ReactionIcon as AppReactionIcon;
 Use Auth;
 use Illuminate\Support\Facades\Log;
+
+// 画像リサイズに使用する
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class PostController extends Controller
 {
@@ -45,28 +50,20 @@ class PostController extends Controller
         ;
     }
 
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        // バリデーション
-        $validate = $request->validate([
-            'message' => 'required_without_all:picture,youtube_url|max:255', // picture, youtube_urlと空白を入れてはいけない
-            'picture' => 'nullable|image',
-            'youtube_url' => 'nullable|starts_with:https://www.youtube.com,https://m.youtube.com,https://youtu.be',
-        ],
-        [
-            'message.required_without_all' => '投稿が未記入です。',
-            'message.max' => '投稿は最大255文字までです。',
-            'picture.image' => 'こちらの写真の拡張子は非対応です。',
-            'youtube_url.starts_with' => '動画URLの形式が誤っています。',
-        ]);
-
         // ファイルのアップロード
         if ($request->hasFile('picture')) {
-            $picture = $request->file('picture');
-            $picture_name = uniqid('pic_') . '.' . $request->file('picture')->guessExtension();
-            // ストレージフォルダに保存する。
-            $path = storage_path('app/public/uploads');
-            $picture->move($path, $picture_name);
+          $picture = $request->file('picture');
+
+          // 画像リサイズ
+          $manager = new ImageManager(new Driver());
+          $resized_picture = $manager
+            ->read($picture->getPathname())
+            ->scaleDown(width: 600); // これ以下のものをアップした場合は、拡張せずそのまま
+          $picture_name = uniqid('pic_') . '.' . $request->file('picture')->guessExtension();
+
+          $resized_picture->save(storage_path('app/public/uploads/' . $picture_name));
         } else {
             $picture_name = null;
         }

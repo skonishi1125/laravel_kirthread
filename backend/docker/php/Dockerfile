@@ -2,8 +2,13 @@ FROM php:8.2-fpm
 COPY php.ini /usr/local/etc/php/
 
 RUN apt-get update \
-  && apt-get install -y zlib1g-dev mariadb-client vim libzip-dev \
-  && docker-php-ext-install zip pdo_mysql
+  && apt-get install -y zlib1g-dev mariadb-client vim libzip-dev libmagickwand-dev --no-install-recommends \
+  && docker-php-ext-install zip pdo_mysql \
+  && pecl install imagick \
+  && docker-php-ext-enable imagick
+
+# コンテナのキャッシュ削減のためのクリーンアップ（オプション）
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Composer install
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
