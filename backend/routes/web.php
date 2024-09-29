@@ -23,7 +23,7 @@ Route::get('/about', 'PageController@about')->name('about');
 Route::get('/game', 'PageController@game')->name('game');
 Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 
-if (config('app.env') === 'local') {
+// if (config('app.env') === 'local') {
   // RPG関連のルーティング
   // rpg/* のパスにアクセスした場合、トップページに飛ばす
   // (その後はvue-router側で操作される)
@@ -38,12 +38,10 @@ if (config('app.env') === 'local') {
   Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
   Route::post('/api/game/rpg/battle/escape', 'Game\Rpg\ApiController@escapeBattle')->name('api_game_rpg_battle_escape');
   Route::post('/api/game/rpg/battle/result-win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
-  
-
 
   Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
   Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSaveData')->name('api_game_rpg_save_data');
-}
+// }
 
 // Auth認証のかかるページ
 Route::group(['middleware' => 'auth'], function () {

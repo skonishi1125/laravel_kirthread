@@ -83,7 +83,7 @@ body {
   position: absolute;
   top: -46px;
   right: -91px;
-  width: 190px;
+  width: 200px;
   height: 60px;
   background-color: #e0edff;
 }
@@ -153,7 +153,7 @@ body {
   .reaction-modal {
     right: -32px;
     top: -45px;
-    width: 180px;
+    width: 200px;
     height: 50px;
   }
 
