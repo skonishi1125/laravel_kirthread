@@ -457,7 +457,7 @@ class BattleState extends Model
     // opponents_dataは攻撃する敵のデータが入る
     public static function storePartyDamage(
       string $command, Object $self_data, 
-      Collection $opponents_data, int $opponents_index, Collection $logs, 
+      Collection $opponents_data, ?int $opponents_index, Collection $logs, 
       int $damage, int $target_range, int $attack_type
     ) {
       switch ($command) {

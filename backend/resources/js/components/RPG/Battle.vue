@@ -91,7 +91,7 @@
 }
 
 .log-container {
-  height: 100%; /* 高さを設定して、スクロール可能にする */
+  height: 86px; /* 高さを設定して、スクロール可能にする */
   overflow-y: scroll; /* スクロールバーを常に表示 */
   background-color: white;
   /* border: 1px solid #ccc; 境界線を追加して見やすくする（任意） */
@@ -111,6 +111,25 @@
 .log-item {
   margin-bottom: -15px; /* 各ログアイテムの下に余白を追加（任意） */
 }
+
+.battlelog_result_wrapper {
+  background-color: black;
+  color: rgb(58, 250, 58);
+  padding: 10px 10px;
+  height: 150px;
+  overflow-y: scroll !important;
+  font-size: 12px;
+}
+
+.battlelog_result_wrapper ul {
+  padding-left: 0;
+}
+
+.battlelog_result_wrapper li {
+  list-style: none;
+  border-bottom: 1px dotted white;
+}
+
 
 </style>
 
@@ -178,9 +197,9 @@
         <!-- messageフィールド -->
         <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
           <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
-           <div style="position: absolute; right: 0%; bottom: 0%;">
+           <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
-           </div>
+           </div> -->
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
             {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？<br>
@@ -264,6 +283,13 @@
     <button @click="escapeBattle">逃げる</button>
   </div>
 
+  <div class="battlelog_result_wrapper overflow-auto">
+    <ul>
+      <li>【戦闘履歴】</li>
+      <li v-for="log in this.battleLogHistory" >{{ log }}</li>
+    </ul>
+  </div>
+
 </template>
 
 <script>
@@ -277,7 +303,8 @@ export default {
       partyData: {},
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       enemyData: {},
-      battleLog: {},
+      battleLog: {}, // リアルタイムの戦闘結果
+      battleLogHistory: [], // これまでの戦闘結果を配列として履歴に残す。最大100件を考えている
       resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
     }
   },
@@ -532,6 +559,7 @@ export default {
           this.partyData = data[0] || [];
           this.enemyData = data[1] || [];
           this.battleLog = data[2] || []; //戦闘結果を取得する
+          this.pushBattleLogHistory(this.battleLog);
           this.$store.dispatch('setBattleStatus', 'outputLog');
           // stateのリセット
           this.$store.dispatch('resetBattleStatus');
@@ -568,6 +596,8 @@ export default {
       console.log(`clearStage: ${this.clearStage}`);
 
       console.log('nextBattle(): --------------------', fieldId, stageId, this.clearStage);
+      // バトルログなど、色々リセット
+      this.battleLogHistory = [];
       this.$store.dispatch('resetAllBattleStatus');
       this.$store.dispatch('setBattleStatus', 'start');
       const nextStageId = parseInt(stageId) + 1;
@@ -591,6 +621,13 @@ export default {
         this.$router.push('/game/rpg/menu');
         });
     },
+    pushBattleLogHistory(logs) {
+      console.log("pushBattleLogHistory(): -------------------");
+      logs.forEach(log => {
+        this.battleLogHistory.unshift( log );
+      });
+      this.battleLogHistory.unshift('------------------------------------------------【ターン終了】------------------------------------------------');
+    }
   },
   beforeRouteUpdate(to, from, next) {
     console.log('beforeRouteUpdate(): URL変更を確認しました ----------------------------------');
