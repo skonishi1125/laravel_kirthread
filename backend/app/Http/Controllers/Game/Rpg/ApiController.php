@@ -27,8 +27,23 @@ class ApiController extends Controller
 
   // ショップ
   public function shopList() {
+    $shop_element_data = collect();
     $shop_list_items = Item::getShopListItem();
-    return $shop_list_items;
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+
+    foreach ($shop_list_items as $item) {
+      $data = collect([
+        'id' => $item->id,
+        'name' => $item->name,
+        'price' => $item->price,
+        'description' => $item->description,
+        'max_possesion_number' => $item->max_possesion_number,
+        'money' => $savedata->money
+      ]);
+      $shop_element_data->push($data);
+    }
+
+    return $shop_element_data;
   }
   public function paymentItem(Request $request) {
     $money = $request->money;

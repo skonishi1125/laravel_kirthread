@@ -10,6 +10,19 @@ class Item extends Model
   use HasFactory;
   protected $table = 'rpg_items';
 
+  const ATTACK_NO_TYPE        = 0; // 分類なし
+  const ATTACK_PHYSICAL_TYPE  = 1; // 物理
+  const ATTACK_MAGIC_TYPE     = 2; // 魔法
+
+  const EFFECT_SPECIAL_TYPE = 0; // 特殊系アイテム
+  const EFFECT_DAMAGE_TYPE  = 1; // 攻撃系アイテム
+  const EFFECT_HEAL_TYPE    = 2; // 治療系アイテム
+  const EFFECT_BUFF_TYPE    = 3; // バフ系アイテム
+
+  const TARGET_RANGE_SELF   = 0; // 自身を対象
+  const TARGET_RANGE_SINGLE = 1; // 単体を対象
+  const TARGET_RANGE_ALL    = 2; // 全体を対象
+
   public static function getShopListItem() {
     return self::where('is_buyable', true)->get();
   }
