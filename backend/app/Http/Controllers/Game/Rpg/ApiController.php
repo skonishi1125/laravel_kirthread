@@ -144,9 +144,15 @@ class ApiController extends Controller
 
       // ステージの敵情報を読み込む
       $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
-  
+
+      // アイテムデータを読み込む
+      $savedata = SaveData::getLoginUserCurrentSaveData();
+      $items_data = BattleState::createItemsData($savedata->id);
+
       // 戦闘データをセッションIDで一意に管理する
-      $battle_state = BattleState::createBattleState($user_id, $players_data, $enemies_data, $field_id, $stage_id);
+      $battle_state = BattleState::createBattleState(
+        $user_id, $players_data, $enemies_data, $items_data, $field_id, $stage_id
+      );
 
     } else {
       // 戦闘中のデータを取得する
@@ -164,11 +170,17 @@ class ApiController extends Controller
 
       $players_data = json_decode($battle_state['players_json_data']);
       $enemies_data = json_decode($battle_state['enemies_json_data']);
+      $items_data   = json_decode($battle_state['items_json_data']);
     }
 
     // vueに渡すデータ
-    // [0]プレイヤー情報 [1]敵情報 [2]セッションID
-    $all_data = collect()->push($players_data)->push($enemies_data)->push($battle_state->session_id);
+    // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム
+    $all_data = collect()
+      ->push($players_data)
+      ->push($enemies_data)
+      ->push($battle_state->session_id)
+      ->push($items_data)
+      ;
 
     return $all_data;
   }

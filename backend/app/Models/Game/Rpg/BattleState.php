@@ -11,6 +11,8 @@ use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\PresetAppearingEnemy;
+use App\Models\Game\Rpg\SavedataHasItem;
+
 Use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -194,14 +196,39 @@ class BattleState extends Model
       return $enemies_data;
     }
 
+
+    public static function createItemsData(int $savedata_id) {
+      Debugbar::debug('createItemsData(): ------------');
+      $items_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
+      $current_savedata_has_items = SavedataHasItem::where('savedata_id', $savedata_id)->get();
+
+      foreach ($current_savedata_has_items as $savedata_has_item) {
+        $item = Item::find($savedata_has_item->item_id);
+        $item_data = collect([
+          'id' => $item->id,
+          'name' => $item->name,
+          'attack_type' => $item->attack_type,
+          'effect_type' => $item->effect_type,
+          'target_range' => $item->target_range,
+          'description' => $item->description,
+          'possesion_number' => $savedata_has_item->possesion_number,
+        ]);
+
+        $items_data->push($item_data);
+      }
+
+      return $items_data;
+    }
+
     public static function createBattleState(
-      int $user_id, Collection $players_data, Collection $enemies_data, int $field_id, int $stage_id
+      int $user_id, Collection $players_data, Collection $enemies_data, Collection $items_data, int $field_id, int $stage_id
     ) {
       $session_id = \Str::uuid()->toString();
       $created_battle_state = BattleState::create([
         'user_id' => $user_id,
         'session_id' => $session_id,
         'players_json_data' => json_encode($players_data),
+        'items_json_data'   => json_encode($items_data),
         'enemies_json_data' => json_encode($enemies_data),
         'current_field_id' => $field_id,
         'current_stage_id' => $stage_id,

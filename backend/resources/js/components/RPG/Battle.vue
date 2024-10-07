@@ -25,22 +25,28 @@
   background-color: beige;
 }
 
-.command-list-row-skills {
+.command-list-row-skills-and-items {
   width: 300px;
   text-align: left;
   padding: 10px 30px;
   cursor: pointer;
 }
-.command-list-row-skills:hover {
+.command-list-row-skills-and-items:hover {
   background-color: beige;
 }
-.command-list-row-skills_not_enough_ap {
+.command-list-row-skills-and-items_not_enough_ap {
   width: 300px;
   text-align: left;
   padding: 10px 30px;
   cursor: default;
   background-color: #888;
 }
+
+.dropdown-menu-skill-and-items-size {
+  max-height: 210px;
+  overflow-y: scroll;
+}
+
 
 .party-status-wrapper {
   display: flex; 
@@ -155,13 +161,13 @@
               <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @mouseover="showCommandDescription('SKILL')" @mouseleave="clearAllDescription">
                 <a>SKILL</a>
               </div>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu dropdown-menu-skill-and-items-size">
                 <div 
-                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills" class=""
-                   @mouseover="showSkillDescription(skill.description)" @mouseleave="clearAllDescription"
+                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills"
+                   @mouseover="showSkillAndItemDescription(skill.description)" @mouseleave="clearAllDescription"
                 >
                   <div v-if="this.partyData[this.currentPartyMemberIndex].value_ap < skill.ap_cost">
-                    <div class="command-list-row-skills_not_enough_ap">
+                    <div class="command-list-row-skills-and-items_not_enough_ap">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ skill.name }}</span>
                         <span>{{ skill.ap_cost }}</span>
@@ -172,7 +178,7 @@
                   </div>
 
                   <div v-else>
-                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills">
+                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills-and-items">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ skill.name }}</span>
                         <span>{{ skill.ap_cost }}</span>
@@ -187,7 +193,27 @@
             </div>
 
             <div class="command-list-row" @click="handleCommandSelection('DEFENCE')" @mouseover="showCommandDescription('DEFENCE')" @mouseleave="clearAllDescription">DEFENCE</div>
-            <div class="command-list-row" @click="handleCommandSelection('ITEM')" @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">ITEM</div>
+
+            <div class="btn-group dropright">
+              <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">
+                <a>ITEM</a>
+              </div>
+              <div class="dropdown-menu dropdown-menu-skill-and-items-size">
+                <div v-for="item in this.itemData" class="" @mouseover="showSkillAndItemDescription(item.description)" @mouseleave="clearAllDescription">
+                  <div>
+                    <div @click="handleCommandSelection('ITEM', item.id, item.attack_type, item.effect_type, item.target_range)" class="command-list-row-skills-and-items">
+                      <div style="display: flex; justify-content: space-between;">
+                        <span>{{ item.name }}</span>
+                        <span>x {{ item.possesion_number }}</span>
+                      </div>
+                      <div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="command-list-row" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">RETURN</div>
            </div>
            <!-- 味方の立ち絵を出す -->
@@ -301,6 +327,7 @@ export default {
       fieldId: this.$route.params.fieldId,
       stageId: this.$route.params.stageId,
       partyData: {},
+      itemData: {},
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       enemyData: {},
       battleLog: {}, // リアルタイムの戦闘結果
@@ -358,7 +385,7 @@ export default {
       }
       this.hoveredDescription = description;
     },
-    showSkillDescription(description) {
+    showSkillAndItemDescription(description) {
       this.hoveredDescription = description;
     },
     clearAllDescription() {
@@ -379,6 +406,7 @@ export default {
         this.partyData = data[0] || [];
         this.enemyData = data[1] || [];
         this.$store.dispatch('setBattleSessionId', data[2] || []);
+        this.itemData = data[3] || [];
         // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
         console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
         // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
@@ -508,10 +536,30 @@ export default {
           this.battleCommandSetup(); 
           break;
         case ("ITEM") :
-          console.log('ITEM選択。');
-          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
-          this.$store.dispatch('incrementPartyMemberIndex');
-          this.battleCommandSetup(); 
+          // attack_type    0:無し 1:物理 2:魔法
+          // effect_type    0 特殊 1:攻撃 2:回復 3:バフ
+          // target_range   0:自身 1:単体 2:全体
+          console.log(`ITEM選択。
+            item_id: ${on_the_selected_command_id} attack_type: ${attack_type} effect_type: ${effect_type} 対象: ${target_range}`
+          );
+          this.$store.dispatch('setSelectedCommandItem',
+            {partyId: currentMember.id, command, itemId: on_the_selected_command_id}
+          );
+          if (target_range == 0 || target_range == 2) {
+            console.log(`自身を選択するアイテム, もしくは範囲アイテム選択したので対象選択をスキップ。`);
+            this.$store.dispatch('incrementPartyMemberIndex');
+            this.battleCommandSetup();
+            return;
+          }
+          // 攻撃系のアイテムなら、enemySelectへ
+          if (effect_type == 1) {
+            console.log(`攻撃系単体アイテム。enemySelectへ。`);
+            this.$store.dispatch('setBattleStatus', 'enemySelect');
+          // 回復, バフアイテムなら、partySelectへ
+          } else {
+            console.log(`回復・バフ系単体アイテム。partySelectへ。`);
+            this.$store.dispatch('setBattleStatus', 'partySelect');
+          }
           break;
         case ("RETURN") :
           console.log('RETURN選択。');
