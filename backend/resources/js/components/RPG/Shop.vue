@@ -128,6 +128,7 @@
     methods: {
       // ショップ販売物一覧をlaravelAPIから取得
       getShopList() {
+        console.log("getShopList(): -----------------------------------------");
         axios.get('/api/game/rpg/shop/list')
           .then(response => {
             this.shopListItems = response.data;

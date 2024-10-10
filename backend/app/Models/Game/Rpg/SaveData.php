@@ -4,6 +4,8 @@ namespace App\Models\Game\Rpg;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
+use App\Models\Game\Rpg\Item;
 Use Auth;
 
 class SaveData extends Model
@@ -16,6 +18,13 @@ class SaveData extends Model
 
     public function user() {
       return $this->belongsTo('App\User');
+    }
+
+    // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possesion_number で実現ができる
+    public function Items() {
+      return $this
+        ->belongsToMany(Item::class, 'rpg_savedata_has_items', 'savedata_id', 'item_id')
+        ->withPivot('possesion_number');
     }
 
     // リレーションメモ

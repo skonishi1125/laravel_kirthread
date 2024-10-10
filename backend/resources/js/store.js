@@ -34,6 +34,9 @@ export default createStore({
       state.selectedCommands.push({ partyId, command, skillId });
     },
     // todo: ITEM選択
+    setSelectedCommandItem(state, { partyId, command, itemId }) {
+      state.selectedCommands.push({ partyId, command, itemId });
+    },
 
     // RETURN選択
     resetSelectedCommands(state) {
@@ -120,6 +123,10 @@ export default createStore({
     // SKILL選択
     setSelectedCommandSkill({ commit }, { partyId, command, skillId }) {
       commit('setSelectedCommandSkill', { partyId, command, skillId  });
+    },
+    // ITEM選択
+    setSelectedCommandItem({ commit }, { partyId, command, itemId }) {
+      commit('setSelectedCommandItem', { partyId, command, itemId  });
     },
 
     // RETURN選択
