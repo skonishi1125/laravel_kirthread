@@ -607,6 +607,7 @@ export default {
           this.partyData = data[0] || [];
           this.enemyData = data[1] || [];
           this.battleLog = data[2] || []; //戦闘結果を取得する
+          this.itemData  = data[3] || [];
           this.pushBattleLogHistory(this.battleLog);
           this.$store.dispatch('setBattleStatus', 'outputLog');
           // stateのリセット

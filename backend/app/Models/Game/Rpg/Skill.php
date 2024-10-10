@@ -269,7 +269,7 @@ class Skill extends Model
         case self::EFFECT_DAMAGE_TYPE :
           $damage = ceil($damage);
           BattleState::storePartyDamage(
-            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
+            'SKILL', $self_data, $opponents_data, null, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
           );
           break;
         case self::EFFECT_HEAL_TYPE :
