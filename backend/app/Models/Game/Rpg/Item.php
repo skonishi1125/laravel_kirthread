@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\SavedataHasItem;
 
 class Item extends Model
 {
@@ -24,6 +25,11 @@ class Item extends Model
   const TARGET_RANGE_SELF   = 0; // 自身を対象
   const TARGET_RANGE_SINGLE = 1; // 単体を対象
   const TARGET_RANGE_ALL    = 2; // 全体を対象
+
+  // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
+  public function SavedataHasItem() {
+    return $this->hasOne(SavedataHasItem::class);
+  }
 
   public function Savedatas() {
     return $this

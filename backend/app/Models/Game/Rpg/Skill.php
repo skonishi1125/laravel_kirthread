@@ -275,7 +275,7 @@ class Skill extends Model
         case self::EFFECT_HEAL_TYPE :
           $heal_point = ceil($heal_point);
           BattleState::storePartyHeal(
-            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
+            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range, null
           );
           break;
         case self::EFFECT_BUFF_TYPE :

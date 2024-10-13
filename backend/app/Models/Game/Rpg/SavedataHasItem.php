@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 use App\Models\Game\Rpg\Item;
+use App\Models\Game\Rpg\SaveData;
 
 
 class SavedataHasItem extends Model
@@ -17,6 +18,14 @@ class SavedataHasItem extends Model
     protected $guarded = [
       'id',
     ];
+
+    public function item() {
+      return $this->belongsTo(Item::class, 'item_id');
+    }
+
+    public function savedata() {
+      return $this->belongsTo(SaveData::class, 'item_id');
+    }
 
     public static function updateItemsAfterBattle($savedata_id, $json_items_data) {
       \Debugbar::debug("SavedataHasItem::updateItemsAfterBattle(): ------------------");
@@ -31,7 +40,7 @@ class SavedataHasItem extends Model
 
       foreach ($db_items_data as $db_item) {
         if (!in_array($db_item->item_id, $json_items_data_ids)) {
-          \Debugbar::debug("ID:{$db_item->item_id} は戦闘で使い切ったため削除します。");
+          \Debugbar::debug("ID:{$db_item->item_id} {$db_item->item->name} は戦闘で使い切ったため削除します。");
           SavedataHasItem::where('savedata_id', $savedata_id)
             ->where('item_id', $db_item->item_id)
             ->delete();

@@ -13,6 +13,7 @@ use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\PresetAppearingEnemy;
+use App\Models\Game\Rpg\SavedataHasItem;
 use Illuminate\Support\Facades\DB;
 Use Auth;
 use Barryvdh\Debugbar\Facades\Debugbar;
@@ -308,7 +309,7 @@ class ApiController extends Controller
         $savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs, $when_cleared_players_data, $when_cleared_json_items_data 
       ) {
         // アイテム消費処理
-        Item::updateItemsAfterBattle($savedata->id, $when_cleared_json_items_data );
+        SavedataHasItem::updateItemsAfterBattle($savedata->id, $when_cleared_json_items_data );
         Debugbar::debug("アイテム所持数更新完了。");
 
         // 金額処理

@@ -608,7 +608,7 @@ class BattleState extends Model
             // 倍率系アイテムの場合はnullが入るがstorePartyHeal側で向こうの体力と合わせて計算する
             Debugbar::debug("回復系アイテム");
             BattleState::storePartyHeal(
-              'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_item->target_range
+              'ITEM', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_item->target_range, $selected_item->percent
             );
             break;
           case Item::EFFECT_BUFF_TYPE :
@@ -621,7 +621,7 @@ class BattleState extends Model
               'remaining_turn' => $selected_item->buff_turn,
             ];
             BattleState::storePartyBuff(
-              'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_item->target_range
+              'ITEM', $self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_item->target_range
             );
             break;
         }
@@ -939,11 +939,11 @@ class BattleState extends Model
     // スキル回復時もしくは、アイテム回復の時に使う
     public static function storePartyHeal(
       string $command, Object $self_data, Collection $opponents_data, 
-      ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range
+      ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range, $percent
     ) {
       switch ($command) {
         case "SKILL":
-          Debugbar::debug("回復スキル発動。");
+          Debugbar::debug("storePartyHeal(): SKILL ------------------------------");
           if ($target_range == Skill::TARGET_RANGE_SINGLE) {
             Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
 
@@ -978,6 +978,53 @@ class BattleState extends Model
           }
           break;
         case "ITEM":
+          Debugbar::debug("storePartyHeal(): ITEM ------------------------------");
+          if ($target_range == Skill::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
+
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+
+              // HP回復系の場合
+              // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+              if (is_null($heal_point)) {
+                $heal_point = ceil($opponents_data[$opponents_index]->max_value_hp * $percent);
+                Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$heal_point} ");
+              }
+              $opponents_data[$opponents_index]->value_hp += $heal_point;
+              if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
+                $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+              }
+              $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+
+              // MP回復系の場合
+
+            }
+
+          } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
+            Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$self_data->name}");
+            foreach ($opponents_data as $opponent_data) {
+              $calculated_heal_point = $heal_point;
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
+              } else {
+                // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+                if (is_null($heal_point)) {
+                  $calculated_heal_point = ceil($opponent_data->max_value_hp * $percent);
+                  Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$calculated_heal_point} ");
+                }
+                $opponent_data->value_hp += $calculated_heal_point;
+                if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                  $opponent_data->value_hp = $opponent_data->max_value_hp;
+                }
+                Debugbar::debug("{$opponent_data->name}の体力を {$calculated_heal_point} ポイント回復。");
+                $logs->push("{$opponent_data->name}の体力を {$calculated_heal_point} ポイント回復！");
+              }
+            }
+          }
           break;
         default:
           break;
