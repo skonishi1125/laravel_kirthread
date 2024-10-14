@@ -38,7 +38,7 @@ class ApiController extends Controller
             $log_array->push($p->post_id);
         }
 
-        Log::channel('api')
+        Log::channel('apilog')
             ->info(sprintf('"%s"件のpostを出力するAPIが使用されました。', $item), [$log_array]);
 
         return response()->json($rtn);
