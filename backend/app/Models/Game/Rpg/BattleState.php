@@ -592,25 +592,41 @@ class BattleState extends Model
             );
             break;
           case Item::EFFECT_BUFF_TYPE :
-            // todo: デバフを採用するなら敵データを入れたいかも。
-            Debugbar::debug("バフ系アイテム");
-            // 基本データだけを入れて、上昇させるステータスは後ほど計算する
-            $buffs = [
-              'buffed_item_id' => $selected_item->id,
-              'buffed_item_name' => $selected_item->name,
-              'remaining_turn' => $selected_item->buff_turn,
-            ];
+            // バフは個別に処理
+            switch ($selected_item->id) {
+              case 21:
+                Debugbar::debug("アタックドロップ");
+                $buffs = [
+                  'buffed_skill_id' => null,
+                  'buffed_item_id' => $selected_item->id,
+                  'buffed_skill_name' => null,
+                  'buffed_item_name' => $selected_item->name,
+                  'buffed_str' =>  $selected_item->fixed_value,
+                  'remaining_turn' => $selected_item->buff_turn,
+                  'buffed_from' => 'ITEM'
+                ];
+                break;
+              case 22:
+                Debugbar::debug("アタックミスト");
+                $buffs = [
+                  'buffed_skill_id' => null,
+                  'buffed_item_id' => $selected_item->id,
+                  'buffed_skill_name' => null,
+                  'buffed_item_name' => $selected_item->name,
+                  'buffed_str' =>  $selected_item->fixed_value,
+                  'remaining_turn' => $selected_item->buff_turn,
+                  'buffed_from' => 'ITEM'
+                ];
+                break;
+            }
+
             BattleState::storePartyBuff(
               'ITEM', $self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_item->target_range
             );
             break;
         }
-
-        // 問題なく実行できたら、使ったアイテムの数を減らす
-
-
       }
-
+      // execBattleCommandに戻る
     }
 
 
@@ -1145,6 +1161,73 @@ class BattleState extends Model
           }
           break;
         case "ITEM":
+          Debugbar::debug("バフアイテム使用。");
+          if ($target_range == ITEM::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体バフ】使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+              // 同じバフがかかっているかどうかをチェック
+              Debugbar::debug($opponents_data[$opponents_index]->buffs);
+              $buff_exists = false;
+
+              // $new_buffの方は配列なので['']で呼ばないとエラーになる
+              foreach ($opponents_data[$opponents_index]->buffs as &$already_buff) {
+                $already_buff = (array)$already_buff;
+                Debugbar::debug($new_buff['buffed_item_id']); // 型キャストチェック
+                Debugbar::debug($already_buff['buffed_item_id']); // 型キャストチェック
+
+                if ($already_buff['buffed_item_id'] === $new_buff['buffed_item_id']) {
+                  Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                  $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                  $buff_exists = true;
+                  break;
+                }
+              }
+
+              // 同じ buffed_skill_id がなければ、新しいバフを追加
+              if (!$buff_exists) {
+                Debugbar::debug('新しいバフ追加');
+                $opponents_data[$opponents_index]->buffs[] = $new_buff;
+              }
+
+              $logs->push("{$opponents_data[$opponents_index]->name}のステータスが向上！");
+
+            }
+
+          } elseif ($target_range == ITEM::TARGET_RANGE_ALL) {
+            // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
+            Debugbar::debug("【全体バフ】使用者: {$self_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+            foreach ($opponents_data as $opponent_data) {
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
+              } else {
+                // 同じバフがかかっているかどうかをチェック
+                Debugbar::debug($opponent_data->buffs);
+                $buff_exists = false;
+
+                // $new_buffの方は配列なので['']で呼ばないとエラーになる
+                foreach ($opponent_data->buffs as &$already_buff) {
+                  if ($already_buff->buffed_item_id === $new_buff['buffed_item_id']) {
+                    Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                    $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $buff_exists = true;
+                    break;
+                  }
+                }
+
+                // 同じ buffed_item_id がなければ、新しいバフを追加
+                if (!$buff_exists) {
+                  Debugbar::debug('新しいバフ追加');
+                  $opponent_data->buffs[] = $new_buff;
+                }
+              }
+            }
+            $logs->push("全員の特定の能力値が向上！");
+          }
           break;
         default:
           break;
@@ -1318,13 +1401,27 @@ class BattleState extends Model
           foreach ($data->buffs as $buff) {
             $buff = (object)$buff; // -> で値を呼べるようにオブジェクトにキャストしとく
             $buff->remaining_turn -= 1;
-            if ($buff->remaining_turn > 0) {
-              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
-              $remaining_buffs[] = $buff;
-            } else {
-              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
-              // 切れた時の表示は不要か？
-              $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+            switch ($buff->buffed_from) {
+              case 'SKILL' :
+                if ($buff->remaining_turn > 0) {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
+                  $remaining_buffs[] = $buff;
+                } else {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
+                  // 切れた時の表示は不要か？
+                  $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+                }
+                break;
+              case 'ITEM' :
+                if ($buff->remaining_turn > 0) {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
+                  $remaining_buffs[] = $buff;
+                } else {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} が消えました。");
+                  // 切れた時の表示は不要か？
+                  $logs->push("{$data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
+                }
+                break;
             }
           }
           $data->buffs = $remaining_buffs;
@@ -1421,7 +1518,7 @@ class BattleState extends Model
           // Debugbar::debug("---------------------------------");
           if (isset($buff[$actual_status_name])) {
             $actual_status_value += $buff[$actual_status_name];
-            Debugbar::debug("バフ値: {$buff[$actual_status_name]} ");
+            Debugbar::debug("バフ値: {$buff['buffed_from']} {$buff[$actual_status_name]} ");
           }
         }
 

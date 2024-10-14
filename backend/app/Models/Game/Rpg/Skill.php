@@ -231,10 +231,13 @@ class Skill extends Model
           $logs->push("{$self_data->name}の{$selected_skill->name}！冒険の中で修めてきた全ての知力が{$self_data->name}の力と代わる！");
           $buffs = [
             'buffed_skill_id' => $selected_skill->id,
+            'buffed_item_id' => null,
             'buffed_skill_name' => $selected_skill->name,
+            'buffed_item_name' => null,
             'buffed_str' => ceil(($self_data->value_int * $selected_skill->skill_percent)),
             'buffed_int' => ceil( - $self_data->value_int ), // intを0にする
             'remaining_turn' => $selected_skill->buff_turn,
+            'buffed_from' => 'SKILL'
           ];
           break;
         default:
