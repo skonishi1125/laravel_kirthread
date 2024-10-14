@@ -1115,9 +1115,10 @@ class BattleState extends Model
 
                 // $new_buffの方は配列なので['']で呼ばないとエラーになる
                 foreach ($opponent_data->buffs as &$already_buff) {
-                  if ($already_buff->buffed_skill_id === $new_buff['buffed_skill_id']) {
+                  $already_buff = (array)$already_buff;
+                  if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
                     Debugbar::debug("既にバフが付与されているためターン数を更新します。");
-                    $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
                     $buff_exists = true;
                     break;
                   }
@@ -1211,9 +1212,10 @@ class BattleState extends Model
 
                 // $new_buffの方は配列なので['']で呼ばないとエラーになる
                 foreach ($opponent_data->buffs as &$already_buff) {
-                  if ($already_buff->buffed_item_id === $new_buff['buffed_item_id']) {
+                $already_buff = (array)$already_buff;
+                  if ($already_buff['buffed_item_id'] === $new_buff['buffed_item_id']) {
                     Debugbar::debug("既にバフが付与されているためターン数を更新します。");
-                    $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
                     $buff_exists = true;
                     break;
                   }

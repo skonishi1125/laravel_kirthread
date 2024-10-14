@@ -228,7 +228,7 @@ class Skill extends Model
         case 45 :
           // STR = (INT * ダメージ%)とする
           Debugbar::debug('バトルメイジ');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！冒険の中で修めてきた全ての知力が{$self_data->name}の力と代わる！");
+          $logs->push("{$self_data->name}の{$selected_skill->name}！冒険中に修めてきた全ての智力が{$self_data->name}の力と代わる！");
           $buffs = [
             'buffed_skill_id' => $selected_skill->id,
             'buffed_item_id' => null,
