@@ -30,7 +30,7 @@ class Skill extends Model
     const TARGET_RANGE_ALL    = 2; // 全体を対象
 
     public function parties() {
-      return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'rpg_skill_id', 'rpg_party_id');
+      return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'skill_id', 'party_id');
     }
 
     // 現在会得しているスキル情報を取得

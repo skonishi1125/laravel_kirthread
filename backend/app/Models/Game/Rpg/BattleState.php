@@ -98,12 +98,12 @@ class BattleState extends Model
         // 会得しているスキルの取得
         $learned_skills = Skill::getLearnedSkill($party);
         $buffs = [];
-        $role = Role::find($party->rpg_role_id);
+        $role = Role::find($party->role_id);
         $role_portrait = $role->portrait_image_path;
         // vue側に渡すデータ
         $player_data = collect([
           'id' => $party->id,
-          'role_id' => $party->rpg_role_id,
+          'role_id' => $party->role_id,
           'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
           'command' => null, // exec時に格納する
           'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
