@@ -13,6 +13,7 @@ use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\PresetAppearingEnemy;
+use App\Models\Game\Rpg\SavedataHasItem;
 use Illuminate\Support\Facades\DB;
 Use Auth;
 use Barryvdh\Debugbar\Facades\Debugbar;
@@ -27,8 +28,23 @@ class ApiController extends Controller
 
   // ショップ
   public function shopList() {
+    $shop_element_data = collect();
     $shop_list_items = Item::getShopListItem();
-    return $shop_list_items;
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+
+    foreach ($shop_list_items as $item) {
+      $data = collect([
+        'id' => $item->id,
+        'name' => $item->name,
+        'price' => $item->price,
+        'description' => $item->description,
+        'max_possesion_number' => $item->max_possesion_number,
+        'money' => $savedata->money
+      ]);
+      $shop_element_data->push($data);
+    }
+
+    return $shop_element_data;
   }
   public function paymentItem(Request $request) {
     $money = $request->money;
@@ -129,9 +145,15 @@ class ApiController extends Controller
 
       // ステージの敵情報を読み込む
       $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
-  
+
+      // アイテムデータを読み込む
+      $savedata = SaveData::getLoginUserCurrentSaveData();
+      $items_data = BattleState::createItemsData($savedata->id);
+
       // 戦闘データをセッションIDで一意に管理する
-      $battle_state = BattleState::createBattleState($user_id, $players_data, $enemies_data, $field_id, $stage_id);
+      $battle_state = BattleState::createBattleState(
+        $user_id, $players_data, $enemies_data, $items_data, $field_id, $stage_id
+      );
 
     } else {
       // 戦闘中のデータを取得する
@@ -149,11 +171,17 @@ class ApiController extends Controller
 
       $players_data = json_decode($battle_state['players_json_data']);
       $enemies_data = json_decode($battle_state['enemies_json_data']);
+      $items_data   = json_decode($battle_state['items_json_data']);
     }
 
     // vueに渡すデータ
-    // [0]プレイヤー情報 [1]敵情報 [2]セッションID
-    $all_data = collect()->push($players_data)->push($enemies_data)->push($battle_state->session_id);
+    // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム
+    $all_data = collect()
+      ->push($players_data)
+      ->push($enemies_data)
+      ->push($battle_state->session_id)
+      ->push($items_data)
+      ;
 
     return $all_data;
   }
@@ -167,6 +195,7 @@ class ApiController extends Controller
     $battle_logs = collect(); // 結果を格納していく
     $current_players_data = collect(json_decode($battle_state['players_json_data']));
     $current_enemies_data = collect(json_decode($battle_state['enemies_json_data']));
+    $current_items_data   = collect(json_decode($battle_state['items_json_data']));
     $commands = collect($request->selectedCommands);
 
 
@@ -179,6 +208,7 @@ class ApiController extends Controller
         $data->target_enemy_index = $command['enemyIndex'] ?? null;
         $data->target_player_index = $command['playerIndex'] ?? null;
         $data->selected_skill_id = $command['skillId'] ?? null;
+        $data->selected_item_id = $command['itemId'] ?? null;
         
         // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
         if (!is_null($data->selected_skill_id)) {
@@ -204,11 +234,11 @@ class ApiController extends Controller
 
     Debugbar::debug("戦闘実行！ BattleState::execBattleCommand()----------------");
     BattleState::execBattleCommand(
-      $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $battle_logs
+      $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $current_items_data, $battle_logs
     );
 
     Debugbar::debug("--------------戦闘処理完了(ステータス一覧)----------------");
-    Debugbar::debug($current_players_data, $current_enemies_data, $battle_logs);
+    Debugbar::debug($current_players_data, $current_enemies_data, $current_items_data, $battle_logs);
     Debugbar::debug("----------------------------------------------------------");
 
     Debugbar::debug("バフターン数計算処理-------------------------------");
@@ -218,6 +248,7 @@ class ApiController extends Controller
     // rpg_battle_states更新
     $updated_battle_state = $battle_state->update([
         'players_json_data' => json_encode($current_players_data),
+        'items_json_data' => json_encode($current_items_data),
         'enemies_json_data' => json_encode($current_enemies_data),
     ]);
 
@@ -225,7 +256,9 @@ class ApiController extends Controller
     $all_vue_data = collect()
       ->push($current_players_data)
       ->push($current_enemies_data)
-      ->push($battle_logs);
+      ->push($battle_logs)
+      ->push($current_items_data)
+      ;
 
     return $all_vue_data;
   }
@@ -268,10 +301,17 @@ class ApiController extends Controller
     Debugbar::debug("獲得経験値:{$total_aquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_aquire_money} ");
     $result_logs->push("敵を倒した！{$total_aquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
 
+    // 戦闘後のアイテム状況
+    $when_cleared_json_items_data = $battle_state['items_json_data'];
+
     try {
       DB::transaction(function () use (
-        $savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs, $when_cleared_players_data
+        $savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs, $when_cleared_players_data, $when_cleared_json_items_data 
       ) {
+        // アイテム消費処理
+        SavedataHasItem::updateItemsAfterBattle($savedata->id, $when_cleared_json_items_data );
+        Debugbar::debug("アイテム所持数更新完了。");
+
         // 金額処理
         $savedata->increment('money', $total_aquire_money);
         Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
@@ -353,8 +393,11 @@ class ApiController extends Controller
 
       $next_players_data = BattleState::createPlayersData(Auth::id(), $when_cleared_players_data);
       $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+      $next_items_data   = BattleState::createItemsData($savedata->id);
+
+
       $create_next_battle_state = BattleState::createBattleState(
-        Auth::id(), $next_players_data, $next_enemies_data, $field_id, $next_stage_id
+        Auth::id(), $next_players_data, $next_enemies_data, $next_items_data, $field_id, $next_stage_id
       );
       $battle_state->delete();
       Debugbar::debug("現在の戦闘データを削除しました。");

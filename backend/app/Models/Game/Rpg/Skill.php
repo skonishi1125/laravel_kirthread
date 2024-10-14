@@ -228,13 +228,16 @@ class Skill extends Model
         case 45 :
           // STR = (INT * ダメージ%)とする
           Debugbar::debug('バトルメイジ');
-          $logs->push("{$self_data->name}の{$selected_skill->name}！冒険の中で修めてきた全ての知力が{$self_data->name}の力と代わる！");
+          $logs->push("{$self_data->name}の{$selected_skill->name}！冒険中に修めてきた全ての智力が{$self_data->name}の力と代わる！");
           $buffs = [
             'buffed_skill_id' => $selected_skill->id,
+            'buffed_item_id' => null,
             'buffed_skill_name' => $selected_skill->name,
+            'buffed_item_name' => null,
             'buffed_str' => ceil(($self_data->value_int * $selected_skill->skill_percent)),
             'buffed_int' => ceil( - $self_data->value_int ), // intを0にする
             'remaining_turn' => $selected_skill->buff_turn,
+            'buffed_from' => 'SKILL'
           ];
           break;
         default:
@@ -269,13 +272,14 @@ class Skill extends Model
         case self::EFFECT_DAMAGE_TYPE :
           $damage = ceil($damage);
           BattleState::storePartyDamage(
-            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
+            'SKILL', $self_data, $opponents_data, null, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
           );
           break;
         case self::EFFECT_HEAL_TYPE :
           $heal_point = ceil($heal_point);
           BattleState::storePartyHeal(
-            'SKILL', $self_data, $opponents_data, $opponents_index, $logs, $heal_point, $selected_skill->target_range
+            'SKILL', $self_data, $opponents_data, 
+            $opponents_index, $logs, $heal_point, $selected_skill->target_range, null, null
           );
           break;
         case self::EFFECT_BUFF_TYPE :

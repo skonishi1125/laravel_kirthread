@@ -19,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(\Database\Seeders\rpg\SkillTableSeeder::class);
         $this->call(\Database\Seeders\rpg\RoleTableSeeder::class);
         $this->call(\Database\Seeders\rpg\PartyLearnedSkillTableSeeder::class);
+        $this->call(\Database\Seeders\rpg\ItemTableSeeder::class);
+        $this->call(\Database\Seeders\rpg\SavedataHasItemTableSeeder::class);
     }
 }

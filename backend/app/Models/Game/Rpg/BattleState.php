@@ -11,6 +11,8 @@ use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\PresetAppearingEnemy;
+use App\Models\Game\Rpg\SavedataHasItem;
+
 Use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -194,14 +196,22 @@ class BattleState extends Model
       return $enemies_data;
     }
 
+
+    public static function createItemsData(int $savedata_id) {
+      Debugbar::debug('createItemsData(): ------------');
+      $items_data = Item::getBattleStateItemFromSavedata($savedata_id);
+      return $items_data;
+    }
+
     public static function createBattleState(
-      int $user_id, Collection $players_data, Collection $enemies_data, int $field_id, int $stage_id
+      int $user_id, Collection $players_data, Collection $enemies_data, Collection $items_data, int $field_id, int $stage_id
     ) {
       $session_id = \Str::uuid()->toString();
       $created_battle_state = BattleState::create([
         'user_id' => $user_id,
         'session_id' => $session_id,
         'players_json_data' => json_encode($players_data),
+        'items_json_data'   => json_encode($items_data),
         'enemies_json_data' => json_encode($enemies_data),
         'current_field_id' => $field_id,
         'current_stage_id' => $stage_id,
@@ -250,9 +260,17 @@ class BattleState extends Model
       return $sorted_data;
     }
 
-    // 戦闘処理を実際に実行する。
+    /**
+     * 戦闘処理実行。コマンドの処理に移る前に、下記内容を確認する
+     * 【敵/味方の行動か, 行動者は戦闘不能状態ではないか, 敵/味方は全滅していないか】
+     * &$item_data: 通常これはjsonの$current_items_dataを使用する想定
+     *  こちらのメソッド上で使った数に応じて配列の加工を行なっているため、参照渡しとすることで反映させている
+     * 
+     */
     public static function execBattleCommand(
-      Collection $sorted_players_and_enemies_data, Collection $players_data, Collection $enemies_data, Collection $logs
+      Collection $sorted_players_and_enemies_data, 
+      Collection $players_data, Collection $enemies_data, Collection &$items_data,
+      Collection $logs
     ) {
       // Debugbar::debug(get_class($sorted_players_and_enemies_data)); // この時点ではCollection
       foreach($sorted_players_and_enemies_data as $index => $data) {
@@ -322,6 +340,77 @@ class BattleState extends Model
                 }
               }
               self::execCommandSkill($data, $opponents_data, false, $opponents_index, $logs);
+              break;
+            case "ITEM":
+              // 選択したアイテムの情報を$items_dataから取得する
+              $selected_item = $items_data->firstWhere('id', $data->selected_item_id);
+              // 選択アイテムが無い場合、スキップする(残り2個のアイテムを3人選択していた場合など)
+              if (is_null($selected_item)) {
+                $logs->push("{$data->name}はアイテムを使おうと試みたが、手持ちには用意がなかった！");
+                break;
+              }
+              Debugbar::debug("【ITEM】選択アイテムID: {$selected_item->id},  {$selected_item->name}", $selected_item);
+
+              // 対象決定処理 (SKILLと同じなので、統一化できそう。)
+              $opponents_data = collect();
+              if (($data->target_enemy_index !== null)) {
+                Debugbar::debug("【ITEM】target_enemy_indexが入っているので敵グループを対象として格納。");
+                $opponents_data = $enemies_data;
+                $opponents_index = $data->target_enemy_index;
+              } elseif (($data->target_player_index !== null)) {
+                Debugbar::debug("【ITEM】target_player_indexが入っているので味方グループを個別対象として選択。");
+                $opponents_data = $players_data;
+                $opponents_index = $data->target_player_index;
+              } else {
+                // 敵味方ともに対象のindexが格納されていないなら、範囲系のアイテム
+                // それぞれ$opponents_dataに条件に合うデータを格納。
+                // 攻撃系の全体攻撃アイテムなら敵を, 回復またはバフ系の範囲アイテムなら味方を入れる。
+                // 範囲技の場合は$opponents_indexは格納せず、nullのままとする。
+                $opponents_index = null;
+                Debugbar::debug("【ITEM】target_player_indexが格納されていないため、範囲系のアイテムが選択されました。");
+
+                switch ($selected_item->effect_type) {
+                  case ITEM::EFFECT_SPECIAL_TYPE :
+                    Debugbar::debug("特殊系範囲アイテム");
+                    break;
+                  case Item::EFFECT_DAMAGE_TYPE :
+                    Debugbar::debug("攻撃系範囲アイテムのため敵情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
+                    $opponents_data = $enemies_data;
+                    break;
+                  case Item::EFFECT_HEAL_TYPE :
+                    Debugbar::debug("回復系範囲アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
+                    $opponents_data = $players_data;
+                    break;
+                  case Item::EFFECT_BUFF_TYPE :
+                    // todo: デバフを採用するなら敵データを入れたいかも。
+                    Debugbar::debug("バフ系範囲アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
+                    $opponents_data = $players_data;
+                    break;
+                }
+              }
+              self::execCommandItem($data, $opponents_data, false, $opponents_index, $selected_item, $logs);
+
+              // アイテムの数を減らす 
+              Debugbar::debug("アイテム処理完了。所持数調整....");
+              $selected_item_id = $selected_item->id;
+              $items_data = $items_data->map(function ($item) use ($selected_item_id) {
+                if ($item->id === $selected_item_id) {
+                  $item->possesion_number -= 1;
+                  // 所持数が0以下になったら、return $itemとしてではなくnullで返すようにする
+                  if ($item->possesion_number <= 0) {
+                    Debugbar::debug("{$item->name}が0個になったためitems_json_dataからは取り除きます。");
+                    return null; 
+                  }
+                }
+                return $item; 
+              })
+              // filter()メソッドはコレクションの要素を真偽値でフィルタリングする
+              // nullとして返された要素(所持数が0となった要素)はfalseで返り、コレクションから取り除かれる
+              // &$item_dataと参照渡しとしているので、フィルタリング結果は元々の$current_items_dataと同期する
+              ->filter();
+              Debugbar::debug($items_data);
+
+
               break;
             default:
               $logs->push("{$data->name}は攻撃とスキル以外を選択した。");
@@ -394,7 +483,7 @@ class BattleState extends Model
         Debugbar::debug("（味方）純粋なダメージ量(STRの値。) : {$damage}");
         // 単体・物理攻撃として扱う
         self::storePartyDamage(
-          'ATTACK', $self_data, $opponents_data, $opponents_index, $logs, $damage, Skill::TARGET_RANGE_SINGLE, Skill::ATTACK_PHYSICAL_TYPE
+          'ATTACK', $self_data, $opponents_data, null, $opponents_index, $logs, $damage, Skill::TARGET_RANGE_SINGLE, Skill::ATTACK_PHYSICAL_TYPE
         );
 
       // 敵の場合
@@ -453,11 +542,104 @@ class BattleState extends Model
       }
     }
 
-    // コマンドを実行した際、画面に表示させるダメージなどのログ入力
-    // opponents_dataは攻撃する敵のデータが入る
+    /*
+     コマンドとして"ITEM"を選択した時の処理
+     * $self_data: 行動実行するキャラクター/敵のデータ ※現状アイテムは味方だけしか使えないため、基本味方データが入る。
+     * $opponent_data: 対象とするキャラクター/敵のデータ
+     * $opponents_index: 
+        対象とするキャラクター/敵のインデックス。 真ん中の味方に向けた場合は[1]などが入る
+        全体攻撃スキルを使った場合, $opponents_indexはnullであるため許容しておく (?int)
+     * $selected_item: items_json_dataからfirstWhereで絞り込んで取得したので、Object(stdClass)である
+    */
+    private static function execCommandItem(
+      Object $self_data, Collection $opponents_data, bool $is_enemy, 
+      ?int $opponents_index, Object $selected_item, Collection $logs
+    ){
+      Debugbar::debug("execCommandItem(): ---------------------- ", get_class($selected_item));
+
+      // 味方の場合※ただし、アイテムを使えるのは現状味方だけの想定であるが。
+      if ($is_enemy == false) {
+        $damage     = null;
+        $heal_point = null;
+        $buffs      = null;
+
+        $logs->push("{$self_data->name}は{$selected_item->name}を使った！");
+
+        switch($selected_item->effect_type) {
+          case ITEM::EFFECT_SPECIAL_TYPE :
+            Debugbar::debug("特殊系アイテム※現状考えていない。");
+            break;
+          case Item::EFFECT_DAMAGE_TYPE :
+            Debugbar::debug("攻撃系アイテム");
+            if (!$selected_item->is_percent_based) {
+              $damage = $selected_item->fixed_value;
+            } else {
+              // 攻撃系倍率系のアイテムの場合※現状実装はしていない
+            }
+            BattleState::storePartyDamage(
+              'ITEM', $self_data, $opponents_data, $selected_item, $opponents_index, $logs, $damage, $selected_item->target_range, $selected_item->attack_type
+            );
+            break;
+          case Item::EFFECT_HEAL_TYPE :
+            if (!$selected_item->is_percent_based) {
+              $heal_point = $selected_item->fixed_value;
+            }
+            // 倍率系アイテムの場合はnullが入るがstorePartyHeal側で向こうの体力と合わせて計算する
+            Debugbar::debug("回復系アイテム");
+            BattleState::storePartyHeal(
+              'ITEM', $self_data, $opponents_data,
+              $opponents_index, $logs, $heal_point, $selected_item->target_range, $selected_item->percent, $selected_item->heal_type
+            );
+            break;
+          case Item::EFFECT_BUFF_TYPE :
+            // バフは個別に処理
+            switch ($selected_item->id) {
+              case 21:
+                Debugbar::debug("アタックドロップ");
+                $buffs = [
+                  'buffed_skill_id' => null,
+                  'buffed_item_id' => $selected_item->id,
+                  'buffed_skill_name' => null,
+                  'buffed_item_name' => $selected_item->name,
+                  'buffed_str' =>  $selected_item->fixed_value,
+                  'remaining_turn' => $selected_item->buff_turn,
+                  'buffed_from' => 'ITEM'
+                ];
+                break;
+              case 22:
+                Debugbar::debug("アタックミスト");
+                $buffs = [
+                  'buffed_skill_id' => null,
+                  'buffed_item_id' => $selected_item->id,
+                  'buffed_skill_name' => null,
+                  'buffed_item_name' => $selected_item->name,
+                  'buffed_str' =>  $selected_item->fixed_value,
+                  'remaining_turn' => $selected_item->buff_turn,
+                  'buffed_from' => 'ITEM'
+                ];
+                break;
+            }
+
+            BattleState::storePartyBuff(
+              'ITEM', $self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_item->target_range
+            );
+            break;
+        }
+      }
+      // execBattleCommandに戻る
+    }
+
+
+    /**
+     * コマンドを実行した際、画面に表示させるダメージなどのログ入力
+     * $opponents_data: 攻撃対象のデータ
+     * $damage: 敵の守備力などを考慮しない、純粋なダメージ量
+     */
+    // 
+    // 
     public static function storePartyDamage(
       string $command, Object $self_data, 
-      Collection $opponents_data, ?int $opponents_index, Collection $logs, 
+      Collection $opponents_data, ?Object $selected_item, ?int $opponents_index, Collection $logs, 
       int $damage, int $target_range, int $attack_type
     ) {
       switch ($command) {
@@ -592,6 +774,117 @@ class BattleState extends Model
 
           }
           break;
+
+        case "ITEM":
+          Debugbar::debug("storePartyDamage(): ITEM");
+          // 単体攻撃の場合
+          if ($target_range == ITEM::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("単体攻撃。");
+
+            // is_percent_basedのアイテムの場合は、相手の現在体力に合わせたダメージを与える
+            if ($damage == null || $selected_item->is_percent_based) {
+              $calculated_damage = ceil($opponents_data[$opponents_index]->value_hp * $selected_item->percent);
+            }else {
+              // ダメージ計算 物理か魔法攻撃かで変える
+              if ($attack_type == ITEM::ATTACK_PHYSICAL_TYPE) {
+                Debugbar::debug("物理。");
+                $calculated_damage = self::calculatePhysicalDamage(
+                  $damage, 
+                  self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
+                );
+              } else if ($attack_type == ITEM::ATTACK_MAGIC_TYPE) {
+                Debugbar::debug("魔法。");
+                $opponent_mdef = self::calculateMagicDefenceValue(
+                  self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
+                  self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
+                );
+                $calculated_damage = $damage -= $opponent_mdef;
+              }
+            }
+
+            if ($calculated_damage > 0) {
+              Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$opponents_data[$opponents_index]->value_hp}");
+              $opponents_data[$opponents_index]->value_hp -= $calculated_damage;
+              Debugbar::debug("アイテムで攻撃した。敵の残り体力: {$opponents_data[$opponents_index]->value_hp}");
+              // 敵を倒した場合
+              if ($opponents_data[$opponents_index]->value_hp <= 0 ) {
+                $opponents_data[$opponents_index]->value_hp = 0; // マイナスになるのを防ぐ。
+                $opponents_data[$opponents_index]->is_defeated_flag = true;
+                self::clearBuff($opponents_data[$opponents_index]);
+                $logs->push("{$opponents_data[$opponents_index]->name}に{$calculated_damage}のダメージ！");
+                $logs->push("{$opponents_data[$opponents_index]->name}を倒した！");
+                Debugbar::debug("{$opponents_data[$opponents_index]->name}を倒した。敵の残り体力: {$opponents_data[$opponents_index]->value_hp} 敵討伐フラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+              } else {
+                $logs->push("{$opponents_data[$opponents_index]->name}に{$calculated_damage}のダメージ！");
+                Debugbar::debug("{$opponents_data[$opponents_index]->name}はまだ生存している。敵の残り体力: {$opponents_data[$opponents_index]->value_hp} 敵討伐フラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+              }
+            // ダメージを与えられなかった場合
+            } else {
+              Debugbar::debug("ダメージを与えられない。");
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}にダメージは与えられなかった！");
+              Debugbar::debug("攻撃が通らなかった。{$opponents_data[$opponents_index]->name}は当然生存している。敵の残り体力: {$opponents_data[$opponents_index]->value_hp} 敵討伐フラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+            }
+          // 全体攻撃の場合
+          } else {
+            Debugbar::debug("全体攻撃ループ開始。#########");
+            // ループ内で書くと攻撃のたびに威力が弱まってしまうので、個別で防御などを改めて取得して処理する。
+            $base_damage = $damage;
+            foreach ($opponents_data as $opponent_data) {
+              // 討伐判定チェック
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+                continue; // returnにするとforeach自体が終了するがcontinueだと次のforeachの処理に移行する
+              }
+
+              // is_percent_basedのアイテムの場合は、相手の現在体力に合わせたダメージを与える
+              if ($base_damage == null || $selected_item->is_percent_based) {
+                $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
+              } else {
+                // ダメージ計算 物理か魔法攻撃かで変える
+                if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
+                  Debugbar::debug("物理。");
+                  $calculated_damage = self::calculatePhysicalDamage(
+                    $base_damage, 
+                    self::calculateActualStatusValue($opponent_data, 'def')
+                  );
+                } else if ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
+                  Debugbar::debug("魔法。");
+                  $opponent_mdef = self::calculateMagicDefenceValue(
+                    self::calculateActualStatusValue($opponent_data, 'def'),
+                    self::calculateActualStatusValue($opponent_data, 'int')
+                  );
+                  $calculated_damage = $base_damage - $opponent_mdef;
+                }
+              }
+
+              if ($calculated_damage > 0) {
+                Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
+                $opponent_data->value_hp -= $calculated_damage;
+                Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+                // 敵を倒した場合
+                if ($opponent_data->value_hp <= 0 ) {
+                  $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                  $opponent_data->is_defeated_flag = true;
+                  self::clearBuff($opponent_data);
+                  $logs->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                  $logs->push("{$opponent_data->name}を倒した！");
+                  Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                } else {
+                  $logs->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                  Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                }
+              // ダメージを与えられなかった場合
+              } else {
+                Debugbar::debug("ダメージを与えられない。");
+                $logs->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
+                Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+              }
+            }
+            Debugbar::debug("全体攻撃ループ完了。#########");
+          }
+          break;
+
+
         default:
           break;
       }
@@ -639,14 +932,15 @@ class BattleState extends Model
       }
     }
 
-    // スキル回復時もしくは、アイテム回復の時に使う
+    // スキル回復時、アイテム回復の時に使う
+    // $percentはint|double (1, 0.5など)
     public static function storePartyHeal(
       string $command, Object $self_data, Collection $opponents_data, 
-      ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range
+      ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range, int|float|null $percent, ?int $heal_type
     ) {
       switch ($command) {
         case "SKILL":
-          Debugbar::debug("回復スキル発動。");
+          Debugbar::debug("storePartyHeal(): SKILL ------------------------------");
           if ($target_range == Skill::TARGET_RANGE_SINGLE) {
             Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
 
@@ -681,8 +975,85 @@ class BattleState extends Model
           }
           break;
         case "ITEM":
-          break;
-        default:
+          Debugbar::debug("storePartyHeal(): ITEM ------------------------------");
+
+          if ($target_range == Item::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+              switch ($heal_type) {
+                case Item::HEAL_HP_TYPE :
+                  Debugbar::debug("HP回復アイテム");
+                  // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+                  if (is_null($heal_point)) {
+                    $heal_point = ceil($opponents_data[$opponents_index]->max_value_hp * $percent);
+                    Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$heal_point} ");
+                  }
+                  $opponents_data[$opponents_index]->value_hp += $heal_point;
+                  if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
+                    $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+                  }
+                  $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+                  break;
+
+                case Item::HEAL_AP_TYPE :
+                  Debugbar::debug("AP回復アイテム");
+                  // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+                  if (is_null($heal_point)) {
+                    $heal_point = ceil($opponents_data[$opponents_index]->max_value_ap * $percent);
+                    Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$heal_point} ");
+                  }
+                  $opponents_data[$opponents_index]->value_ap += $heal_point;
+                  if ($opponents_data[$opponents_index]->value_ap > $opponents_data[$opponents_index]->max_value_ap) {
+                    $opponents_data[$opponents_index]->value_ap = $opponents_data[$opponents_index]->max_value_ap;
+                  }
+                  $logs->push("{$opponents_data[$opponents_index]->name}のAPが{$heal_point}ポイント回復！");
+                  break;
+              }
+            }
+
+          } elseif ($target_range == Item::TARGET_RANGE_ALL) {
+            Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$self_data->name}");
+            foreach ($opponents_data as $opponent_data) {
+              $calculated_heal_point = $heal_point;
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
+              } else {
+
+                switch($heal_type) {
+                  case Item::HEAL_HP_TYPE :
+                    // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+                    if (is_null($heal_point)) {
+                      $calculated_heal_point = ceil($opponent_data->max_value_hp * $percent);
+                      Debugbar::debug("回復量nullのため、percentを参照。回復量:{$calculated_heal_point} ");
+                    }
+                    $opponent_data->value_hp += $calculated_heal_point;
+                    if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                      $opponent_data->value_hp = $opponent_data->max_value_hp;
+                    }
+                    Debugbar::debug("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復。");
+                    $logs->push("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復！");
+                    break;
+                  case Item::HEAL_AP_TYPE :
+                    // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
+                    if (is_null($heal_point)) {
+                      $calculated_heal_point = ceil($opponent_data->max_value_ap * $percent);
+                      Debugbar::debug("回復量nullのため、percentを参照。回復量: {$calculated_heal_point} ");
+                    }
+                    $opponent_data->value_ap += $calculated_heal_point;
+                    if ($opponent_data->value_ap > $opponent_data->max_value_ap) {
+                      $opponent_data->value_ap = $opponent_data->max_value_ap;
+                    }
+                    Debugbar::debug("{$opponent_data->name}のAPを{$calculated_heal_point}ポイント回復。");
+                    $logs->push("{$opponent_data->name}のAPを{$calculated_heal_point}ポイント回復！");
+                    break;
+                }
+              }
+            }
+          }
           break;
       }
     }
@@ -744,9 +1115,10 @@ class BattleState extends Model
 
                 // $new_buffの方は配列なので['']で呼ばないとエラーになる
                 foreach ($opponent_data->buffs as &$already_buff) {
-                  if ($already_buff->buffed_skill_id === $new_buff['buffed_skill_id']) {
+                  $already_buff = (array)$already_buff;
+                  if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
                     Debugbar::debug("既にバフが付与されているためターン数を更新します。");
-                    $already_buff->remaining_turn = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
                     $buff_exists = true;
                     break;
                   }
@@ -790,6 +1162,74 @@ class BattleState extends Model
           }
           break;
         case "ITEM":
+          Debugbar::debug("バフアイテム使用。");
+          if ($target_range == ITEM::TARGET_RANGE_SINGLE) {
+            Debugbar::debug("【単体バフ】使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+
+            // 戦闘不能ならスキップ
+            if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
+              $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+            } else {
+              // 同じバフがかかっているかどうかをチェック
+              Debugbar::debug($opponents_data[$opponents_index]->buffs);
+              $buff_exists = false;
+
+              // $new_buffの方は配列なので['']で呼ばないとエラーになる
+              foreach ($opponents_data[$opponents_index]->buffs as &$already_buff) {
+                $already_buff = (array)$already_buff;
+                Debugbar::debug($new_buff['buffed_item_id']); // 型キャストチェック
+                Debugbar::debug($already_buff['buffed_item_id']); // 型キャストチェック
+
+                if ($already_buff['buffed_item_id'] === $new_buff['buffed_item_id']) {
+                  Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                  $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                  $buff_exists = true;
+                  break;
+                }
+              }
+
+              // 同じ buffed_skill_id がなければ、新しいバフを追加
+              if (!$buff_exists) {
+                Debugbar::debug('新しいバフ追加');
+                $opponents_data[$opponents_index]->buffs[] = $new_buff;
+              }
+
+              $logs->push("{$opponents_data[$opponents_index]->name}のステータスが向上！");
+
+            }
+
+          } elseif ($target_range == ITEM::TARGET_RANGE_ALL) {
+            // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
+            Debugbar::debug("【全体バフ】使用者: {$self_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+            foreach ($opponents_data as $opponent_data) {
+              // 戦闘不能ならスキップ
+              if ($opponent_data->is_defeated_flag == true) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
+              } else {
+                // 同じバフがかかっているかどうかをチェック
+                Debugbar::debug($opponent_data->buffs);
+                $buff_exists = false;
+
+                // $new_buffの方は配列なので['']で呼ばないとエラーになる
+                foreach ($opponent_data->buffs as &$already_buff) {
+                $already_buff = (array)$already_buff;
+                  if ($already_buff['buffed_item_id'] === $new_buff['buffed_item_id']) {
+                    Debugbar::debug("既にバフが付与されているためターン数を更新します。");
+                    $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+                    $buff_exists = true;
+                    break;
+                  }
+                }
+
+                // 同じ buffed_item_id がなければ、新しいバフを追加
+                if (!$buff_exists) {
+                  Debugbar::debug('新しいバフ追加');
+                  $opponent_data->buffs[] = $new_buff;
+                }
+              }
+            }
+            $logs->push("全員の特定の能力値が向上！");
+          }
           break;
         default:
           break;
@@ -963,13 +1403,27 @@ class BattleState extends Model
           foreach ($data->buffs as $buff) {
             $buff = (object)$buff; // -> で値を呼べるようにオブジェクトにキャストしとく
             $buff->remaining_turn -= 1;
-            if ($buff->remaining_turn > 0) {
-              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
-              $remaining_buffs[] = $buff;
-            } else {
-              Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
-              // 切れた時の表示は不要か？
-              $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+            switch ($buff->buffed_from) {
+              case 'SKILL' :
+                if ($buff->remaining_turn > 0) {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
+                  $remaining_buffs[] = $buff;
+                } else {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
+                  // 切れた時の表示は不要か？
+                  $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+                }
+                break;
+              case 'ITEM' :
+                if ($buff->remaining_turn > 0) {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
+                  $remaining_buffs[] = $buff;
+                } else {
+                  Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} が消えました。");
+                  // 切れた時の表示は不要か？
+                  $logs->push("{$data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
+                }
+                break;
             }
           }
           $data->buffs = $remaining_buffs;
@@ -1066,7 +1520,7 @@ class BattleState extends Model
           // Debugbar::debug("---------------------------------");
           if (isset($buff[$actual_status_name])) {
             $actual_status_value += $buff[$actual_status_name];
-            Debugbar::debug("バフ値: {$buff[$actual_status_name]} ");
+            Debugbar::debug("バフ値: {$buff['buffed_from']} {$buff[$actual_status_name]} ");
           }
         }
 
