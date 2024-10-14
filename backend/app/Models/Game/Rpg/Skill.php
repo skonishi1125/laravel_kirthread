@@ -147,9 +147,12 @@ class Skill extends Model
           $logs->push("{$self_data->name}の{$selected_skill->name}！パーティは守りの壁に包まれた！");
           $buffs = [
             'buffed_skill_id' => $selected_skill->id,
+            'buffed_item_id' => null,
             'buffed_skill_name' => $selected_skill->name,
+            'buffed_item_name' => null,
             'buffed_def' => ceil($self_data->value_def * $selected_skill->skill_percent),
             'remaining_turn' => $selected_skill->buff_turn,
+            'buffed_from' => 'SKILL',
             // 'remaining_turn' => 3,
           ];
           break;
