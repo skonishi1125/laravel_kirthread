@@ -108,10 +108,10 @@ class ApiController extends Controller
     $field_id = $request->field_id;
     $stage_id = $request->stage_id;
     Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
-    $user_id = Auth::id();
+    $savedata = Savedata::getLoginUserCurrentSaveData();
 
     // 戦闘中かどうかの判定
-    $is_user_battle = BattleState::where('user_id', $user_id)->exists();
+    $is_user_battle = BattleState::where('savedata_id', $savedata->id)->exists();
 
     // stage_idが1以外なら、URLベタ打ちでなく戦闘後に正しく遷移してきたかを確認する。
     // 現在1-2なら、clearStageに'1-1'が入っていたら通せば良い。1-3なら、'1-2'をクリアしていたら通す
@@ -141,7 +141,7 @@ class ApiController extends Controller
       Debugbar::debug("戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------");
 
       // パーティ3人の情報(ステータス,スキル,アイテム)を格納する
-      $players_data = BattleState::createPlayersData($user_id, null);
+      $players_data = BattleState::createPlayersData($savedata->id, null);
 
       // ステージの敵情報を読み込む
       $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
@@ -152,13 +152,13 @@ class ApiController extends Controller
 
       // 戦闘データをセッションIDで一意に管理する
       $battle_state = BattleState::createBattleState(
-        $user_id, $players_data, $enemies_data, $items_data, $field_id, $stage_id
+        $savedata->id, $players_data, $enemies_data, $items_data, $field_id, $stage_id
       );
 
     } else {
       // 戦闘中のデータを取得する
       Debugbar::debug("戦闘中です。セッションIDから戦闘履歴を取得します。  ---------------");
-      $battle_state = BattleState::where('user_id', $user_id)->first();
+      $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
 
       // $battle_stateの情報と現在のfield_id, stage_idが一致しているか確認する
       // 例えば /game/rpg/battle/1/2 に正常進行 -> 1/3にURLベタ打ちすると1-2のstateがある状態で1-3に遷移できる
@@ -279,8 +279,8 @@ class ApiController extends Controller
     // そのためトランザクションで挟んだのち、処理後に戦闘キャッシュを消して管理する。
     if (!$battle_state) return abort(500, 'not exist battle state');
 
-    $savedata = SaveData::where('user_id', Auth::id())->first();
-    $parties = Party::where('user_id', Auth::id())->get();
+    $savedata = Savedata::getLoginUserCurrentSaveData();
+    $parties = Party::where('savedata_id', $savedata->id)->get();
     $exp_tables = Exp::get();
     $result_logs = collect();
 
@@ -420,8 +420,9 @@ class ApiController extends Controller
 
     // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて削除する
     if (!$battle_state) {
-      Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、ユーザーIDで検索をかけ削除します。");
-      $battle_state = BattleState::where('user_id', Auth::id())->get();
+      $savedata = SaveData::getLoginUserCurrentSaveData();
+      Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
+      $battle_state = BattleState::where('savedata_id', $savedata->id)->get();
       foreach ($battle_state as $b) {
         $b->delete();
       }

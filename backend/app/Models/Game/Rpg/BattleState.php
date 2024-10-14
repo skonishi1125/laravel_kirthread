@@ -37,9 +37,9 @@ class BattleState extends Model
     const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
     // エンカウント時の処理
-    public static function createPlayersData(int $user_id, Collection $when_cleared_players_data = null) {
+    public static function createPlayersData(int $savedata_id, Collection $when_cleared_players_data = null) {
       Debugbar::debug("プレイヤーのエンカウントデータ(battlestates.playeys_json_data)を作成します。----------");
-      $parties = Party::where('user_id', $user_id)->get();
+      $parties = Party::where('savedata_id', $savedata_id)->get();
       $players_data = collect();
 
       // クリア後にbattlestateのplayers_dataを作成する場合、HP/APを戦闘後の状態にしておく
@@ -97,20 +97,7 @@ class BattleState extends Model
       Debugbar::debug("################# {$player_index} 人目");
         // 会得しているスキルの取得
         $learned_skills = Skill::getLearnedSkill($party);
-        $items = [];
-        $buffs = [
-          // [
-          //   'buffed_skill_id' => 31,
-          //   'buffed_def' => 20,
-          //   'buffed_int' => -10,
-          //   'remaining_turn' => 5,
-          // ],
-          // [
-          //   'buffed_skill_id' => 51,
-          //   'buffed_hp' => 30,
-          //   'remaining_turn' => 3,
-          // ],
-        ];
+        $buffs = [];
         $role = Role::find($party->rpg_role_id);
         $role_portrait = $role->portrait_image_path;
         // vue側に渡すデータ
@@ -133,7 +120,6 @@ class BattleState extends Model
           'skills' => $learned_skills,
           'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
           'buffs' => $buffs,
-          'items' => $items,
           'role_portrait' => $role_portrait,
           'is_defeated_flag' => false,
           'player_index' => $player_index, // 味方のパーティ中での並び。
@@ -204,11 +190,11 @@ class BattleState extends Model
     }
 
     public static function createBattleState(
-      int $user_id, Collection $players_data, Collection $enemies_data, Collection $items_data, int $field_id, int $stage_id
+      int $savedata_id, Collection $players_data, Collection $enemies_data, Collection $items_data, int $field_id, int $stage_id
     ) {
       $session_id = \Str::uuid()->toString();
       $created_battle_state = BattleState::create([
-        'user_id' => $user_id,
+        'savedata_id' => $savedata_id,
         'session_id' => $session_id,
         'players_json_data' => json_encode($players_data),
         'items_json_data'   => json_encode($items_data),

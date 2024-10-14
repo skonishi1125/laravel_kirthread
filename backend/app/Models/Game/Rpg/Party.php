@@ -18,6 +18,10 @@ class Party extends Model
       'id',
     ];
 
+    public function savedata() {
+      
+    }
+
     public function skills() {
       // pivotの定義により、$party->skills[0]->pivot->skill_level というような形で中間tableの値を取得できる
       return $this
