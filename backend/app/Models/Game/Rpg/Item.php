@@ -17,6 +17,10 @@ class Item extends Model
   const ATTACK_PHYSICAL_TYPE  = 1; // 物理
   const ATTACK_MAGIC_TYPE     = 2; // 魔法
 
+  const HEAL_NO_TYPE  = 0; // 分類なし
+  const HEAL_HP_TYPE  = 1; // HP回復系アイテム
+  const HEAL_AP_TYPE  = 2; // AP回復系アイテム
+
   const EFFECT_SPECIAL_TYPE = 0; // 特殊系アイテム
   const EFFECT_DAMAGE_TYPE  = 1; // 攻撃系アイテム
   const EFFECT_HEAL_TYPE    = 2; // 治療系アイテム
@@ -39,6 +43,40 @@ class Item extends Model
 
   public static function getShopListItem() {
     return self::where('is_buyable', true)->get();
+  }
+
+  public static function getBattleStateItemFromSavedata(int $savedata_id) {
+    $items_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
+    $current_savedata_has_items = SavedataHasItem::where('savedata_id', $savedata_id)->get();
+
+    foreach ($current_savedata_has_items as $savedata_has_item) {
+      $item = Item::where('id',$savedata_has_item->item_id)
+        ->where('is_battle_available', true)
+        ->first();
+
+      if (is_null($item)) continue; // 戦闘中に使えないアイテムならスキップ
+
+      $item_data = collect([
+        'id' => $item->id,
+        'name' => $item->name,
+        'attack_type' => $item->attack_type,
+        'heal_type' => $item->heal_type,
+        'effect_type' => $item->effect_type,
+        'target_range' => $item->target_range,
+        'is_percent_based' => $item->is_percent_based,
+        'percent' => $item->percent,
+        'fixed_value' => $item->fixed_value,
+        'buff_turn' => $item->buff_turn,
+        'description' => $item->description,
+        'possesion_number' => $savedata_has_item->possesion_number,
+      ]);
+
+      $items_data->push($item_data);
+    }
+
+    return $items_data;
+
+
   }
 
 }
