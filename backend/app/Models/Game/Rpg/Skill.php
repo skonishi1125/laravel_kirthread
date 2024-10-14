@@ -30,7 +30,7 @@ class Skill extends Model
     const TARGET_RANGE_ALL    = 2; // 全体を対象
 
     public function parties() {
-      return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'rpg_skill_id', 'rpg_party_id');
+      return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'skill_id', 'party_id');
     }
 
     // 現在会得しているスキル情報を取得
@@ -98,49 +98,32 @@ class Skill extends Model
         }
       }
 
-      switch ($role_id) {
-        case Role::ROLE_STRIKER :
-          Debugbar::debug('decideExecSkill(): 格闘家');
-          $logs->push("{$self_data->name}は格闘家スキルを選択。");
-          break;
-        case Role::ROLE_MEDIC :
-          Debugbar::debug('decideExecSkill(): 治療師');
-          break;
-        case Role::ROLE_PARADIN :
-          Debugbar::debug('decideExecSkill(): 重騎士');
-          self::decideExecParadinSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs);
-          break;
-        case Role::ROLE_MAGE :
-          Debugbar::debug('decideExecSkill(): 魔導士');
-          self::decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs);
-          break;
-        case Role::ROLE_RANGER :
-          break;
-        case Role::ROLE_BUFFER :
-          break;
-        default:
-          break;
-      }
-    }
-
-    /**
-     * 重騎士
-     */
-    public static function decideExecParadinSkill(
-      Object $selected_skill, Object $self_data, Collection $opponents_data, 
-      ?int $opponents_index, Collection $logs
-    ) {
+      // 使用スキルの設定
       $damage     = null;
       $heal_point = null;
       $buffs      = null;
 
-      // スキル処理
       switch ($selected_skill->id) {
+        /**
+         * 格闘家(Striker)
+         */
+        case 10 :
+          Debugbar::debug('ミドルブロウ');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！");
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent + 10);
+          break;
+        case 11 :
+          Debugbar::debug('スピンキック');
+          $logs->push("{$self_data->name}の{$selected_skill->name}！鋭い蹴りで鉾の如く周囲を薙ぎ払う！");
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent + 5);
+          break;
+        /**
+         * 重騎士(Paradin)
+         */
         case 30 :
           Debugbar::debug('ワイドスラスト');
           $logs->push("{$self_data->name}の{$selected_skill->name}！");
-          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent
-          );
+          $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent);
           break;
         case 31 :
           Debugbar::debug('ワイドガード');
@@ -153,7 +136,6 @@ class Skill extends Model
             'buffed_def' => ceil($self_data->value_def * $selected_skill->skill_percent),
             'remaining_turn' => $selected_skill->buff_turn,
             'buffed_from' => 'SKILL',
-            // 'remaining_turn' => 3,
           ];
           break;
         case 32 :
@@ -172,30 +154,9 @@ class Skill extends Model
             'remaining_turn' => $selected_skill->buff_turn,
           ];
           break;
-        default:
-          break;
-      }
-
-      // Debugbar::debug(gettype($damage), gettype($heal_point), gettype($buffs)); // int, int, array
-
-      self::separateStoreProcessAccrodingToEffectType(
-        $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
-      );
-
-    }
-
-
-    /**
-     * 魔導士
-     */
-
-    public static function decideExecMageSkill($selected_skill, $self_data, $opponents_data, $opponents_index, $logs) {
-      $damage     = null;
-      $heal_point = null;
-      $buffs      = null;
-
-      // スキル処理
-      switch ($selected_skill->id) {
+        /**
+         * 魔導士(Mage)
+         */
         case 40 :
           // 回復量 = (INT * ダメージ%)
           Debugbar::debug('ミニヒール');
@@ -243,18 +204,17 @@ class Skill extends Model
             'buffed_from' => 'SKILL'
           ];
           break;
-        default:
+        default :
           Debugbar::debug('存在しないスキルが選択されました。');
           break;
       }
-
-      // Debugbar::debug(gettype($damage), gettype($heal_point), gettype($buffs)); // int, int, array
 
       self::separateStoreProcessAccrodingToEffectType(
         $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
       );
 
     }
+
 
     public static function separateStoreProcessAccrodingToEffectType(
       Object $selected_skill, Object $self_data, Collection $opponents_data, 

@@ -28,7 +28,7 @@ class Role extends Model
 
     public function Parties() {
       // 親側は相手のクラスを指定し、自分の主キーと紐づけようと思っている相手のカラムを指定する
-      return $this->hasMany(Party::class, 'rpg_role_id');
+      return $this->hasMany(Party::class, 'role_id');
     }
 
     // レベルアップ時に使うステータス値を配列として出力する

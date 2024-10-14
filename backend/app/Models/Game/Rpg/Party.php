@@ -18,17 +18,21 @@ class Party extends Model
       'id',
     ];
 
+    public function savedata() {
+
+    }
+
     public function skills() {
       // pivotの定義により、$party->skills[0]->pivot->skill_level というような形で中間tableの値を取得できる
       return $this
-        ->belongsToMany(Skill::class, 'rpg_party_learned_skills', 'rpg_party_id', 'rpg_skill_id')
+        ->belongsToMany(Skill::class, 'rpg_party_learned_skills', 'party_id', 'skill_id')
         ->withPivot('skill_level') 
         ;
     }
 
     public function role() {
       // 子側は自分の持つカラムを指定して、相手の主キーと紐づける
-      return $this->belongsTo(Role::class, 'rpg_role_id');
+      return $this->belongsTo(Role::class, 'role_id');
     }
 
     public static function calculateGaussianGrowth($party){
