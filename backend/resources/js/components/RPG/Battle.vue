@@ -228,7 +228,7 @@
            </div> -->
           <p v-if="battleStatus == 'encount'">敵が現れた！</p>
           <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうする？<br>
+            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
               <span v-if="hoveredDescription != null">
                 <hr>
