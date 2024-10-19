@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\Item;
+use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\SavedataHasItem;
 Use Auth;
 
@@ -19,6 +20,10 @@ class SaveData extends Model
 
     public function user() {
       return $this->belongsTo('App\User');
+    }
+
+    public function parties() {
+      return $this->hasMany(Party::class, 'savedata_id');
     }
 
     public function SavedataHasItem() {

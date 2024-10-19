@@ -23,6 +23,32 @@ use Illuminate\Http\Request;
 class ApiController extends Controller
 {
 
+  // todo: constructなどでログインしているユーザーがアクセスできる前提とする
+
+  // パーティー登録画面関連
+  public function checkIsExistData() {
+    $is_exist_data = 0;
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    // セーブデータが存在しなければ作成して、trueを返しつつ初期設定を進める
+    if (is_null($savedata)) {
+      $savedata = SaveData::create([
+        'user_id' => Auth::id(),
+        'money' => '300',
+      ]);
+      return $is_exist_data;
+    }
+    // セーブデータを作っただけのユーザーがいるかのチェック
+    // 紐づくパーティメンバーが存在している場合trueを返す。
+    $parties = $savedata->parties;
+    if ($parties->isEmpty()) {
+      $is_exist_data = 0;
+    } else {
+      $is_exist_data = 1;
+    }
+    Debugbar::debug("checkIsExistData():------------------------ data: {$is_exist_data}");
+    return $is_exist_data;
+  }
+
   // TODO: 
   // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
 

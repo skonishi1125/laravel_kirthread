@@ -1,23 +1,19 @@
 <template>
   <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 600px;">
     <h4 style="text-align: center; height: 60px;">App.vue 
-      <small style="font-size: 12px;">
+      <!-- 
+      戦闘画面用デバッグ 
+       <small style="font-size: 12px;">
         {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
         {{ battleSessionId }}
+      </small> 
+      -->
+      <small style="font-size: 12px;">
+        {{ currentScreen }}.{{ beginningStatus }}<br>
       </small>
     </h4>
 
-    <div v-if="currentScreen == 'title'">
-      <router-view></router-view>
-    </div>
-
-    <div v-else-if="currentScreen == 'menu'">
-      <router-view></router-view>
-    </div>
-
-    <div v-else-if="currentScreen == 'battle'">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
 
   </div>
 </template>
@@ -32,6 +28,7 @@
     // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
     ...mapState(['currentScreen']),
     ...mapState(['battleStatus']),
+    ...mapState(['beginningStatus']),
     ...mapState(['selectedCommands']),
     ...mapState(['battleSessionId']),
     },

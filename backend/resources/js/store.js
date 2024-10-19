@@ -3,8 +3,9 @@ import { createStore } from 'vuex';
 // 戦闘状態の管理
 export default createStore({
   state: {
-    // メイン画面の状態 'title', 'menu', 'battle'
+    // メイン画面の状態 'title', 'beginning', 'menu', 'battle'
     currentScreen: 'title',
+    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', '
     battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
@@ -15,6 +16,9 @@ export default createStore({
   mutations: {
     setScreen(state, screen) {
       state.currentScreen = screen;
+    },
+    setBeginningStatus(state, status) {
+      state.beginningStatus = status;
     },
     setClearStage(state, stage) {
       state.clearStage = stage;
@@ -106,6 +110,9 @@ export default createStore({
     // commitで引数を渡す場合
     setScreen({ commit }, screen) {
       commit('setScreen', screen);
+    },
+    setBeginningStatus({ commit }, status) {
+      commit('setBeginningStatus', status);
     },
     setClearStage({ commit }, stage) {
       commit('setClearStage', stage)
