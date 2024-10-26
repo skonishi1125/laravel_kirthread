@@ -43,7 +43,7 @@
 }
 
 .role-description-wrapper {
-  /* border: 1px dotted black; */
+  border: 1px dotted black;
 }
 
 .role-description-message {
@@ -96,17 +96,43 @@
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
-          <p>共に冒険へと旅立つパーティのメンバーを決定しましょう。 (1/3)</p>
+          <p>共に冒険へと旅立つパーティのメンバーを決定しましょう。 ({{this.currentDecidedMemberIndex + 1}}/3)</p>
+          <p>選択中メンバー:
+            <span v-for="member in this.selectedRoleInformations">
+              <span>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</span>
+            </span>
+          </p>
         </div>
       </div>
 
       <div class="col-6 role-description-wrapper">
         <div class="role-description-message">
           <p>
-            【<span style="font-weight: bold;">{{ this.roleData[this.currentDisplayRoleIndex]['class_kana'] }} </span>】
+            【<span style="font-weight: bold;">{{ this.roleData[this.currentDisplayRoleIndex]['class_japanese'] }} </span>】
             <span>({{ this.roleData[this.currentDisplayRoleIndex]['class'] }})</span>
           </p>
           <p>{{ this.roleData[this.currentDisplayRoleIndex]['description'] }}</p>
+        </div>
+        <!-- 名前と確定ボタンの記入フォーム -->
+        <div>
+          <form class="form-horizontal" role="form">
+            <div class="form-group">
+            <label class="col-md-12 control-rabel">名前<small>※最大6文字</small></label>
+              <div class="col-md-8">
+                <div class="input-group">
+                  <input type="text" class="form-control" pattern="\d{3}-\d{4}" v-model="partyName">
+                  <span class="input-group-btn">
+                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(this.roleData[this.currentDisplayRoleIndex]['id'],this.roleData[this.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
+                  </span>
+
+                </div>
+                <a href=""><small>ステータスについて</small></a>
+              </div>
+            </div>
+            <span class="input-group-btn" style="margin-left: 10px;">
+              <button class="btn btn-info" type="button" @click="resetData">最初からやり直す</button>
+            </span>
+          </form>
         </div>
       </div>
  
@@ -122,7 +148,7 @@
     </div>
     
     <!-- パラメータ -->
-    <div style="position: absolute; bottom: 5%; right: 5%;">
+    <div style="position: absolute; bottom: 5%; left: 5%;">
       <div class="parameter-base-wrapper">
         <div class="parameter-role">
           <div v-if="currentDisplayRoleIndex === 0">
@@ -146,28 +172,60 @@
         </div>
       </div>
       <div>
-        <p style="position:absolute;top: -13%;right: 44%;">HP </p>
-        <p style="position:absolute;top: 10%;right: -3%;">AP </p>
-        <p style="position:absolute;top: 55%;left: 104%;">STR</p>
-        <p style="position:absolute;top: 100%;left: 71%;">DEF</p>
-        <p style="position:absolute;top: 100%;left: 13%;">INT</p>
-        <p style="position:absolute;top: 54%;left: -17%;">SPD</p>
-        <p style="position:absolute;top: 9%;left: -4%;">LUC</p>
+        <p style="position:absolute; top:-13%; right: 44%;">HP </p>
+        <p style="position:absolute; top:10%;  right: -3%;">AP </p>
+        <p style="position:absolute; top:55%;  left: 104%;">STR</p>
+        <p style="position:absolute; top:100%; left:  71%;">DEF</p>
+        <p style="position:absolute; top:100%; left:  13%;">INT</p>
+        <p style="position:absolute; top:54%;  left: -17%;">SPD</p>
+        <p style="position:absolute; top:9%;   left:  -4%;">LUC</p>
       </div>
 
     </div>
 
   </div>
 
+  <!-- 確認モーダル -->
+  <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">パーティメンバーの確認</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              以下のメンバーで確定してよろしいですか？ <br> 
+              ※進行途中で変更することはできません
+            </p>
+            <ul>
+              <span v-for="member in this.selectedRoleInformations">
+              <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
+              </span>
+            </ul>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
+            <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
+          </div>
+
+        </div>
+      </div>
+  </div>
+
 </template>
 
 <script>
+  import $ from 'jquery';
   import { mapState } from 'vuex';
   import axios from 'axios';
   export default {
     data() { // script内で使用する変数を定義する。
       return {
         roleData: {},
+        partyName: "",
       }
     },
     computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -175,6 +233,8 @@
     ...mapState(['currentScreen']),
     ...mapState(['beginningStatus']),
     ...mapState(['currentDisplayRoleIndex']),
+    ...mapState(['currentDecidedMemberIndex']),
+    ...mapState(['selectedRoleInformations']),
     backgroundImageStyle() {
       return {
         backgroundImage: `url(/image/rpg/character/portrait/${this.roleData[this.currentDisplayRoleIndex]['portrait_image_path']})`
@@ -212,7 +272,7 @@
               this.$router.push('/game/rpg/menu');
             } else {
               console.log('party未設定のため、処理を続けます。');
-
+              this.roleInformationSetup();
               this.$store.dispatch('setBeginningStatus', 'prologue');
             }
         });
@@ -224,16 +284,57 @@
       incrementDisplayRoleIndex() {
         console.log('incrementDisplayRoleIndex(): -----------------------');
         this.$store.dispatch('incrementCurrentDisplayRoleIndex');
+        // 名前の初期値を設定
+        // todo: すでにそのindexデータが選択されている場合はスキップする（同じ職業を選べないようにする）
+        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
         console.log(this.currentDisplayRoleIndex);
       },
       decrementDisplayRoleIndex() {
         console.log('decrementDisplayRoleIndex(): -----------------------');
         this.$store.dispatch('decrementCurrentDisplayRoleIndex');
+        // 名前の初期値を設定
+        // todo: すでにそのindexデータが選択されている場合はスキップする（同じ職業を選べないようにする）
+        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
         console.log(this.currentDisplayRoleIndex);
-
       },
+      roleInformationSetup() {
+        console.log('roleInformationSetup(): -----------------');
+        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
+        if (this.currentDecidedMemberIndex <= 2) {
+          console.log('2以下なので処理開始。');
+        } else {
+          console.log('2以上');
+          this.displayConfirmModal();
+        }
+      },
+      setPlayerData(roleId, roleClassJapanese, partyName) {
+        console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
+        //todo: バリデーションチェックをしたいかも。名前最大6文字までとか。一応input側でつけてはいるが。
 
+        this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
+        this.$store.dispatch('incrementCurrentDecidedMemberIndex');
+        console.log(`${this.currentDecidedMemberIndex}`);
+        this.roleInformationSetup();
+      },
+      displayConfirmModal() {
+        // このメンバーでいいですか？というダイアログを出す。
+        // OKならpostPlayerData()を実行する。
+        console.log(`displayConfirmModal(): -----------------`);
+        $('#modal-confirm').modal('show');
+      },
+      postPlayerData() {
+        console.log(`postPlayerData(): -----------------`);
+        // axios.postで登録
+        // 成功したら次の画面へ
+        // エラーが発生したらもう一度やり直してもらう
 
+        // 処理が終わった後はmodalを閉じる
+        this.resetData();
+        $('#modal-confirm').modal('hide');
+      },
+      resetData() {
+        this.$store.dispatch('resetBeginningDecidedData');
+      }
 
     }
   }

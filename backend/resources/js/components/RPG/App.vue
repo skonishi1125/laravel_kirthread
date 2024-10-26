@@ -9,7 +9,7 @@
       </small> 
       -->
       <small style="font-size: 12px;">
-        {{ currentScreen }}.{{ beginningStatus }}<br>
+        {{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br>
       </small>
     </h4>
 
@@ -30,6 +30,7 @@
     ...mapState(['battleStatus']),
     ...mapState(['beginningStatus']),
     ...mapState(['selectedCommands']),
+    ...mapState(['selectedRoleInformations']),
     ...mapState(['battleSessionId']),
     },
     created() { // DOMに依存しない処理を書く(state処理など。)

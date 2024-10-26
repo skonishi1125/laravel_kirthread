@@ -25,7 +25,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_STRIKER,
           'class' => 'striker',
-          'class_kana' => '格闘家',
+          'class_japanese' => '格闘家',
+          'default_name' => 'スト',
           'growth_hp'  => 4,
           'growth_ap'  => 2,
           'growth_str' => 5,
@@ -42,7 +43,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_MEDIC,
           'class' => 'medic',
-          'class_kana' => '治療師',
+          'class_japanese' => '治療師',
+          'default_name' => 'メディ',
           'growth_hp'  => 3,
           'growth_ap'  => 4,
           'growth_str' => 2,
@@ -59,7 +61,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_PARADIN,
           'class' => 'paradin',
-          'class_kana' => '重騎士',
+          'class_japanese' => '重騎士',
+          'default_name' => 'パラ',
           'growth_hp'  => 5,
           'growth_ap'  => 3,
           'growth_str' => 3,
@@ -76,7 +79,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_MAGE,
           'class' => 'mage',
-          'class_kana' => '魔導士',
+          'class_japanese' => '魔導士',
+          'default_name' => 'メイ',
           'growth_hp'  => 2,
           'growth_ap'  => 5,
           'growth_str' => 1,
@@ -93,7 +97,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_RANGER,
           'class' => 'ranger',
-          'class_kana' => '弓馭者', // ゆみぎょしゃ
+          'class_japanese' => '弓馭者', // ゆみぎょしゃ
+          'default_name' => 'レン',
           'growth_hp'  => 4,
           'growth_ap'  => 3,
           'growth_str' => 3,
@@ -110,7 +115,8 @@ class RoleTableSeeder extends Seeder
         [
           'id' => Role::ROLE_BUFFER,
           'class' => 'buffer',
-          'class_kana' => '理術師',
+          'class_japanese' => '理術師',
+          'default_name' => 'バファ',
           'growth_hp'  => 3,
           'growth_ap'  => 4,
           'growth_str' => 1,
