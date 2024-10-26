@@ -6,6 +6,8 @@ export default createStore({
     // メイン画面の状態 'title', 'beginning', 'menu', 'battle'
     currentScreen: 'title',
     beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', '
+    currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
+
     battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
     selectedCommands: [], // 味方の選択コマンド
     selectedEnemies: [],  // コマンドで選択した敵
@@ -19,6 +21,18 @@ export default createStore({
     },
     setBeginningStatus(state, status) {
       state.beginningStatus = status;
+    },
+    incrementCurrentDisplayRoleIndex(state) { // "→"クリック
+      state.currentDisplayRoleIndex += 1;
+      if (state.currentDisplayRoleIndex > 5) {
+        state.currentDisplayRoleIndex = 0;
+      }
+    },
+    decrementCurrentDisplayRoleIndex(state) { // "←"クリック
+      state.currentDisplayRoleIndex -= 1;
+      if (state.currentDisplayRoleIndex < 0) {
+        state.currentDisplayRoleIndex = 5;
+      }
     },
     setClearStage(state, stage) {
       state.clearStage = stage;
@@ -113,6 +127,12 @@ export default createStore({
     },
     setBeginningStatus({ commit }, status) {
       commit('setBeginningStatus', status);
+    },
+    incrementCurrentDisplayRoleIndex({commit}) {
+      commit('incrementCurrentDisplayRoleIndex')
+    },
+    decrementCurrentDisplayRoleIndex({commit}) {
+      commit('decrementCurrentDisplayRoleIndex')
     },
     setClearStage({ commit }, stage) {
       commit('setClearStage', stage)

@@ -33,6 +33,7 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 
   // RPG API関連
   Route::get('/api/game/rpg/beginning/check-is-exist-data', 'Game\Rpg\ApiController@checkIsExistData')->name('api_game_rpg_beginning_check_is_exist_data');
+  Route::get('/api/game/rpg/beginning/role', 'Game\Rpg\ApiController@getRoleData')->name('api_game_rpg_beginning_role');
   Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
   Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
   Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');

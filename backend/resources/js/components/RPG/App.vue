@@ -1,5 +1,5 @@
 <template>
-  <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 600px;">
+  <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 700px; position: relative">
     <h4 style="text-align: center; height: 60px;">App.vue 
       <!-- 
       戦闘画面用デバッグ 

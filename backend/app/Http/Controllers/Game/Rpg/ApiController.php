@@ -49,6 +49,10 @@ class ApiController extends Controller
     return $is_exist_data;
   }
 
+  public function getRoleData() {
+    return Role::get();
+  }
+
   // TODO: 
   // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
 
