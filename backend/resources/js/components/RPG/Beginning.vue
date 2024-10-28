@@ -120,7 +120,7 @@
             <label class="col-md-12 control-rabel">名前<small>※最大6文字</small></label>
               <div class="col-md-8">
                 <div class="input-group">
-                  <input type="text" class="form-control" pattern="\d{3}-\d{4}" v-model="partyName">
+                  <input type="text" class="form-control" maxlength="6" v-model="partyName">
                   <span class="input-group-btn">
                     <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(this.roleData[this.currentDisplayRoleIndex]['id'],this.roleData[this.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
                   </span>
@@ -143,8 +143,8 @@
       </div>
 
       <!-- currentDisplayRoleIndexを調整するボタン -->
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="incrementDisplayRoleIndex">→</button>
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="decrementDisplayRoleIndex">←</button>
+      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRoleIndex('increment')">→</button>
+      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRoleIndex('decrement')">←</button>
     </div>
     
     <!-- パラメータ -->
@@ -186,33 +186,33 @@
   </div>
 
   <!-- 確認モーダル -->
-  <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">パーティメンバーの確認</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-
-          <div class="modal-body">
-            <p>
-              以下のメンバーで確定してよろしいですか？ <br> 
-              ※進行途中で変更することはできません
-            </p>
-            <ul>
-              <span v-for="member in this.selectedRoleInformations">
-              <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
-              </span>
-            </ul>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
-            <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
-          </div>
-
+   <!-- data-keyboard="false" data-backdrop="static" として、灰色の枠をクリックした場合でも閉じないようにする -->
+  <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">パーティメンバーの確認</h4>
         </div>
+
+        <div class="modal-body">
+          <p>
+            以下のメンバーで確定してよろしいですか？ <br> 
+            ※進行途中で変更することはできません
+          </p>
+          <ul>
+            <span v-for="member in this.selectedRoleInformations">
+            <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
+            </span>
+          </ul>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
+          <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
+        </div>
+
       </div>
+    </div>
   </div>
 
 </template>
@@ -253,6 +253,8 @@
         console.log('checkIsUserExistPartyData(): -----------------------');
         // axiosでログイン中のユーザーがデータを作っているかどうかをチェックして操作を決定する
         // ロールデータを取っておく
+
+        // todo: わざわざ2つの情報を別々にaxiosでとらなくても、まとめて良いかもしれない。
         axios.get('/api/game/rpg/beginning/role')
         .then(response => {
           this.roleData = response.data;
@@ -281,21 +283,36 @@
         console.log('switchSetCharacter(): -----------------------');
         this.$store.dispatch('setBeginningStatus', 'setCharacter');
       },
-      incrementDisplayRoleIndex() {
-        console.log('incrementDisplayRoleIndex(): -----------------------');
-        this.$store.dispatch('incrementCurrentDisplayRoleIndex');
-        // 名前の初期値を設定
-        // todo: すでにそのindexデータが選択されている場合はスキップする（同じ職業を選べないようにする）
+      adjustDisplayRoleIndex(type){
+        /*
+          現在画面に表示しているロールをすでに選択している場合、currentDisplayRoleIndexを+/-して別のロール情報を出す
+          選択中のロールが入った配列: this.selectedRoleInformations idを参照したいなら['roleId']
+            [ 
+              { "roleId": 1, "roleClassJapanese": "格闘家", "partyName": "スト" }, 
+              { "roleId": 2, "roleClassJapanese": "治療師", "partyName": "メディ" } 
+            ]
+          現在選択中のロール: this.roleData[this.currentDisplayRoleIndex] idを参照したいなら['id']
+            Proxy(Object) {id: 2, class: 'medic', class_japanese: '治療師', default_name: 'メディ', growth_hp: 3, …}
+        */
+        switch(type) {
+          case 'increment':
+            console.log('adjusttDisplayRoleIndex(): + increment -----------------------');
+            do {
+              this.$store.dispatch('incrementCurrentDisplayRoleIndex');
+            } while (this.isRoleAlreadySelected(this.roleData[this.currentDisplayRoleIndex]['id']));
+            break;
+          case 'decrement':
+            console.log('adjusttDisplayRoleIndex(): - decrement -----------------------');
+            do {
+              this.$store.dispatch('decrementCurrentDisplayRoleIndex');
+            } while (this.isRoleAlreadySelected(this.roleData[this.currentDisplayRoleIndex]['id']));
+            break;
+        }
+        // inputに職業別デフォルトネームを設定
         this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
-        console.log(this.currentDisplayRoleIndex);
       },
-      decrementDisplayRoleIndex() {
-        console.log('decrementDisplayRoleIndex(): -----------------------');
-        this.$store.dispatch('decrementCurrentDisplayRoleIndex');
-        // 名前の初期値を設定
-        // todo: すでにそのindexデータが選択されている場合はスキップする（同じ職業を選べないようにする）
-        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
-        console.log(this.currentDisplayRoleIndex);
+      isRoleAlreadySelected(roleId) {
+        return this.selectedRoleInformations.some(selected => selected.roleId === roleId);
       },
       roleInformationSetup() {
         console.log('roleInformationSetup(): -----------------');
@@ -313,6 +330,7 @@
 
         this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
         this.$store.dispatch('incrementCurrentDecidedMemberIndex');
+        this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
         console.log(`${this.currentDecidedMemberIndex}`);
         this.roleInformationSetup();
       },
