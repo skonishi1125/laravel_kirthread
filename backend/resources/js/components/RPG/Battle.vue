@@ -621,7 +621,7 @@ export default {
       console.log('resultWin: ----------------------------------');
       this.resultLog = null;
       this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
-      axios.post('/api/game/rpg/battle/result-win', {
+      axios.post('/api/game/rpg/battle/result_win', {
         session_id: this.$store.state.battleSessionId,
         is_win: true,
       })

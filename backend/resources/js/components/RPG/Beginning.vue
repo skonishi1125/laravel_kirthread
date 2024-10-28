@@ -96,7 +96,7 @@
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
-          <p>共に冒険へと旅立つパーティのメンバーを決定しましょう。 ({{this.currentDecidedMemberIndex + 1}}/3)</p>
+          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ this.displayCurrentDecidedMemberNumber }}/3)</p>
           <p>選択中メンバー:
             <span v-for="member in this.selectedRoleInformations">
               <span>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</span>
@@ -143,8 +143,8 @@
       </div>
 
       <!-- currentDisplayRoleIndexを調整するボタン -->
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRoleIndex('increment')">→</button>
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRoleIndex('decrement')">←</button>
+      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRole('increment')">→</button>
+      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRole('decrement')">←</button>
     </div>
     
     <!-- パラメータ -->
@@ -226,6 +226,7 @@
       return {
         roleData: {},
         partyName: "",
+        displayCurrentDecidedMemberNumber: 1,
       }
     },
     computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -243,30 +244,20 @@
     },
     created() { // DOMに依存しない処理を書く(state処理など。)
       this.$store.dispatch('setScreen', 'beginning');
-      this.checkIsUserExistPartyData();
+      this.prepareBeginning();
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
       console.log('Beginning.vue', this.currentScreen);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
-      checkIsUserExistPartyData() {
-        console.log('checkIsUserExistPartyData(): -----------------------');
-        // axiosでログイン中のユーザーがデータを作っているかどうかをチェックして操作を決定する
-        // ロールデータを取っておく
-
-        // todo: わざわざ2つの情報を別々にaxiosでとらなくても、まとめて良いかもしれない。
-        axios.get('/api/game/rpg/beginning/role')
-        .then(response => {
-          this.roleData = response.data;
-          // response.data.forEach(data => {
-          //   console.log(data);
-          //  });
-          // console.log(this.roleData, this.roleData[0], this.roleData[0]['class']);
-            console.log('roleデータ読み込み完了.');
-        });
-        axios.get('/api/game/rpg/beginning/check-is-exist-data')
+      prepareBeginning() {
+        console.log('prepareBeginning(): -----------------------');
+        axios.get('/api/game/rpg/beginning/prepare_beginning')
           .then(response => {
-            const isExistData = response.data;
+            console.log(`response.data: ${response.data[0]}, ${response.data}`);
+            const isExistData = response.data[0]; // || のケースを書くとfalseの時にそちらの値が代入されてしまう。
+            this.roleData     = response.data[1] || [];
+            console.log('roleData取得完了。');
             if (isExistData) {
               // すでに登録済みのユーザーがURL直打ちなどでアクセスした場合はリダイレクト
               console.log('savedata, party登録済みのためリダイレクト');
@@ -283,7 +274,7 @@
         console.log('switchSetCharacter(): -----------------------');
         this.$store.dispatch('setBeginningStatus', 'setCharacter');
       },
-      adjustDisplayRoleIndex(type){
+      adjustDisplayRole(type){
         /*
           現在画面に表示しているロールをすでに選択している場合、currentDisplayRoleIndexを+/-して別のロール情報を出す
           選択中のロールが入った配列: this.selectedRoleInformations idを参照したいなら['roleId']
@@ -331,12 +322,13 @@
         this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
         this.$store.dispatch('incrementCurrentDecidedMemberIndex');
         this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
+        this.displayCurrentDecidedMemberNumber++;
+        if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
         console.log(`${this.currentDecidedMemberIndex}`);
         this.roleInformationSetup();
       },
       displayConfirmModal() {
-        // このメンバーでいいですか？というダイアログを出す。
-        // OKならpostPlayerData()を実行する。
+        // このメンバーでいいですか？というダイアログを出す。 OKならpostPlayerData()を実行する。
         console.log(`displayConfirmModal(): -----------------`);
         $('#modal-confirm').modal('show');
       },
@@ -351,6 +343,7 @@
         $('#modal-confirm').modal('hide');
       },
       resetData() {
+        this.displayCurrentDecidedMemberNumber = 1;
         this.$store.dispatch('resetBeginningDecidedData');
       }
 

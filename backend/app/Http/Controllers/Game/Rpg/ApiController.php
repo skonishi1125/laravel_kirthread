@@ -25,33 +25,37 @@ class ApiController extends Controller
 
   // todo: constructなどでログインしているユーザーがアクセスできる前提とする
 
-  // パーティー登録画面関連
-  public function checkIsExistData() {
-    $is_exist_data = 0;
+  /**
+   * 「最初から」選択時の初期処理。
+   *  セーブデータの作成チェック・職業情報をvue側に渡す。
+   */
+  public function prepareBeginning() {
+    Debugbar::debug("prepareBeginning():------------------------");
+    $roles = Role::get();
+    $is_exist_data = false;
+
+    // Debugbar::debug("prepareBeginning():------------------------ data: {$return_data}");
+
     $savedata = SaveData::getLoginUserCurrentSaveData();
-    // セーブデータが存在しなければ作成して、trueを返しつつ初期設定を進める
     if (is_null($savedata)) {
       $savedata = SaveData::create([
         'user_id' => Auth::id(),
         'money' => '300',
       ]);
-      return $is_exist_data;
     }
-    // セーブデータを作っただけのユーザーがいるかのチェック
-    // 紐づくパーティメンバーが存在している場合trueを返す。
+    // セーブデータを作っただけのユーザーがいるかのチェック。紐づくメンバーがいる場合trueにする。
     $parties = $savedata->parties;
-    if ($parties->isEmpty()) {
-      $is_exist_data = 0;
-    } else {
-      $is_exist_data = 1;
-    }
-    Debugbar::debug("checkIsExistData():------------------------ data: {$is_exist_data}");
-    return $is_exist_data;
+    $parties->isEmpty() ? $is_exist_data = false : $is_exist_data = true;
+
+    $return_data  = collect()
+      ->push($is_exist_data)
+      ->push($roles)
+    ;
+
+    Debugbar::debug("return_data: {$return_data}");
+    return $return_data;
   }
 
-  public function getRoleData() {
-    return Role::get();
-  }
 
   // TODO: 
   // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
