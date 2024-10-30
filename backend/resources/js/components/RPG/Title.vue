@@ -1,7 +1,7 @@
 <template>
   <div class="row" style="margin-top: 100px; text-align: center;">
     <div class="col-sm-12">
-      <span>Title.vue</span><br>
+      <span>Title.vue(タイトル)</span><br>
       <button class="btn btn-success" @click="switchMenuScreen">街に戻る</button>
     </div>
     <div class="col-sm-12 mt-5">

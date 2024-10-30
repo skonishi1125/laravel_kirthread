@@ -56,6 +56,45 @@ class ApiController extends Controller
     return $return_data;
   }
 
+  public function createParties(Request $request) {
+    Debugbar::debug("createParties():------------------------");
+    $selected_info = $request->selected_info;
+    // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導士", "partyName" => "メイ" というArrayが3つ
+    // Debugbar::debug($selected_info, gettype($selected_info));
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    Debugbar::debug($savedata, count($selected_info));
+
+    $created_parties = collect(); 
+
+    try {
+      DB::transaction(function () use ($savedata, $selected_info, $created_parties) {
+        // 想定していないケースの場合に500エラーを返す
+        // if (this.currentDecidedMemberIndex <= 3) にすれば検証できる
+        if (count($selected_info) > 3) throw new \Exception('選択されたデータが3件以上存在します。もう一度お試しください。');
+        // 適当なデータを1件作れば検証できる
+        if (!$savedata->parties->isEmpty()) throw new \Exception('すでにパーティメンバーが作成されています。ページ更新をお試しください。'); 
+        foreach ($selected_info as $party) {
+          // inputのmaxlengthを調整すれば検証できる
+          if (mb_strlen($party['partyName']) > 6) throw new \Exception('パーティメンバーの名前は6文字以下でなければなりません。もう一度お試しください。');
+
+          $created_party = Party::generateRpgPartyMember($savedata->id, $party['roleId'], $party['partyName']);
+          Debugbar::debug("作成完了。id: {$created_party->id} nickname: {$created_party->nickname}");
+          Debugbar::debug($created_party);
+          $created_parties->push($created_party);
+        }
+      });
+    } catch(\Exception $e) {
+      Debugbar::debug("createParties() でエラーが発生しました。");
+      // \Log::error('createParties() でエラーが発生しました。', ['error' => $e->getMessage()]);
+      return response()->json([
+        'message' => $e->getMessage()
+      ], 422);
+    }
+
+    // 作成したパーティの情報をvueに返す。
+    return $created_parties;
+  }
+
 
   // TODO: 
   // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい

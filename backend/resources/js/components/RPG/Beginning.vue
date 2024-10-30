@@ -93,6 +93,11 @@
   </div>
 
   <div v-if="beginningStatus == 'setCharacter'">
+    <div v-if="errorMessage != null">
+      <div class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+    </div>
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
@@ -215,6 +220,33 @@
     </div>
   </div>
 
+  <div v-if="beginningStatus == 'monologue'">
+    <div class="row">
+      <div class="col-12" style="border: 1px solid black">
+        <p>
+          <hr>
+          {{this.createdPartyMembers[0]['nickname']}}、{{this.createdPartyMembers[1]['nickname']}}、そして{{this.createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
+          <br>
+          これから幾多の危険が彼らの前に立ちはだかることだろう。<br>
+          凶暴な魔物は彼らの力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>
+          見通せぬ暗闇には、想像を絶する困難が隠れているかもしれない。<br>
+          <br>
+          君たちはまだ経験に乏しく、思わぬ苦境に立たされることもあるだろう。<br>
+          しかし、冒険者として最も必要な素養である強き意志はとうの昔から持ち合わせている。<br>
+          <br>
+          さあ、意志を強く持ちその先に進みたまえ！<br>
+          <hr>
+          <br>
+          ...あなた達の冒険はたった今から始まります。<br>
+          まずは冒険者達が拠点とする街に向かい、旅の支度を整えましょう。<br>
+        </p>
+      </div>
+      <div class="col-12" style="text-align:right;">
+        <button class="btn btn-success" @click="switchMenuScreen">→街へ向かう</button>
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -227,6 +259,8 @@
         roleData: {},
         partyName: "",
         displayCurrentDecidedMemberNumber: 1,
+        createdPartyMembers: [],
+        errorMessage: null,
       }
     },
     computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -335,9 +369,23 @@
       postPlayerData() {
         console.log(`postPlayerData(): -----------------`);
         // axios.postで登録
-        // 成功したら次の画面へ
-        // エラーが発生したらもう一度やり直してもらう
-
+        axios.post(`/api/game/rpg/beginning/create`,{
+          selected_info: this.selectedRoleInformations
+        })
+        .then(response => {
+          console.log(`通信OK`);
+          this.createdPartyMembers = response.data;
+          console.log(`作成完了。`, this.createdPartyMembers, this.createdPartyMembers[0]['nickname']);
+          this.$store.dispatch('setBeginningStatus', 'monologue');
+        })
+        .catch(error => {
+          console.log(`通信失敗。`);
+          if (error.response && error.response.data) {
+            this.errorMessage = error.response.data.message;
+          } else {
+            this.errorMessage = "予期しないエラーが発生しました。もう一度お試しください。"
+          }
+        });
         // 処理が終わった後はmodalを閉じる
         this.resetData();
         $('#modal-confirm').modal('hide');
@@ -345,7 +393,11 @@
       resetData() {
         this.displayCurrentDecidedMemberNumber = 1;
         this.$store.dispatch('resetBeginningDecidedData');
-      }
+      },
+      switchMenuScreen() {
+        this.$store.dispatch('setScreen', 'menu');
+        this.$router.push('/game/rpg/menu');
+      },
 
     }
   }

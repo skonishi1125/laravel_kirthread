@@ -5,7 +5,7 @@ export default createStore({
   state: {
     // メイン画面の状態 'title', 'beginning', 'menu', 'battle'
     currentScreen: 'title',
-    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', '
+    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
       currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
