@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Game\Rpg;
 
+use App\User;
+use App\Models\Profile;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Enemy;
@@ -24,6 +26,69 @@ class ApiController extends Controller
 {
 
   // todo: constructなどでログインしているユーザーがアクセスできる前提とする
+
+  /**
+   * タイトル画面。ユーザーの状態に応じてパターンを分ける。
+   * ・未ログイン: ログインまたはユーザー登録をしてもらうようモーダルを出す。
+   * ・ログイン済 && データなし: 「最初から」ボタンを出す。
+   * ・ログイン済 && データあり && パーティ登録なし: 「最初から」ボタンを出す。
+   * ・ログイン済 && データあり && パーティ登録あり: 「街に戻る」ボタンを出す。
+  */
+  public function checkSituation() {
+    !Auth::check() ? $status = 'unsigned' : $status = 'signed';
+    if (SaveData::checkSavedataHasParties()) $status = 'ready';
+
+    return response()->json(['status' => $status, 'user_id' => Auth::id()]);
+
+  }
+
+  // すぐ作る機能で作成
+  public function createRpgUser(Request $request) {
+    Debugbar::debug("createRpgUser():------------------------");
+
+    // メールアドレスチェック
+    $is_exist_email = User::where('email', $request->email)->exists();
+    if ($is_exist_email) {
+      return response()->json([
+        'message' => 'このemailはすでに使われています。 再生成または別のアドレスの記入をお試しください。'
+      ], 409);
+    }
+
+    \DB::transaction(function () use ($request) {
+      Debugbar::debug("{$request['name']}");
+      $create_user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => \Hash::make($request->password),
+      ]);
+      Debugbar::debug("ユーザー作成OK");
+      // プロフィールも一緒に作る
+      $create_profile = Profile::create([
+        'user_id'   =>  $create_user->id,
+        'message'   =>  'よろしくお願いします。'
+      ]);
+      // 作成したユーザーでログイン
+      Auth::login($create_user);
+    });
+
+    // 成功メッセージまたはユーザー情報を返す
+    return response()->json([
+      'message' => 'ユーザーが作成され、ログインしました。',
+    ]);
+  }
+
+  // 削除予定のデータ関連情報を返す
+  public function checkSavedataInfo(Request $request) {
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    $parties = $savedata->parties;
+    $return_infos = collect([
+      'money' => $savedata->money,
+      'parties' => $parties,
+    ]);
+
+    return response()->json($return_infos);
+  }
+
 
   /**
    * 「最初から」選択時の初期処理。

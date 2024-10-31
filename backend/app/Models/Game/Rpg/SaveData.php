@@ -41,7 +41,23 @@ class SaveData extends Model
     // 1:1でリレーションしているものは rpgSavedata で受け取る(単体取得になる)
     // 1:nでリレーションしているものは rpgSavedata()->get() みたいな形で受け取る(カッコつける)
     public static function getLoginUserCurrentSaveData() {
-      return Auth::user()->rpgSavedata;
+      if (Auth::check() == false) {
+        return null;
+      } else {
+        return Auth::user()->rpgSavedata;
+      }
+    }
+
+    public static function checkSavedataHasParties() {
+      $is_exist_parties_data = null;
+      $savedata = self::getLoginUserCurrentSaveData();
+      if ($savedata == null) return false;
+      $parties = $savedata->parties;
+      // 登録されているケースは3人である前提だが、バグとかで一人しか登録されてなくても通っちゃう
+      // 大丈夫かな？
+      $parties->isEmpty() ? $is_exist_parties_data = false : $is_exist_parties_data = true;
+
+      return $is_exist_parties_data;
     }
 
 }
