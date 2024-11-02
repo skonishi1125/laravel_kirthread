@@ -24,7 +24,11 @@ class SaveData extends Model
 
       // 削除した時、セーブデータに紐づく情報もすべて削除する
       static::deleting(function ($savedata) {
-        $savedata->parties()->delete();
+        // $savedata->parties()->delete(); 
+        // でまとめて消すことができるが、Partyモデル側のイベントが発火しないので個別に消していく。
+        foreach ($savedata->parties as $party) {
+          $party->delete(); // Party側のdeletingイベントを発火させる
+        }
         $savedata->battle_state()->delete();
         $savedata->savedata_has_item()->delete();
       });

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
+use App\Models\Game\Rpg\PartyLearnedSkill;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -19,8 +20,22 @@ class Party extends Model
       'id',
     ];
 
+    public static function boot() {
+      parent::boot();
+
+      // 削除した時、パーティの習得スキル情報だけ削除する
+      static::deleting(function ($party) {
+        $party->skills()->detach();
+      });
+    }
+
     public function savedata() {
       return $this->belongsTo(Savedata::class, 'savedata_id');
+    }
+
+    // $p->party_learned_skills
+    public function party_learned_skills() {
+      return $this->hasMany(PartyLearnedSkill::class, 'party_id');
     }
 
     public function skills() {
