@@ -81,12 +81,33 @@ class ApiController extends Controller
   public function checkSavedataInfo(Request $request) {
     $savedata = SaveData::getLoginUserCurrentSaveData();
     $parties = $savedata->parties;
+    $parties = $parties->map(function ($party) {
+      $party['class_japanese'] = $party->role->class_japanese;
+      return $party;
+    });
     $return_infos = collect([
       'money' => $savedata->money,
       'parties' => $parties,
     ]);
-
     return response()->json($return_infos);
+  }
+
+  public function deleteSavedata(Request $request) {
+    // 紐づくデータの削除を行う
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    if (is_null($savedata)) {
+      return response()->json([
+        'message' => 'このセーブデータはすでに削除されています。画面のリロードをお試しください。'
+      ], 409);
+    }
+
+    \DB::transaction(function () use ($savedata) {
+      $savedata->delete();
+    });
+
+    return response()->json([
+      'message' => 'データを削除しました。',
+    ]);
   }
 
 

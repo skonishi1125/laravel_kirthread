@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\SavedataHasItem;
+use App\Models\Game\Rpg\BattleState;
 Use Auth;
 
 class SaveData extends Model
@@ -18,6 +19,18 @@ class SaveData extends Model
       'id',
     ];
 
+    public static function boot() {
+      parent::boot();
+
+      // 削除した時、セーブデータに紐づく情報もすべて削除する
+      static::deleting(function ($savedata) {
+        $savedata->parties()->delete();
+        $savedata->battle_state()->delete();
+        $savedata->SavedataHasItem()->delete();
+      });
+    }
+
+
     public function user() {
       return $this->belongsTo('App\User');
     }
@@ -27,7 +40,7 @@ class SaveData extends Model
     }
 
     public function SavedataHasItem() {
-      return $this->hasOne(SavedataHasItem::class);
+      return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 
     // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possesion_number で実現ができる
@@ -35,6 +48,10 @@ class SaveData extends Model
       return $this
         ->belongsToMany(Item::class, 'rpg_savedata_has_items', 'savedata_id', 'item_id')
         ->withPivot('possesion_number');
+    }
+
+    public function battle_state() {
+      return $this->hasOne(BattleState::class, 'savedata_id');
     }
 
     // リレーションメモ

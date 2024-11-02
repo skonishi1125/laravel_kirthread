@@ -29,6 +29,11 @@ class BattleState extends Model
       'id',
     ];
 
+    public function savedata() {
+      return $this->belongsTo(SaveData::class);
+    }
+
+
     // 戦闘後に回復させるHPの倍率
     // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
     const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;

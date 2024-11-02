@@ -27,19 +27,21 @@
 
         <div class="modal-body">
           <p>
-            以下のセーブデータを削除しますが本当によろしいですか？ <br> 
-            ※進行途中で変更することはできません
+            以下のファイルを削除しますが本当によろしいですか？ <br> 
           </p>
           <ul>
-            <!-- <span v-for="member in this.selectedRoleInformations">
-              <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
-            </span> -->
+            <span v-for="party in this.dataParties">
+              <li>{{ party['nickname'] }}【Lv.{{ party['level'] }}: {{party['class_japanese']}}】</li>
+            </span>
           </ul>
+          <div v-if="errorMessage !== null">
+            <small style="color:red">{{ this.errorMessage }}</small>
+          </div>
         </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">やめる</button>
-          <button type="button" class="btn btn-success" @click="postPlayerData">消しちゃう</button>
+          <button type="button" class="btn btn-success" data-dismiss="modal" @click="resetData">やめる</button>
+          <button type="button" class="btn btn-danger" @click="deleteSavedata">削除</button>
         </div>
 
       </div>
@@ -62,7 +64,7 @@
           </p>
           <div style="text-align: center;" >
             <button class="btn btn-sm btn-success" @click="generateCredential">
-              <span v-if="generateCredentialEmail !== null && generateCredentialPassword !== null">
+              <span v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
                 再生成する
               </span>
               <span v-else>
@@ -76,8 +78,8 @@
               <p>
                 以下の情報で作成します。<small>(一部編集可能)</small><br>
                 <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
-                <small>email: <b>sugutuku_<input v-model="this.generateCredentialEmailString">@sample.com</b></small> <br>
-                <small>パスワード: </small><input v-model="generateCredentialPassword"><br>
+                <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="this.generateCredentialEmailString">@sample.com</b></small> <br>
+                <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
                 <br>
                 <div v-if="errorMessage !== null">
                   <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
@@ -201,17 +203,33 @@
           console.log(response.data);
           this.dataMoney = response.data['money'];
           this.dataParties = response.data['parties'];
+          $('#modal-delete').modal('show');
         })
         .catch(error => {
           console.log(`通信失敗。`);
           if (error.response && error.response.data) {
             this.errorMessage = error.response.data.message;
           } else {
-            this.errorMessage = "予期しないエラーが発生しました。もう一度お試しください。"
+            this.errorMessage = "予期しないエラーが発生しました。画面リロードなどをお試しください。"
           }
         });
-        $('#modal-delete').modal('show');
       },
+      deleteSavedata() {
+        axios.post(`/api/game/rpg/title/delete_savedata`)
+        .then(response => {
+          console.log(response.data.message);
+          $('#modal-delete').modal('hide');
+          location.reload(); // リロードする
+        })
+        .catch(error => {
+          console.log(`通信失敗。`);
+          if (error.response && error.response.data) {
+            this.errorMessage = error.response.data.message;
+          } else {
+            this.errorMessage = "予期しないエラーが発生しました。画面リロードなどをお試しください。"
+          }
+        });
+      }
     },
   }
 </script>
