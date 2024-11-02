@@ -550,13 +550,12 @@ class ApiController extends Controller
       $field_id = $battle_state->current_field_id;
       $next_stage_id = $battle_state->current_stage_id + 1;
 
-      $next_players_data = BattleState::createPlayersData(Auth::id(), $when_cleared_players_data);
+      $next_players_data = BattleState::createPlayersData($savedata->id, $when_cleared_players_data);
       $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
       $next_items_data   = BattleState::createItemsData($savedata->id);
 
-
       $create_next_battle_state = BattleState::createBattleState(
-        Auth::id(), $next_players_data, $next_enemies_data, $next_items_data, $field_id, $next_stage_id
+        $savedata->id, $next_players_data, $next_enemies_data, $next_items_data, $field_id, $next_stage_id
       );
       $battle_state->delete();
       Debugbar::debug("現在の戦闘データを削除しました。");
