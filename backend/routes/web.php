@@ -46,7 +46,7 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
   Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
 
   Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
-  Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSaveData')->name('api_game_rpg_save_data');
+  Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
 // }
 
 // Auth認証のかかるページ

@@ -49,8 +49,8 @@ class User extends Authenticatable
       return $this->hasMany('App\Purchase');
     }
 
-    public function rpgSavedata() {
-      return $this->hasOne('App\Models\Game\Rpg\SaveData');
+    public function rpg_savedata() {
+      return $this->hasOne('App\Models\Game\Rpg\Savedata');
     }
 
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 use App\Models\Game\Rpg\Item;
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 
 
 class SavedataHasItem extends Model
@@ -24,7 +24,7 @@ class SavedataHasItem extends Model
     }
 
     public function savedata() {
-      return $this->belongsTo(SaveData::class, 'item_id');
+      return $this->belongsTo(Savedata::class, 'item_id');
     }
 
     public static function updateItemsAfterBattle($savedata_id, $json_items_data) {

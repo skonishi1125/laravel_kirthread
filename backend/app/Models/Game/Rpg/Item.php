@@ -5,7 +5,7 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 use App\Models\Game\Rpg\SavedataHasItem;
 
 class Item extends Model
@@ -31,13 +31,13 @@ class Item extends Model
   const TARGET_RANGE_ALL    = 2; // 全体を対象
 
   // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
-  public function SavedataHasItem() {
+  public function savedata_has_item() {
     return $this->hasOne(SavedataHasItem::class);
   }
 
   public function Savedatas() {
     return $this
-      ->belongsToMany(SaveData::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
+      ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
       ->withPivot('possesion_number');
   }
 
