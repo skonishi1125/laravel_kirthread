@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Game\Rpg;
 
+use App\User;
+use App\Models\Profile;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Enemy;
@@ -22,6 +24,163 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
+
+  // todo: constructなどでログインしているユーザーがアクセスできる前提とする
+
+  /**
+   * タイトル画面。ユーザーの状態に応じてパターンを分ける。
+   * ・未ログイン: ログインまたはユーザー登録をしてもらうようモーダルを出す。
+   * ・ログイン済 && データなし: 「最初から」ボタンを出す。
+   * ・ログイン済 && データあり && パーティ登録なし: 「最初から」ボタンを出す。
+   * ・ログイン済 && データあり && パーティ登録あり: 「街に戻る」ボタンを出す。
+  */
+  public function checkSituation() {
+    !Auth::check() ? $status = 'unsigned' : $status = 'signed';
+    if (SaveData::checkSavedataHasParties()) $status = 'ready';
+
+    return response()->json(['status' => $status, 'user_id' => Auth::id()]);
+
+  }
+
+  // すぐ作る機能で作成
+  public function createRpgUser(Request $request) {
+    Debugbar::debug("createRpgUser():------------------------");
+
+    // メールアドレスチェック
+    $is_exist_email = User::where('email', $request->email)->exists();
+    if ($is_exist_email) {
+      return response()->json([
+        'message' => 'このemailはすでに使われています。 再生成または別のアドレスの記入をお試しください。'
+      ], 409);
+    }
+
+    \DB::transaction(function () use ($request) {
+      Debugbar::debug("{$request['name']}");
+      $create_user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => \Hash::make($request->password),
+      ]);
+      Debugbar::debug("ユーザー作成OK");
+      // プロフィールも一緒に作る
+      $create_profile = Profile::create([
+        'user_id'   =>  $create_user->id,
+        'message'   =>  'よろしくお願いします。'
+      ]);
+      // 作成したユーザーでログイン
+      Auth::login($create_user);
+    });
+
+    // 成功メッセージまたはユーザー情報を返す
+    return response()->json([
+      'message' => 'ユーザーが作成され、ログインしました。',
+    ]);
+  }
+
+  // 削除予定のデータ関連情報を返す
+  public function checkSavedataInfo(Request $request) {
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    $parties = $savedata->parties;
+    $parties = $parties->map(function ($party) {
+      $party['class_japanese'] = $party->role->class_japanese;
+      return $party;
+    });
+    $return_infos = collect([
+      'money' => $savedata->money,
+      'parties' => $parties,
+    ]);
+    return response()->json($return_infos);
+  }
+
+  public function deleteSavedata(Request $request) {
+    // 紐づくデータの削除を行う
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    if (is_null($savedata)) {
+      return response()->json([
+        'message' => 'このセーブデータはすでに削除されています。画面のリロードをお試しください。'
+      ], 409);
+    }
+
+    \DB::transaction(function () use ($savedata) {
+      $savedata->delete();
+    });
+
+    return response()->json([
+      'message' => 'データを削除しました。',
+    ]);
+  }
+
+
+  /**
+   * 「最初から」選択時の初期処理。
+   *  セーブデータの作成チェック・職業情報をvue側に渡す。
+   */
+  public function prepareBeginning() {
+    Debugbar::debug("prepareBeginning():------------------------");
+    $roles = Role::get();
+    $is_exist_data = false;
+
+    // Debugbar::debug("prepareBeginning():------------------------ data: {$return_data}");
+
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    if (is_null($savedata)) {
+      $savedata = SaveData::create([
+        'user_id' => Auth::id(),
+        'money' => '300',
+      ]);
+    }
+    // セーブデータを作っただけのユーザーがいるかのチェック。紐づくメンバーがいる場合trueにする。
+    $parties = $savedata->parties;
+    $parties->isEmpty() ? $is_exist_data = false : $is_exist_data = true;
+
+    $return_data  = collect()
+      ->push($is_exist_data)
+      ->push($roles)
+    ;
+
+    Debugbar::debug("return_data: {$return_data}");
+    return $return_data;
+  }
+
+  public function createParties(Request $request) {
+    Debugbar::debug("createParties():------------------------");
+    $selected_info = $request->selected_info;
+    // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導士", "partyName" => "メイ" というArrayが3つ
+    // Debugbar::debug($selected_info, gettype($selected_info));
+    $savedata = SaveData::getLoginUserCurrentSaveData();
+    Debugbar::debug($savedata, count($selected_info));
+
+    $created_parties = collect(); 
+
+    try {
+      DB::transaction(function () use ($savedata, $selected_info, $created_parties) {
+        // 想定していないケースの場合に500エラーを返す
+        // if (this.currentDecidedMemberIndex <= 3) にすれば検証できる
+        if (count($selected_info) > 3) throw new \Exception('選択されたデータが3件以上存在します。もう一度お試しください。');
+        // 適当なデータを1件作れば検証できる
+        if (!$savedata->parties->isEmpty()) throw new \Exception('すでにパーティメンバーが作成されています。ページ更新をお試しください。'); 
+        foreach ($selected_info as $party) {
+          // inputのmaxlengthを調整すれば検証できる
+          if (mb_strlen($party['partyName']) > 6) throw new \Exception('パーティメンバーの名前は6文字以下でなければなりません。もう一度お試しください。');
+
+          $created_party = Party::generateRpgPartyMember($savedata->id, $party['roleId'], $party['partyName']);
+          Debugbar::debug("作成完了。id: {$created_party->id} nickname: {$created_party->nickname}");
+          Debugbar::debug($created_party);
+          $created_parties->push($created_party);
+        }
+      });
+    } catch(\Exception $e) {
+      Debugbar::debug("createParties() でエラーが発生しました。");
+      // \Log::error('createParties() でエラーが発生しました。', ['error' => $e->getMessage()]);
+      return response()->json([
+        'message' => $e->getMessage()
+      ], 422);
+    }
+
+    // 作成したパーティの情報をvueに返す。
+    return $created_parties;
+  }
+
 
   // TODO: 
   // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい

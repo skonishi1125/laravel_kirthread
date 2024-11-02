@@ -19,7 +19,7 @@
       <div><button @click="endGame">タイトルに戻る</button></div>
     </div>
     <div class="col-9" v-if="isMenuRoute">
-      <p>あなたは街に帰ってきました。</p>
+      <p>街に到着した。何をしようか？</p>
     </div>
     <div v-else class="col-9">
       <!-- メニューはそのまま、children固有の要素を出す -->

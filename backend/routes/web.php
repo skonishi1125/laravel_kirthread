@@ -32,12 +32,18 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
     ->name('game_rpg_index');
 
   // RPG API関連
+  Route::get('/api/game/rpg/title/check_situation', 'Game\Rpg\ApiController@checkSituation')->name('api_game_rpg_beginning_title_check_situation');
+  Route::post('/api/game/rpg/title/create_rpg_user', 'Game\Rpg\ApiController@createRpgUser')->name('api_game_rpg_beginning_title_create_rpg_user');
+  Route::get('/api/game/rpg/title/check_savedata_info', 'Game\Rpg\ApiController@checkSavedataInfo')->name('api_game_rpg_beginning_title_check_savedata_info');
+  Route::post('/api/game/rpg/title/delete_savedata', 'Game\Rpg\ApiController@deleteSavedata')->name('api_game_rpg_beginning_title_delete_savedata');
+  Route::get('/api/game/rpg/beginning/prepare_beginning', 'Game\Rpg\ApiController@prepareBeginning')->name('api_game_rpg_beginning_prepare_beginning');
+  Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createParties')->name('api_game_rpg_beginning_create');
   Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
   Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
   Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
   Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
   Route::post('/api/game/rpg/battle/escape', 'Game\Rpg\ApiController@escapeBattle')->name('api_game_rpg_battle_escape');
-  Route::post('/api/game/rpg/battle/result-win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
+  Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
 
   Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
   Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSaveData')->name('api_game_rpg_save_data');

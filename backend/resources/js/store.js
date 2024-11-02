@@ -3,18 +3,53 @@ import { createStore } from 'vuex';
 // 戦闘状態の管理
 export default createStore({
   state: {
-    // メイン画面の状態 'title', 'menu', 'battle'
+    // メイン画面の状態 'title', 'beginning', 'menu', 'battle'
     currentScreen: 'title',
+    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
+      currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
+      currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
+      selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
+
     battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
-    selectedCommands: [], // 味方の選択コマンド
-    selectedEnemies: [],  // コマンドで選択した敵
-    currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
-    clearStage: '', // 1-1, 1-2, 2-1という文字列で記入される
-    battleSessionId: '', // 戦闘データのセッション
+      selectedCommands: [], // 味方の選択コマンド
+      selectedEnemies: [],  // コマンドで選択した敵
+      currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
+      clearStage: '', // 1-1, 1-2, 2-1という文字列で記入される
+      battleSessionId: '', // 戦闘データのセッション
   },
   mutations: {
     setScreen(state, screen) {
       state.currentScreen = screen;
+    },
+    setBeginningStatus(state, status) {
+      state.beginningStatus = status;
+    },
+    incrementCurrentDisplayRoleIndex(state) { // "→"クリック
+      state.currentDisplayRoleIndex += 1;
+      if (state.currentDisplayRoleIndex > 5) {
+        state.currentDisplayRoleIndex = 0;
+      }
+    },
+    decrementCurrentDisplayRoleIndex(state) { // "←"クリック
+      state.currentDisplayRoleIndex -= 1;
+      if (state.currentDisplayRoleIndex < 0) {
+        state.currentDisplayRoleIndex = 5;
+      }
+    },
+     // キャラ設定中のメンバーのindex操作
+    incrementCurrentDecidedMemberIndex(state) {
+      state.currentDecidedMemberIndex += 1;
+    },
+    decrementDecidedMemberIndex(state) {
+      state.currentDecidedMemberIndex -= 1;
+    },
+    // 選択の状態例: [ { "roleId": "1", "name": "スト" } ]
+    setSelectedRoleInformation(state, { roleId, roleClassJapanese, partyName }) {
+      state.selectedRoleInformations.push({ roleId, roleClassJapanese, partyName });
+    },
+    resetBeginningDecidedData(state) {
+      state.selectedRoleInformations = [];
+      state.currentDecidedMemberIndex = 0;
     },
     setClearStage(state, stage) {
       state.clearStage = stage;
@@ -106,6 +141,27 @@ export default createStore({
     // commitで引数を渡す場合
     setScreen({ commit }, screen) {
       commit('setScreen', screen);
+    },
+    setBeginningStatus({ commit }, status) {
+      commit('setBeginningStatus', status);
+    },
+    incrementCurrentDisplayRoleIndex({commit}) {
+      commit('incrementCurrentDisplayRoleIndex')
+    },
+    decrementCurrentDisplayRoleIndex({commit}) {
+      commit('decrementCurrentDisplayRoleIndex')
+    },
+    incrementCurrentDecidedMemberIndex({commit}) {
+      commit('incrementCurrentDecidedMemberIndex')
+    },
+    decrementCurrentDecidedMemberIndex({commit}) {
+      commit('decrementCurrentDecidedMemberIndex')
+    },
+    setSelectedRoleInformation({ commit }, { roleId, roleClassJapanese, partyName, }) {
+      commit('setSelectedRoleInformation', { roleId, roleClassJapanese, partyName  });
+    },
+    resetBeginningDecidedData({ commit }) {
+      commit('resetBeginningDecidedData');
     },
     setClearStage({ commit }, stage) {
       commit('setClearStage', stage)

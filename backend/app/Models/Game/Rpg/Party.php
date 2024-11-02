@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\Role;
+use App\Models\Game\Rpg\SaveData;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -19,7 +20,7 @@ class Party extends Model
     ];
 
     public function savedata() {
-
+      return $this->belongsTo(SaveData::class, 'savedata_id');
     }
 
     public function skills() {
@@ -90,6 +91,107 @@ class Party extends Model
       return $increase_values;
     }
 
+    // beginning画面で指定した情報から、パーティメンバーを作成する
+    public static function generateRpgPartyMember($savedata_id, $role_id, $nickname) {
+      switch ($role_id) {
+        case Role::ROLE_STRIKER :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_STRIKER,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '40',
+            'value_ap' => '10',
+            'value_str' => '25',
+            'value_def' => '5',
+            'value_int' => '5',
+            'value_spd' => '25',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+        case Role::ROLE_MEDIC :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_MEDIC,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '30',
+            'value_ap' => '20',
+            'value_str' => '10',
+            'value_def' => '15',
+            'value_int' => '20',
+            'value_spd' => '10',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+        case Role::ROLE_PARADIN :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_PARADIN,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '50',
+            'value_ap' => '15',
+            'value_str' => '15',
+            'value_def' => '25',
+            'value_int' => '5',
+            'value_spd' => '5',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+        case Role::ROLE_MAGE :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_MAGE,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '20',
+            'value_ap' => '25',
+            'value_str' => '5',
+            'value_def' => '10',
+            'value_int' => '25',
+            'value_spd' => '15',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+        case Role::ROLE_RANGER :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_RANGER,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '40',
+            'value_ap' => '15',
+            'value_str' => '15',
+            'value_def' => '10',
+            'value_int' => '10',
+            'value_spd' => '20',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+        case Role::ROLE_BUFFER :
+          return self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => Role::ROLE_BUFFER,
+            'level' => 1,
+            'nickname' => $nickname,
+            'value_hp' => '30',
+            'value_ap' => '20',
+            'value_str' => '5',
+            'value_def' => '15',
+            'value_int' => '15',
+            'value_spd' => '20',
+            'value_luc' => '10',
+            'total_exp' => '0',
+          ]);
+          break;
+      }
+    }
 
     // デバッグ用 
     /*
