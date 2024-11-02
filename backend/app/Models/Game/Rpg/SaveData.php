@@ -55,13 +55,14 @@ class SaveData extends Model
     }
 
     // リレーションメモ
-    // 1:1でリレーションしているものは rpgSavedata で受け取る(単体取得になる)
-    // 1:nでリレーションしているものは rpgSavedata()->get() みたいな形で受け取る(カッコつける)
+    // 1:1でリレーションしているものは rpg_savedata で受け取る(単体取得になる)
+    // 1:nでリレーションしているものは rpg_savedata()->get() みたいな形で受け取る(カッコつける)
+    // ->追記: 違うかも rpg_savedataだとcollectionとして取得するが、rpg_savedata(だとクエリビルダとして取得できる
     public static function getLoginUserCurrentSavedata() {
       if (Auth::check() == false) {
         return null;
       } else {
-        return Auth::user()->rpgSavedata;
+        return Auth::user()->rpg_savedata;
       }
     }
 
