@@ -5,7 +5,7 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 use App\Models\Game\Rpg\SavedataHasItem;
 
 class Item extends Model
@@ -37,7 +37,7 @@ class Item extends Model
 
   public function Savedatas() {
     return $this
-      ->belongsToMany(SaveData::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
+      ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
       ->withPivot('possesion_number');
   }
 

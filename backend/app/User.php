@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
     public function rpgSavedata() {
-      return $this->hasOne('App\Models\Game\Rpg\SaveData');
+      return $this->hasOne('App\Models\Game\Rpg\Savedata');
     }
 
 }

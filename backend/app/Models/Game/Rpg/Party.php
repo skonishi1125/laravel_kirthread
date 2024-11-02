@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\Game\Rpg\Role;
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -20,7 +20,7 @@ class Party extends Model
     ];
 
     public function savedata() {
-      return $this->belongsTo(SaveData::class, 'savedata_id');
+      return $this->belongsTo(Savedata::class, 'savedata_id');
     }
 
     public function skills() {

@@ -8,7 +8,7 @@ use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\PresetAppearingEnemy;
 use App\Models\Game\Rpg\SavedataHasItem;
@@ -30,7 +30,7 @@ class BattleState extends Model
     ];
 
     public function savedata() {
-      return $this->belongsTo(SaveData::class);
+      return $this->belongsTo(Savedata::class);
     }
 
 
