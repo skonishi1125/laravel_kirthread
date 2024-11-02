@@ -26,7 +26,7 @@ class SaveData extends Model
       static::deleting(function ($savedata) {
         $savedata->parties()->delete();
         $savedata->battle_state()->delete();
-        $savedata->SavedataHasItem()->delete();
+        $savedata->savedata_has_item()->delete();
       });
     }
 
@@ -39,7 +39,7 @@ class SaveData extends Model
       return $this->hasMany(Party::class, 'savedata_id');
     }
 
-    public function SavedataHasItem() {
+    public function savedata_has_item() {
       return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 

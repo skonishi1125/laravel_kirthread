@@ -31,7 +31,7 @@ class Item extends Model
   const TARGET_RANGE_ALL    = 2; // 全体を対象
 
   // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
-  public function SavedataHasItem() {
+  public function savedata_has_item() {
     return $this->hasOne(SavedataHasItem::class);
   }
 
