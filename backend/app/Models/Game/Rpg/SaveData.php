@@ -44,7 +44,7 @@ class SaveData extends Model
     }
 
     // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possesion_number で実現ができる
-    public function Items() {
+    public function items() {
       return $this
         ->belongsToMany(Item::class, 'rpg_savedata_has_items', 'savedata_id', 'item_id')
         ->withPivot('possesion_number');
