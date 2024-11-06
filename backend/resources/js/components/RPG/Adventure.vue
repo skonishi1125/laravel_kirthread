@@ -6,15 +6,16 @@
 
 <template>
   <div class="container">
-
-    <div class="row">
-      <div class="col-sm-12">
+    <div class="row sub-sucreen-text-space">
+      <div class="col-12">
+        <div>
         <p>どこに向かおうか？</p>
+        </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-12">
+    <div class="row mt-3 sub-sucreen-main-space">
+      <div class="col-12">
         <table class="table table-borderless">
           <thead>
               <tr>
@@ -38,9 +39,9 @@
             </tr>
           </tbody>
         </table>
-
       </div>
     </div>
+
   </div>
 </template>
 

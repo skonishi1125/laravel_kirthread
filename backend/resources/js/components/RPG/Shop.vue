@@ -9,20 +9,25 @@
 
   <div class="container">
 
-    <div class="row" v-if="this.after_purchase_array.after_purchase_flag">
-      <div class="col-sm-12" style="color: blue">
-        <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
+    <div class="row sub-sucreen-text-space">
+      <div class="col-12">
+        <p>何を買おうかな？(所持金: {{ this.money }} G)</p>
+
       </div>
+        <div class="col-12" style="color: blue" v-if="this.after_purchase_array.after_purchase_flag">
+          <hr>
+          <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
+        </div>
     </div>
 
-    <div class="row">
-      <div class="col-sm-12">
-        <p>購入品を選択してください(所持金: {{ this.money }} G)</p>
+    <div class="row mt-3 sub-sucreen-main-space">
+      <div class="col-12">
+        <ul class="nav nav-tabs">
+          <a class="nav-link active">買う</a>
+          <a class="nav-link ">売る</a>
+        </ul>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12">
+      <div class="col-12">
         <table class="table table-borderless">
           <thead>
               <tr>

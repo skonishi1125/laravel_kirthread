@@ -1,12 +1,23 @@
 <style>
 .main-screen {
-  background-color: rgb(228, 231, 231); 
+  background-color: rgb(255, 255, 255); 
   border: 1px solid black; 
   /* 4:3 */
   min-width: 1280px;
   min-height: 720px; 
   position: relative;
 }
+
+.sub-sucreen-text-space {
+  height: 120px;
+  border: 1px solid red;
+}
+
+.sub-sucreen-main-space {
+  height: 500px;
+  border: 1px solid rgb(60, 0, 255);
+}
+
 
 </style>
 
