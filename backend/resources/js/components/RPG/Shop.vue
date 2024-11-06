@@ -7,38 +7,41 @@
 <!-- v-if系はtemplateの内部に書く。 -->
 <template>
 
-  <div class="row" v-if="this.after_purchase_array.after_purchase_flag">
-    <div class="col-sm-12" style="color: blue">
-      <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
-    </div>
-  </div>
+  <div class="container">
 
-  <div class="row">
-    <div class="col-sm-12">
-      <p>購入品を選択してください(所持金: {{ this.money }} G)</p>
+    <div class="row" v-if="this.after_purchase_array.after_purchase_flag">
+      <div class="col-sm-12" style="color: blue">
+        <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
+      </div>
     </div>
-  </div>
 
-  <div class="row">
-    <div class="col-sm-12">
-      <table class="table table-borderless">
-        <thead>
-            <tr>
-              <th>名前</th>
-              <th>価格</th>
-              <th>説明</th>
-              <th></th>
+    <div class="row">
+      <div class="col-sm-12">
+        <p>購入品を選択してください(所持金: {{ this.money }} G)</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <table class="table table-borderless">
+          <thead>
+              <tr>
+                <th>名前</th>
+                <th>価格</th>
+                <th>説明</th>
+                <th></th>
+              </tr>
+          </thead>
+          <tbody>
+            <tr v-for="shopListItem in shopListItems">
+              <td>{{ shopListItem.name }}</td>
+              <td>{{ shopListItem.price }} G</td>
+              <td>{{ shopListItem.description }}</td>
+              <td><a class="action-link" @click="showPurchaseForm(shopListItem)">買う</a></td>
             </tr>
-        </thead>
-        <tbody>
-          <tr v-for="shopListItem in shopListItems">
-            <td>{{ shopListItem.name }}</td>
-            <td>{{ shopListItem.price }} G</td>
-            <td>{{ shopListItem.description }}</td>
-            <td><a class="action-link" @click="showPurchaseForm(shopListItem)">買う</a></td>
-          </tr>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

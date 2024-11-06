@@ -1,6 +1,26 @@
+<style>
+.main-screen {
+  background-color: rgb(228, 231, 231); 
+  border: 1px solid black; 
+  /* 4:3 */
+  min-width: 1280px;
+  min-height: 720px; 
+  position: relative;
+}
+
+</style>
+
 <template>
-  <div class="container" style="background-color: rgb(228, 231, 231); border: 1px solid black; min-height: 700px; position: relative">
-    <h4 style="text-align: center; height: 60px;">App.vue 
+  <!-- debug -->
+  <div class="container" style="background-color: whitesmoke; border: 1px solid black; min-width: 1280px">
+    <div class="row">
+      <div class="col-12" style="text-align: center;">
+        <h4>
+          App.vue
+          <small style="font-size: 12px;">{{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small>
+        </h4>
+      </div>
+    </div>
       <!-- 
       戦闘画面用デバッグ 
        <small style="font-size: 12px;">
@@ -8,10 +28,11 @@
         {{ battleSessionId }}
       </small> 
       -->
-      <small style="font-size: 12px;">
-        {{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br>
-      </small>
-    </h4>
+
+  </div>
+
+  <!-- メイン画面 4:3 -->
+  <div class="container main-screen">
 
     <router-view></router-view>
 

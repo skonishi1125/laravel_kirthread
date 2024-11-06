@@ -1,17 +1,19 @@
 <template>
-  <div class="row">
-    <div class="col-sm-12">
-      <p>スキル振り分け</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <p>スキル振り分け</p>
+      </div>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-sm-12">
-      <ul>
-        <li><button>ファイアボール</button></li>
-        <li><button>アイスエッジ</button></li>
-        <li><button>サンダーランス</button></li>
-      </ul>
+  
+    <div class="row">
+      <div class="col-sm-12">
+        <ul>
+          <li><button>ファイアボール</button></li>
+          <li><button>アイスエッジ</button></li>
+          <li><button>サンダーランス</button></li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
