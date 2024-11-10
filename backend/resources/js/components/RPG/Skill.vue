@@ -1,9 +1,16 @@
+<style>
+.skill-items {
+  margin: 20px;
+}
+
+</style>
+
 <template>
   <div class="container">
     <div class="row sub-sucreen-text-space">
       <div class="col-12">
         <div>
-          <p>パーティメンバーのステータス及びスキルの確認・ポイントの振り分けができます。</p>
+          <p>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</p>
         </div>
         <hr>
         <div>
@@ -30,24 +37,36 @@
               <div><button class="btn btn-sm btn-outline-info active">スキル確認</button></div>
             </div>
           </div>
-          <div class="col-10 my-5">
+          <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
             <ul>
-              <li>
+              <li class="skill-items">
                 <button class="btn btn-sm btn-outline-info">ミニヒール</button>
                 <ul>
                   <li><button class="btn btn-sm btn-outline-info">ポップヒール</button></li>
                 </ul>
               </li>
-              <li>
+              <li class="skill-items">
                 <button class="btn btn-sm btn-outline-info">プチブラスト</button>
                 <ul>
                   <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
                   <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
                 </ul>
               </li>
-              <li><button class="btn btn-sm btn-outline-info">バトルメイジ</button></li>
-              <li><button class="btn btn-sm btn-outline-info disabled">???</button></li>
-              <li><button class="btn btn-sm btn-outline-info disabled">???</button></li>
+              <li class="skill-items">
+                <button class="btn btn-sm btn-outline-info">プチブラスト</button>
+                <ul>
+                  <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
+                  <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
+                  <ul>
+                    <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
+                    <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
+                  </ul>
+                </ul>
+              </li>
+              <li class="skill-items"><button class="btn btn-sm btn-outline-info">バトルメイジ</button></li>
+              <li class="skill-items"><button class="btn btn-sm btn-outline-info disabled">???</button></li>
+              <li class="skill-items"><button class="btn btn-sm btn-outline-info disabled">???</button></li>
+
             </ul>
           </div>
         </div>
