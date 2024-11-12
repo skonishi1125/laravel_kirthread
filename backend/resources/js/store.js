@@ -3,14 +3,23 @@ import { createStore } from 'vuex';
 // 戦闘状態の管理
 export default createStore({
   state: {
-    // メイン画面の状態 'title', 'beginning', 'menu', 'battle'
-    currentScreen: 'title',
+    // メイン画面
+    currentScreen: 'title', // 'title', 'beginning', 'menu', 'battle'
+
+    // beginning サブステータス
     beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
       currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
 
-    battleStatus: 'start', // 'battle'状態のサブステータス 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
+    // menu ショップ画面サブステータス
+    menuShopState: 'start' , // 'start' 'buy' 'sell'とかかな。
+
+    // menu スキル|ステ振り画面サブステータス
+    menuStatusState: 'start', // 'start', 'status', 'skill', とかかな。あと3人のうち誰の表示かも別途サブステータスで分けた方が良い
+
+    // battle サブステータス
+    battleStatus: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
       selectedCommands: [], // 味方の選択コマンド
       selectedEnemies: [],  // コマンドで選択した敵
       currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
@@ -18,9 +27,12 @@ export default createStore({
       battleSessionId: '', // 戦闘データのセッション
   },
   mutations: {
+    // メイン画面
     setScreen(state, screen) {
       state.currentScreen = screen;
     },
+
+    // beginning サブステータス
     setBeginningStatus(state, status) {
       state.beginningStatus = status;
     },
@@ -51,6 +63,13 @@ export default createStore({
       state.selectedRoleInformations = [];
       state.currentDecidedMemberIndex = 0;
     },
+
+    // menu スキル|ステ振り
+    setMenuStatusState(state, status) {
+      state.menuStatusState = status;
+    },
+
+    // battle サブステータス
     setClearStage(state, stage) {
       state.clearStage = stage;
     },
@@ -138,10 +157,12 @@ export default createStore({
 
   },
   actions: {
-    // commitで引数を渡す場合
+    // メイン画面
     setScreen({ commit }, screen) {
       commit('setScreen', screen);
     },
+
+    // beginning サブステータス
     setBeginningStatus({ commit }, status) {
       commit('setBeginningStatus', status);
     },
@@ -163,6 +184,13 @@ export default createStore({
     resetBeginningDecidedData({ commit }) {
       commit('resetBeginningDecidedData');
     },
+
+    // menu スキル|ステ振り
+    setMenuStatusState({ commit }, status) {
+      commit('setMenuStatusState', status);
+    },
+
+    // battle サブステータス
     setClearStage({ commit }, stage) {
       commit('setClearStage', stage)
     },

@@ -239,6 +239,45 @@ class ApiController extends Controller
     }
   }
 
+  // ステータス及びスキルの確認
+  public function getPartiesSkillTree() {
+    $skills = [
+        [
+            "id" => 1,
+            "name" => "ミニヒール",
+            "childSkills" => [
+                [
+                    "id" => 2,
+                    "name" => "ポップヒール",
+                    "childSkills" => []
+                ]
+            ]
+        ],
+        [
+            "id" => 3,
+            "name" => "プチブラスト",
+            "childSkills" => [
+                [
+                    "id" => 4,
+                    "name" => "クラッシュボルト",
+                    "childSkills" => []
+                ],
+                [
+                    "id" => 5,
+                    "name" => "マナエクスプロージョン",
+                    "childSkills" => []
+                ]
+            ]
+        ]
+    ];
+
+    // dd($skills, json_encode($skills));
+
+    return response()->json($skills);
+
+  }
+
+
   // ログインユーザーの現在のステータス
   public function loginUserCurrentSavedata() {
     $current_save_data = Savedata::getLoginUserCurrentSavedata();

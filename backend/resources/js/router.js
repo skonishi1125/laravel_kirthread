@@ -9,7 +9,7 @@ import Beginning from './components/RPG/Beginning.vue';
 import Menu from './components/RPG/Menu.vue';
 import Adventure from './components/RPG/Adventure.vue';
 import Shop from './components/RPG/Shop.vue';
-import Skill from './components/RPG/Skill.vue';
+import Status from './components/RPG/Status.vue';
 import Battle from './components/RPG/Battle.vue';
 const routes = [
   { 
@@ -35,8 +35,8 @@ const routes = [
           component: Shop
         },
         {
-          path: 'Skill',
-          component: Skill
+          path: 'status',
+          component: Status
         }
       ]
   },
