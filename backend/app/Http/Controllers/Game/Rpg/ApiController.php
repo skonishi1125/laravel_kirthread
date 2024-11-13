@@ -253,7 +253,8 @@ class ApiController extends Controller
           'role_id' => $party->role_id,
           'role_class' => $party->role->class,
           'role_class_japanese' => $party->role->class_japanese,
-          // todo: 画面に必要なステータス情報とかを入れる
+          'freely_skill_point' => $party->freely_skill_point,
+          'freely_status_point' => $party->freely_status_point,
           'status' => [
             'level' => $party->level,
             'value_hp' => $party->value_hp,
@@ -264,15 +265,11 @@ class ApiController extends Controller
             'value_spd' => $party->value_spd,
             'value_luc' => $party->value_luc,
             'total_exp' => $party->total_exp,
-            // 'freely_skill_point' => $party->freely_skill_point,
-            'freely_status_point' => $party->freely_status_point,
+
           ],
-          'skill_tree' => [], // 別途加工した情報を入れる
+          'skill_tree' => Skill::aquireSkillTreeCollection($party)
         ]
       );
-
-      $skill_tree = Skill::aquireSkillTreeArray($party);
-      $party_data_collection['skill_tree'] = $skill_tree;
 
       $parties_data_collection->push($party_data_collection);
     }

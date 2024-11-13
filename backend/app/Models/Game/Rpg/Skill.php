@@ -5,6 +5,7 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\SkillRequirement;
@@ -41,21 +42,21 @@ class Skill extends Model
         ;
     }
 
-    // スキル振りに必要な配列を作成する
-    public static function aquireSkillTreeArray($party) {
+    // 渡したパーティ(単体)に合ったスキルツリーを作成し、それを返す
+    public static function aquireSkillTreeCollection(Party $party) {
       $role_skills = self::where('available_role_id', $party->role_id)->get();
       $skills_collection = collect();
-      $stored_skill_ids = []; //処理したスキルIDを格納していく
+      $stored_skill_ids = []; //処理したスキルIDを格納していく用の配列
 
-      foreach ($role_skills as $skill) {
+      foreach ($role_skills as $parent_skill) {
         // すでに処理済みのスキルだったら次のスキルの処理へ
-        if (in_array($skill->id, $stored_skill_ids, true)) {
+        if (in_array($parent_skill->id, $stored_skill_ids, true)) {
           continue;
         }
 
-        // 親スキルの取得条件チェック
-        $parent_skill_requirement = SkillRequirement::where('acquired_skill_id', $skill->id)->first();
-        // 取得条件がない場合、各フラグをtrueにしておく
+        // 親スキルの取得条件を取得し、それぞれ満たしているのかを確認
+        $parent_skill_requirement = SkillRequirement::where('acquired_skill_id', $parent_skill->id)->first();
+        // 取得条件が特にない場合、各フラグをtrueにして子スキルの処理へ
         if (is_null($parent_skill_requirement)) {
           $parent_skill_requirement_skill_level = null;
           $parent_skill_is_checked_skill_level  = true;
@@ -76,7 +77,7 @@ class Skill extends Model
             $parent_skill_is_checked_party_level  = false;
           }
 
-          // 条件をどちらも満たしているなら、習得可能フラグをtrueとする
+          // スキルレベル・パーティレベルどちらの条件も満たしていればtrueとする
           if ($parent_skill_is_checked_skill_level && $parent_skill_is_checked_party_level) {
             $parent_skill_is_learned = true;
           } else {
@@ -84,14 +85,14 @@ class Skill extends Model
           }
         }
 
-        // 親スキルをまずツリーに格納
-        $skill_collection = collect([
-          'skill_id' => $skill->id,
-          'skill_name' => $skill->name,
-          'skill_level' => $party->skills->where('id', $skill->id)->first()->pivot->skill_level ?? null,
-          'attack_type' => $skill->attack_type,
-          'effect_type' => $skill->effect_type,
-          'target_range' => $skill->target_range,
+        // 親スキルの情報をまずコレクションとして格納
+        $parent_skill_collection = collect([
+          'skill_id' => $parent_skill->id,
+          'skill_name' => $parent_skill->name,
+          'skill_level' => $party->skills->where('id', $parent_skill->id)->first()->pivot->skill_level ?? null,
+          'attack_type' => $parent_skill->attack_type,
+          'effect_type' => $parent_skill->effect_type,
+          'target_range' => $parent_skill->target_range,
           'requirement_skill_level' => $parent_skill_requirement_skill_level,
           'is_checked_skill_level' => $parent_skill_is_checked_skill_level,
           'requirement_party_level' => $parent_skill_requirement_party_level,
@@ -100,15 +101,16 @@ class Skill extends Model
           'child_skills' => collect(),
         ]);
 
-        // 子スキルを持つ場合、そのスキルに対して処理をする
-        $skill_requirements = SkillRequirement::where('requirement_skill_id', $skill->id)->get();
+        // 子スキルの処理
+        // 子スキルを持つ場合、そのスキルについても同様に条件や詳細情報を格納していく
+        $skill_requirements = SkillRequirement::where('requirement_skill_id', $parent_skill->id)->get();
         foreach ($skill_requirements as $skill_requirement) {
           $child_skill = $role_skills->firstWhere('id', $skill_requirement->acquired_skill_id);
 
           // パーティメンバーが親スキルを習得済みかどうか
-          // 覚えているなら現在のスキルのレベルと習得対象スキルの必要なスキルレベルを比較する
+          // 次に、覚えているなら現在のスキルのレベルが習得対象スキルの必要なスキルレベルより高ければ、trueとする
           $is_checked_skill_level = false;
-          $learned_parent_skill = $party->skills->where('id', $skill->id)->first();
+          $learned_parent_skill = $party->skills->where('id', $parent_skill->id)->first();
           if (!is_null($learned_parent_skill)) {
             if ($learned_parent_skill->pivot->skill_level >= $skill_requirement->requirement_skill_level) {
               $is_checked_skill_level = true;
@@ -122,7 +124,7 @@ class Skill extends Model
             $is_checked_party_level  = false;
           }
 
-          // スキルレベル・パーティレベルどちらの条件も満たしていれば習得可能とする
+          // スキルレベル・パーティレベルどちらの条件も満たしていればtrueとする
           if ($is_checked_skill_level && $is_checked_party_level) {
             $is_learned = true;
           } else {
@@ -143,30 +145,18 @@ class Skill extends Model
             'is_checked_party_level' => $is_checked_party_level,
             'is_learned' => $is_learned,
           ]);
-          $skill_collection['child_skills']->push($child_skill_collection);
+          $parent_skill_collection['child_skills']->push($child_skill_collection);
 
           // 子スキルのIDを格納し、処理済みとする
           array_push($stored_skill_ids, $child_skill->id);
         }
 
         // スキルツリーに親子スキルの情報を格納し、処理済みとする
-        $skills_collection->push($skill_collection);
-        array_push($stored_skill_ids, $skill->id);
+        $skills_collection->push($parent_skill_collection);
+        array_push($stored_skill_ids, $parent_skill->id);
       }
 
       return $skills_collection;
-    }
-
-    // 習得に必要なスキルレベルを満たしているかどうか、真偽値で返す
-    public function isLearnedSkillLevelCondition($party, $skill) {
-      // パーティが覚えているスキルのレベルと習得対象スキルの必要なスキルレベルを比較する
-
-
-    }
-
-    // 習得に必要なパーティレベルを満たしているかどうか、真偽値で返す
-    public function isLearnedPartyLevelCondition($party, $skill) {
-
     }
 
 
