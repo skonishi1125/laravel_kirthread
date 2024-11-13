@@ -241,39 +241,44 @@ class ApiController extends Controller
 
   // ステータス及びスキルの確認
   public function getPartiesSkillTree() {
-    $skills = [
-        [
-            "id" => 1,
-            "name" => "ミニヒール",
-            "childSkills" => [
-                [
-                    "id" => 2,
-                    "name" => "ポップヒール",
-                    "childSkills" => []
-                ]
-            ]
-        ],
-        [
-            "id" => 3,
-            "name" => "プチブラスト",
-            "childSkills" => [
-                [
-                    "id" => 4,
-                    "name" => "クラッシュボルト",
-                    "childSkills" => []
-                ],
-                [
-                    "id" => 5,
-                    "name" => "マナエクスプロージョン",
-                    "childSkills" => []
-                ]
-            ]
+    // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
+    $savedata = Savedata::getLoginUserCurrentSavedata();
+    $parties = $savedata->parties; // collectionとして取得
+    $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
+
+    foreach ($parties as $party) {
+      $party_data_collection = collect([
+          'party_id' => $party->id,
+          'nickname' => $party->nickname,
+          'role_id' => $party->role_id,
+          'role_class' => $party->role->class,
+          'role_class_japanese' => $party->role->class_japanese,
+          // todo: 画面に必要なステータス情報とかを入れる
+          'status' => [
+            'level' => $party->level,
+            'value_hp' => $party->value_hp,
+            'value_ap' => $party->value_ap,
+            'value_str' => $party->value_str,
+            'value_def' => $party->value_def,
+            'value_int' => $party->value_int,
+            'value_spd' => $party->value_spd,
+            'value_luc' => $party->value_luc,
+            'total_exp' => $party->total_exp,
+            // 'freely_skill_point' => $party->freely_skill_point,
+            'freely_status_point' => $party->freely_status_point,
+          ],
+          'skill_tree' => [], // 別途加工した情報を入れる
         ]
-    ];
+      );
 
-    // dd($skills, json_encode($skills));
+      $skill_tree = Skill::aquireSkillTreeArray($party);
+      $party_data_collection['skill_tree'] = $skill_tree;
 
-    return response()->json($skills);
+      $parties_data_collection->push($party_data_collection);
+    }
+
+
+    return response()->json($parties_data_collection);
 
   }
 
