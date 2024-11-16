@@ -1,4 +1,7 @@
 <style>
+.character-nav-tab {
+  cursor: pointer;
+}
 .skill-items {
   margin: 20px;
 }
@@ -13,11 +16,19 @@
           <p>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</p>
         </div>
         <hr>
-        <div>
-          <p>
-            <b>ポップヒール</b> 50%/魔/回復 消費AP: 10 <br>
-            回復魔力を周囲に浮かべ、全体のHPを回復する。【条件】Lv10以上, ミニヒール Lv1以上
-          </p>
+        <div v-if="Object.keys(this.skillInformation).length > 0">
+          <div>
+            <p>
+              <b>{{ this.skillInformation.skill_name }}</b>
+              <span v-if="this.skillInformation.skill_level == 0">【<small><b>未習得</b></small>】</span>
+              <span v-else>【習得済<small>(SLv:<b>{{ this.skillInformation.skill_level }}</b>)</small>】</span>
+              
+              【{{ this.skillInformation.attack_type }}】
+              【{{ this.skillInformation.effect_type }}】
+              【{{ this.skillInformation.target_range }}】<br>
+              {{ this.skillInformation.description }} <small style="color:red">{{ this.skillInformation.conditions }}</small>
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -28,9 +39,24 @@
         <div class="col-12">
           <ul class="nav nav-tabs">
             <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替えるような実装にするとよい -->
-            <a class="nav-link active">{{ this.partiesInformation[0].nickname }}</a>
-            <a class="nav-link">{{ this.partiesInformation[1].nickname }}</a>
-            <a class="nav-link">{{ this.partiesInformation[2].nickname }}</a>
+            <a class="nav-link character-nav-tab"
+              :class="{'active': this.currentSelectedPartyMemberIndex === 0}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 0)"
+            >
+              {{ this.partiesInformation[0].nickname }}
+            </a>
+            <a class="nav-link character-nav-tab" 
+              :class="{'active': this.currentSelectedPartyMemberIndex === 1}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 1)"
+            >
+              {{ this.partiesInformation[1].nickname }}
+            </a>
+            <a class="nav-link character-nav-tab" 
+              :class="{'active': this.currentSelectedPartyMemberIndex === 2}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 2)"
+            >
+              {{ this.partiesInformation[2].nickname }}
+            </a>
           </ul>
   
           <div class="row">
@@ -40,20 +66,23 @@
                 <div><button class="btn btn-sm btn-outline-info active">スキル確認</button></div>
               </div>
             </div>
-            <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
 
+            <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
               <!-- 0:灰/特殊 1:青/攻撃 2:緑/回復 3:黄/バフ -->
-              <ul v-for="parentSkill in this.skillTreeArray[this.currentDecidedMemberIndex]">
+              <ul v-for="parentSkill in this.skillTreeArray[this.currentSelectedPartyMemberIndex]">
                 <li class="skill-items">
                   <button class="btn btn-sm"
                     :class="{
+                      'disabled': !parentSkill.is_learned,
                       'btn-outline-secondary': parentSkill.effect_type === 0,
                       'btn-outline-primary': parentSkill.effect_type === 1,
                       'btn-outline-success': parentSkill.effect_type === 2,
                       'btn-outline-warning': parentSkill.effect_type === 3,
                     }"
+                    @mouseover="showSkillInformation(parentSkill)"
                   >
-                    {{ parentSkill.skill_name }}
+                    <span v-if="parentSkill.is_learned">{{ parentSkill.skill_name }} <small>(SLv:<b>{{ parentSkill.skill_level }}</b>)</small></span>
+                    <span v-else="parentSkill.is_learned">???</span>
                   </button>
                 </li>
                 <div v-if="parentSkill.child_skills">
@@ -61,49 +90,31 @@
                     <li>
                       <button class="btn btn-sm"
                         :class="{
+                          'disabled': !childSkill.is_learned,
                           'btn-outline-secondary': parentSkill.effect_type === 0,
                           'btn-outline-primary': parentSkill.effect_type === 1,
                           'btn-outline-success': parentSkill.effect_type === 2,
                           'btn-outline-warning': parentSkill.effect_type === 3,
                         }"
+                        @mouseover="showSkillInformation(childSkill)"
                       >
-                        {{ childSkill.skill_name }}
+                        <span v-if="childSkill.is_learned">{{ childSkill.skill_name }}<small>(SLv:<b>{{ childSkill.skill_level }}</b>)</small></span>
+                        <span v-else="childSkill.is_learned">???</span>
                       </button>
                     </li>
                   </ul>
                 </div>
               </ul>
+            </div> <!-- class="col-10 my-5" -->
+          </div>
 
-              <!-- <ul>
-                <li class="skill-items">
-                  <button class="btn btn-sm btn-outline-info">ミニヒール</button>
-                  <ul>
-                    <li><button class="btn btn-sm btn-outline-info">ポップヒール</button></li>
-                  </ul>
-                </li>
-                <li class="skill-items">
-                  <button class="btn btn-sm btn-outline-info">プチブラスト</button>
-                  <ul>
-                    <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
-                    <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
-                  </ul>
-                </li>
-                <li class="skill-items">
-                  <button class="btn btn-sm btn-outline-info">プチブラスト</button>
-                  <ul>
-                    <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
-                    <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
-                    <ul>
-                      <li><button class="btn btn-sm btn-outline-info">クラッシュボルト</button></li>
-                      <li><button class="btn btn-sm btn-outline-info">マナエクスプロージョン</button></li>
-                    </ul>
-                  </ul>
-                </li>
-                <li class="skill-items"><button class="btn btn-sm btn-outline-info">バトルメイジ</button></li>
-                <li class="skill-items"><button class="btn btn-sm btn-outline-info disabled">???</button></li>
-                <li class="skill-items"><button class="btn btn-sm btn-outline-info disabled">???</button></li>
-              </ul> -->
-
+          <!-- TODO: 現在選択中のパーティメンバーのデータを出す(index指定する) -->
+          <div class="row">
+            <div class="col-12">
+              <small>
+                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                ※スキルツリーはスクロール可能。
+              </small>
             </div>
           </div>
         </div>
@@ -126,13 +137,12 @@
         skillTreeArray: [],
         hoveredDescription: null, // 現在マウスオーバーしている要素の説明
         errorMessage: null,
-        displaySkillName: '',
-        displaySkillDescription: '',
+        skillInformation: {},
       }
     },
     computed: {
       ...mapState(['menuStatusState']),
-      ...mapState(['currentDecidedMemberIndex']),
+      ...mapState(['currentSelectedPartyMemberIndex']),
     },
     created() {
       this.getSkill();
@@ -148,8 +158,9 @@
           .then(response => {
             console.log(`response.data: ${response.data}`);
             this.partiesInformation = response.data;
-            console.log(this.partiesInformation[0],this.partiesInformation[0]['status'], this.partiesInformation[1]);
-            console.log('情報取得完了。各変数に情報振り分け。');
+            // console.log(this.partiesInformation[0],this.partiesInformation[0]['status'], this.partiesInformation[1]);
+
+            console.log('スキルツリー変数格納開始。');
             this.partiesInformation.forEach(partyInformation => {
               this.statusArray.push(partyInformation['status']);
               this.skillTreeArray.push(partyInformation['skill_tree']);
@@ -157,20 +168,92 @@
 
             // console.log(this.skillTreeArray[0], this.statusArray[0]);
             // 1人目のメンバーのスキル一覧の、1つ目のスキルの情報を参照したい場合
-            console.log(this.skillTreeArray[0][0]['skill_name'], this.skillTreeArray[0][0].child_skills);
-
-            // todo: スキルを受け取って、色々格納する変数を分けられたらいいかも。
-            // api側からスキル情報を一括で受け取って、それが誰のスキルなのかを変数で分けたり。
+            // console.log(this.skillTreeArray[0][0]['skill_name'], this.skillTreeArray[0][0].child_skills);
 
             this.$store.dispatch('setMenuStatusState', 'skill');
           }
         );
       },
-      showDescription(description) {
-        this.hoveredDescription = description;
+      showSkillInformation(skill) {
+        // console.log(`showSkillInformation: ${skill.skill_name} -------`);
+
+        this.skillInformation = {
+          skill_name: '???',
+          skill_level: skill.skill_level,
+          description: '-',
+          attack_type: '-',
+          effect_type: '-',
+          target_range: '-',
+        };
+
+        // 習得可能なスキルの場合、各要素を開示させる
+        if (skill.is_learned) {
+          this.skillInformation.skill_name = skill.skill_name;
+          this.skillInformation.description = skill.description;
+          switch (skill.attack_type) {
+            case 0:
+              this.skillInformation.attack_type = "-"
+              break;
+            case 1:
+              this.skillInformation.attack_type = "物理"
+              break;
+            case 2:
+              this.skillInformation.attack_type = "魔法"
+              break;
+          };
+          switch (skill.effect_type) {
+            case 0:
+              this.skillInformation.effect_type = "特殊"
+              break;
+            case 1:
+              this.skillInformation.effect_type = "攻撃"
+              break;
+            case 2:
+              this.skillInformation.effect_type = "回復"
+              break;
+            case 3:
+              this.skillInformation.effect_type = "バフ"
+              break;
+            case 9:
+              this.skillInformation.effect_type = "その他"
+              break;
+          };
+  
+          switch (skill.target_range) {
+            case 0:
+              this.skillInformation.target_range = "自身"
+              break;
+            case 1:
+              this.skillInformation.target_range = "単体"
+              break;
+            case 2:
+              this.skillInformation.target_range = "全体"
+              break;
+          };
+        }
+
+        // 習得条件メッセージの作成
+        // 複数条件
+        if (skill.requirement_skill_level && skill.requirement_party_level) {
+          // console.log('a');
+          this.skillInformation.conditions = `【条件】Lv${skill.requirement_party_level}以上,${skill.parent_skill_name} SLv${skill.requirement_skill_level}以上`;
+        // SLv条件
+        } else if (skill.requirement_skill_level && skill.requirement_party_level == null) {
+          // console.log('b');
+          this.skillInformation.conditions = `【条件】${skill.parent_skill_name} SLv${skill.requirement_skill_level}以上`;
+        // パーティLv条件
+        } else if (skill.requirement_skill_level == null && skill.requirement_party_level) {
+          // console.log('c');
+          this.skillInformation.conditions = `【条件】Lv${skill.requirement_party_level}以上`;
+        // 条件なし
+        } else if (skill.requirement_skill_level == null && skill.requirement_party_level == null) {
+          // console.log('d');
+          this.skillInformation.conditions = '';
+        }
       },
-      clearAllDescription() {
-        this.hoveredDescription = null;
+      clearSkillInformation() {
+        console.log(`clearSkillInformation: -------`);
+        this.skillInformation = {};
       },
     }
   }

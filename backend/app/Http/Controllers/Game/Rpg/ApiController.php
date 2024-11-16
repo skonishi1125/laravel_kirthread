@@ -265,7 +265,6 @@ class ApiController extends Controller
             'value_spd' => $party->value_spd,
             'value_luc' => $party->value_luc,
             'total_exp' => $party->total_exp,
-
           ],
           'skill_tree' => Skill::aquireSkillTreeCollection($party)
         ]

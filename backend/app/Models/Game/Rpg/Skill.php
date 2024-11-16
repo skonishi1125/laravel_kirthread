@@ -89,9 +89,10 @@ class Skill extends Model
         $parent_skill_collection = collect([
           'skill_id' => $parent_skill->id,
           'skill_name' => $parent_skill->name,
-          'skill_level' => $party->skills->where('id', $parent_skill->id)->first()->pivot->skill_level ?? null,
+          'skill_level' => $party->skills->where('id', $parent_skill->id)->first()->pivot->skill_level ?? 0,
           'attack_type' => $parent_skill->attack_type,
           'effect_type' => $parent_skill->effect_type,
+          'target_range' => $parent_skill->target_range,
           'lv1_percent' => $parent_skill->lv1_percent,
           'lv1_ap_cost' => $parent_skill->lv1_ap_cost,
           'lv1_buff_turn' => $parent_skill->lv1_buff_turn,
@@ -144,7 +145,8 @@ class Skill extends Model
           $child_skill_collection = collect([
             'skill_id' => $child_skill->id,
             'skill_name' => $child_skill->name,
-            'skill_level' => $party->skills->where('id', $child_skill->id)->first()->pivot->skill_level ?? null,
+            'parent_skill_name' => $parent_skill->name,
+            'skill_level' => $party->skills->where('id', $child_skill->id)->first()->pivot->skill_level ?? 0,
             'attack_type' => $child_skill->attack_type,
             'effect_type' => $child_skill->effect_type,
             'target_range' => $child_skill->target_range,

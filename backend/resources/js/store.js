@@ -17,6 +17,7 @@ export default createStore({
 
     // menu スキル|ステ振り画面サブステータス
     menuStatusState: 'start', // 'start', 'status', 'skill', とかかな。あと3人のうち誰の表示かも別途サブステータスで分けた方が良い
+      currentSelectedPartyMemberIndex: 0, // どの味方の画面を開いているか。 0か1か2
 
     // battle サブステータス
     battleStatus: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
@@ -67,6 +68,9 @@ export default createStore({
     // menu スキル|ステ振り
     setMenuStatusState(state, status) {
       state.menuStatusState = status;
+    },
+    setCurrentSelectedPartyMemberIndex(state, number) {
+      state.currentSelectedPartyMemberIndex = number;
     },
 
     // battle サブステータス
@@ -188,6 +192,9 @@ export default createStore({
     // menu スキル|ステ振り
     setMenuStatusState({ commit }, status) {
       commit('setMenuStatusState', status);
+    },
+    setCurrentSelectedPartyMemberIndex({ commit }, number) {
+      commit('setCurrentSelectedPartyMemberIndex', number);
     },
 
     // battle サブステータス

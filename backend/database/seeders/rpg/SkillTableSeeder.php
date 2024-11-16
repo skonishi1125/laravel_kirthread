@@ -428,7 +428,7 @@ class SkillTableSeeder extends Seeder
           'lv3_ap_cost' => 5,
           'lv3_buff_turn' => 1,
           'elemental_id' => 1,
-          'description' => '使用ターンの味方全員の物理ダメージを軽減する。',
+          'description' => '先制発動する。使用ターンの味方全員の物理ダメージを軽減する。',
           'created_at' => $now,
           'updated_at' => $now
         ],
