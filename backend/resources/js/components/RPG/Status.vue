@@ -27,9 +27,10 @@
       <div class="row mt-3 sub-sucreen-main-space">
         <div class="col-12">
           <ul class="nav nav-tabs">
-            <a class="nav-link active">メイ</a>
-            <a class="nav-link ">パラ</a>
-            <a class="nav-link ">カア</a>
+            <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替えるような実装にするとよい -->
+            <a class="nav-link active">{{ this.partiesInformation[0].nickname }}</a>
+            <a class="nav-link">{{ this.partiesInformation[1].nickname }}</a>
+            <a class="nav-link">{{ this.partiesInformation[2].nickname }}</a>
           </ul>
   
           <div class="row">
@@ -41,11 +42,34 @@
             </div>
             <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
 
-              <ul v-for="parentSkill in this.skillTree">
-                <li class="skill-items"><button class="btn btn-sm btn-outline-info">{{ parentSkill.name }}</button></li>
-                <div v-if="parentSkill.childSkills">
-                  <ul v-for="childSkill in parentSkill.childSkills">
-                    <li><button class="btn btn-sm btn-outline-info">{{ childSkill.name }}</button></li>
+              <!-- 0:灰/特殊 1:青/攻撃 2:緑/回復 3:黄/バフ -->
+              <ul v-for="parentSkill in this.skillTreeArray[this.currentDecidedMemberIndex]">
+                <li class="skill-items">
+                  <button class="btn btn-sm"
+                    :class="{
+                      'btn-outline-secondary': parentSkill.effect_type === 0,
+                      'btn-outline-primary': parentSkill.effect_type === 1,
+                      'btn-outline-success': parentSkill.effect_type === 2,
+                      'btn-outline-warning': parentSkill.effect_type === 3,
+                    }"
+                  >
+                    {{ parentSkill.skill_name }}
+                  </button>
+                </li>
+                <div v-if="parentSkill.child_skills">
+                  <ul v-for="childSkill in parentSkill.child_skills">
+                    <li>
+                      <button class="btn btn-sm"
+                        :class="{
+                          'btn-outline-secondary': parentSkill.effect_type === 0,
+                          'btn-outline-primary': parentSkill.effect_type === 1,
+                          'btn-outline-success': parentSkill.effect_type === 2,
+                          'btn-outline-warning': parentSkill.effect_type === 3,
+                        }"
+                      >
+                        {{ childSkill.skill_name }}
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </ul>
@@ -97,13 +121,18 @@
   export default {
     data() { // script内で使用する変数を定義する。
       return {
-        skillTree: [],
+        partiesInformation: [],
+        statusArray: [],
+        skillTreeArray: [],
         hoveredDescription: null, // 現在マウスオーバーしている要素の説明
         errorMessage: null,
+        displaySkillName: '',
+        displaySkillDescription: '',
       }
     },
     computed: {
       ...mapState(['menuStatusState']),
+      ...mapState(['currentDecidedMemberIndex']),
     },
     created() {
       this.getSkill();
@@ -115,12 +144,20 @@
     methods: {
       getSkill() { 
         console.log(`getSkill(): -----------------`);
-        axios.get('/api/game/rpg/status/skill_tree')
+        axios.get('/api/game/rpg/parties/information')
           .then(response => {
             console.log(`response.data: ${response.data}`);
-            this.skillTree = response.data;
-            console.log(this.skillTree);
-            console.log('skillTree取得完了したのでステータスをskillに変更。');
+            this.partiesInformation = response.data;
+            console.log(this.partiesInformation[0],this.partiesInformation[0]['status'], this.partiesInformation[1]);
+            console.log('情報取得完了。各変数に情報振り分け。');
+            this.partiesInformation.forEach(partyInformation => {
+              this.statusArray.push(partyInformation['status']);
+              this.skillTreeArray.push(partyInformation['skill_tree']);
+            });
+
+            // console.log(this.skillTreeArray[0], this.statusArray[0]);
+            // 1人目のメンバーのスキル一覧の、1つ目のスキルの情報を参照したい場合
+            console.log(this.skillTreeArray[0][0]['skill_name'], this.skillTreeArray[0][0].child_skills);
 
             // todo: スキルを受け取って、色々格納する変数を分けられたらいいかも。
             // api側からスキル情報を一括で受け取って、それが誰のスキルなのかを変数で分けたり。

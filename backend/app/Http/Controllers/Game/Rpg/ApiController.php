@@ -240,7 +240,7 @@ class ApiController extends Controller
   }
 
   // ステータス及びスキルの確認
-  public function getPartiesSkillTree() {
+  public function getPartiesInfo() {
     // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
     $savedata = Savedata::getLoginUserCurrentSavedata();
     $parties = $savedata->parties; // collectionとして取得
