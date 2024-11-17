@@ -176,8 +176,33 @@
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title">
-            <b>{{ updateSkillForm.skill_name }}</b>
-            <!-- <span class="badge badge-light badge-light-magic">魔法</span> -->
+            <b>{{ modalSkillInfo.skill_name }}</b>
+            <span class="badge badge-light"
+                :class="{
+                  'badge-light-physical': this.modalSkillInfo.attack_type === '物理',
+                  'badge-light-magic': this.modalSkillInfo.attack_type === '魔法',
+                  }"
+            >
+              {{ this.modalSkillInfo.attack_type }}
+            </span>
+            <span class="badge"
+              :class="{
+                'badge-primary': this.modalSkillInfo.effect_type === '攻撃',
+                'badge-success': this.modalSkillInfo.effect_type === '回復',
+                'badge-light badge-light-buff': this.modalSkillInfo.effect_type === 'バフ',
+                }"
+            >
+              {{ this.modalSkillInfo.effect_type }}
+            </span>
+            <span class="badge badge-light"
+              :class="{
+                'badge-light-self': this.modalSkillInfo.target_range === '自身',
+                'badge-light-single': this.modalSkillInfo.target_range === '単体',
+                'badge-light-all': this.modalSkillInfo.target_range === '全体',
+                }"
+            >
+              {{ this.modalSkillInfo.target_range }}
+            </span>
           </h6>
           <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
         </div>
@@ -186,26 +211,26 @@
           <div class="container-fluid">
             <div class="row">
               <!-- スキルレベルがnu;; (未習得)の時 -->
-              <div v-if="!updateSkillForm.current_skill_level">
+              <div v-if="!modalSkillInfo.current_skill_level">
                 <div class="col-12">
                   <span class="badge badge-info">NEXT</span>
                    <p>
-                    【スキルレベル: {{ updateSkillForm.next_skill_level}}】<br>
-                    使用AP: <span style="color:orange">{{ updateSkillForm.next_skill_ap_cost }}</span><br>
-                    基礎倍率: <span style="color:orange">{{ updateSkillForm.next_skill_percent }}</span>% <br>
-                    <span v-if="updateSkillForm.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.next_skill_buff_turn }}</span></span>
+                    【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
+                    使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span><br>
+                    基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
+                    <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
                    </p>
                 </div>
               </div>
               <!-- スキルレベルが1 or 2の時 -->
-              <div v-else-if="updateSkillForm.current_skill_level < 3">
+              <div v-else-if="modalSkillInfo.current_skill_level < 3">
                 <div class="col-12">
                   <span class="badge badge-secondary">現在</span>
                    <p>
-                    【スキルレベル: {{ updateSkillForm.current_skill_level }}】<br>
-                    使用AP: <span style="color:orange">{{ updateSkillForm.current_skill_ap_cost }}</span> <br>
-                    基礎倍率: <span style="color:orange">{{ updateSkillForm.current_skill_percent }}</span>% <br>
-                    <span v-if="updateSkillForm.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.current_skill_buff_turn }}</span></span>
+                    【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
+                    使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span> <br>
+                    基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
+                    <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
                    </p>
                    <hr>
                    <div style="text-align: center;">
@@ -213,23 +238,23 @@
                    </div>
                    <span class="badge badge-info">NEXT</span>
                    <p>
-                    【スキルレベル: {{ updateSkillForm.next_skill_level}}】<br>
-                    使用AP: <span style="color:orange">{{ updateSkillForm.next_skill_ap_cost }}</span> <br>
-                    基礎倍率: <span style="color:orange">{{ updateSkillForm.next_skill_percent }}</span>% <br>
-                    <span v-if="updateSkillForm.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.next_skill_buff_turn }}</span></span>
+                    【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
+                    使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span> <br>
+                    基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
+                    <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
                    </p>
                 </div>
               </div>
 
               <!-- スキルレベルが3 (max)の時 -->
-              <div v-else-if="updateSkillForm.current_skill_level > 2">
+              <div v-else-if="modalSkillInfo.current_skill_level > 2">
                 <div class="col-12">
                   <span class="badge badge-dark">MAX</span>
                    <p>
-                    【スキルレベル: {{ updateSkillForm.current_skill_level }}】<br>
-                    使用AP: <span style="color:orange">{{ updateSkillForm.current_skill_ap_cost }}</span><br>
-                    基礎倍率: <span style="color:orange">{{ updateSkillForm.current_skill_percent }}</span>% <br>
-                    <span v-if="updateSkillForm.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.current_skill_buff_turn }}</span></span>
+                    【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
+                    使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span><br>
+                    基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
+                    <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
                    </p>
                 </div>
               </div>
@@ -254,10 +279,10 @@
               </div>
             </div>
           </div>
-          <div v-if="updateSkillForm.current_skill_level !== 3">
+          <div v-if="modalSkillInfo.current_skill_level !== 3">
             <button type="button" class="btn btn-info">習得</button>
           </div>
-          <div v-else-if="updateSkillForm.current_skill_level === 3">
+          <div v-else-if="modalSkillInfo.current_skill_level === 3">
             <small>このスキルはマスターしています。</small>
           </div>
         </div>
@@ -281,7 +306,7 @@
         hoveredDescription: null, // 現在マウスオーバーしている要素の説明
         errorMessage: null,
         skillInformation: {},
-        updateSkillForm: {},
+        modalSkillInfo: {},
       }
     },
     computed: {
@@ -399,22 +424,63 @@
         console.log(`clearSkillInformation: -------`);
         this.skillInformation = {};
       },
-      displaySkillConfirmModal(Skill) {
+      displaySkillConfirmModal(skill) {
         console.log(`displaySkillConfirmModal(): -----------------`);
         // 取得条件を満たすスキルのみクリックできるようにする
-        if (Skill.is_learned) {
-          this.updateSkillForm = {
-            skill_name: Skill.skill_name,
-            current_skill_level: Skill.skill_level,
-            current_skill_percent: Skill[`lv${Skill.skill_level}_percent`] * 100 ?? null,
-            current_skill_ap_cost: Skill[`lv${Skill.skill_level}_ap_cost`] ?? null,
-            current_skill_buff_turn: Skill[`lv${Skill.skill_level}_buff_turn`] ?? null,
-            next_skill_level: Skill.skill_level + 1,
-            next_skill_percent: Skill[`lv${Skill.skill_level + 1}_percent`] * 100 ?? null,
-            next_skill_ap_cost: Skill[`lv${Skill.skill_level + 1}_ap_cost`] ?? null,
-            next_skill_buff_turn: Skill[`lv${Skill.skill_level + 1}_buff_turn`] ?? null,
-          }
-          
+        if (skill.is_learned) {
+          this.modalSkillInfo = {
+            skill_name: skill.skill_name,
+            current_skill_level: skill.skill_level,
+            current_skill_percent: skill[`lv${skill.skill_level}_percent`] * 100 ?? null,
+            current_skill_ap_cost: skill[`lv${skill.skill_level}_ap_cost`] ?? null,
+            current_skill_buff_turn: skill[`lv${skill.skill_level}_buff_turn`] ?? null,
+            next_skill_level: skill.skill_level + 1,
+            next_skill_percent: skill[`lv${skill.skill_level + 1}_percent`] * 100 ?? null,
+            next_skill_ap_cost: skill[`lv${skill.skill_level + 1}_ap_cost`] ?? null,
+            next_skill_buff_turn: skill[`lv${skill.skill_level + 1}_buff_turn`] ?? null,
+          };
+
+          switch (skill.attack_type) {
+            case 0:
+              this.modalSkillInfo.attack_type = "-"
+              break;
+            case 1:
+              this.modalSkillInfo.attack_type = "物理"
+              break;
+            case 2:
+              this.modalSkillInfo.attack_type = "魔法"
+              break;
+          };
+
+          switch (skill.effect_type) {
+            case 0:
+              this.modalSkillInfo.effect_type = "特殊"
+              break;
+            case 1:
+              this.modalSkillInfo.effect_type = "攻撃"
+              break;
+            case 2:
+              this.modalSkillInfo.effect_type = "回復"
+              break;
+            case 3:
+              this.modalSkillInfo.effect_type = "バフ"
+              break;
+            case 9:
+              this.modalSkillInfo.effect_type = "その他"
+              break;
+          };
+
+          switch (skill.target_range) {
+            case 0:
+              this.modalSkillInfo.target_range = "自身"
+              break;
+            case 1:
+              this.modalSkillInfo.target_range = "単体"
+              break;
+            case 2:
+              this.modalSkillInfo.target_range = "全体"
+              break;
+          };
 
           $('#modal-skill-confirm').modal('show');
         }
