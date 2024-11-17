@@ -34,8 +34,13 @@
 
 <template>
   <div class="container">
+    <div v-if="menuStatusState == 'start'">
+      <div class="row sub-sucreen-text-space"></div>
+      <div class="row mt-3 sub-sucreen-main-space"></div>
+    </div>
+
     <!-- axiosで受け取れてから表示させる -->
-    <div v-if="menuStatusState == 'skill'">
+    <div v-if="menuStatusState == 'skill' && Object.keys(this.partiesInformation).length > 0">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
@@ -159,7 +164,6 @@
             </div> <!-- class="col-10 my-5" -->
           </div>
 
-          <!-- TODO: 現在選択中のパーティメンバーのデータを出す(index指定する) -->
           <div class="row">
             <div class="col-12">
               <div v-if="successSkillMessage !== null">
@@ -333,15 +337,14 @@
       ...mapState(['currentSelectedPartyMemberIndex']),
     },
     created() {
-      this.getSkill();
-      console.log(this.menuStatusState);
+      this.getPartiesInformation();
     },
     mounted() {
       console.log('Status.vue');
     },
     methods: {
-      getSkill() { 
-        console.log(`getSkill(): -----------------`);
+      getPartiesInformation() { 
+        console.log(`getPartiesInformation(): -----------------`);
         axios.get('/api/game/rpg/parties/information')
           .then(response => {
             console.log(`response.data: ${response.data}`);
