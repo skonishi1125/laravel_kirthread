@@ -2,6 +2,30 @@
 .character-nav-tab {
   cursor: pointer;
 }
+.badge-light-physical {
+  color: white;
+  background-color: #cf5555 !important;
+}
+.badge-light-magic {
+  color: white;
+  background-color: #5573cf !important;
+}
+.badge-light-buff {
+  color: white;
+  background-color: #ffc107 !important;
+}
+.badge-light-self {
+  color: white;
+  background-color: #ffc107 !important;
+}
+.badge-light-single {
+  color: white;
+  background-color: #fd7e14 !important;
+}
+.badge-light-all {
+  color: white;
+  background-color: #dc3545 !important;
+}
 .skill-items {
   margin: 20px;
 }
@@ -13,7 +37,7 @@
     <div class="row sub-sucreen-text-space">
       <div class="col-12">
         <div>
-          <p>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</p>
+          <p><small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</small></p>
         </div>
         <hr>
         <div v-if="Object.keys(this.skillInformation).length > 0">
@@ -22,10 +46,33 @@
               <b>{{ this.skillInformation.skill_name }}</b>
               <span v-if="this.skillInformation.skill_level == 0">【<small><b>未習得</b></small>】</span>
               <span v-else>【習得済<small>(SLv:<b>{{ this.skillInformation.skill_level }}</b>)</small>】</span>
-              
-              【{{ this.skillInformation.attack_type }}】
-              【{{ this.skillInformation.effect_type }}】
-              【{{ this.skillInformation.target_range }}】<br>
+              <span class="badge badge-light"
+                :class="{
+                  'badge-light-physical': this.skillInformation.attack_type === '物理',
+                  'badge-light-magic': this.skillInformation.attack_type === '魔法',
+                  }"
+              >
+                {{ this.skillInformation.attack_type }}
+              </span>
+              <span class="badge"
+                :class="{
+                  'badge-primary': this.skillInformation.effect_type === '攻撃',
+                  'badge-success': this.skillInformation.effect_type === '回復',
+                  'badge-light badge-light-buff': this.skillInformation.effect_type === 'バフ',
+                  }"
+              >
+                {{ this.skillInformation.effect_type }}
+              </span>
+              <span class="badge badge-light"
+                :class="{
+                  'badge-light-self': this.skillInformation.target_range === '自身',
+                  'badge-light-single': this.skillInformation.target_range === '単体',
+                  'badge-light-all': this.skillInformation.target_range === '全体',
+                  }"
+              >
+                {{ this.skillInformation.target_range }}
+              </span>
+              <br>
               {{ this.skillInformation.description }} <small style="color:red">{{ this.skillInformation.conditions }}</small>
             </p>
           </div>
@@ -79,6 +126,7 @@
                       'btn-outline-success': parentSkill.effect_type === 2,
                       'btn-outline-warning': parentSkill.effect_type === 3,
                     }"
+                    @click="displaySkillConfirmModal(parentSkill)"
                     @mouseover="showSkillInformation(parentSkill)"
                   >
                     <span v-if="parentSkill.is_learned">{{ parentSkill.skill_name }} <small>(SLv:<b>{{ parentSkill.skill_level }}</b>)</small></span>
@@ -96,6 +144,7 @@
                           'btn-outline-success': parentSkill.effect_type === 2,
                           'btn-outline-warning': parentSkill.effect_type === 3,
                         }"
+                        @click="displaySkillConfirmModal(childSkill)"
                         @mouseover="showSkillInformation(childSkill)"
                       >
                         <span v-if="childSkill.is_learned">{{ childSkill.skill_name }}<small>(SLv:<b>{{ childSkill.skill_level }}</b>)</small></span>
@@ -120,9 +169,103 @@
         </div>
       </div>
     </div>
-
-
   </div>
+
+  <div class="modal fade" id="modal-skill-confirm" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">
+            <b>{{ updateSkillForm.skill_name }}</b>
+            <!-- <span class="badge badge-light badge-light-magic">魔法</span> -->
+          </h6>
+          <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row">
+              <!-- スキルレベルがnu;; (未習得)の時 -->
+              <div v-if="!updateSkillForm.current_skill_level">
+                <div class="col-12">
+                  <span class="badge badge-info">NEXT</span>
+                   <p>
+                    【スキルレベル: {{ updateSkillForm.next_skill_level}}】<br>
+                    使用AP: <span style="color:orange">{{ updateSkillForm.next_skill_ap_cost }}</span><br>
+                    基礎倍率: <span style="color:orange">{{ updateSkillForm.next_skill_percent }}</span>% <br>
+                    <span v-if="updateSkillForm.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.next_skill_buff_turn }}</span></span>
+                   </p>
+                </div>
+              </div>
+              <!-- スキルレベルが1 or 2の時 -->
+              <div v-else-if="updateSkillForm.current_skill_level < 3">
+                <div class="col-12">
+                  <span class="badge badge-secondary">現在</span>
+                   <p>
+                    【スキルレベル: {{ updateSkillForm.current_skill_level }}】<br>
+                    使用AP: <span style="color:orange">{{ updateSkillForm.current_skill_ap_cost }}</span> <br>
+                    基礎倍率: <span style="color:orange">{{ updateSkillForm.current_skill_percent }}</span>% <br>
+                    <span v-if="updateSkillForm.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.current_skill_buff_turn }}</span></span>
+                   </p>
+                   <hr>
+                   <div style="text-align: center;">
+                    <p>↓</p>
+                   </div>
+                   <span class="badge badge-info">NEXT</span>
+                   <p>
+                    【スキルレベル: {{ updateSkillForm.next_skill_level}}】<br>
+                    使用AP: <span style="color:orange">{{ updateSkillForm.next_skill_ap_cost }}</span> <br>
+                    基礎倍率: <span style="color:orange">{{ updateSkillForm.next_skill_percent }}</span>% <br>
+                    <span v-if="updateSkillForm.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.next_skill_buff_turn }}</span></span>
+                   </p>
+                </div>
+              </div>
+
+              <!-- スキルレベルが3 (max)の時 -->
+              <div v-else-if="updateSkillForm.current_skill_level > 2">
+                <div class="col-12">
+                  <span class="badge badge-dark">MAX</span>
+                   <p>
+                    【スキルレベル: {{ updateSkillForm.current_skill_level }}】<br>
+                    使用AP: <span style="color:orange">{{ updateSkillForm.current_skill_ap_cost }}</span><br>
+                    基礎倍率: <span style="color:orange">{{ updateSkillForm.current_skill_percent }}</span>% <br>
+                    <span v-if="updateSkillForm.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ updateSkillForm.current_skill_buff_turn }}</span></span>
+                   </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 mb-3">
+                <p style="font-size: 14px">
+                  <b>※基礎倍率</b><br>
+                  ステータスの値を100%とした、スキル使用時の効果倍率。<br>
+                  【例】<br>
+                  ●<span class="badge badge-light badge-light-physical">物理</span><span class="badge badge-primary">攻撃</span>, 基礎倍率200%のスキル<br>
+                  　→通常攻撃(基礎倍率100%)の倍程度のダメージ。<br>
+                  ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
+                  　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。
+                </p>
+              </div>
+            </div>
+          </div>
+          <div v-if="updateSkillForm.current_skill_level !== 3">
+            <button type="button" class="btn btn-info">習得</button>
+          </div>
+          <div v-else-if="updateSkillForm.current_skill_level === 3">
+            <small>このスキルはマスターしています。</small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </template>
 
 <script>
@@ -138,6 +281,7 @@
         hoveredDescription: null, // 現在マウスオーバーしている要素の説明
         errorMessage: null,
         skillInformation: {},
+        updateSkillForm: {},
       }
     },
     computed: {
@@ -254,6 +398,26 @@
       clearSkillInformation() {
         console.log(`clearSkillInformation: -------`);
         this.skillInformation = {};
+      },
+      displaySkillConfirmModal(Skill) {
+        console.log(`displaySkillConfirmModal(): -----------------`);
+        // 取得条件を満たすスキルのみクリックできるようにする
+        if (Skill.is_learned) {
+          this.updateSkillForm = {
+            skill_name: Skill.skill_name,
+            current_skill_level: Skill.skill_level,
+            current_skill_percent: Skill[`lv${Skill.skill_level}_percent`] * 100 ?? null,
+            current_skill_ap_cost: Skill[`lv${Skill.skill_level}_ap_cost`] ?? null,
+            current_skill_buff_turn: Skill[`lv${Skill.skill_level}_buff_turn`] ?? null,
+            next_skill_level: Skill.skill_level + 1,
+            next_skill_percent: Skill[`lv${Skill.skill_level + 1}_percent`] * 100 ?? null,
+            next_skill_ap_cost: Skill[`lv${Skill.skill_level + 1}_ap_cost`] ?? null,
+            next_skill_buff_turn: Skill[`lv${Skill.skill_level + 1}_buff_turn`] ?? null,
+          }
+          
+
+          $('#modal-skill-confirm').modal('show');
+        }
       },
     }
   }

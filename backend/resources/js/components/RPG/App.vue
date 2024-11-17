@@ -10,12 +10,13 @@
 
 .sub-sucreen-text-space {
   height: 120px;
-  border: 1px solid red;
+  border: 1px solid rgba(0, 0, 0, .5);
 }
 
 .sub-sucreen-main-space {
   height: 500px;
-  border: 1px solid rgb(60, 0, 255);
+  border: 1px solid rgba(0, 0, 0, .5);
+  /* border: 1px solid rgb(60, 0, 255); */
 }
 
 
