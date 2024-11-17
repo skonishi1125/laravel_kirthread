@@ -38,6 +38,8 @@ Route::get('/game/panel', 'PageController@panel')->name('game_panel');
   Route::post('/api/game/rpg/title/delete_savedata', 'Game\Rpg\ApiController@deleteSavedata')->name('api_game_rpg_beginning_title_delete_savedata');
   Route::get('/api/game/rpg/beginning/prepare_beginning', 'Game\Rpg\ApiController@prepareBeginning')->name('api_game_rpg_beginning_prepare_beginning');
   Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createParties')->name('api_game_rpg_beginning_create');
+  Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
+
   Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
   Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
   Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');

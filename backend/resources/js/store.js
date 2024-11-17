@@ -16,7 +16,7 @@ export default createStore({
     menuShopState: 'start' , // 'start' 'buy' 'sell'とかかな。
 
     // menu スキル|ステ振り画面サブステータス
-    menuStatusState: 'start', // 'start', 'status', 'skill', とかかな。あと3人のうち誰の表示かも別途サブステータスで分けた方が良い
+    menuStatusState: 'start', // 'start', 'status', 'skill', 'updating',
       currentSelectedPartyMemberIndex: 0, // どの味方の画面を開いているか。 0か1か2
 
     // battle サブステータス

@@ -29,7 +29,7 @@
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
-          <small style="font-size: 12px;">{{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small>
+          <!-- <small style="font-size: 12px;">{{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small> -->
         </h4>
       </div>
     </div>
@@ -49,6 +49,9 @@
     <router-view></router-view>
 
   </div>
+  <!-- メニュー: ステータス画面デバッグ -->
+  <small style="font-size: 12px;">{{ currentScreen }}.{{ menuStatusState }}<br></small>
+
 </template>
 
 <script>
@@ -62,6 +65,7 @@
     ...mapState(['currentScreen']),
     ...mapState(['battleStatus']),
     ...mapState(['beginningStatus']),
+    ...mapState(['menuStatusState']),
     ...mapState(['selectedCommands']),
     ...mapState(['selectedRoleInformations']),
     ...mapState(['battleSessionId']),

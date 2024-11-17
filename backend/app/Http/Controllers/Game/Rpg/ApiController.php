@@ -278,6 +278,33 @@ class ApiController extends Controller
 
   }
 
+  public function learnSkill(Request $request) {
+    $party_id = $request->party_id;
+    $skill_id = $request->skill_id;
+    Debugbar::debug("learnSkill(): {$party_id} {$skill_id} ------------------------");
+    $learned_skill = Skill::find($skill_id);
+    $learned_party = Party::find($party_id);
+
+    try {
+      DB::transaction(function () use ($learned_skill, $learned_party) {
+        // 存在しないスキルが選択された場合、エラーを返す
+        if (is_null($learned_skill) || is_null($learned_party)) {
+          throw new \Exception('指定したスキルとパーティメンバーの情報が存在しませんでした。もう一度お試しください。');
+        } 
+        Skill::learnPartySkill($learned_party, $learned_skill);
+      });
+    } catch(\Exception $e) {
+      Debugbar::debug("learnSkill() でエラーが発生しました。");
+      return response()->json([
+        'message' => $e->getMessage()
+      ], 422);
+    }
+
+    return response()->json([
+      'message' => '習得処理を正常に完了しました。',
+    ]);
+  }
+
 
   // ログインユーザーの現在のステータス
   public function loginUserCurrentSavedata() {

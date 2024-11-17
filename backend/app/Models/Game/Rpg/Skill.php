@@ -39,6 +39,7 @@ class Skill extends Model
     public function parties() {
       return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'skill_id', 'party_id')
         ->withPivot('skill_level') 
+        ->withTimestamps()
         ;
     }
 
@@ -178,6 +179,46 @@ class Skill extends Model
       }
 
       return $skills_collection;
+    }
+
+    // スキルの習得及びスキルLvの上昇処理。
+    // 既に例外処理で括られていることを前提とする。
+    public static function learnPartySkill(Party $learned_party,  Skill $learned_skill) {
+      Debugbar::debug("Skill::learnPartySkill: {$learned_party->nickname} {$learned_skill->name} ------------------------");
+
+      // パーティがそのスキルを習得済かどうかの確認
+      $party_learned_skill = $learned_party->skills->where('id', $learned_skill->id)->first();
+      if ($party_learned_skill == null) {
+        Debugbar::debug("未修得のため、習得処理を行います。");
+        $create_party_learned_skill = PartyLearnedSkill::create([
+          'party_id' => $learned_party->id,
+          'skill_id' => $learned_skill->id,
+          'skill_level' => 1,
+        ]);
+      } else {
+        Debugbar::debug("修得済。レベル: {$party_learned_skill->pivot->skill_level} スキルレベル上昇処理を行います。");
+
+        // クリック連打やバグなどでLv3->Lv4にはさせない
+        if ($party_learned_skill->pivot->skill_level > 2) {
+          throw new \Exception('スキルレベルが既にMAXです。画面のリロードをお試しください。');
+        }
+        // スキルポイントがない場合も、その後の処理を行わせない
+        if ($learned_party->freely_skill_point < 1) {
+          throw new \Exception('スキルポイントが足りません。画面のリロードをお試しください。');
+        }
+        
+        // 中間テーブルの値の更新
+        $update_party_learned_skill = $learned_party->skills()->updateExistingPivot($learned_skill->id, [
+          'skill_level' => $party_learned_skill->pivot->skill_level + 1,
+          'updated_at' => now(), // withTimestamps()で動作するはずだが、動作しないので一旦直接書き換える
+        ]);
+      }
+
+      // 振分けたので、自由なスキルポイントを減らす
+      $learned_party->update([
+        'freely_skill_point' => $learned_party->freely_skill_point - 1
+      ]);
+
     }
 
 
