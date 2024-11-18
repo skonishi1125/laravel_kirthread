@@ -39,6 +39,132 @@
       <div class="row mt-3 sub-sucreen-main-space"></div>
     </div>
 
+    <div v-if="menuStatusState == 'status'">
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p>
+              <small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</small>
+            </p>
+          </div>
+          <hr>
+          <div>
+            <p>aaa</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12">
+          <ul class="nav nav-tabs">
+            <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替えるような実装にするとよい -->
+            <a class="nav-link character-nav-tab"
+              :class="{'active': this.currentSelectedPartyMemberIndex === 0}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 0)"
+            >
+              {{ this.partiesInformation[0].nickname }}
+            </a>
+            <a class="nav-link character-nav-tab" 
+              :class="{'active': this.currentSelectedPartyMemberIndex === 1}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 1)"
+            >
+              {{ this.partiesInformation[1].nickname }}
+            </a>
+            <a class="nav-link character-nav-tab" 
+              :class="{'active': this.currentSelectedPartyMemberIndex === 2}" 
+              @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 2)"
+            >
+              {{ this.partiesInformation[2].nickname }}
+            </a>
+          </ul>
+  
+          <div class="row">
+            <div class="col-2 my-5">
+              <div style="min-height: 300px;  display: flex; flex-flow: column;  justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                    :class="{'active': this.menuStatusState == 'status'}"
+                    @click="toggleMenuStatusState('status')"
+                    >
+                      ステータス
+                    </button>
+                  </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                    :class="{'active': this.menuStatusState == 'skill'}"
+                    @click="toggleMenuStatusState('skill')"
+                  >
+                    スキル確認
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
+              <div class="col-12" style="border-bottom: 1px solid black;">
+                <h6>
+                  {{ partiesInformation[currentSelectedPartyMemberIndex].nickname }}
+                  <small>
+                    <span class="badge badge-primary">Lv.{{ partiesInformation[currentSelectedPartyMemberIndex].level }}</span>
+                    【{{ partiesInformation[currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[currentSelectedPartyMemberIndex].role_class_japanese }}】 Total Exp: <small><b>{{ partiesInformation[currentSelectedPartyMemberIndex].total_exp }}</b></small> Next Lv: <small><b>{{ partiesInformation[currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small>
+                  </small>
+                </h6>
+              </div>
+
+              <!-- ステータス一覧 -->
+              <div class="container-fluid my-1">
+                <div class="row my-4">
+                  <div class="col-6">
+                    <div>
+                      HP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_hp }} / AP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_ap }}
+                    </div>
+                    <div class="my-2">
+                      <p>
+                        STR: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_str }}<br>
+                        DEF: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_def }}<br>
+                        INT: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_int }}<br>
+                        SPD: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_spd }}<br>
+                        LUC: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_luc }}<br>
+                      </p>
+                    </div>
+                  </div>
+                  <!-- マウスカーソルで説明欄に出した方が丸いかな。 -->
+                  <div class="col-6" style="border: 1px solid black; padding: 10px 0px 0px 15px;">
+                    <p style="font-size: 14px">
+                      <b>※ステータスについて</b><br>
+                      <small><b>STR</b></small>: 物理攻撃力に影響します。<br>
+                      <small><b>DEF</b></small>: 物理防御力及び、魔法防御力に影響します。<br>
+                      <small><b>INT</b></small>: 魔法攻撃力及び、魔法防御力に影響します。<br>
+                      <small><b>SPD</b></small>: 行動速度に影響します。<br>
+                      <small><b>LUC</b></small>: いいことが沢山起こりやすくなります。<br>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+
+            </div> <!-- class="col-10 my-5" -->
+
+
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div v-if="successStatusMessage !== null">
+                <small style="color:red">
+                  {{ successStatusMessage }}
+                </small>
+              </div>
+              <small>
+                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                ※スキルツリーはスクロール可能。
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- axiosで受け取れてから表示させる -->
     <div v-if="menuStatusState == 'skill' && Object.keys(this.partiesInformation).length > 0">
       <div class="row sub-sucreen-text-space">
@@ -116,8 +242,22 @@
           <div class="row">
             <div class="col-2 my-5">
               <div style="min-height: 300px;  display: flex; flex-flow: column;  justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
-                <div><button class="btn btn-sm btn-outline-info">ステータス</button></div>
-                <div><button class="btn btn-sm btn-outline-info active">スキル確認</button></div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                    :class="{'active': this.menuStatusState == 'status'}"
+                    @click="toggleMenuStatusState('status')"
+                    >
+                      ステータス
+                    </button>
+                  </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                    :class="{'active': this.menuStatusState == 'skill'}"
+                    @click="toggleMenuStatusState('skill')"
+                  >
+                    スキル確認
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -327,6 +467,7 @@
         hoveredDescription: null, // 現在マウスオーバーしている要素の説明
         errorMessage: null,
         successSkillMessage: null,
+        successStatusMessage: null,
         modalErrorMessage: null,
         skillInformation: {},
         modalSkillInfo: {},
@@ -361,9 +502,13 @@
             // 1人目のメンバーのスキル一覧の、1つ目のスキルの情報を参照したい場合
             // console.log(this.skillTreeArray[0][0]['skill_name'], this.skillTreeArray[0][0].child_skills);
 
-            this.$store.dispatch('setMenuStatusState', 'skill');
+            this.$store.dispatch('setMenuStatusState', 'status');
           }
         );
+      },
+      // 'status' or 'skill'画面に変える
+      toggleMenuStatusState(state) {
+        this.$store.dispatch('setMenuStatusState', state);
       },
       showSkillInformation(skill) {
         // console.log(`showSkillInformation: ${skill.skill_name} -------`);

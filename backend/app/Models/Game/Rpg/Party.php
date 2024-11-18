@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
 use App\Models\Game\Rpg\PartyLearnedSkill;
+use App\Models\Game\Rpg\Exp;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -49,6 +50,22 @@ class Party extends Model
     public function role() {
       // 子側は自分の持つカラムを指定して、相手の主キーと紐づける
       return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function getNextLevelUpExp() {
+      // 次に必要なEXPを取得
+      $exp_model = Exp::where('level', $this->level + 1)->first();
+
+      // Level MAXの場合は'-'を返す
+      if (is_null($exp_model)) return '-';
+
+      $next_level_up_exp = ($exp_model->total_exp - $this->total_exp);
+      // マイナスになるようなら、'-'を返す
+      if ($next_level_up_exp < 0) {
+        return '-';
+      } else {
+        return $next_level_up_exp;
+      }
     }
 
     public static function calculateGaussianGrowth($party){

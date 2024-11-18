@@ -249,12 +249,15 @@ class ApiController extends Controller
     foreach ($parties as $party) {
       $party_data_collection = collect([
           'party_id' => $party->id,
+          'level' => $party->level,
           'nickname' => $party->nickname,
           'role_id' => $party->role_id,
           'role_class' => $party->role->class,
           'role_class_japanese' => $party->role->class_japanese,
           'freely_skill_point' => $party->freely_skill_point,
           'freely_status_point' => $party->freely_status_point,
+          'total_exp' => $party->total_exp,
+          'next_level_up_exp' => $party->getNextLevelUpExp(), // 次のレベルアップまでの経験値
           'status' => [
             'level' => $party->level,
             'value_hp' => $party->value_hp,
@@ -264,7 +267,6 @@ class ApiController extends Controller
             'value_int' => $party->value_int,
             'value_spd' => $party->value_spd,
             'value_luc' => $party->value_luc,
-            'total_exp' => $party->total_exp,
           ],
           'skill_tree' => Skill::aquireSkillTreeCollection($party)
         ]
