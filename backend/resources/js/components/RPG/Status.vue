@@ -2,6 +2,14 @@
 .character-nav-tab {
   cursor: pointer;
 }
+.btn-status-modal {
+  border: 1px dotted black;
+}
+.badge-light-status {
+  color: white;
+  background-color: #dc3545 !important;
+}
+
 .badge-light-physical {
   color: white;
   background-color: #cf5555 !important;
@@ -49,7 +57,7 @@
           </div>
           <hr>
           <div>
-            <p>aaa</p>
+            <!-- <p>aaa</p> -->
           </div>
         </div>
       </div>
@@ -114,22 +122,40 @@
               <!-- ステータス一覧 -->
               <div class="container-fluid my-1">
                 <div class="row my-4">
-                  <div class="col-6">
+                  <div class="col-4">
                     <div>
-                      HP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_hp }} / AP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_ap }}
-                    </div>
-                    <div class="my-2">
-                      <p>
-                        STR: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_str }}<br>
-                        DEF: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_def }}<br>
-                        INT: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_int }}<br>
-                        SPD: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_spd }}<br>
-                        LUC: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_luc }}<br>
-                      </p>
+                      <div class="d-flex justify-content-between">
+                        <span>HP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_hp }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('HP', partiesInformation[currentSelectedPartyMemberIndex].status.value_hp)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>AP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_ap }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('AP', partiesInformation[currentSelectedPartyMemberIndex].status.value_ap)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>STR: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_str }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('STR', partiesInformation[currentSelectedPartyMemberIndex].status.value_str)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>DEF: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_def }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('DEF', partiesInformation[currentSelectedPartyMemberIndex].status.value_def)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>INT: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_int }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('INT', partiesInformation[currentSelectedPartyMemberIndex].status.value_int)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>SPD: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_spd }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('SPD', partiesInformation[currentSelectedPartyMemberIndex].status.value_spd)">+</button></span>
+                      </div>
+                      <div class="d-flex justify-content-between">
+                        <span>LUC: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_luc }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('LUC', partiesInformation[currentSelectedPartyMemberIndex].status.value_luc)">+</button></span>
+                      </div>
                     </div>
                   </div>
                   <!-- マウスカーソルで説明欄に出した方が丸いかな。 -->
-                  <div class="col-6" style="border: 1px solid black; padding: 10px 0px 0px 15px;">
+                  <div class="col-8">
                     <p style="font-size: 14px">
                       <b>※ステータスについて</b><br>
                       <small><b>STR</b></small>: 物理攻撃力に影響します。<br>
@@ -163,6 +189,79 @@
           </div>
         </div>
       </div>
+
+      <!-- ステータスモーダル -->
+      <div class="modal fade" id="modal-status-confirm" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6 class="modal-title"><b>ステータス: HP</b></h6>
+              <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-12">
+                    <p>
+                      何ポイント振り分けますか？<br>
+                      <small>※未振り分けのステータスポイント: 4</small>
+                    </p>
+                    <div class="input-group input-group-sm mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Small</span>
+                      </div>
+                      <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                  </div>
+
+                  <div class="col-3"></div>
+                  <div class="col-6">
+                    <div class="d-flex justify-content-between">
+                      <span class="badge badge-secondary" style="padding: 6px 10px">HP:40</span>
+                      <span>→</span>
+                      <span class="badge badge-secondary" style="padding: 6px 10px">HP:40</span>
+                    </div>
+                  </div>
+                  <div class="col-3"></div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-12 mb-3">
+                    <p style="font-size: 14px">
+                      <b>※HPステータスについて</b><br>
+                      HPのみ振り分けた際の伸びが大きく、1ポイントで2UPします。
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="modalErrorMessage != null">
+                <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
+              </div>
+              <!-- ポイントがない場合は押せなくするとよい -->
+              <div v-if="modalSkillInfo.current_skill_level !== 3">
+                <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
+                  :class="{'disabled': this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point < 1}"
+                >
+                  確定
+                </button>
+              </div>
+              <div v-else-if="modalSkillInfo.current_skill_level === 3">
+                <small>このスキルはマスターしています。</small>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div> <!-- modal -->
+
     </div>
 
     <!-- axiosで受け取れてから表示させる -->
@@ -470,6 +569,7 @@
         successStatusMessage: null,
         modalErrorMessage: null,
         skillInformation: {},
+        modalStatusInfo: {},
         modalSkillInfo: {},
       }
     },
@@ -509,6 +609,11 @@
       // 'status' or 'skill'画面に変える
       toggleMenuStatusState(state) {
         this.$store.dispatch('setMenuStatusState', state);
+      },
+      displayStatusConfirmModal(status_name, status_value) {
+        console.log(`displayStatusConfirmModal: ${status_name} ${status_value} -------`);
+        $('#modal-status-confirm').modal('show');
+
       },
       showSkillInformation(skill) {
         // console.log(`showSkillInformation: ${skill.skill_name} -------`);
