@@ -280,6 +280,35 @@ class ApiController extends Controller
 
   }
 
+  public function incrementStatus(Request $request) {
+    $party_id = $request->party_id;
+    $input_point = $request->input_point;
+    $status_type = $request->status_type; // 'HP', 'AP', 'STR' など
+
+    $party = Party::find($party_id);
+
+    try {
+      DB::transaction(function () use ($party, $input_point, $status_type) {
+        // 存在しないスキルが選択された場合、エラーを返す
+        if (is_null($party)) {
+          throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+        } 
+        $party->allocateStatusPoint($input_point, $status_type);
+      });
+    } catch(\Exception $e) {
+        Debugbar::debug("incrementStatus でエラーが発生しました。");
+        return response()->json([
+          'message' => $e->getMessage()
+        ], 422);
+    }
+
+    return response()->json([
+      'message' => '習得処理を正常に完了しました。',
+    ]);
+
+
+  }
+
   public function learnSkill(Request $request) {
     $party_id = $request->party_id;
     $skill_id = $request->skill_id;

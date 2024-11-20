@@ -68,6 +68,46 @@ class Party extends Model
       }
     }
 
+    public function allocateStatusPoint(int $input_point, String $status_type) {
+      Debugbar::debug("Party::incrementeStatus({$input_point}, {$status_type}) ------------------------");
+
+      $freely_status_point = $this->freely_status_point;
+      // クリック連打やバグなどで予期せず振り分けられる形を防ぐ
+      if ($freely_status_point < $input_point) {
+        throw new \Exception('ステータスポイントが足りません。画面のリロードをお試しください。');
+      }
+
+      // $status_typeに応じて値を引き上げる
+      switch($status_type) {
+        case 'HP':
+          // HPだけ伸び幅を倍にする
+          $this->update(['value_hp' => $this->value_hp + ($input_point * 2)]);
+          break;
+        case 'AP':
+          $this->update(['value_ap' => $this->value_ap + $input_point]);
+          break;
+        case 'STR':
+          $this->update(['value_str' => $this->value_str + $input_point]);
+          break;
+        case 'DEF':
+          $this->update(['value_def' => $this->value_def + $input_point]);
+          break;
+        case 'INT':
+          $this->update(['value_int' => $this->value_int + $input_point]);
+          break;
+        case 'SPD':
+          $this->update(['value_spd' => $this->value_spd + $input_point]);
+          break;
+        case 'LUC':
+          $this->update(['value_luc' => $this->value_luc + $input_point]);
+          break;
+      }
+
+      // 振分けた分の自由ステータスポイントを減らす
+      $this->update(['freely_status_point' => $this->freely_status_point - $input_point]);
+      
+    }
+
     public static function calculateGaussianGrowth($party){
       // Box-Muller法でガウス分布に従う乱数を生成
       $u1 = mt_rand() / mt_getrandmax();

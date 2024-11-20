@@ -176,15 +176,15 @@
 
           <div class="row">
             <div class="col-12">
+              <small>
+                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                ※スキルツリーはスクロール可能。
+              </small>
               <div v-if="successStatusMessage !== null">
                 <small style="color:red">
                   {{ successStatusMessage }}
                 </small>
               </div>
-              <small>
-                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
-                ※スキルツリーはスクロール可能。
-              </small>
             </div>
           </div>
         </div>
@@ -205,22 +205,34 @@
                   <div class="col-12">
                     <p>
                       何ポイント振り分けますか？<br>
-                      <small>※未振り分けのステータスポイント: 4</small>
+                      <small>※未振り分けのステータスポイント: {{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point - inputFreelyStatusPoints }}</small>
                     </p>
                     <div class="input-group input-group-sm mb-3">
                       <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-sm">Small</span>
+                        <span class="input-group-text" id="inputGroup-sizing-sm">振り分けるポイント数: </span>
                       </div>
-                      <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+                      <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                        v-model.number="inputFreelyStatusPoints"
+                        @input="validateStatusInput"
+                        :max="this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point"
+                        min="0"
+                        placeholder="振り分けるポイントを入力"
+                      >
                     </div>
                   </div>
 
                   <div class="col-3"></div>
                   <div class="col-6">
                     <div class="d-flex justify-content-between">
-                      <span class="badge badge-secondary" style="padding: 6px 10px">HP:40</span>
+                      <span class="badge badge-secondary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue }}</span>
                       <span>→</span>
-                      <span class="badge badge-secondary" style="padding: 6px 10px">HP:40</span>
+                      <span v-if="modalStatusName !== 'HP'">
+                        <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + inputFreelyStatusPoints }}</span>
+                      </span>
+                      <!-- HPは倍伸ばす -->
+                      <span v-else>
+                        <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + (inputFreelyStatusPoints * 2) }}</span>
+                      </span>
                     </div>
                   </div>
                   <div class="col-3"></div>
@@ -245,16 +257,11 @@
                 <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
               </div>
               <!-- ポイントがない場合は押せなくするとよい -->
-              <div v-if="modalSkillInfo.current_skill_level !== 3">
-                <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
-                  :class="{'disabled': this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point < 1}"
-                >
-                  確定
-                </button>
-              </div>
-              <div v-else-if="modalSkillInfo.current_skill_level === 3">
-                <small>このスキルはマスターしています。</small>
-              </div>
+              <button type="button" class="btn btn-info" @click="postIncrementStatus"
+                :class="{'disabled': this.inputFreelyStatusPoints < 1 || this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point < 1}"
+              >
+                確定
+              </button>
 
             </div>
 
@@ -405,15 +412,15 @@
 
           <div class="row">
             <div class="col-12">
+              <small>
+                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                ※スキルツリーはスクロール可能。
+              </small>
               <div v-if="successSkillMessage !== null">
                 <small style="color:red">
                   {{ successSkillMessage }}
                 </small>
               </div>
-              <small>
-                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
-                ※スキルツリーはスクロール可能。
-              </small>
             </div>
           </div>
         </div>
@@ -569,7 +576,9 @@
         successStatusMessage: null,
         modalErrorMessage: null,
         skillInformation: {},
-        modalStatusInfo: {},
+        modalStatusName: '',
+        modalStatusBaseValue: null,
+        inputFreelyStatusPoints: 0,
         modalSkillInfo: {},
       }
     },
@@ -612,7 +621,63 @@
       },
       displayStatusConfirmModal(status_name, status_value) {
         console.log(`displayStatusConfirmModal: ${status_name} ${status_value} -------`);
+        this.successStatusMessage = null;
+        this.modalStatusName = status_name;
+        this.modalStatusBaseValue = status_value;
+        this.inputFreelyStatusPoints = 0;
         $('#modal-status-confirm').modal('show');
+      },
+      validateStatusInput(event) {
+        const value = Number(event.target.value);
+        const maxPoints = this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point;
+
+        if (maxPoints === 0) {
+          this.inputFreelyStatusPoints = maxPoints; // 最大値を超えた場合は最大値に
+          this.modalErrorMessage = `振り分け可能なステータスポイントがありません。`;
+        } else if (value > maxPoints) {
+          this.inputFreelyStatusPoints = maxPoints; // 最大値を超えた場合は最大値に
+          this.modalErrorMessage = `${maxPoints}ポイント以上を指定することはできません。`;
+        } else if (value < 0) {
+          this.inputFreelyStatusPoints = 0; // 最小値を下回った場合は0に
+          this.modalErrorMessage = 'マイナスの値を指定することはできません。';
+        }
+      },
+      postIncrementStatus() {
+        console.log(`${this.inputFreelyStatusPoints}, ${this.modalStatusName}, ${this.modalStatusBaseValue}`);
+
+        // 未振り分けのステータスポイントが1以上ある場合のみ、処理を行う
+        if (this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point > 0) {
+          // axios.postで登録
+          axios.post(`/api/game/rpg/status/increment`,{
+            party_id: this.partiesInformation[this.currentSelectedPartyMemberIndex].party_id,
+            input_point: this.inputFreelyStatusPoints,
+            status_type: this.modalStatusName,
+          })
+          .then(response => {
+            console.log(`通信OK`);
+            console.log(response.data.message);
+            this.successStatusMessage = 'ステータスの振り分けが完了しました！';
+
+            // 振り分け後のデータ再取得
+            this.updatePartiesInformation();
+
+            // stateを'status'に戻し、modalを閉じる
+            this.$store.dispatch('setMenuStatusState', 'status');
+            $('#modal-status-confirm').modal('hide');
+          })
+          .catch(error => {
+            console.log(`通信失敗。`);
+            if (error.response && error.response.data) {
+              this.modalErrorMessage = error.response.data.message;
+            } else {
+              this.modalErrorMessage = "予期しないエラーが発生しました。画面リロードをお試しください。"
+            }
+            console.log(this.modalErrorMessage);
+          });
+        } else {
+          console.log('ステータスポイントなし');
+          this.modalErrorMessage = 'ステータスポイントが不足しています。';
+        }
 
       },
       showSkillInformation(skill) {
@@ -785,7 +850,7 @@
             if (error.response && error.response.data) {
               this.modalErrorMessage = error.response.data.message;
             } else {
-              this.modalErrorMessage = "予期しないエラーが発生しました。もう一度お試しください。"
+              this.modalErrorMessage = "予期しないエラーが発生しました。画面リロードをお試しください。"
             }
             console.log(this.modalErrorMessage);
           });
