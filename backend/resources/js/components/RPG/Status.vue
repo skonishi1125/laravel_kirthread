@@ -587,6 +587,7 @@
       ...mapState(['currentSelectedPartyMemberIndex']),
     },
     created() {
+      this.$store.dispatch('setMenuStatusState', 'start');
       this.getPartiesInformation();
     },
     mounted() {

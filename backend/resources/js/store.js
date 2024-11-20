@@ -65,7 +65,8 @@ export default createStore({
       state.currentDecidedMemberIndex = 0;
     },
 
-    // menu スキル|ステ振り
+    // menu 
+    // スキル|ステ振り
     setMenuStatusState(state, status) {
       state.menuStatusState = status;
     },
@@ -189,7 +190,8 @@ export default createStore({
       commit('resetBeginningDecidedData');
     },
 
-    // menu スキル|ステ振り
+    // menu
+    // スキル|ステ振り
     setMenuStatusState({ commit }, status) {
       commit('setMenuStatusState', status);
     },
