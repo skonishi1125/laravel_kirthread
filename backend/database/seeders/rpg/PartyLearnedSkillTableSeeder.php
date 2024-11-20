@@ -32,6 +32,11 @@ class PartyLearnedSkillTableSeeder extends Seeder
         ['party_id' => 2, 'skill_id' => 33, 'skill_level' => 2, 'created_at' => $now, 'updated_at' => $now],
         ['party_id' => 3, 'skill_id' => 10, 'skill_level' => 1, 'created_at' => $now, 'updated_at' => $now],
         ['party_id' => 3, 'skill_id' => 11, 'skill_level' => 2, 'created_at' => $now, 'updated_at' => $now],
+
+        // local スキルツリー確認用データ
+        ['party_id' => 45, 'skill_id' => 40, 'skill_level' => 1, 'created_at' => $now, 'updated_at' => $now],
+        ['party_id' => 45, 'skill_id' => 41, 'skill_level' => 2, 'created_at' => $now, 'updated_at' => $now],
+        ['party_id' => 45, 'skill_id' => 42, 'skill_level' => 3, 'created_at' => $now, 'updated_at' => $now],
       ];
 
       foreach ($party_learned_skills as $p) {

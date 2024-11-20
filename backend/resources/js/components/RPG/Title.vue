@@ -1,18 +1,20 @@
 <template>
-  <div class="row" style="margin-top: 100px; text-align: center;">
-    <div class="col-sm-12">
-      <p class="mb-5">Title.vue(タイトル)</p>
-      <span v-if="status == 'ready'">
-        <div>
-          <button class="btn btn-success" @click="switchMenuScreen">街に戻る</button>
-        </div>
-        <div class="mt-5">
-          <button class="btn btn-danger" @click="displayDeleteModal">セーブデータの削除</button>
-        </div>
-      </span>
-      <span v-if="status == 'signed'">
-        <button class="btn btn-primary" @click="switchBeginningScreen">最初からはじめる</button>
-      </span>
+  <div class="container">
+    <div class="row" style="margin-top: 100px; text-align: center;">
+      <div class="col-sm-12">
+        <p class="mb-5">Title.vue(タイトル)</p>
+        <span v-if="status == 'ready'">
+          <div>
+            <button class="btn btn-success" @click="switchMenuScreen">街に戻る</button>
+          </div>
+          <div class="mt-5">
+            <button class="btn btn-danger" @click="displayDeleteModal">セーブデータの削除</button>
+          </div>
+        </span>
+        <span v-if="status == 'signed'">
+          <button class="btn btn-primary" @click="switchBeginningScreen">最初からはじめる</button>
+        </span>
+      </div>
     </div>
   </div>
 

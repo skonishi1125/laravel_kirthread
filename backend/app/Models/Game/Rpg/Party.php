@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
 use App\Models\Game\Rpg\PartyLearnedSkill;
+use App\Models\Game\Rpg\Exp;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 
@@ -49,6 +50,62 @@ class Party extends Model
     public function role() {
       // 子側は自分の持つカラムを指定して、相手の主キーと紐づける
       return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function getNextLevelUpExp() {
+      // 次に必要なEXPを取得
+      $exp_model = Exp::where('level', $this->level + 1)->first();
+
+      // Level MAXの場合は'-'を返す
+      if (is_null($exp_model)) return '-';
+
+      $next_level_up_exp = ($exp_model->total_exp - $this->total_exp);
+      // マイナスになるようなら、'-'を返す
+      if ($next_level_up_exp < 0) {
+        return '-';
+      } else {
+        return $next_level_up_exp;
+      }
+    }
+
+    public function allocateStatusPoint(int $input_point, String $status_type) {
+      Debugbar::debug("Party::incrementeStatus({$input_point}, {$status_type}) ------------------------");
+
+      $freely_status_point = $this->freely_status_point;
+      // クリック連打やバグなどで予期せず振り分けられる形を防ぐ
+      if ($freely_status_point < $input_point) {
+        throw new \Exception('ステータスポイントが足りません。画面のリロードをお試しください。');
+      }
+
+      // $status_typeに応じて値を引き上げる
+      switch($status_type) {
+        case 'HP':
+          // HPだけ伸び幅を倍にする
+          $this->update(['value_hp' => $this->value_hp + ($input_point * 2)]);
+          break;
+        case 'AP':
+          $this->update(['value_ap' => $this->value_ap + $input_point]);
+          break;
+        case 'STR':
+          $this->update(['value_str' => $this->value_str + $input_point]);
+          break;
+        case 'DEF':
+          $this->update(['value_def' => $this->value_def + $input_point]);
+          break;
+        case 'INT':
+          $this->update(['value_int' => $this->value_int + $input_point]);
+          break;
+        case 'SPD':
+          $this->update(['value_spd' => $this->value_spd + $input_point]);
+          break;
+        case 'LUC':
+          $this->update(['value_luc' => $this->value_luc + $input_point]);
+          break;
+      }
+
+      // 振分けた分の自由ステータスポイントを減らす
+      $this->update(['freely_status_point' => $this->freely_status_point - $input_point]);
+      
     }
 
     public static function calculateGaussianGrowth($party){

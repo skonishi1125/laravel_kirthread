@@ -12,6 +12,10 @@ class PartyLearnedSkill extends Model
     use HasFactory;
     protected $table = 'rpg_party_learned_skills';
 
+    protected $guarded = [
+      'id',
+    ];
+
     // $s->party
     public function party() {
       return $this->belongsTo(Party::class);

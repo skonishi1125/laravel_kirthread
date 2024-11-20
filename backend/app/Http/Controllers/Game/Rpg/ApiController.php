@@ -239,6 +239,104 @@ class ApiController extends Controller
     }
   }
 
+  // ステータス及びスキルの確認
+  public function getPartiesInfo() {
+    // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
+    $savedata = Savedata::getLoginUserCurrentSavedata();
+    $parties = $savedata->parties; // collectionとして取得
+    $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
+
+    foreach ($parties as $party) {
+      $party_data_collection = collect([
+          'party_id' => $party->id,
+          'level' => $party->level,
+          'nickname' => $party->nickname,
+          'role_id' => $party->role_id,
+          'role_class' => $party->role->class,
+          'role_class_japanese' => $party->role->class_japanese,
+          'freely_skill_point' => $party->freely_skill_point,
+          'freely_status_point' => $party->freely_status_point,
+          'total_exp' => $party->total_exp,
+          'next_level_up_exp' => $party->getNextLevelUpExp(), // 次のレベルアップまでの経験値
+          'status' => [
+            'level' => $party->level,
+            'value_hp' => $party->value_hp,
+            'value_ap' => $party->value_ap,
+            'value_str' => $party->value_str,
+            'value_def' => $party->value_def,
+            'value_int' => $party->value_int,
+            'value_spd' => $party->value_spd,
+            'value_luc' => $party->value_luc,
+          ],
+          'skill_tree' => Skill::aquireSkillTreeCollection($party)
+        ]
+      );
+
+      $parties_data_collection->push($party_data_collection);
+    }
+
+
+    return response()->json($parties_data_collection);
+
+  }
+
+  public function incrementStatus(Request $request) {
+    $party_id = $request->party_id;
+    $input_point = $request->input_point;
+    $status_type = $request->status_type; // 'HP', 'AP', 'STR' など
+
+    $party = Party::find($party_id);
+
+    try {
+      DB::transaction(function () use ($party, $input_point, $status_type) {
+        // 存在しないスキルが選択された場合、エラーを返す
+        if (is_null($party)) {
+          throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+        } 
+        $party->allocateStatusPoint($input_point, $status_type);
+      });
+    } catch(\Exception $e) {
+        Debugbar::debug("incrementStatus でエラーが発生しました。");
+        return response()->json([
+          'message' => $e->getMessage()
+        ], 422);
+    }
+
+    return response()->json([
+      'message' => '習得処理を正常に完了しました。',
+    ]);
+
+
+  }
+
+  public function learnSkill(Request $request) {
+    $party_id = $request->party_id;
+    $skill_id = $request->skill_id;
+    Debugbar::debug("learnSkill(): {$party_id} {$skill_id} ------------------------");
+    $learned_skill = Skill::find($skill_id);
+    $learned_party = Party::find($party_id);
+
+    try {
+      DB::transaction(function () use ($learned_skill, $learned_party) {
+        // 存在しないスキルが選択された場合、エラーを返す
+        if (is_null($learned_skill) || is_null($learned_party)) {
+          throw new \Exception('指定したスキルとパーティメンバーの情報が存在しませんでした。もう一度お試しください。');
+        } 
+        Skill::learnPartySkill($learned_party, $learned_skill);
+      });
+    } catch(\Exception $e) {
+      Debugbar::debug("learnSkill() でエラーが発生しました。");
+      return response()->json([
+        'message' => $e->getMessage()
+      ], 422);
+    }
+
+    return response()->json([
+      'message' => '習得処理を正常に完了しました。',
+    ]);
+  }
+
+
   // ログインユーザーの現在のステータス
   public function loginUserCurrentSavedata() {
     $current_save_data = Savedata::getLoginUserCurrentSavedata();

@@ -2,26 +2,41 @@
 .menu-bar {
   display: flex;
   flex-flow: column;
-  justify-content: space-between;
-  height: 400px;
+  justify-content: space-evenly;
+  min-height: 500px;
+  text-align: center;
   border-right: 1px dotted;
 }
+
+.btn-menu {
+  width: 100%;
+}
+
+
 </style>
 
-<!-- 冒険、ショップ、スキル振りなどの一覧ページ -->
+<!-- 冒険、ショップ、スキル振りなどの一覧ページ。すべてこのページのレイアウトがベースになる -->
 <template>
 
-  <div class="row">
-    <div class="col-3 menu-bar">
-      <div><button @click="$router.push('/game/rpg/menu/adventure')">冒険へ行く</button></div>
-      <div><button @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
-      <div><button @click="$router.push('/game/rpg/menu/skill')">スキル振り</button></div>
-      <div><button @click="endGame">タイトルに戻る</button></div>
+  <div class="row my-5 h-100">
+    <div class="col-2 menu-bar">
+      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/adventure')">冒険準備</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/skill')">中心広場</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
+      <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
     </div>
-    <div class="col-9" v-if="isMenuRoute">
-      <p>街に到着した。何をしようか？</p>
+    <div class="col-10" v-if="isMenuRoute">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <p>街に到着した。どうしようか？</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div v-else class="col-9">
+    
+    <div v-else class="col-10">
       <!-- メニューはそのまま、children固有の要素を出す -->
       <router-view></router-view>
     </div>
