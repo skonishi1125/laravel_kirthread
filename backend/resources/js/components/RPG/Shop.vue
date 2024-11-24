@@ -11,12 +11,12 @@
 
     <div class="row sub-sucreen-text-space">
       <div class="col-12">
-        <p>何を買おうかな？(所持金: {{ this.money }} G)</p>
+        <p>何を買おうかな？(所持金: {{ money }} G)</p>
 
       </div>
-        <div class="col-12" style="color: blue" v-if="this.after_purchase_array.after_purchase_flag">
+        <div class="col-12" style="color: blue" v-if="after_purchase_array.after_purchase_flag">
           <hr>
-          <p>{{ after_purchase_array.name }} x {{ this.after_purchase_array.number }} を購入しました!</p>
+          <p>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</p>
         </div>
     </div>
 

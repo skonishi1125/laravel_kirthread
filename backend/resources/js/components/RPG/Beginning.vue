@@ -101,9 +101,9 @@
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
-          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ this.displayCurrentDecidedMemberNumber }}/3)</p>
+          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ displayCurrentDecidedMemberNumber }}/3)</p>
           <p>選択中メンバー:
-            <span v-for="member in this.beginning.selectedRoleInformations">
+            <span v-for="member in beginning.selectedRoleInformations">
               <span>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</span>
             </span>
           </p>
@@ -113,10 +113,10 @@
       <div class="col-6 role-description-wrapper">
         <div class="role-description-message">
           <p>
-            【<span style="font-weight: bold;">{{ this.roleData[this.beginning.currentDisplayRoleIndex]['class_japanese'] }} </span>】
-            <span>({{ this.roleData[this.beginning.currentDisplayRoleIndex]['class'] }})</span>
+            【<span style="font-weight: bold;">{{ roleData[beginning.currentDisplayRoleIndex]['class_japanese'] }} </span>】
+            <span>({{ roleData[beginning.currentDisplayRoleIndex]['class'] }})</span>
           </p>
-          <p>{{ this.roleData[this.beginning.currentDisplayRoleIndex]['description'] }}</p>
+          <p>{{ roleData[beginning.currentDisplayRoleIndex]['description'] }}</p>
         </div>
         <!-- 名前と確定ボタンの記入フォーム -->
         <div>
@@ -127,7 +127,7 @@
                 <div class="input-group">
                   <input type="text" class="form-control" maxlength="6" v-model="partyName">
                   <span class="input-group-btn">
-                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(this.roleData[this.beginning.currentDisplayRoleIndex]['id'],this.roleData[this.beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
+                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
                   </span>
 
                 </div>
@@ -205,7 +205,7 @@
             ※進行途中で変更することはできません
           </p>
           <ul>
-            <span v-for="member in this.beginning.selectedRoleInformations">
+            <span v-for="member in beginning.selectedRoleInformations">
             <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
             </span>
           </ul>
@@ -225,7 +225,7 @@
       <div class="col-12" style="border: 1px solid black">
         <p>
           <hr>
-          {{this.createdPartyMembers[0]['nickname']}}、{{this.createdPartyMembers[1]['nickname']}}、そして{{this.createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
+          {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
           <br>
           これから幾多の危険が彼らの前に立ちはだかることだろう。<br>
           凶暴な魔物は彼らの力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>

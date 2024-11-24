@@ -32,12 +32,12 @@
             以下のファイルを削除しますが本当によろしいですか？ <br> 
           </p>
           <ul>
-            <span v-for="party in this.dataParties">
+            <span v-for="party in dataParties">
               <li>{{ party['nickname'] }}【Lv.{{ party['level'] }}: {{party['class_japanese']}}】</li>
             </span>
           </ul>
           <div v-if="errorMessage !== null">
-            <small style="color:red">{{ this.errorMessage }}</small>
+            <small style="color:red">{{ errorMessage }}</small>
           </div>
         </div>
 
@@ -80,7 +80,7 @@
               <p>
                 以下の情報で作成します。<small>(一部編集可能)</small><br>
                 <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
-                <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="this.generateCredentialEmailString">@sample.com</b></small> <br>
+                <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sample.com</b></small> <br>
                 <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
                 <br>
                 <div v-if="errorMessage !== null">

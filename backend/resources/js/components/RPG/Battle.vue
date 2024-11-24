@@ -163,10 +163,10 @@
               </div>
               <div class="dropdown-menu dropdown-menu-skill-and-items-size">
                 <div 
-                  v-for="skill in this.partyData[this.battle.currentPartyMemberIndex].skills"
+                  v-for="skill in partyData[battle.currentPartyMemberIndex].skills"
                    @mouseover="showSkillAndItemDescription(skill.description)" @mouseleave="clearAllDescription"
                 >
-                  <div v-if="this.partyData[this.battle.currentPartyMemberIndex].value_ap < skill.ap_cost">
+                  <div v-if="partyData[battle.currentPartyMemberIndex].value_ap < skill.ap_cost">
                     <div class="command-list-row-skills-and-items_not_enough_ap">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ skill.name }}</span>
@@ -199,7 +199,7 @@
                 <a>ITEM</a>
               </div>
               <div class="dropdown-menu dropdown-menu-skill-and-items-size">
-                <div v-for="item in this.itemData" class="" @mouseover="showSkillAndItemDescription(item.description)" @mouseleave="clearAllDescription">
+                <div v-for="item in itemData" class="" @mouseover="showSkillAndItemDescription(item.description)" @mouseleave="clearAllDescription">
                   <div>
                     <div @click="handleCommandSelection('ITEM', item.id, item.attack_type, item.effect_type, item.target_range)" class="command-list-row-skills-and-items">
                       <div style="display: flex; justify-content: space-between;">
@@ -222,13 +222,13 @@
 
         <!-- messageフィールド -->
         <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
-          <!-- <<{{ this.battle.currentPartyMemberIndex }} 人目選択中>> -->
+          <!-- <<{{ battle.currentPartyMemberIndex }} 人目選択中>> -->
            <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div> -->
           <p v-if="battle.status == 'encount'">敵が現れた！</p>
           <p v-if="battle.status == 'command'">
-            {{ this.partyData[this.battle.currentPartyMemberIndex].name }}はどうしようか？<br>
+            {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
               <span v-if="hoveredDescription != null">
                 <hr>
@@ -240,12 +240,12 @@
           <p v-if="battle.status == 'partySelect'">対象の味方を選択してください</p>
           <p v-if="battle.status == 'exec'">戦闘開始します。</p>
           <div v-if="battle.status == 'outputLog'" class="log-container">
-            <div v-for="(log, index) in this.battleLog" :key="index" class="log-item">
+            <div v-for="(log, index) in battleLog" :key="index" class="log-item">
               <p>{{ (index + 1) }}: {{ log }}</p>
             </div>
           </div>
           <div v-if="battle.status == 'resultWin'" class="log-container">
-            <div v-for="(log, index) in this.resultLog" :key="index" class="log-item">
+            <div v-for="(log, index) in resultLog" :key="index" class="log-item">
               <p>{{ log }}</p>
             </div>
           </div>
@@ -312,7 +312,7 @@
   <div class="battlelog_result_wrapper overflow-auto">
     <ul>
       <li>【戦闘履歴】</li>
-      <li v-for="log in this.battleLogHistory" >{{ log }}</li>
+      <li v-for="log in battleLogHistory" >{{ log }}</li>
     </ul>
   </div>
 
