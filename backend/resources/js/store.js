@@ -13,13 +13,30 @@ export default createStore({
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
     },
-
-    // menu ショップ画面サブステータス
-    menuShopState: 'start' , // 'start' 'buy' 'sell'とかかな。
-
-    // menu スキル|ステ振り画面サブステータス
-    menuStatusState: 'start', // 'start', 'status', 'skill', 'updating',
-      currentSelectedPartyMemberIndex: 0, // どの味方の画面を開いているか。 0か1か2
+    menu: {
+      // ショップ画面
+      shop: {
+        status: 'start',  // 'start' 'buy' 'sell'とかかな。
+      },
+      // スキル|ステ振り画面
+      status: {
+        status: 'start',  // 'start', 'status', 'skill', 'updating'
+        currentSelectedPartyMemberIndex: 0, // 味方画面の配列のインデックス 0, 1, 2
+      }
+    },
+    battle: {
+      /*
+        戦闘中ステータス 
+        'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 
+        'outputLog', 'resultWin', 'resultLose', 'escape'
+      */
+      status: 'start', 
+      selectedCommands: [], // 味方の選択コマンド
+      selectedEnemies: [],  // コマンドで選択した敵
+      currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
+      clearStage: '', // 1-1, 1-2, 2-1という文字列で記入される
+      battleSessionId: '', // 戦闘データのセッション
+    },
 
     // battle サブステータス
     battleStatus: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
@@ -69,11 +86,11 @@ export default createStore({
 
     // menu 
     // スキル|ステ振り
-    setMenuStatusState(state, status) {
-      state.menuStatusState = status;
+    setMenuStatusStatus(state, status) {
+      state.menu.status.status = status;
     },
     setCurrentSelectedPartyMemberIndex(state, number) {
-      state.currentSelectedPartyMemberIndex = number;
+      state.menu.status.currentSelectedPartyMemberIndex = number;
     },
 
     // battle サブステータス
@@ -194,8 +211,8 @@ export default createStore({
 
     // menu
     // スキル|ステ振り
-    setMenuStatusState({ commit }, status) {
-      commit('setMenuStatusState', status);
+    setMenuStatusStatus({ commit }, status) {
+      commit('setMenuStatusStatus', status);
     },
     setCurrentSelectedPartyMemberIndex({ commit }, number) {
       commit('setCurrentSelectedPartyMemberIndex', number);

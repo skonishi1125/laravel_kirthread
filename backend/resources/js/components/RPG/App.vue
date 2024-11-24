@@ -29,7 +29,6 @@
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
-          <!-- <small style="font-size: 12px;">{{ screen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small> -->
         </h4>
       </div>
     </div>
@@ -50,7 +49,7 @@
 
   </div>
   <!-- メニュー: ステータス画面デバッグ -->
-  <small style="font-size: 12px;">{{ screen.current }}.{{ menuStatusState }}<br></small>
+  <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }}<br></small>
 
 </template>
 
@@ -68,10 +67,11 @@
     //   screen: state => state.screen.current,
     // }),
     ...mapState(['screen']), // state.screen 全体を取得
+    ...mapState({
+        status: state => state.menu.status,
+      }),
 
     ...mapState(['battleStatus']),
-    ...mapState(['beginningStatus']),
-    ...mapState(['menuStatusState']),
     ...mapState(['selectedCommands']),
     ...mapState(['selectedRoleInformations']),
     ...mapState(['battleSessionId']),
