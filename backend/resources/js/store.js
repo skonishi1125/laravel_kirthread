@@ -4,115 +4,124 @@ import { createStore } from 'vuex';
 export default createStore({
   state: {
     // メイン画面
-    currentScreen: 'title', // 'title', 'beginning', 'menu', 'battle'
-
-    // beginning サブステータス
-    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
+    screen: {
+      current: 'title', // 'title', 'beginning', 'menu', 'battle'
+    },
+    beginning: {
+      status: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
       currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
-
-    // menu ショップ画面サブステータス
-    menuShopState: 'start' , // 'start' 'buy' 'sell'とかかな。
-
-    // menu スキル|ステ振り画面サブステータス
-    menuStatusState: 'start', // 'start', 'status', 'skill', 'updating',
-      currentSelectedPartyMemberIndex: 0, // どの味方の画面を開いているか。 0か1か2
-
-    // battle サブステータス
-    battleStatus: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
+    },
+    menu: {
+      // ショップ画面
+      shop: {
+        status: 'start',  // 'start' 'buy' 'sell'とかかな。
+      },
+      // スキル|ステ振り画面
+      status: {
+        status: 'start',  // 'start', 'status', 'skill', 'updating'
+        currentSelectedPartyMemberIndex: 0, // 味方画面の配列のインデックス 0, 1, 2
+      }
+    },
+    // 戦闘画面
+    battle: {
+      status: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
       selectedCommands: [], // 味方の選択コマンド
-      selectedEnemies: [],  // コマンドで選択した敵
+      selectedEnemies: [],  // 味方が選択したEnemy情報
       currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
       clearStage: '', // 1-1, 1-2, 2-1という文字列で記入される
       battleSessionId: '', // 戦闘データのセッション
+    },
+
+
   },
   mutations: {
     // メイン画面
     setScreen(state, screen) {
-      state.currentScreen = screen;
+      state.screen.current = screen;
     },
 
     // beginning サブステータス
     setBeginningStatus(state, status) {
-      state.beginningStatus = status;
+      state.beginning.status = status;
     },
     incrementCurrentDisplayRoleIndex(state) { // "→"クリック
-      state.currentDisplayRoleIndex += 1;
-      if (state.currentDisplayRoleIndex > 5) {
-        state.currentDisplayRoleIndex = 0;
+      state.beginning.currentDisplayRoleIndex += 1;
+      if (state.beginning.currentDisplayRoleIndex > 5) {
+        state.beginning.currentDisplayRoleIndex = 0;
       }
     },
     decrementCurrentDisplayRoleIndex(state) { // "←"クリック
-      state.currentDisplayRoleIndex -= 1;
-      if (state.currentDisplayRoleIndex < 0) {
-        state.currentDisplayRoleIndex = 5;
+      state.beginning.currentDisplayRoleIndex -= 1;
+      if (state.beginning.currentDisplayRoleIndex < 0) {
+        state.beginning.currentDisplayRoleIndex = 5;
       }
     },
      // キャラ設定中のメンバーのindex操作
     incrementCurrentDecidedMemberIndex(state) {
-      state.currentDecidedMemberIndex += 1;
+      state.beginning.currentDecidedMemberIndex += 1;
     },
     decrementDecidedMemberIndex(state) {
-      state.currentDecidedMemberIndex -= 1;
+      state.beginning.currentDecidedMemberIndex -= 1;
     },
     // 選択の状態例: [ { "roleId": "1", "name": "スト" } ]
     setSelectedRoleInformation(state, { roleId, roleClassJapanese, partyName }) {
-      state.selectedRoleInformations.push({ roleId, roleClassJapanese, partyName });
+      state.beginning.selectedRoleInformations.push({ roleId, roleClassJapanese, partyName });
     },
     resetBeginningDecidedData(state) {
-      state.selectedRoleInformations = [];
-      state.currentDecidedMemberIndex = 0;
+      state.beginning.selectedRoleInformations = [];
+      state.beginning.currentDecidedMemberIndex = 0;
     },
 
     // menu 
     // スキル|ステ振り
-    setMenuStatusState(state, status) {
-      state.menuStatusState = status;
+    setMenuStatusStatus(state, status) {
+      state.menu.status.status = status;
     },
     setCurrentSelectedPartyMemberIndex(state, number) {
-      state.currentSelectedPartyMemberIndex = number;
+      state.menu.status.currentSelectedPartyMemberIndex = number;
     },
 
     // battle サブステータス
     setClearStage(state, stage) {
-      state.clearStage = stage;
+      state.battle.clearStage = stage;
     },
     setBattleSessionId(state, sessionId) {
-      state.battleSessionId = sessionId;
+      state.battle.battleSessionId = sessionId;
     },
     setBattleStatus(state, status) {
-      state.battleStatus = status;
+      state.battle.status = status;
     },
     setSelectedCommand(state, { partyId, command }) {
-      state.selectedCommands.push({ partyId, command });
+      state.battle.selectedCommands.push({ partyId, command });
       // この時点でコマンド状態: 
       // [ { "partyId": "1", "command": "ATTACK" } ]
     },
     setSelectedCommandSkill(state, { partyId, command, skillId }) {
-      state.selectedCommands.push({ partyId, command, skillId });
+      state.battle.selectedCommands.push({ partyId, command, skillId });
     },
     // todo: ITEM選択
     setSelectedCommandItem(state, { partyId, command, itemId }) {
-      state.selectedCommands.push({ partyId, command, itemId });
+      state.battle.selectedCommands.push({ partyId, command, itemId });
     },
 
     // RETURN選択
     resetSelectedCommands(state) {
-      state.selectedCommands = [];
+      state.battle.selectedCommands = [];
     },
     resetPartyMemberIndex(state) {
-      state.currentPartyMemberIndex = 0;
+      state.battle.currentPartyMemberIndex = 0;
     },
 
     setSelectedEnemy(state, { partyId, enemyIndex }) {
-      const commandIndex = state.selectedCommands.findIndex(c => c.partyId === partyId);
+      const commandIndex = state.battle.selectedCommands.findIndex(c => c.partyId === partyId);
       // 下と同じ意味
       // const commandIndex = state.selectedCommands.findIndex(function(c) {
       //   return c.partyId === partyId;
       // });
       if (commandIndex !== -1) {
-        state.selectedCommands[commandIndex].enemyIndex = enemyIndex;
+        state.battle.selectedCommands[commandIndex].enemyIndex = enemyIndex;
         /* 
           1人選んだ時点でのコマンド状態:
           [ { "partyId": 1, "command": "ATTACK", "enemyIndex": 1 } ]
@@ -127,9 +136,9 @@ export default createStore({
     },
     // playerIndexは、jsonでエンカウント時に作成したパーティの並び順
     setSelectedParty(state, { partyId, playerIndex }) {
-      const commandIndex = state.selectedCommands.findIndex(c => c.partyId === partyId);
+      const commandIndex = state.battle.selectedCommands.findIndex(c => c.partyId === partyId);
       if (commandIndex !== -1) {
-        state.selectedCommands[commandIndex].playerIndex = playerIndex;
+        state.battle.selectedCommands[commandIndex].playerIndex = playerIndex;
       /* 
         [ 
           { "partyId": 1, "command": "SKILL", "playerIndex": 1 },
@@ -140,24 +149,24 @@ export default createStore({
       }
     },
     incrementPartyMemberIndex(state) {
-      state.currentPartyMemberIndex += 1;
+      state.battle.currentPartyMemberIndex += 1;
     },
 
     // コマンドが2週目以降続く場合、選択履歴をリセット
     resetBattleStatus(state) {
-      state.currentPartyMemberIndex = 0;
-      state.selectedCommands = [];
-      state.selectedEnemies= [];
+      state.battle.currentPartyMemberIndex = 0;
+      state.battle.selectedCommands = [];
+      state.battle.selectedEnemies= [];
     },
 
     // 戦闘を途中で終了する(逃げる)場合は初期ステータスに全て戻す
     // また別途DB側のbattle_statesを削除する
     resetAllBattleStatus(state) {
-      state.currentPartyMemberIndex = 0;
-      state.selectedCommands = [];
-      state.selectedEnemies= [];
-      state.battleStatus = 'escape'; 
-      state.battleSessionId =  '';
+      state.battle.currentPartyMemberIndex = 0;
+      state.battle.selectedCommands = [];
+      state.battle.selectedEnemies= [];
+      state.battle.status = 'escape'; 
+      state.battle.battleSessionId =  '';
     }
 
   },
@@ -192,8 +201,8 @@ export default createStore({
 
     // menu
     // スキル|ステ振り
-    setMenuStatusState({ commit }, status) {
-      commit('setMenuStatusState', status);
+    setMenuStatusStatus({ commit }, status) {
+      commit('setMenuStatusStatus', status);
     },
     setCurrentSelectedPartyMemberIndex({ commit }, number) {
       commit('setCurrentSelectedPartyMemberIndex', number);

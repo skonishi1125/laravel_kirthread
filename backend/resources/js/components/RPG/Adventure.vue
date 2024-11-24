@@ -28,11 +28,6 @@
             <tr v-for="field in fieldList">
               <td>{{ field.name }}</td>
               <td>{{ field.difficulty }}</td>
-              <!-- <td>
-                <a v-for="stage_id in 5" :key="stage_id" class="action-link" @click="startBattle(field.id, stage_id)" style="margin:0 10px; display: inline-block; min-width: 30px;">
-                  {{ field.id }}-{{ stage_id }}
-                </a>
-              </td> -->
               <td>
                 <a class="action-link" @click="startFirstStageBattle(field.id)">行く</a>
               </td>
@@ -72,12 +67,10 @@
       },
       startBattle(fieldId, stageId) {
         this.$store.dispatch('setScreen', 'battle');
-        // this.$router.push('/game/rpg/battle');
         this.$router.push(`/game/rpg/battle/${fieldId}/${stageId}`);
       },
       startFirstStageBattle(fieldId) {
         this.$store.dispatch('setScreen', 'battle');
-        // this.$router.push('/game/rpg/battle');
         this.$router.push(`/game/rpg/battle/${fieldId}/1`);
       }
 

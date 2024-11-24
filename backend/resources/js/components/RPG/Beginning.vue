@@ -54,7 +54,7 @@
 
 
 <template>
-  <div v-if="beginningStatus == 'start'">
+  <div v-if="beginning.status == 'start'">
     <div class="row">
       <div class="col-12">
         <p>beginning.vue, start</p>
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <div v-if="beginningStatus == 'prologue'">
+  <div v-if="beginning.status == 'prologue'">
     <div class="row">
       <div class="col-12" style="border: 1px solid black">
         <p>
@@ -92,7 +92,7 @@
     </div>
   </div>
 
-  <div v-if="beginningStatus == 'setCharacter'">
+  <div v-if="beginning.status == 'setCharacter'">
     <div v-if="errorMessage != null">
       <div class="alert alert-danger" role="alert">
         {{ errorMessage }}
@@ -101,9 +101,9 @@
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
-          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ this.displayCurrentDecidedMemberNumber }}/3)</p>
+          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ displayCurrentDecidedMemberNumber }}/3)</p>
           <p>選択中メンバー:
-            <span v-for="member in this.selectedRoleInformations">
+            <span v-for="member in beginning.selectedRoleInformations">
               <span>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</span>
             </span>
           </p>
@@ -113,10 +113,10 @@
       <div class="col-6 role-description-wrapper">
         <div class="role-description-message">
           <p>
-            【<span style="font-weight: bold;">{{ this.roleData[this.currentDisplayRoleIndex]['class_japanese'] }} </span>】
-            <span>({{ this.roleData[this.currentDisplayRoleIndex]['class'] }})</span>
+            【<span style="font-weight: bold;">{{ roleData[beginning.currentDisplayRoleIndex]['class_japanese'] }} </span>】
+            <span>({{ roleData[beginning.currentDisplayRoleIndex]['class'] }})</span>
           </p>
-          <p>{{ this.roleData[this.currentDisplayRoleIndex]['description'] }}</p>
+          <p>{{ roleData[beginning.currentDisplayRoleIndex]['description'] }}</p>
         </div>
         <!-- 名前と確定ボタンの記入フォーム -->
         <div>
@@ -127,7 +127,7 @@
                 <div class="input-group">
                   <input type="text" class="form-control" maxlength="6" v-model="partyName">
                   <span class="input-group-btn">
-                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(this.roleData[this.currentDisplayRoleIndex]['id'],this.roleData[this.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
+                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
                   </span>
 
                 </div>
@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <!-- currentDisplayRoleIndexを調整するボタン -->
+      <!-- beginning.currentDisplayRoleIndexを調整するボタン -->
       <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRole('increment')">→</button>
       <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRole('decrement')">←</button>
     </div>
@@ -156,22 +156,22 @@
     <div style="position: absolute; bottom: 5%; left: 5%;">
       <div class="parameter-base-wrapper">
         <div class="parameter-role">
-          <div v-if="currentDisplayRoleIndex === 0">
+          <div v-if="beginning.currentDisplayRoleIndex === 0">
             <div class="parameter-role paint striker"></div>
           </div>
-          <div v-else-if="currentDisplayRoleIndex === 1">
+          <div v-else-if="beginning.currentDisplayRoleIndex === 1">
             <div class="parameter-role paint medic"></div>
           </div>
-          <div v-else-if="currentDisplayRoleIndex === 2">
+          <div v-else-if="beginning.currentDisplayRoleIndex === 2">
             <div class="parameter-role paint paradin"></div>
           </div>
-          <div v-else-if="currentDisplayRoleIndex === 3">
+          <div v-else-if="beginning.currentDisplayRoleIndex === 3">
             <div class="parameter-role paint mage"></div>
           </div>
-          <div v-else-if="currentDisplayRoleIndex === 4">
+          <div v-else-if="beginning.currentDisplayRoleIndex === 4">
             <div class="parameter-role paint ranger"></div>
           </div>
-          <div v-else-if="currentDisplayRoleIndex === 5">
+          <div v-else-if="beginning.currentDisplayRoleIndex === 5">
             <div class="parameter-role paint buffer"></div>
           </div>
         </div>
@@ -205,7 +205,7 @@
             ※進行途中で変更することはできません
           </p>
           <ul>
-            <span v-for="member in this.selectedRoleInformations">
+            <span v-for="member in beginning.selectedRoleInformations">
             <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
             </span>
           </ul>
@@ -220,12 +220,12 @@
     </div>
   </div>
 
-  <div v-if="beginningStatus == 'monologue'">
+  <div v-if="beginning.status == 'monologue'">
     <div class="row">
       <div class="col-12" style="border: 1px solid black">
         <p>
           <hr>
-          {{this.createdPartyMembers[0]['nickname']}}、{{this.createdPartyMembers[1]['nickname']}}、そして{{this.createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
+          {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
           <br>
           これから幾多の危険が彼らの前に立ちはだかることだろう。<br>
           凶暴な魔物は彼らの力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>
@@ -263,16 +263,12 @@
         errorMessage: null,
       }
     },
-    computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
-    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
-    ...mapState(['currentScreen']),
-    ...mapState(['beginningStatus']),
-    ...mapState(['currentDisplayRoleIndex']),
-    ...mapState(['currentDecidedMemberIndex']),
-    ...mapState(['selectedRoleInformations']),
+    computed: {
+    ...mapState(['screen']),
+    ...mapState(['beginning']),
     backgroundImageStyle() {
       return {
-        backgroundImage: `url(/image/rpg/character/portrait/${this.roleData[this.currentDisplayRoleIndex]['portrait_image_path']})`
+        backgroundImage: `url(/image/rpg/character/portrait/${this.roleData[this.beginning.currentDisplayRoleIndex]['portrait_image_path']})`
       }
     }
     },
@@ -281,7 +277,7 @@
       this.prepareBeginning();
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
-      console.log('Beginning.vue', this.currentScreen);
+      console.log('Beginning.vue', this.screen.current);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
       prepareBeginning() {
@@ -311,12 +307,12 @@
       adjustDisplayRole(type){
         /*
           現在画面に表示しているロールをすでに選択している場合、currentDisplayRoleIndexを+/-して別のロール情報を出す
-          選択中のロールが入った配列: this.selectedRoleInformations idを参照したいなら['roleId']
+          選択中のロールが入った配列: this.beginning.selectedRoleInformations idを参照したいなら['roleId']
             [ 
               { "roleId": 1, "roleClassJapanese": "格闘家", "partyName": "スト" }, 
               { "roleId": 2, "roleClassJapanese": "治療師", "partyName": "メディ" } 
             ]
-          現在選択中のロール: this.roleData[this.currentDisplayRoleIndex] idを参照したいなら['id']
+          現在選択中のロール: this.roleData[this.beginning.currentDisplayRoleIndex] idを参照したいなら['id']
             Proxy(Object) {id: 2, class: 'medic', class_japanese: '治療師', default_name: 'メディ', growth_hp: 3, …}
         */
         switch(type) {
@@ -324,25 +320,25 @@
             console.log('adjusttDisplayRoleIndex(): + increment -----------------------');
             do {
               this.$store.dispatch('incrementCurrentDisplayRoleIndex');
-            } while (this.isRoleAlreadySelected(this.roleData[this.currentDisplayRoleIndex]['id']));
+            } while (this.isRoleAlreadySelected(this.roleData[this.beginning.currentDisplayRoleIndex]['id']));
             break;
           case 'decrement':
             console.log('adjusttDisplayRoleIndex(): - decrement -----------------------');
             do {
               this.$store.dispatch('decrementCurrentDisplayRoleIndex');
-            } while (this.isRoleAlreadySelected(this.roleData[this.currentDisplayRoleIndex]['id']));
+            } while (this.isRoleAlreadySelected(this.roleData[this.beginning.currentDisplayRoleIndex]['id']));
             break;
         }
         // inputに職業別デフォルトネームを設定
-        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
+        this.partyName = this.roleData[this.beginning.currentDisplayRoleIndex]['default_name'];
       },
       isRoleAlreadySelected(roleId) {
-        return this.selectedRoleInformations.some(selected => selected.roleId === roleId);
+        return this.beginning.selectedRoleInformations.some(selected => selected.roleId === roleId);
       },
       roleInformationSetup() {
         console.log('roleInformationSetup(): -----------------');
-        this.partyName = this.roleData[this.currentDisplayRoleIndex]['default_name'];
-        if (this.currentDecidedMemberIndex <= 2) {
+        this.partyName = this.roleData[this.beginning.currentDisplayRoleIndex]['default_name'];
+        if (this.beginning.currentDecidedMemberIndex <= 2) {
           console.log('2以下なので処理開始。');
         } else {
           console.log('2以上');
@@ -358,7 +354,7 @@
         this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
         this.displayCurrentDecidedMemberNumber++;
         if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
-        console.log(`${this.currentDecidedMemberIndex}`);
+        console.log(`${this.beginning.currentDecidedMemberIndex}`);
         this.roleInformationSetup();
       },
       displayConfirmModal() {
@@ -370,7 +366,7 @@
         console.log(`postPlayerData(): -----------------`);
         // axios.postで登録
         axios.post(`/api/game/rpg/beginning/create`,{
-          selected_info: this.selectedRoleInformations
+          selected_info: this.beginning.selectedRoleInformations
         })
         .then(response => {
           console.log(`通信OK`);

@@ -23,24 +23,15 @@
 </style>
 
 <template>
-  <!-- debug -->
+  <!-- titleなど? 現状デバッグ要素の表示 -->
   <div class="container" style="background-color: whitesmoke; border: 1px solid black; min-width: 1280px">
     <div class="row">
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
-          <!-- <small style="font-size: 12px;">{{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small> -->
         </h4>
       </div>
     </div>
-      <!-- 
-      戦闘画面用デバッグ 
-       <small style="font-size: 12px;">
-        {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
-        {{ battleSessionId }}
-      </small> 
-      -->
-
   </div>
 
   <!-- メイン画面 4:3 -->
@@ -50,7 +41,7 @@
 
   </div>
   <!-- メニュー: ステータス画面デバッグ -->
-  <small style="font-size: 12px;">{{ currentScreen }}.{{ menuStatusState }}<br></small>
+  <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }}<br></small>
 
 </template>
 
@@ -60,20 +51,18 @@
     data() { // script内で使用する変数を定義する。
       return {}
     },
-    computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
-    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
-    ...mapState(['currentScreen']),
-    ...mapState(['battleStatus']),
-    ...mapState(['beginningStatus']),
-    ...mapState(['menuStatusState']),
-    ...mapState(['selectedCommands']),
-    ...mapState(['selectedRoleInformations']),
-    ...mapState(['battleSessionId']),
+    // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
+    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.screen.currentを取得。thisで参照できるようになる。
+    computed: { 
+    ...mapState(['screen']), // state.screen 全体を取得
+    ...mapState({
+        status: state => state.menu.status,
+      }),
     },
     created() { // DOMに依存しない処理を書く(state処理など。)
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
-      console.log('app.vue', this.currentScreen);
+      console.log('app.vue', this.screen.current);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
     }

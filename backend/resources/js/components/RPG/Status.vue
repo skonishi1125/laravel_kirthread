@@ -42,12 +42,12 @@
 
 <template>
   <div class="container">
-    <div v-if="menuStatusState == 'start'">
+    <div v-if="status.status == 'start'">
       <div class="row sub-sucreen-text-space"></div>
       <div class="row mt-3 sub-sucreen-main-space"></div>
     </div>
 
-    <div v-if="menuStatusState == 'status'">
+    <div v-if="status.status == 'status'">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
@@ -67,22 +67,22 @@
           <ul class="nav nav-tabs">
             <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替えるような実装にするとよい -->
             <a class="nav-link character-nav-tab"
-              :class="{'active': this.currentSelectedPartyMemberIndex === 0}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 0}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 0)"
             >
-              {{ this.partiesInformation[0].nickname }}
+              {{ partiesInformation[0].nickname }}
             </a>
             <a class="nav-link character-nav-tab" 
-              :class="{'active': this.currentSelectedPartyMemberIndex === 1}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 1}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 1)"
             >
-              {{ this.partiesInformation[1].nickname }}
+              {{ partiesInformation[1].nickname }}
             </a>
             <a class="nav-link character-nav-tab" 
-              :class="{'active': this.currentSelectedPartyMemberIndex === 2}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 2}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 2)"
             >
-              {{ this.partiesInformation[2].nickname }}
+              {{ partiesInformation[2].nickname }}
             </a>
           </ul>
   
@@ -91,16 +91,16 @@
               <div style="min-height: 300px;  display: flex; flex-flow: column;  justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
                 <div>
                   <button class="btn btn-sm btn-outline-info"
-                    :class="{'active': this.menuStatusState == 'status'}"
-                    @click="toggleMenuStatusState('status')"
+                    :class="{'active': status.status == 'status'}"
+                    @click="toggleStatusStatus('status')"
                     >
                       ステータス
                     </button>
                   </div>
                 <div>
                   <button class="btn btn-sm btn-outline-info"
-                    :class="{'active': this.menuStatusState == 'skill'}"
-                    @click="toggleMenuStatusState('skill')"
+                    :class="{'active': status.status == 'skill'}"
+                    @click="toggleStatusStatus('skill')"
                   >
                     スキル確認
                   </button>
@@ -111,10 +111,10 @@
             <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
               <div class="col-12" style="border-bottom: 1px solid black;">
                 <h6>
-                  {{ partiesInformation[currentSelectedPartyMemberIndex].nickname }}
+                  {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
                   <small>
-                    <span class="badge badge-primary">Lv.{{ partiesInformation[currentSelectedPartyMemberIndex].level }}</span>
-                    【{{ partiesInformation[currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[currentSelectedPartyMemberIndex].role_class_japanese }}】 Total Exp: <small><b>{{ partiesInformation[currentSelectedPartyMemberIndex].total_exp }}</b></small> Next Lv: <small><b>{{ partiesInformation[currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small>
+                    <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
+                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】 Total Exp: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Next Lv: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small>
                   </small>
                 </h6>
               </div>
@@ -125,32 +125,32 @@
                   <div class="col-4">
                     <div>
                       <div class="d-flex justify-content-between">
-                        <span>HP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_hp }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('HP', partiesInformation[currentSelectedPartyMemberIndex].status.value_hp)">+</button></span>
+                        <span>HP: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_hp }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('HP', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_hp)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>AP: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_ap }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('AP', partiesInformation[currentSelectedPartyMemberIndex].status.value_ap)">+</button></span>
+                        <span>AP: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_ap }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('AP', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_ap)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>STR: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_str }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('STR', partiesInformation[currentSelectedPartyMemberIndex].status.value_str)">+</button></span>
+                        <span>STR: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_str }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('STR', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_str)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>DEF: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_def }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('DEF', partiesInformation[currentSelectedPartyMemberIndex].status.value_def)">+</button></span>
+                        <span>DEF: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_def }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('DEF', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_def)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>INT: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_int }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('INT', partiesInformation[currentSelectedPartyMemberIndex].status.value_int)">+</button></span>
+                        <span>INT: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_int }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('INT', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_int)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>SPD: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_spd }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('SPD', partiesInformation[currentSelectedPartyMemberIndex].status.value_spd)">+</button></span>
+                        <span>SPD: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_spd }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('SPD', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_spd)">+</button></span>
                       </div>
                       <div class="d-flex justify-content-between">
-                        <span>LUC: {{ partiesInformation[currentSelectedPartyMemberIndex].status.value_luc }}</span>
-                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('LUC', partiesInformation[currentSelectedPartyMemberIndex].status.value_luc)">+</button></span>
+                        <span>LUC: {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_luc }}</span>
+                        <span><button class="btn btn-sm btn-status-modal" @click="displayStatusConfirmModal('LUC', partiesInformation[status.currentSelectedPartyMemberIndex].status.value_luc)">+</button></span>
                       </div>
                     </div>
                   </div>
@@ -177,7 +177,7 @@
           <div class="row">
             <div class="col-12">
               <small>
-                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
                 ※スキルツリーはスクロール可能。
               </small>
               <div v-if="successStatusMessage !== null">
@@ -205,7 +205,7 @@
                   <div class="col-12">
                     <p>
                       何ポイント振り分けますか？<br>
-                      <small>※未振り分けのステータスポイント: {{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point - inputFreelyStatusPoints }}</small>
+                      <small>※未振り分けのステータスポイント: {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point - inputFreelyStatusPoints }}</small>
                     </p>
                     <div class="input-group input-group-sm mb-3">
                       <div class="input-group-prepend">
@@ -214,7 +214,7 @@
                       <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
                         v-model.number="inputFreelyStatusPoints"
                         @input="validateStatusInput"
-                        :max="this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point"
+                        :max="partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point"
                         min="0"
                         placeholder="振り分けるポイントを入力"
                       >
@@ -258,7 +258,7 @@
               </div>
               <!-- ポイントがない場合は押せなくするとよい -->
               <button type="button" class="btn btn-info" @click="postIncrementStatus"
-                :class="{'disabled': this.inputFreelyStatusPoints < 1 || this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point < 1}"
+                :class="{'disabled': inputFreelyStatusPoints < 1 || partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point < 1}"
               >
                 確定
               </button>
@@ -272,7 +272,7 @@
     </div>
 
     <!-- axiosで受け取れてから表示させる -->
-    <div v-if="menuStatusState == 'skill' && Object.keys(this.partiesInformation).length > 0">
+    <div v-if="status.status == 'skill' && Object.keys(partiesInformation).length > 0">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
@@ -281,40 +281,40 @@
             </p>
           </div>
           <hr>
-          <div v-if="Object.keys(this.skillInformation).length > 0">
+          <div v-if="Object.keys(skillInformation).length > 0">
             <div>
               <p>
-                <b>{{ this.skillInformation.skill_name }}</b>
-                <span v-if="this.skillInformation.skill_level == 0">【<small><b>未習得</b></small>】</span>
-                <span v-else>【習得済<small>(SLv:<b>{{ this.skillInformation.skill_level }}</b>)</small>】</span>
+                <b>{{ skillInformation.skill_name }}</b>
+                <span v-if="skillInformation.skill_level == 0">【<small><b>未習得</b></small>】</span>
+                <span v-else>【習得済<small>(SLv:<b>{{ skillInformation.skill_level }}</b>)</small>】</span>
                 <span class="badge badge-light"
                   :class="{
-                    'badge-light-physical': this.skillInformation.attack_type === '物理',
-                    'badge-light-magic': this.skillInformation.attack_type === '魔法',
+                    'badge-light-physical': skillInformation.attack_type === '物理',
+                    'badge-light-magic': skillInformation.attack_type === '魔法',
                     }"
                 >
-                  {{ this.skillInformation.attack_type }}
+                  {{ skillInformation.attack_type }}
                 </span>
                 <span class="badge"
                   :class="{
-                    'badge-primary': this.skillInformation.effect_type === '攻撃',
-                    'badge-success': this.skillInformation.effect_type === '回復',
-                    'badge-light badge-light-buff': this.skillInformation.effect_type === 'バフ',
+                    'badge-primary': skillInformation.effect_type === '攻撃',
+                    'badge-success': skillInformation.effect_type === '回復',
+                    'badge-light badge-light-buff': skillInformation.effect_type === 'バフ',
                     }"
                 >
-                  {{ this.skillInformation.effect_type }}
+                  {{ skillInformation.effect_type }}
                 </span>
                 <span class="badge badge-light"
                   :class="{
-                    'badge-light-self': this.skillInformation.target_range === '自身',
-                    'badge-light-single': this.skillInformation.target_range === '単体',
-                    'badge-light-all': this.skillInformation.target_range === '全体',
+                    'badge-light-self': skillInformation.target_range === '自身',
+                    'badge-light-single': skillInformation.target_range === '単体',
+                    'badge-light-all': skillInformation.target_range === '全体',
                     }"
                 >
-                  {{ this.skillInformation.target_range }}
+                  {{ skillInformation.target_range }}
                 </span>
                 <br>
-                {{ this.skillInformation.description }} <small style="color:red">{{ this.skillInformation.conditions }}</small>
+                {{ skillInformation.description }} <small style="color:red">{{ skillInformation.conditions }}</small>
               </p>
             </div>
           </div>
@@ -326,22 +326,22 @@
           <ul class="nav nav-tabs">
             <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替えるような実装にするとよい -->
             <a class="nav-link character-nav-tab"
-              :class="{'active': this.currentSelectedPartyMemberIndex === 0}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 0}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 0)"
             >
-              {{ this.partiesInformation[0].nickname }}
+              {{ partiesInformation[0].nickname }}
             </a>
             <a class="nav-link character-nav-tab" 
-              :class="{'active': this.currentSelectedPartyMemberIndex === 1}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 1}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 1)"
             >
-              {{ this.partiesInformation[1].nickname }}
+              {{ partiesInformation[1].nickname }}
             </a>
             <a class="nav-link character-nav-tab" 
-              :class="{'active': this.currentSelectedPartyMemberIndex === 2}" 
+              :class="{'active': status.currentSelectedPartyMemberIndex === 2}" 
               @click="$store.dispatch('setCurrentSelectedPartyMemberIndex', 2)"
             >
-              {{ this.partiesInformation[2].nickname }}
+              {{ partiesInformation[2].nickname }}
             </a>
           </ul>
   
@@ -350,16 +350,16 @@
               <div style="min-height: 300px;  display: flex; flex-flow: column;  justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
                 <div>
                   <button class="btn btn-sm btn-outline-info"
-                    :class="{'active': this.menuStatusState == 'status'}"
-                    @click="toggleMenuStatusState('status')"
+                    :class="{'active': status.status == 'status'}"
+                    @click="toggleStatusStatus('status')"
                     >
                       ステータス
                     </button>
                   </div>
                 <div>
                   <button class="btn btn-sm btn-outline-info"
-                    :class="{'active': this.menuStatusState == 'skill'}"
-                    @click="toggleMenuStatusState('skill')"
+                    :class="{'active': status.status == 'skill'}"
+                    @click="toggleStatusStatus('skill')"
                   >
                     スキル確認
                   </button>
@@ -369,7 +369,7 @@
 
             <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
               <!-- 0:灰/特殊 1:青/攻撃 2:緑/回復 3:黄/バフ -->
-              <ul v-for="parentSkill in this.skillTreeArray[this.currentSelectedPartyMemberIndex]">
+              <ul v-for="parentSkill in skillTreeArray[status.currentSelectedPartyMemberIndex]">
                 <li class="skill-items">
                   <button class="btn btn-sm"
                     :class="{
@@ -413,7 +413,7 @@
           <div class="row">
             <div class="col-12">
               <small>
-                未振り分けのステータスポイント:【{{ this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point }}】
+                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
                 ※スキルツリーはスクロール可能。
               </small>
               <div v-if="successSkillMessage !== null">
@@ -435,29 +435,29 @@
                 <b>{{ modalSkillInfo.skill_name }}</b>
                 <span class="badge badge-light"
                     :class="{
-                      'badge-light-physical': this.modalSkillInfo.attack_type === '物理',
-                      'badge-light-magic': this.modalSkillInfo.attack_type === '魔法',
+                      'badge-light-physical': modalSkillInfo.attack_type === '物理',
+                      'badge-light-magic': modalSkillInfo.attack_type === '魔法',
                       }"
                 >
-                  {{ this.modalSkillInfo.attack_type }}
+                  {{ modalSkillInfo.attack_type }}
                 </span>
                 <span class="badge"
                   :class="{
-                    'badge-primary': this.modalSkillInfo.effect_type === '攻撃',
-                    'badge-success': this.modalSkillInfo.effect_type === '回復',
-                    'badge-light badge-light-buff': this.modalSkillInfo.effect_type === 'バフ',
+                    'badge-primary': modalSkillInfo.effect_type === '攻撃',
+                    'badge-success': modalSkillInfo.effect_type === '回復',
+                    'badge-light badge-light-buff': modalSkillInfo.effect_type === 'バフ',
                     }"
                 >
-                  {{ this.modalSkillInfo.effect_type }}
+                  {{ modalSkillInfo.effect_type }}
                 </span>
                 <span class="badge badge-light"
                   :class="{
-                    'badge-light-self': this.modalSkillInfo.target_range === '自身',
-                    'badge-light-single': this.modalSkillInfo.target_range === '単体',
-                    'badge-light-all': this.modalSkillInfo.target_range === '全体',
+                    'badge-light-self': modalSkillInfo.target_range === '自身',
+                    'badge-light-single': modalSkillInfo.target_range === '単体',
+                    'badge-light-all': modalSkillInfo.target_range === '全体',
                     }"
                 >
-                  {{ this.modalSkillInfo.target_range }}
+                  {{ modalSkillInfo.target_range }}
                 </span>
               </h6>
               <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
@@ -540,7 +540,7 @@
               </div>
               <div v-if="modalSkillInfo.current_skill_level !== 3">
                 <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
-                  :class="{'disabled': this.partiesInformation[currentSelectedPartyMemberIndex].freely_skill_point < 1}"
+                  :class="{'disabled': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point < 1}"
                 >
                   習得
                 </button>
@@ -583,15 +583,16 @@
       }
     },
     computed: {
-      ...mapState(['menuStatusState']),
-      ...mapState(['currentSelectedPartyMemberIndex']),
+      ...mapState({
+        status: state => state.menu.status,
+      }),
     },
     created() {
-      this.$store.dispatch('setMenuStatusState', 'start');
+      this.$store.dispatch('setMenuStatusStatus', 'start');
       this.getPartiesInformation();
     },
     mounted() {
-      console.log('Status.vue');
+      console.log(`Status.vue ${this.status.status}`);
     },
     methods: {
       getPartiesInformation() { 
@@ -612,13 +613,13 @@
             // 1人目のメンバーのスキル一覧の、1つ目のスキルの情報を参照したい場合
             // console.log(this.skillTreeArray[0][0]['skill_name'], this.skillTreeArray[0][0].child_skills);
 
-            this.$store.dispatch('setMenuStatusState', 'status');
+            this.$store.dispatch('setMenuStatusStatus', 'status');
           }
         );
       },
       // 'status' or 'skill'画面に変える
-      toggleMenuStatusState(state) {
-        this.$store.dispatch('setMenuStatusState', state);
+      toggleStatusStatus(state) {
+        this.$store.dispatch('setMenuStatusStatus', state);
       },
       displayStatusConfirmModal(status_name, status_value) {
         console.log(`displayStatusConfirmModal: ${status_name} ${status_value} -------`);
@@ -630,7 +631,7 @@
       },
       validateStatusInput(event) {
         const value = Number(event.target.value);
-        const maxPoints = this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point;
+        const maxPoints = this.partiesInformation[this.status.currentSelectedPartyMemberIndex].freely_status_point;
 
         if (maxPoints === 0) {
           this.inputFreelyStatusPoints = maxPoints; // 最大値を超えた場合は最大値に
@@ -647,10 +648,10 @@
         console.log(`${this.inputFreelyStatusPoints}, ${this.modalStatusName}, ${this.modalStatusBaseValue}`);
 
         // 未振り分けのステータスポイントが1以上ある場合のみ、処理を行う
-        if (this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_status_point > 0) {
+        if (this.partiesInformation[this.status.currentSelectedPartyMemberIndex].freely_status_point > 0) {
           // axios.postで登録
           axios.post(`/api/game/rpg/status/increment`,{
-            party_id: this.partiesInformation[this.currentSelectedPartyMemberIndex].party_id,
+            party_id: this.partiesInformation[this.status.currentSelectedPartyMemberIndex].party_id,
             input_point: this.inputFreelyStatusPoints,
             status_type: this.modalStatusName,
           })
@@ -663,7 +664,7 @@
             this.updatePartiesInformation();
 
             // stateを'status'に戻し、modalを閉じる
-            this.$store.dispatch('setMenuStatusState', 'status');
+            this.$store.dispatch('setMenuStatusStatus', 'status');
             $('#modal-status-confirm').modal('hide');
           })
           .catch(error => {
@@ -828,10 +829,10 @@
       postLearnSkillData(modalSkillInfo) {
         console.log(`postLearnSkillData: ${modalSkillInfo.skill_id} -------`);
         // スキルポイントが1以上ある場合のみ、処理を行う
-        if (this.partiesInformation[this.currentSelectedPartyMemberIndex].freely_skill_point > 0) {
+        if (this.partiesInformation[this.status.currentSelectedPartyMemberIndex].freely_skill_point > 0) {
           // axios.postで登録
           axios.post(`/api/game/rpg/status/skill/learn`,{
-            party_id: this.partiesInformation[this.currentSelectedPartyMemberIndex].party_id,
+            party_id: this.partiesInformation[this.status.currentSelectedPartyMemberIndex].party_id,
             skill_id: modalSkillInfo.skill_id
           })
           .then(response => {
@@ -843,7 +844,7 @@
             this.updatePartiesInformation();
 
             // stateを'skill'に戻し、modalを閉じる
-            this.$store.dispatch('setMenuStatusState', 'skill');
+            this.$store.dispatch('setMenuStatusStatus', 'skill');
             $('#modal-skill-confirm').modal('hide');
           })
           .catch(error => {
@@ -862,7 +863,7 @@
       },
       updatePartiesInformation() {
         // 状態を変更し、要素が無くなっている間のエラーを予防する
-        this.$store.dispatch('setMenuStatusState', 'updating');
+        this.$store.dispatch('setMenuStatusStatus', 'updating');
 
         // ステータスorスキル振り分け後のデータを改めて格納
         axios.get('/api/game/rpg/parties/information')
