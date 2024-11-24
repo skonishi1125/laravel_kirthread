@@ -20,7 +20,7 @@
 
   <div class="row my-5 h-100">
     <div class="col-2 menu-bar">
-      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/adventure')">冒険準備</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/adventure')">冒険に出る</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/skill')">中心広場</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
