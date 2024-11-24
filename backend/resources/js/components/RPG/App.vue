@@ -29,14 +29,14 @@
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
-          <!-- <small style="font-size: 12px;">{{ currentScreen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small> -->
+          <!-- <small style="font-size: 12px;">{{ screen }}.{{ beginningStatus }}.{{ selectedRoleInformations }}<br></small> -->
         </h4>
       </div>
     </div>
       <!-- 
       戦闘画面用デバッグ 
        <small style="font-size: 12px;">
-        {{ currentScreen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
+        {{ screen }}.{{ battleStatus }}.{{ selectedCommands }}<br>
         {{ battleSessionId }}
       </small> 
       -->
@@ -50,7 +50,7 @@
 
   </div>
   <!-- メニュー: ステータス画面デバッグ -->
-  <small style="font-size: 12px;">{{ currentScreen }}.{{ menuStatusState }}<br></small>
+  <small style="font-size: 12px;">{{ screen.current }}.{{ menuStatusState }}<br></small>
 
 </template>
 
@@ -61,8 +61,14 @@
       return {}
     },
     computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
-    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
-    ...mapState(['currentScreen']),
+    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.screen.currentを取得。thisで参照できるようになる。
+
+    // 取得方法 2通り
+    // ...mapState({
+    //   screen: state => state.screen.current,
+    // }),
+    ...mapState(['screen']), // state.screen 全体を取得
+
     ...mapState(['battleStatus']),
     ...mapState(['beginningStatus']),
     ...mapState(['menuStatusState']),
@@ -73,7 +79,7 @@
     created() { // DOMに依存しない処理を書く(state処理など。)
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
-      console.log('app.vue', this.currentScreen);
+      console.log('app.vue', this.screen.current);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
     }

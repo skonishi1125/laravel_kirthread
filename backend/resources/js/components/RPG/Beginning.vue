@@ -263,9 +263,8 @@
         errorMessage: null,
       }
     },
-    computed: { // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
-    // vuexに存在するmapStateメソッドでstore.jsで定義したstate.currentScreenを取得。thisで参照できるようになる。
-    ...mapState(['currentScreen']),
+    computed: {
+    ...mapState(['screen']), // state.screen 全体を取得
     ...mapState(['beginningStatus']),
     ...mapState(['currentDisplayRoleIndex']),
     ...mapState(['currentDecidedMemberIndex']),
@@ -281,7 +280,7 @@
       this.prepareBeginning();
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
-      console.log('Beginning.vue', this.currentScreen);
+      console.log('Beginning.vue', this.screen.current);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
       prepareBeginning() {

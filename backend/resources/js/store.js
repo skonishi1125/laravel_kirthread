@@ -4,7 +4,9 @@ import { createStore } from 'vuex';
 export default createStore({
   state: {
     // メイン画面
-    currentScreen: 'title', // 'title', 'beginning', 'menu', 'battle'
+    screen: {
+      current: 'title', // 'title', 'beginning', 'menu', 'battle'
+    },
 
     // beginning サブステータス
     beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
@@ -30,7 +32,7 @@ export default createStore({
   mutations: {
     // メイン画面
     setScreen(state, screen) {
-      state.currentScreen = screen;
+      state.screen.current = screen;
     },
 
     // beginning サブステータス
