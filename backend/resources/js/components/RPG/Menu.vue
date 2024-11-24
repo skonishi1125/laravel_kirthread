@@ -26,16 +26,27 @@
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
       <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
     </div>
+
     <div class="col-10" v-if="isMenuRoute">
+
       <div class="container">
-        <div class="row">
+        <div class="row sub-sucreen-text-space">
           <div class="col-12">
+            <div>
             <p>街に到着した。どうしようか？</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3 sub-sucreen-main-space">
+          <div class="col-12">
+            <!-- contents -->
           </div>
         </div>
       </div>
+
     </div>
-    
+
     <div v-else class="col-10">
       <!-- メニューはそのまま、children固有の要素を出す -->
       <router-view></router-view>
