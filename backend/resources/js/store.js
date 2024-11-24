@@ -7,12 +7,12 @@ export default createStore({
     screen: {
       current: 'title', // 'title', 'beginning', 'menu', 'battle'
     },
-
-    // beginning サブステータス
-    beginningStatus: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
+    beginning: {
+      status: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
       currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
+    },
 
     // menu ショップ画面サブステータス
     menuShopState: 'start' , // 'start' 'buy' 'sell'とかかな。
@@ -37,34 +37,34 @@ export default createStore({
 
     // beginning サブステータス
     setBeginningStatus(state, status) {
-      state.beginningStatus = status;
+      state.beginning.status = status;
     },
     incrementCurrentDisplayRoleIndex(state) { // "→"クリック
-      state.currentDisplayRoleIndex += 1;
-      if (state.currentDisplayRoleIndex > 5) {
-        state.currentDisplayRoleIndex = 0;
+      state.beginning.currentDisplayRoleIndex += 1;
+      if (state.beginning.currentDisplayRoleIndex > 5) {
+        state.beginning.currentDisplayRoleIndex = 0;
       }
     },
     decrementCurrentDisplayRoleIndex(state) { // "←"クリック
-      state.currentDisplayRoleIndex -= 1;
-      if (state.currentDisplayRoleIndex < 0) {
-        state.currentDisplayRoleIndex = 5;
+      state.beginning.currentDisplayRoleIndex -= 1;
+      if (state.beginning.currentDisplayRoleIndex < 0) {
+        state.beginning.currentDisplayRoleIndex = 5;
       }
     },
      // キャラ設定中のメンバーのindex操作
     incrementCurrentDecidedMemberIndex(state) {
-      state.currentDecidedMemberIndex += 1;
+      state.beginning.currentDecidedMemberIndex += 1;
     },
     decrementDecidedMemberIndex(state) {
-      state.currentDecidedMemberIndex -= 1;
+      state.beginning.currentDecidedMemberIndex -= 1;
     },
     // 選択の状態例: [ { "roleId": "1", "name": "スト" } ]
     setSelectedRoleInformation(state, { roleId, roleClassJapanese, partyName }) {
-      state.selectedRoleInformations.push({ roleId, roleClassJapanese, partyName });
+      state.beginning.selectedRoleInformations.push({ roleId, roleClassJapanese, partyName });
     },
     resetBeginningDecidedData(state) {
-      state.selectedRoleInformations = [];
-      state.currentDecidedMemberIndex = 0;
+      state.beginning.selectedRoleInformations = [];
+      state.beginning.currentDecidedMemberIndex = 0;
     },
 
     // menu 
