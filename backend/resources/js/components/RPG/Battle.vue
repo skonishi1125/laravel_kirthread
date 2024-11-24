@@ -74,7 +74,7 @@
   margin-top: 20px;
 }
 
-/* battleStatus === 'enemySelect'の場合のみ割り当てる */
+/* battle.status === 'enemySelect'の場合のみ割り当てる */
 .enemy-hover-active {
   cursor: pointer;
   transition: border 0.3s ease, box-shadow 0.3s ease;
@@ -85,7 +85,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* battleStatus === 'partySelect'の場合のみ割り当てる */
+/* battle.status === 'partySelect'の場合のみ割り当てる */
 .party-hover-active {
   cursor: pointer;
   transition: border 0.3s ease, box-shadow 0.3s ease;
@@ -144,7 +144,7 @@
     <!-- todo: ステージごとに背景を変える -->
     <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;">
 
-      <div v-if="battleStatus == 'error'">
+      <div v-if="battle.status == 'error'">
         <div style="cursor: pointer; background-color: white;">
           <p @click="escapeBattle" >エラーが発生しました。このメッセージをクリックして一度戻ってください</p>
         </div>
@@ -152,8 +152,8 @@
 
       <div style="display: flex; flex-flow: column; justify-content: space-between;">
 
-        <!-- command 普段は非表示で、battleStatusがcommandの場合のみ出す。 -->
-         <div v-if="battleStatus == 'command'">
+        <!-- command 普段は非表示で、battle.statusがcommandの場合のみ出す。 -->
+         <div v-if="battle.status == 'command'">
            <div class="command-list">
             <div class="command-list-row" @click="handleCommandSelection('ATTACK')" @mouseover="showCommandDescription('ATTACK')" @mouseleave="clearAllDescription">ATTACK</div>
 
@@ -163,10 +163,10 @@
               </div>
               <div class="dropdown-menu dropdown-menu-skill-and-items-size">
                 <div 
-                  v-for="skill in this.partyData[this.currentPartyMemberIndex].skills"
+                  v-for="skill in this.partyData[this.battle.currentPartyMemberIndex].skills"
                    @mouseover="showSkillAndItemDescription(skill.description)" @mouseleave="clearAllDescription"
                 >
-                  <div v-if="this.partyData[this.currentPartyMemberIndex].value_ap < skill.ap_cost">
+                  <div v-if="this.partyData[this.battle.currentPartyMemberIndex].value_ap < skill.ap_cost">
                     <div class="command-list-row-skills-and-items_not_enough_ap">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ skill.name }}</span>
@@ -222,13 +222,13 @@
 
         <!-- messageフィールド -->
         <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
-          <!-- <<{{ this.currentPartyMemberIndex }} 人目選択中>> -->
+          <!-- <<{{ this.battle.currentPartyMemberIndex }} 人目選択中>> -->
            <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div> -->
-          <p v-if="battleStatus == 'encount'">敵が現れた！</p>
-          <p v-if="battleStatus == 'command'">
-            {{ this.partyData[this.currentPartyMemberIndex].name }}はどうしようか？<br>
+          <p v-if="battle.status == 'encount'">敵が現れた！</p>
+          <p v-if="battle.status == 'command'">
+            {{ this.partyData[this.battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
               <span v-if="hoveredDescription != null">
                 <hr>
@@ -236,20 +236,20 @@
               <span v-html="hoveredDescription"></span>
             </div>
           </p>
-          <p v-if="battleStatus == 'enemySelect'">対象の敵を選択してください</p>
-          <p v-if="battleStatus == 'partySelect'">対象の味方を選択してください</p>
-          <p v-if="battleStatus == 'exec'">戦闘開始します。</p>
-          <div v-if="battleStatus == 'outputLog'" class="log-container">
+          <p v-if="battle.status == 'enemySelect'">対象の敵を選択してください</p>
+          <p v-if="battle.status == 'partySelect'">対象の味方を選択してください</p>
+          <p v-if="battle.status == 'exec'">戦闘開始します。</p>
+          <div v-if="battle.status == 'outputLog'" class="log-container">
             <div v-for="(log, index) in this.battleLog" :key="index" class="log-item">
               <p>{{ (index + 1) }}: {{ log }}</p>
             </div>
           </div>
-          <div v-if="battleStatus == 'resultWin'" class="log-container">
+          <div v-if="battle.status == 'resultWin'" class="log-container">
             <div v-for="(log, index) in this.resultLog" :key="index" class="log-item">
               <p>{{ log }}</p>
             </div>
           </div>
-          <p v-if="battleStatus == 'resultLose'">全滅した...</p>
+          <p v-if="battle.status == 'resultLose'">全滅した...</p>
         </div>
 
         <!-- enemy -->
@@ -263,7 +263,7 @@
             <div 
             @click="selectEnemy(enemy.enemy_index)" 
             :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
-            :class="{ 'enemy-picture': true, 'enemy-hover-active': battleStatus === 'enemySelect'}"
+            :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
@@ -271,7 +271,7 @@
         </div>
 
           <!-- 勝利時、次の戦闘に遷移 -->
-          <div v-if="battleStatus == 'resultWin'"  style="position: relative;">
+          <div v-if="battle.status == 'resultWin'"  style="position: relative;">
             <div style="position: absolute; right: 8%; bottom: 0%; background-color: white; padding: 5px 10px; cursor: pointer;">
               <a @click="nextBattle">次の戦闘へ進む</a>
             </div>
@@ -283,7 +283,7 @@
 
             <div 
             @click="selectParty(partyMember.player_index)"
-            :class="{'party-hover-active': battleStatus === 'partySelect'}"
+            :class="{'party-hover-active': battle.status === 'partySelect'}"
             style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" 
             >
               <p style="font-size: 14px;">{{ partyMember.name }}</p>
@@ -305,7 +305,7 @@
     </div>
   </div>
 
-  <div v-if="battleStatus !== 'resultWin'">
+  <div v-if="battle.status !== 'resultWin'">
     <button @click="escapeBattle">逃げる</button>
   </div>
 
@@ -336,26 +336,22 @@ export default {
     }
   },
   computed: {
-    ...mapState(['battleStatus']),
-    ...mapState(['clearStage']),
-    ...mapState(['selectedCommands']),
-    ...mapState(['currentPartyMemberIndex']),
-    ...mapState(['battleSessionId']),
+    ...mapState(['screen']),
+    ...mapState(['battle']),
     // コマンド選択時のキャラクターの立ち絵
     backgroundImageStyle() {
       return {
-        backgroundImage: `url(/image/rpg/character/portrait/${this.partyData[this.currentPartyMemberIndex].role_portrait})`
+        backgroundImage: `url(/image/rpg/character/portrait/${this.partyData[this.battle.currentPartyMemberIndex].role_portrait})`
       }
     }
   },
   created() {
     this.$store.dispatch('setScreen', 'battle');
-    // if (this.battleStatus !== 'escape' && this.battleStatus !== 'resultLose' && this.battleStatus !== 'resultWin') {
   },
   mounted() {
-    if (this.battleStatus == 'start') {
+    if (this.battle.status == 'start') {
       console.log('mounted() ------------------------');
-      this.getEncountData(this.fieldId, this.stageId, this.clearStage);
+      this.getEncountData(this.fieldId, this.stageId, this.battle.clearStage);
     }
   },
   methods: {
@@ -408,7 +404,7 @@ export default {
         this.$store.dispatch('setBattleSessionId', data[2] || []);
         this.itemData = data[3] || [];
         // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
-        console.log('Battle.vue', this.battleStatus, this.battleSessionId); 
+        console.log('Battle.vue', this.battle.status, this.battle.battleSessionId); 
         // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
         this.$store.dispatch('setBattleStatus', 'encount');
       })
@@ -423,10 +419,10 @@ export default {
     },
     // 画面範囲全体をクリックし、 encount状態から次の状態へ遷移する
     nextAction() {
-      switch (this.battleStatus) {
+      switch (this.battle.status) {
         case 'encount':
           console.log('nextAction() encount: ----------------------------------');
-          // 味方が戦闘不能の場合は、コマンド選択対象から外してcurrentPartyMemberIndexをインクリメントする
+          // 味方が戦闘不能の場合は、コマンド選択対象から外してbattle.currentPartyMemberIndexをインクリメントする
           this.battleCommandSetup(); // リロードして[0,1]が戦闘不能だった場合は、インクリメントする
           break;
         case 'outputLog': 
@@ -439,7 +435,7 @@ export default {
         //   console.log('nextAction() resultWin: ----------------------------------');
         //   this.resultWin();
         default: 
-          console.log(`nextAction()で指定のない状態です。${this.battleStatus}`);
+          console.log(`nextAction()で指定のない状態です。${this.battle.status}`);
       }
     },
 
@@ -457,9 +453,9 @@ export default {
       }
 
       // パーティメンバーの分だけ回す。(現状は3人なので、0,1,2)
-      if (this.currentPartyMemberIndex <= 2) {
-        const currentMember = this.partyData[this.currentPartyMemberIndex];
-        console.log(`currentMember: ${currentMember} ${this.currentPartyMemberIndex}`);
+      if (this.battle.currentPartyMemberIndex <= 2) {
+        const currentMember = this.partyData[this.battle.currentPartyMemberIndex];
+        console.log(`currentMember: ${currentMember} ${this.battle.currentPartyMemberIndex}`);
         // 次に選択するコマンドメンバーが戦闘不能の場合、インクリメントをあげてスキップする
         if (currentMember.is_defeated_flag == true) {
           console.log(`${currentMember.name}は戦闘不能のため、インクリメントしてスキップ。`);
@@ -467,9 +463,9 @@ export default {
           this.battleCommandSetup();
         }
         // 最後のメンバーが戦闘不能の時、コマンド選択画面に遷移させるとbackgroundセットでエラーになるので、0,1の場合だけコマンド画面に遷移させる。
-        if (this.currentPartyMemberIndex <= 2) {
+        if (this.battle.currentPartyMemberIndex <= 2) {
           console.log(`次のパーティコマンド選択画面へ遷移します。`);
-          // console.dir(this.partyData[this.currentPartyMemberIndex].skills);
+          // console.dir(this.partyData[this.battle.currentPartyMemberIndex].skills);
           this.$store.dispatch('setBattleStatus', 'command');
         }
       } else {
@@ -492,8 +488,8 @@ export default {
     // skillを選んだならそのスキルのID, アイテムならそのアイテムのIDを格納する
     handleCommandSelection(command, on_the_selected_command_id, attack_type, effect_type, target_range) {
       console.log('handleCommandSelection(): ----------------------------------');
-      // 現在コマンド選択中のパーティデータをcurrentPartyMemberIndexに格納する
-      let currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      // 現在コマンド選択中のパーティデータをbattle.currentPartyMemberIndexに格納する
+      let currentMember = this.partyData[this.battle.currentPartyMemberIndex];
       switch (command) {
         case ("ATTACK") :
           console.log('ATTACK選択。');
@@ -573,9 +569,9 @@ export default {
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
     selectEnemy(enemyIndex) {
-      if (this.battleStatus !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      if (this.battle.status !== "enemySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
       console.log('selectEnemy(): ----------------------------------');
-      const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      const currentMember = this.partyData[this.battle.currentPartyMemberIndex];
       this.$store.dispatch('setSelectedEnemy', { partyId: currentMember.id, enemyIndex: enemyIndex });
       // インクリメントして次のメンバーのセットアップに移行する
       this.$store.dispatch('incrementPartyMemberIndex');
@@ -585,9 +581,9 @@ export default {
 
     // 選択した味方の順番を格納する
     selectParty(playerIndex) {
-      if (this.battleStatus !== "partySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
+      if (this.battle.status !== "partySelect") return; // 敵選択中以外に敵をクリックした場合は何もさせない。
       console.log('selectParty(): ----------------------------------');
-      const currentMember = this.partyData[this.$store.state.currentPartyMemberIndex];
+      const currentMember = this.partyData[this.battle.currentPartyMemberIndex];
       this.$store.dispatch('setSelectedParty', { partyId: currentMember.id, playerIndex: playerIndex });
       // インクリメントして次のメンバーのセットアップに移行する
       this.$store.dispatch('incrementPartyMemberIndex');
@@ -598,8 +594,8 @@ export default {
     execBattleCommand() {
       console.log('execBattleCommand(): ----------------------------------');
       axios.post('/api/game/rpg/battle/exec', {
-        session_id: this.$store.state.battleSessionId,
-        selectedCommands: this.$store.state.selectedCommands,
+        session_id: this.battle.battleSessionId,
+        selectedCommands: this.battle.selectedCommands,
       })
         .then(response => {
           console.log('通信成功');
@@ -622,7 +618,7 @@ export default {
       this.resultLog = null;
       this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
       axios.post('/api/game/rpg/battle/result_win', {
-        session_id: this.$store.state.battleSessionId,
+        session_id: this.battle.battleSessionId,
         is_win: true,
       })
         .then(response => {
@@ -642,9 +638,9 @@ export default {
 
       // どのステージをクリアしたのかの値を作る。
       this.$store.dispatch('setClearStage', fieldId + '-' + stageId);
-      console.log(`clearStage: ${this.clearStage}`);
+      console.log(`clearStage: ${this.battle.clearStage}`);
 
-      console.log('nextBattle(): --------------------', fieldId, stageId, this.clearStage);
+      console.log('nextBattle(): --------------------', fieldId, stageId, this.battle.clearStage);
       // バトルログなど、色々リセット
       this.battleLogHistory = [];
       this.$store.dispatch('resetAllBattleStatus');
@@ -656,7 +652,7 @@ export default {
     escapeBattle() {
       console.log('escapeBattle(): ----------------------------------');
       axios.post('/api/game/rpg/battle/escape', {
-        session_id: this.$store.state.battleSessionId,
+        session_id: this.battle.battleSessionId,
       })
         .then(response => { 
           this.$store.dispatch('resetAllBattleStatus');
@@ -687,7 +683,7 @@ export default {
     console.log(`新しいfieldId: ${newFieldId} stageId: ${newStageId} `);
     if (newFieldId && newStageId) {
       console.log('エンカウントデータを再取得します。');
-      this.getEncountData(newFieldId, newStageId, this.clearStage);
+      this.getEncountData(newFieldId, newStageId, this.battle.clearStage);
     }
     next();
   }

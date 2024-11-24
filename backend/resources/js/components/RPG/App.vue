@@ -70,8 +70,7 @@
     ...mapState({
         status: state => state.menu.status,
       }),
-
-    ...mapState(['battleStatus']),
+    ...mapState(['battle']),
     ...mapState(['selectedCommands']),
     ...mapState(['selectedRoleInformations']),
     ...mapState(['battleSessionId']),
