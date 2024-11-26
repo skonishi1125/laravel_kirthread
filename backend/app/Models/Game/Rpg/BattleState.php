@@ -122,6 +122,10 @@ class BattleState extends Model
           'value_int' => $party->value_int,
           'value_spd' => $party->value_spd,
           'value_luc' => $party->value_luc,
+          'level' => $party->level,
+          'total_exp' => $party->total_exp,
+          'freely_status_point' => $party->freely_status_point,
+          'freely_skill_point' => $party->freely_skill_point,
           'skills' => $learned_skills,
           'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
           'buffs' => $buffs,

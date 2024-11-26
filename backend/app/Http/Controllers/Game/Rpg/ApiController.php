@@ -521,29 +521,27 @@ class ApiController extends Controller
   }
 
   // 戦闘勝利の処理
+  // 下記の挙動を実現したいので、battle_statesテーブルのjsonデータのみでレベルアップ処理を完結させる。
+  // 全滅: 元のパラメータに戻す
+  // 逃げる: そのパラメータをpartiesテーブル保持して戦闘処理を終了させる(パラメータを保存)
   public function resultWinBattle(Request $request) {
     Debugbar::debug("resultWinBattle(): ---------------");
-    $session_id = $request->session_id;
-    $is_win = $request->is_win;
     // 戦闘が正常に終了したかのチェック
     // vue側でresultWinBattle()からもらえるis_winか、もしくはjsonの敵情報のis_defeated_flagを全て見るかどっちか。
     // 一旦リクエストでもらえる値を参考にする
+    $is_win = $request->is_win;
     if (!$is_win) return abort(500, 'is_win error');
 
-    $battle_state = BattleState::where('session_id', $session_id)->first();
-
-    // ※ 戦闘勝利の処理を繰り返せてしまうとリロードなどで稼がれる可能性がある。
+    // 戦闘勝利の処理を繰り返せてしまうとリロードなどで経験値を稼がれる可能性がある
     // そのためトランザクションで挟んだのち、処理後に戦闘キャッシュを消して管理する。
+    $session_id = $request->session_id;
+    $battle_state = BattleState::where('session_id', $session_id)->first();
     if (!$battle_state) return abort(500, 'not exist battle state');
 
-    $savedata = Savedata::getLoginUserCurrentSavedata();
-    $parties = Party::where('savedata_id', $savedata->id)->get();
-    $exp_tables = Exp::get();
+    // 戦闘終了時の処理開始
+    // 獲得した合計経験値・ゴールドの計算
     $result_logs = collect();
-
-    $when_cleared_players_data = collect(json_decode($battle_state->players_json_data));
-
-    // 合計獲得ゴールド,expを取得する
+    $exp_tables = Exp::get();
     $enemies_json_data = collect(json_decode($battle_state['enemies_json_data']));
     $total_aquire_exp = 0;
     $total_aquire_money = 0;
@@ -552,32 +550,34 @@ class ApiController extends Controller
       $total_aquire_money += $enemy->drop_money;
     }
 
-    // 一人当たりの経験値を計算
-    $per_exp = ceil($total_aquire_exp / $parties->count());
+    // 戦闘不能のユーザーを除外し、振り分ける(戦闘不能のキャラクターはEXPが0)
+    $cleared_no_defeated_players_data = collect(json_decode($battle_state->players_json_data))->filter(function ($item) {
+      return $item->is_defeated_flag === false;
+    });
+    Debugbar::debug($cleared_no_defeated_players_data);
 
+    // 一人当たりの経験値(切り上げ)
+    $per_exp = (int)ceil($total_aquire_exp / $cleared_no_defeated_players_data->count());
     Debugbar::debug("獲得経験値:{$total_aquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_aquire_money} ");
     $result_logs->push("敵を倒した！{$total_aquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
 
     // 戦闘後のアイテム状況
     $when_cleared_json_items_data = $battle_state['items_json_data'];
 
-    try {
-      DB::transaction(function () use (
-        $savedata, $parties, $total_aquire_money, $per_exp, $exp_tables, $result_logs, $when_cleared_players_data, $when_cleared_json_items_data 
-      ) {
-        // アイテム消費処理
-        SavedataHasItem::updateItemsAfterBattle($savedata->id, $when_cleared_json_items_data );
-        Debugbar::debug("アイテム所持数更新完了。");
+    Debugbar::debug($cleared_no_defeated_players_data[0]);
 
+    $savedata = Savedata::getLoginUserCurrentSavedata();
+    try {
+      DB::transaction(function () use ($savedata, $total_aquire_money, $cleared_no_defeated_players_data, $per_exp, $exp_tables, $result_logs) {
         // 金額処理
         $savedata->increment('money', $total_aquire_money);
         Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
-        Debugbar::debug("ループ対象のパーティの数: {$parties->count()} 人");
-        // 経験値処理
-        foreach ($parties as $index => $party) {
-          Debugbar::debug("ループ処理開始: {$party->nickname}に経験値:{$per_exp}を振り分けます。##############");
-          $party->increment('total_exp', $per_exp);
+        // レベル処理
+        Debugbar::debug("ループ対象のパーティメンバーの数: {$cleared_no_defeated_players_data->count()} 人");
+        foreach ($cleared_no_defeated_players_data as $index => $party) {
+          Debugbar::debug("ループ処理開始: {$party->name}に経験値:{$per_exp}を振り分けます。##############");
+          $party->total_exp += $per_exp;
           $current_party_exp = $party->total_exp;
           $current_party_level = $party->level;
           $new_level = null;
@@ -608,6 +608,7 @@ class ApiController extends Controller
               $increase_values = Party::calculateGaussianGrowth($party);
               Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
 
+              // レベルが飛び級した場合でも、画面のログにはまとめてステータスを出す
               $total_growth = [
                 'hp' => $total_growth['hp'] += $increase_values['growth_hp'],
                 'ap' => $total_growth['ap'] += $increase_values['growth_ap'],
@@ -620,51 +621,55 @@ class ApiController extends Controller
 
             }
             // レベル反映
-            $party->update(['level' => $new_level]);
-            $result_logs->push("{$party->nickname}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']}");
+            $party->level = $new_level;
+            $result_logs->push("{$party->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']}");
 
             // レベルが上がった時、減っているHP/APも回復させてあげたい
             // 選択中のキャラの現在のjsonデータの max_value_hp/ap と value_hp/ap を調整してやれば良い
-            $when_cleared_players_data[$index]->max_value_hp = $party->value_hp;
-            $when_cleared_players_data[$index]->value_hp = $party->value_hp;
-            $when_cleared_players_data[$index]->max_value_ap = $party->value_ap;
-            $when_cleared_players_data[$index]->value_ap = $party->value_ap;
+            $party->value_hp = $party->max_value_hp;
+            $party->value_ap = $party->max_value_ap;
 
-            Debugbar::debug("
-              HPとAPを全回復。
-              HP:{$when_cleared_players_data[$index]->value_hp} 
-              AP:{$when_cleared_players_data[$index]->value_ap}
-            ");
-            // Debugbar::info($when_cleared_players_data[$index]);
-            // Debugbar::info($party);
-
+            Debugbar::debug("HPとAPを全回復。HP:{$party->value_hp} AP:{$party->value_ap}");
           }
         }
+
+        Debugbar::debug("処理後");
+        Debugbar::debug($cleared_no_defeated_players_data);
+
       });
-
-      // 各種処理が終わったらセッションデータを破棄する。
-      // ここの処理をコメントアウトすれば戦闘勝利部分のデバッグができる
-
-      $field_id = $battle_state->current_field_id;
-      $next_stage_id = $battle_state->current_stage_id + 1;
-
-      $next_players_data = BattleState::createPlayersData($savedata->id, $when_cleared_players_data);
-      $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
-      $next_items_data   = BattleState::createItemsData($savedata->id);
-
-      $create_next_battle_state = BattleState::createBattleState(
-        $savedata->id, $next_players_data, $next_enemies_data, $next_items_data, $field_id, $next_stage_id
-      );
-      $battle_state->delete();
-      Debugbar::debug("現在の戦闘データを削除しました。");
-
     } catch(\Exception $e) {
-      Debugbar::debug("例外処理を検知しました。");
+      Debugbar::debug("戦闘完了アクションで不具合。");
       \Log::error('resultWinBattle() でエラーが発生しました。', ['error' => $e->getMessage()]);
     }
-    Debugbar::debug("獲得金額、獲得経験値処理完了。");
-    Debugbar::debug($result_logs);
-    return response()->json($result_logs);
+
+
+  }
+
+  public function resultWinBattle2(Request $request) {
+
+    //   // 各種処理が終わったらセッションデータを破棄する。
+    //   // ここの処理をコメントアウトすれば戦闘勝利部分のデバッグができる
+
+    //   $field_id = $battle_state->current_field_id;
+    //   $next_stage_id = $battle_state->current_stage_id + 1;
+
+    //   $next_players_data = BattleState::createPlayersData($savedata->id, $when_cleared_players_data);
+    //   $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+    //   $next_items_data   = BattleState::createItemsData($savedata->id);
+
+    //   $create_next_battle_state = BattleState::createBattleState(
+    //     $savedata->id, $next_players_data, $next_enemies_data, $next_items_data, $field_id, $next_stage_id
+    //   );
+    //   $battle_state->delete();
+    //   Debugbar::debug("現在の戦闘データを削除しました。");
+
+    // } catch(\Exception $e) {
+    //   Debugbar::debug("例外処理を検知しました。");
+    //   \Log::error('resultWinBattle() でエラーが発生しました。', ['error' => $e->getMessage()]);
+    // }
+    // Debugbar::debug("獲得金額、獲得経験値処理完了。");
+    // Debugbar::debug($result_logs);
+    // return response()->json($result_logs);
 
   }
 

@@ -108,7 +108,9 @@ class Party extends Model
       
     }
 
-    public static function calculateGaussianGrowth($party){
+    // $party: 戦闘終了後のrpg_battle_state.players_json_dataの一人分のデータ
+    // Partyに配置せず、BattleStateの方に置き直してもいい。(というか、そうするべき)
+    public static function calculateGaussianGrowth(&$party){
       // Box-Muller法でガウス分布に従う乱数を生成
       $u1 = mt_rand() / mt_getrandmax();
       $u2 = mt_rand() / mt_getrandmax();
@@ -120,40 +122,40 @@ class Party extends Model
       $variance = 1.0; // 分散の調整
 
       // 上昇するステータスの分だけ回す(hp, ap, str, def, int, spd, luc)
-      $growth_array = $party->role->exportGrowthArray();
+      $role = Role::find($party->role_id);
+      $growth_array = $role->exportGrowthArray();
       $increase_values = collect();
 
       foreach ($growth_array as $stat => $growth_value) {
         // ガウス分布計算 最低上昇値が1以上になるようにしておく
         $increase_value = max(1, ceil($growth_value + $z * $variance));
-        $increase_values[$stat] = $increase_value;
+        $increase_values[$stat] = (int)$increase_value;
       }
+
+      Debugbar::debug($increase_values);
 
       foreach($increase_values as $stat => $increase) {
         switch ($stat) {
           case 'growth_hp':
-              $party->increment('value_hp', $increase);
+              $party->max_value_hp += $increase;
               break;
           case 'growth_ap':
-              $party->increment('value_ap', $increase);
+              $party->max_value_ap += $increase;
               break;
           case 'growth_str':
-              $party->increment('value_str', $increase);
+              $party->value_str += $increase;
               break;
           case 'growth_def':
-              $party->increment('value_def', $increase);
-              break;
-          case 'growth_def':
-              $party->increment('value_def', $increase);
+              $party->value_def += $increase;
               break;
           case 'growth_int':
-              $party->increment('value_int', $increase);
+              $party->value_int += $increase;
               break;
           case 'growth_spd':
-              $party->increment('value_spd', $increase);
+              $party->value_spd += $increase;
               break;
           case 'growth_luc':
-              $party->increment('value_luc', $increase);
+              $party->value_luc += $increase;
               break;
         }
       }
