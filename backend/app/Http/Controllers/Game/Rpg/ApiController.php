@@ -606,11 +606,25 @@ class ApiController extends Controller
             $total_growth = [
               'hp' => 0, 'ap' => 0, 'str' => 0,
               'def' => 0, 'int' => 0, 'spd' => 0, 'luc' => 0,
+              'status_point' => 0, 'skill_point' => 0,
             ];
             for ($i = $current_party_level + 1; $i <= $new_level; $i++) {
               // ステータス上昇処理
               $increase_values = Party::calculateGaussianGrowth($party);
               Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
+
+              // ステータス・スキルポイント付与
+              Debugbar::debug("ステータス・スキルポイントの付与開始");
+              $increase_values['growth_status_point'] = 4;
+              $increase_values['growth_skill_point'] = 0;
+              $party->freely_status_point += $increase_values['growth_status_point'];
+              Debugbar::debug("ステータスポイント付与OK");
+              // Lvが３の倍数の時(3,6,9,12,15,18,21,24,27,30), スキルポイント付与
+              if ($i % 3 === 0) {
+                Debugbar::debug("Lvが3の倍数のため、スキルポイントを付与します。");
+                $increase_values['growth_skill_point'] = 1;
+                $party->freely_skill_point += $increase_values['growth_skill_point'];
+              }
 
               // レベルが飛び級した場合でも、画面のログにはまとめてステータスを出す
               $total_growth = [
@@ -621,12 +635,20 @@ class ApiController extends Controller
                 'int' => $total_growth['int'] += $increase_values['growth_int'],
                 'spd' => $total_growth['spd'] += $increase_values['growth_spd'],
                 'luc' => $total_growth['luc'] += $increase_values['growth_luc'],
+                'status_point' => $total_growth['status_point'] += $increase_values['growth_status_point'],
+                'skill_point' => $total_growth['skill_point'] += $increase_values['growth_skill_point'],
               ];
+
+              Debugbar::debug("total_growth配列 OK");
 
             }
             // レベル反映
             $party->level = $new_level;
-            $result_logs->push("{$party->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']}");
+            $result_logs->push("{$party->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']} ステータスポイント+{$total_growth['status_point']}");
+
+            if ($increase_values['growth_skill_point'] !== 0) {
+              $result_logs->push("スキルポイントを獲得！");
+            }
 
             // レベルが上がった時、減っているHP/APも回復させてあげたい
             // 選択中のキャラの現在のjsonデータの max_value_hp/ap と value_hp/ap を調整してやれば良い
@@ -654,6 +676,9 @@ class ApiController extends Controller
     } catch(\Exception $e) {
       Debugbar::debug("戦闘完了アクションで不具合。");
       \Log::error('resultWinBattle() でエラーが発生しました。', ['error' => $e->getMessage()]);
+      return response()->json([
+        'message' => $e->getMessage()
+      ], 422);
     }
 
       Debugbar::debug("ゴールド | 経験値獲得処理完了。");
