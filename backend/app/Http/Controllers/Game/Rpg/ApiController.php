@@ -563,7 +563,10 @@ class ApiController extends Controller
     $result_logs->push("敵を倒した！{$total_aquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
 
     // 戦闘後のアイテム状況
-    $cleared_items_data = collect($battle_state['items_json_data']);
+    $cleared_items_data = collect(json_decode($battle_state['items_json_data']));
+    Debugbar::debug('アイテムデータ');
+    Debugbar::debug(gettype($cleared_items_data));
+
 
     $savedata = Savedata::getLoginUserCurrentSavedata();
     try {
