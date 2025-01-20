@@ -2,8 +2,8 @@
 
 return [
 
-  'PAGINATE' => [
-      'LINK_NUM' => '6',
-  ],
+    'PAGINATE' => [
+        'LINK_NUM' => '6',
+    ],
 
 ];

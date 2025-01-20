@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Post;
+use Illuminate\Console\Command;
 
 class createPostCommand extends Command
 {
@@ -44,9 +44,8 @@ class createPostCommand extends Command
         $post = Post::create([
             'message' => 'artisanコマンドで作成。',
             'user_id' => 1,
-            'good'    => 0
+            'good' => 0,
         ]);
-
 
     }
 }

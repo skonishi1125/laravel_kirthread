@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PresetAppearingEnemy extends Model
 {
     use HasFactory;
-    protected $table = 'rpg_preset_appearing_enemies';
 
+    protected $table = 'rpg_preset_appearing_enemies';
 }

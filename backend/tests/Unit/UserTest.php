@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 // use PHPUnit\Framework\TestCase;
-use Tests\TestCase;
 use App\User;
+use Tests\TestCase;
 
 class UserTest extends TestCase
 {
@@ -13,11 +13,11 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function testExample()
+    public function test_example()
     {
-        $user = new User();
+        $user = new User;
         $response = $user->find(12);
-        echo PHP_EOL . 'サンプルテストです' . PHP_EOL;
+        echo PHP_EOL.'サンプルテストです'.PHP_EOL;
         $this->assertSame('山吹', $response['name']);
     }
 }

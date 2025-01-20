@@ -230,6 +230,6 @@ return [
     ],
 
     'iframely_api_key' => env('IFRAMELY_API_KEY', null),
-    'last_modify_js_file_date' => env('LAST_MODIFY_JS_FILE_DATE', '20240825')
+    'last_modify_js_file_date' => env('LAST_MODIFY_JS_FILE_DATE', '20240825'),
 
 ];

@@ -18,45 +18,45 @@ return new class extends Migration
             $table->timestamps();
         });
 
-                // デフォルトのデータを追加
-                DB::table('rpg_fields')->insert([
-                  [
-                      'name' => '草原',
-                      'difficulty' => 1,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-                  [
-                      'name' => '海',
-                      'difficulty' => 2,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-                  [
-                      'name' => '砂地',
-                      'difficulty' => 2,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-                  [
-                      'name' => '火山',
-                      'difficulty' => 2,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-                  [
-                      'name' => '氷雪地帯',
-                      'difficulty' => 3,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-                  [
-                      'name' => '古城',
-                      'difficulty' => 5,
-                      'created_at' => now(),
-                      'updated_at' => now(),
-                  ],
-              ]);
+        // デフォルトのデータを追加
+        DB::table('rpg_fields')->insert([
+            [
+                'name' => '草原',
+                'difficulty' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => '海',
+                'difficulty' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => '砂地',
+                'difficulty' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => '火山',
+                'difficulty' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => '氷雪地帯',
+                'difficulty' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => '古城',
+                'difficulty' => 5,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
 
     }
 

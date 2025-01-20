@@ -10,11 +10,8 @@ class ReactionIcon extends Model
         'id',
     ];
 
-    public function posts() {
+    public function posts()
+    {
         return $this->belongsToMany('App\Models\Post', 'reactions', 'reaction_icon_id', 'post_id');
     }
-
-
-
-
 }

@@ -21,11 +21,11 @@ class StorePostRequest extends FormRequest
      */
     public function rules(): array
     {
-      return [
-        'message' => 'required_without_all:picture,youtube_url|max:255',
-        'picture' => 'nullable|image',
-        'youtube_url' => 'nullable|starts_with:https://www.youtube.com,https://m.youtube.com,https://youtu.be',
-      ];
+        return [
+            'message' => 'required_without_all:picture,youtube_url|max:255',
+            'picture' => 'nullable|image',
+            'youtube_url' => 'nullable|starts_with:https://www.youtube.com,https://m.youtube.com,https://youtu.be',
+        ];
     }
 
     public function messages()

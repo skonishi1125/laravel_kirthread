@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Profile;
 use App\Providers\RouteServiceProvider;
 use App\User;
-use App\Models\Profile;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +45,6 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -60,7 +59,6 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
      * @return \App\User
      */
     protected function create(array $data)
@@ -81,16 +79,16 @@ class RegisterController extends Controller
         // }
 
         $create_user = User::create([
-          'name' => $data['name'],
-          'email' => $data['email'],
-          'password' => Hash::make($data['password']),
-          'icon' => null,
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'icon' => null,
         ]);
 
         // プロフィールも一緒に作る
         $create_profile = Profile::create([
-          'user_id'   =>  $create_user->id,
-          'message'   =>  'よろしくお願いします。'
+            'user_id' => $create_user->id,
+            'message' => 'よろしくお願いします。',
         ]);
 
         return $create_user;

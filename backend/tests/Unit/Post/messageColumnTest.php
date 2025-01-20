@@ -2,25 +2,22 @@
 
 namespace Tests\Unit\Post;
 
-use Illuminate\Http\Request;
 // use PHPUnit\Framework\TestCase;
-use Tests\TestCase;
 use App\Models\Post;
-
-use App\Http\Controllers\PostController;
-use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
 
 class messageColumnTest extends TestCase
 {
     /**
      * @test
+     *
      * @...とつけることで、testと認識する
      * これがなかったら関数名にtestとつけないと認識されない
      */
-    public function testPostMessageNullableYoutube()
+    public function test_post_message_nullable_youtube()
     {
         // 何か文字列が入っていた時、messagesはnullでも良い
-        $post = new Post();
+        $post = new Post;
         $post->message = null;
         $post->picture = null;
         // $post->youtube_url = "https://aaa.youtube.com?v=111122223333";
@@ -33,15 +30,15 @@ class messageColumnTest extends TestCase
             $post_save = $post->save();
             $this->assertTrue($post_save);
         } else {
-            echo PHP_EOL . 'youtubeが空なので空のmessage/pictureの投稿はできません。' . PHP_EOL;
+            echo PHP_EOL.'youtubeが空なので空のmessage/pictureの投稿はできません。'.PHP_EOL;
             $this->assertFalse(false);
         }
     }
 
-    public function testPostMessageNullablePicture()
+    public function test_post_message_nullable_picture()
     {
         // 何か文字列が入っていた時、messagesはnullでも良い
-        $post = new Post();
+        $post = new Post;
         $post->message = null;
         $post->picture = null;
         // $post->picture = 'sample.png';
@@ -54,9 +51,8 @@ class messageColumnTest extends TestCase
             $post_save = $post->save();
             $this->assertTrue($post_save);
         } else {
-            echo PHP_EOL . 'pictureが空なので空のmessage/youtubeの投稿はできません。' . PHP_EOL;
+            echo PHP_EOL.'pictureが空なので空のmessage/youtubeの投稿はできません。'.PHP_EOL;
             $this->assertFalse(false);
         }
     }
-
 }
