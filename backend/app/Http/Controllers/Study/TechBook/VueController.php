@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Purchase;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class VueController extends Controller
 {

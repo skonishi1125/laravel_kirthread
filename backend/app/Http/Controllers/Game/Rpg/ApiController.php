@@ -153,7 +153,10 @@ class ApiController extends Controller
         // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導士", "partyName" => "メイ" というArrayが3つ
         // Debugbar::debug($selected_info, gettype($selected_info));
         $savedata = SaveData::getLoginUserCurrentSavedata();
-        Debugbar::debug($savedata, count($selected_info));
+        Debugbar::debug([
+            'savedata' => $savedata,
+            'selected_info_count' => count($selected_info),
+        ]);
 
         $created_parties = collect();
 
@@ -245,7 +248,14 @@ class ApiController extends Controller
                 'money' => $after_payment_money,
             ]);
 
-            Debugbar::debug($money, $item_price, $number, $total_price, $after_payment_money, $savedata);
+            Debugbar::debug([
+                'money' => $money,
+                'item_price' => $item_price,
+                'number' => $number,
+                'total_price' => $total_price,
+                'after_payment_money' => $after_payment_money,
+                'savedata' => $savedata,
+            ]);
 
         } catch (Exception $e) {
 
@@ -515,7 +525,12 @@ class ApiController extends Controller
         );
 
         Debugbar::debug('--------------戦闘処理完了(ステータス一覧)----------------');
-        Debugbar::debug($current_players_data, $current_enemies_data, $current_items_data, $battle_logs);
+        Debugbar::debug([
+            'current_players_data' => $current_players_data,
+            'current_enemies_data' => $current_enemies_data,
+            'current_items_data' => $current_items_data,
+            'battle_logs' => $battle_logs,
+        ]);
         Debugbar::debug('----------------------------------------------------------');
 
         Debugbar::debug('バフターン数計算処理-------------------------------');
@@ -594,6 +609,8 @@ class ApiController extends Controller
         $savedata = SaveData::getLoginUserCurrentSavedata();
         try {
             DB::transaction(function () use ($savedata, $total_aquire_money, $cleared_players_data, $cleared_items_data, $per_exp, $exp_tables, $battle_state, $result_logs) {
+                $increase_values = [];
+
                 // 金額処理
                 $savedata->increment('money', $total_aquire_money);
                 Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");

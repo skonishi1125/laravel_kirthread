@@ -12,9 +12,6 @@ use Monolog\Logger;
 
 class StudyController extends Controller
 {
-    //
-    private $private_var = 100;
-
     public function useMonolog()
     {
         // create a log channel
@@ -123,6 +120,7 @@ class StudyController extends Controller
     }
 
     // サンプルcsv
+    /* 未使用なので、Larastanでエラーが出ないようにコメントアウトしておく
     private function csvDownloadSample()
     {
         // ヘッダ行
@@ -169,6 +167,7 @@ class StudyController extends Controller
         }
         exit;
     }
+    */
 
     public function DispatchWriteLogJob()
     {
