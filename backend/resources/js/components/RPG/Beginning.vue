@@ -347,9 +347,11 @@
       },
       setPlayerData(roleId, roleClassJapanese, partyName) {
         console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
-        //todo: バリデーションチェックをしたいかも。名前最大6文字までとか。一応input側でつけてはいるが。
-
         this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
+
+        // WARN: メディ > スト と選択すると、incrementCurrentDecidedMemberIndexが繰り上がり、再びメディが選べるようになってしまう
+        // これは明らかにバグなので直す必要あり
+
         this.$store.dispatch('incrementCurrentDecidedMemberIndex');
         this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
         this.displayCurrentDecidedMemberNumber++;
