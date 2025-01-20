@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Auth;
 use Illuminate\Support\Carbon;
-use App\Models\ReactionIcon;
 
 class Post extends Model
 {
@@ -14,49 +12,57 @@ class Post extends Model
     // private $now = Carbon::now();
 
     protected $guarded = [
-      'id',
+        'id',
     ];
 
     // リレーション
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo('App\User', 'user_id');
     }
 
-    public function reaction_icons() {
+    public function reaction_icons()
+    {
         return $this->belongsToMany('App\Models\ReactionIcon', 'reactions', 'post_id', 'reaction_icon_id');
     }
 
-
-    public function makeLink($value) {
-        return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)" , '<a href="\1\2">\1\2</a>' , $value);
+    public function makeLink($value)
+    {
+        return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)", '<a href="\1\2">\1\2</a>', $value);
     }
 
-    public function isSetReaction($user_id, $post_id, $reaction_icon_id = '') {
-      $is_set_reaction = Reaction::where('user_id', $user_id)
-          ->where('post_id', $post_id)
-          ->where('reaction_icon_id', $reaction_icon_id)
-          ->exists();
-      // ログイン中のユーザが、その投稿に、同じリアクションをつけているかどうか。
-      // true = つけている。 false = つけていない。
-      return $is_set_reaction;
+    public function isSetReaction($user_id, $post_id, $reaction_icon_id = '')
+    {
+        $is_set_reaction = Reaction::where('user_id', $user_id)
+            ->where('post_id', $post_id)
+            ->where('reaction_icon_id', $reaction_icon_id)
+            ->exists();
+
+        // ログイン中のユーザが、その投稿に、同じリアクションをつけているかどうか。
+        // true = つけている。 false = つけていない。
+        return $is_set_reaction;
     }
 
     // クエリスコープ
-    public function scopeRecently($query) {
+    public function scopeRecently($query)
+    {
         $last_month = new Carbon('last month');
+
         return $query->where('created_at', '>=', $last_month);
     }
 
-    public function getIsSetKaidddReactionAttribute() {
+    public function getIsSetKaidddReactionAttribute()
+    {
         $reactions = array_unique(explode(',', $this->reaction));
         $kaiddd_reactions = [5, 7];
         foreach ($kaiddd_reactions as $k_r) {
-            if (in_array( $k_r, $reactions)) {
+            if (in_array($k_r, $reactions)) {
                 return true;
             } else {
                 continue;
             }
         }
+
         return false;
     }
 
@@ -65,33 +71,35 @@ class Post extends Model
     //     $this->attributes['message'] = strtoupper($value);
     // }
 
-    public function acquireReactionType() {
+    public function acquireReactionType()
+    {
         $reaction = Reaction::where('post_id', $this->id)->get();
         // $reaction = Reaction::get();
         // dd($reaction, $this->id);
     }
 
-    public static function extractYoutubeVideoId ($youtube_url) {
-      // postにアップされる可能性のあるYouTubeのURL
-      // https://www.youtube.com (PCブラウザで開いたURL)
-      // https://m.youtube.com (モバイルで開いた際のURL)
-      // https://youtu.be (共有ボタンなどから発行されるURL)
-      // 動画IDは 11桁 が基本。
+    public static function extractYoutubeVideoId($youtube_url)
+    {
+        // postにアップされる可能性のあるYouTubeのURL
+        // https://www.youtube.com (PCブラウザで開いたURL)
+        // https://m.youtube.com (モバイルで開いた際のURL)
+        // https://youtu.be (共有ボタンなどから発行されるURL)
+        // 動画IDは 11桁 が基本。
 
-      if (!$youtube_url) return null;
-
-      if (substr($youtube_url, 0, 16) == 'https://youtu.be') {
-        $yotube_video_id = substr($youtube_url, 17, 11);
-      } else {
-        preg_match('/v=((.){11})/', $youtube_url, $match);
-        if (isset($match)) {
-          $yotube_video_id = $match[1];
+        if (! $youtube_url) {
+            return null;
         }
-      }
 
-      return $yotube_video_id;
+        if (substr($youtube_url, 0, 16) == 'https://youtu.be') {
+            $yotube_video_id = substr($youtube_url, 17, 11);
+        } else {
+            preg_match('/v=((.){11})/', $youtube_url, $match);
+            if (isset($match)) {
+                $yotube_video_id = $match[1];
+            }
+        }
+
+        return $yotube_video_id;
 
     }
-
-
 }

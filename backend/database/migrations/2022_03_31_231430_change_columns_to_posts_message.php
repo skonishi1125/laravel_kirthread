@@ -28,7 +28,7 @@ class ChangeColumnsToPostsMessage extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             //
-            $table->string('message',128)->change();
+            $table->string('message', 128)->change();
         });
     }
 }

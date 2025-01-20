@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             // 外部キー制約をかけるときは、カラム生成が終わってから。
-            $table->foreign('user_id')->references('id')->on('users'); 
+            $table->foreign('user_id')->references('id')->on('users');
 
         });
 

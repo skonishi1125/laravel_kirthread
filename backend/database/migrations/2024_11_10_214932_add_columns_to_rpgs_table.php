@@ -38,8 +38,8 @@ return new class extends Migration
         });
 
         Schema::table('rpg_parties', function (Blueprint $table) {
-          $table->dropColumn('freely_status_point');
-          $table->dropColumn('freely_skill_point');
+            $table->dropColumn('freely_status_point');
+            $table->dropColumn('freely_skill_point');
         });
     }
 };

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rpg_items', function (Blueprint $table) {
-          $table->integer('heal_type')->unsigned()->default(0)->after('attack_type')->comment('0:該当無し 1:HP 2:AP');
-          $table->boolean('is_battle_available')->after('is_buyable')->comment('戦闘中に使用できるアイテムかどうか');
+            $table->integer('heal_type')->unsigned()->default(0)->after('attack_type')->comment('0:該当無し 1:HP 2:AP');
+            $table->boolean('is_battle_available')->after('is_buyable')->comment('戦闘中に使用できるアイテムかどうか');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('rpg_items', function (Blueprint $table) {
-          $table->dropColumn('heal_type');
+            $table->dropColumn('heal_type');
         });
     }
 };

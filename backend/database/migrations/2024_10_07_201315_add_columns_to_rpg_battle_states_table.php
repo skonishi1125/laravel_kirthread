@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('rpg_battle_states', function (Blueprint $table) {
-          $table->dropColumn('items_json_data');
+            $table->dropColumn('items_json_data');
         });
     }
 };

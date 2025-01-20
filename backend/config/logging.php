@@ -112,7 +112,7 @@ return [
             'path' => storage_path('logs/api.log'),
             'level' => 'debug',
             'days' => 3,
-        ]
+        ],
 
     ],
 

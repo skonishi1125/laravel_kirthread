@@ -2,7 +2,6 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -16,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'icon'
+        'name', 'email', 'password', 'icon',
     ];
 
     /**
@@ -37,20 +36,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function post() {
+    public function post()
+    {
         return $this->hasMany('App\Models\Post', 'user_id');
     }
 
-    public function profile() {
+    public function profile()
+    {
         return $this->hasOne('App\Models\Profile');
     }
 
-    public function purchases() {
-      return $this->hasMany('App\Purchase');
+    public function purchases()
+    {
+        return $this->hasMany('App\Purchase');
     }
 
-    public function rpg_savedata() {
-      return $this->hasOne('App\Models\Game\Rpg\Savedata');
+    public function rpg_savedata()
+    {
+        return $this->hasOne('App\Models\Game\Rpg\Savedata');
     }
-
 }

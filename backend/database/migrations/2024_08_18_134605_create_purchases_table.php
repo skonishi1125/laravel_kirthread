@@ -22,7 +22,7 @@ class CreatePurchasesTable extends Migration
             $table->timestamps();
             // 外部キー制約
             // purchasesテーブルのuser_idを、usersテーブルのidに紐付けることになる ("user_id" references "id" on "users" table.)
-            $table->foreign('user_id')->references('id')->on('users'); 
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
