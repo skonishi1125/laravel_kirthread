@@ -407,8 +407,26 @@ class BattleState extends Model
 
 
               break;
+            case "DEFENCE":
+              // 防御は現状味方だけだが、作るなら
+              if ($data->is_enemy == false) {
+                // 防御というバフを1ターン、150%の補正でかけておく
+                Debugbar::debug("【防御】使用者: {$data->name} ");
+                $buffs = [
+                    // 10の場合、+5されて合計15になる
+                    'buffed_def' =>  ceil((int) $data->value_def * 0.5),
+                    'remaining_turn' => 1,
+                    'buffed_from' => 'DEFENCE'
+                  ];
+                $data->buffs[] = $buffs;
+                $logs->push("{$data->name}は防御の構えを取った！");
+              } else {
+
+              }
+
+              break;
             default:
-              $logs->push("{$data->name}は攻撃とスキル以外を選択した。");
+              $logs->push("{$data->name}は攻撃とスキルと防御以外を選択した。");
               break;
           }
 
@@ -1397,6 +1415,7 @@ class BattleState extends Model
           // 1人ずつ、付与されているバフのターン数を削っていく
           foreach ($data->buffs as $buff) {
             $buff = (object)$buff; // -> で値を呼べるようにオブジェクトにキャストしとく
+            Debugbar::debug($data, $buff);
             $buff->remaining_turn -= 1;
             switch ($buff->buffed_from) {
               case 'SKILL' :
@@ -1419,6 +1438,10 @@ class BattleState extends Model
                   $logs->push("{$data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
                 }
                 break;
+                case 'DEFENCE' :
+                  Debugbar::debug("{$data->name}の 防御コマンドを解除。");
+                  break;
+
             }
           }
           $data->buffs = $remaining_buffs;
