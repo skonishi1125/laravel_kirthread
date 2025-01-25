@@ -30,7 +30,7 @@ class Party extends Model
 
     public function savedata()
     {
-        return $this->belongsTo(SaveData::class, 'savedata_id');
+        return $this->belongsTo(Savedata::class, 'savedata_id');
     }
 
     // $p->party_learned_skills

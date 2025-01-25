@@ -25,11 +25,11 @@ class SavedataHasItem extends Model
     }
 
     /**
-     * @return belongsTo<SaveData, $this>
+     * @return belongsTo<Savedata, $this>
      */
     public function savedata(): BelongsTo
     {
-        return $this->belongsTo(SaveData::class, 'item_id');
+        return $this->belongsTo(Savedata::class, 'item_id');
     }
 
     public static function updateItemsAfterBattle($savedata_id, $json_items_data)
