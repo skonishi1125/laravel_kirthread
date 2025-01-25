@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Models\Game\Rpg\SaveData;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -12,7 +14,7 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name', 'email', 'password', 'icon',
@@ -21,7 +23,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array
+     * @var list<string>
      */
     protected $hidden = [
         'password', 'remember_token',
@@ -30,7 +32,7 @@ class User extends Authenticatable
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -51,8 +53,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Purchase');
     }
 
-    public function rpg_savedata()
+    /**
+     * @return HasOne<SaveData, $this>
+     */
+    public function rpg_savedata(): HasOne
     {
-        return $this->hasOne('App\Models\Game\Rpg\Savedata');
+        return $this->hasOne(SaveData::class);
     }
 }
