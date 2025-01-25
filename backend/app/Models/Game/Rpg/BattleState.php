@@ -19,7 +19,7 @@ class BattleState extends Model
 
     public function savedata()
     {
-        return $this->belongsTo(SaveData::class);
+        return $this->belongsTo(Savedata::class);
     }
 
     // 戦闘後に回復させるHPの倍率

@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Models\Game\Rpg\SaveData;
+use App\Models\Game\Rpg\Savedata;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,10 +54,10 @@ class User extends Authenticatable
     }
 
     /**
-     * @return HasOne<SaveData, $this>
+     * @return HasOne<Savedata, $this>
      */
     public function rpg_savedata(): HasOne
     {
-        return $this->hasOne(SaveData::class);
+        return $this->hasOne(Savedata::class);
     }
 }
