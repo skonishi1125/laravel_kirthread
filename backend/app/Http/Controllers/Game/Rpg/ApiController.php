@@ -9,7 +9,7 @@ use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
-use App\Models\Game\Rpg\Savedata;
+use App\Models\Game\Rpg\SaveData;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Profile;
 use App\User;
@@ -33,7 +33,7 @@ class ApiController extends Controller
     public function checkSituation()
     {
         ! Auth::check() ? $status = 'unsigned' : $status = 'signed';
-        if (Savedata::checkSavedataHasParties()) {
+        if (SaveData::checkSavedataHasParties()) {
             $status = 'ready';
         }
 
@@ -80,7 +80,7 @@ class ApiController extends Controller
     // 削除予定のデータ関連情報を返す
     public function checkSavedataInfo(Request $request)
     {
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
         $parties = $savedata->parties;
         $parties = $parties->map(function ($party) {
             $party['class_japanese'] = $party->role->class_japanese;
@@ -98,7 +98,7 @@ class ApiController extends Controller
     public function deleteSavedata(Request $request)
     {
         // 紐づくデータの削除を行う
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
         if (is_null($savedata)) {
             return response()->json([
                 'message' => 'このセーブデータはすでに削除されています。画面のリロードをお試しください。',
@@ -126,9 +126,9 @@ class ApiController extends Controller
 
         // Debugbar::debug("prepareBeginning():------------------------ data: {$return_data}");
 
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
         if (is_null($savedata)) {
-            $savedata = Savedata::create([
+            $savedata = SaveData::create([
                 'user_id' => Auth::id(),
                 'money' => '300',
             ]);
@@ -152,8 +152,11 @@ class ApiController extends Controller
         $selected_info = $request->selected_info;
         // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導士", "partyName" => "メイ" というArrayが3つ
         // Debugbar::debug($selected_info, gettype($selected_info));
-        $savedata = Savedata::getLoginUserCurrentSavedata();
-        Debugbar::debug($savedata, count($selected_info));
+        $savedata = SaveData::getLoginUserCurrentSavedata();
+        Debugbar::debug([
+            'savedata' => $savedata,
+            'selected_info_count' => count($selected_info),
+        ]);
 
         $created_parties = collect();
 
@@ -201,7 +204,7 @@ class ApiController extends Controller
     {
         $shop_element_data = collect();
         $shop_list_items = Item::getShopListItem();
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
 
         foreach ($shop_list_items as $item) {
             $data = collect([
@@ -238,14 +241,21 @@ class ApiController extends Controller
                 return response()->json(['error' => '所持金額が足りません。'], 400);
             }
 
-            $savedata = Savedata::getLoginUserCurrentSavedata();
+            $savedata = SaveData::getLoginUserCurrentSavedata();
 
             // TODO: アイテムが増える挙動も書く。その際はトランザクションを使う。
             $savedata->update([
                 'money' => $after_payment_money,
             ]);
 
-            Debugbar::debug($money, $item_price, $number, $total_price, $after_payment_money, $savedata);
+            Debugbar::debug([
+                'money' => $money,
+                'item_price' => $item_price,
+                'number' => $number,
+                'total_price' => $total_price,
+                'after_payment_money' => $after_payment_money,
+                'savedata' => $savedata,
+            ]);
 
         } catch (Exception $e) {
 
@@ -256,7 +266,7 @@ class ApiController extends Controller
     public function getPartiesInfo()
     {
         // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
         $parties = $savedata->parties; // collectionとして取得
         $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
 
@@ -355,7 +365,7 @@ class ApiController extends Controller
     // ログインユーザーの現在のステータス
     public function loginUserCurrentSavedata()
     {
-        $current_save_data = Savedata::getLoginUserCurrentSavedata();
+        $current_save_data = SaveData::getLoginUserCurrentSavedata();
 
         return $current_save_data;
     }
@@ -384,7 +394,7 @@ class ApiController extends Controller
         $field_id = $request->field_id;
         $stage_id = $request->stage_id;
         Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
 
         // 戦闘中かどうかの判定
         $is_user_battle = BattleState::where('savedata_id', $savedata->id)->exists();
@@ -424,7 +434,7 @@ class ApiController extends Controller
             $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
 
             // アイテムデータを読み込む
-            $savedata = Savedata::getLoginUserCurrentSavedata();
+            $savedata = SaveData::getLoginUserCurrentSavedata();
             $items_data = BattleState::createItemsData($savedata->id);
 
             // 戦闘データをセッションIDで一意に管理する
@@ -515,7 +525,12 @@ class ApiController extends Controller
         );
 
         Debugbar::debug('--------------戦闘処理完了(ステータス一覧)----------------');
-        Debugbar::debug($current_players_data, $current_enemies_data, $current_items_data, $battle_logs);
+        Debugbar::debug([
+            'current_players_data' => $current_players_data,
+            'current_enemies_data' => $current_enemies_data,
+            'current_items_data' => $current_items_data,
+            'battle_logs' => $battle_logs,
+        ]);
         Debugbar::debug('----------------------------------------------------------');
 
         Debugbar::debug('バフターン数計算処理-------------------------------');
@@ -591,9 +606,11 @@ class ApiController extends Controller
         Debugbar::debug('アイテムデータ');
         Debugbar::debug(gettype($cleared_items_data));
 
-        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $savedata = SaveData::getLoginUserCurrentSavedata();
         try {
             DB::transaction(function () use ($savedata, $total_aquire_money, $cleared_players_data, $cleared_items_data, $per_exp, $exp_tables, $battle_state, $result_logs) {
+                $increase_values = [];
+
                 // 金額処理
                 $savedata->increment('money', $total_aquire_money);
                 Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
@@ -725,7 +742,7 @@ class ApiController extends Controller
 
         // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて削除する
         if (! $battle_state) {
-            $savedata = Savedata::getLoginUserCurrentSavedata();
+            $savedata = SaveData::getLoginUserCurrentSavedata();
             Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
             $battle_state = BattleState::where('savedata_id', $savedata->id)->get();
             foreach ($battle_state as $b) {

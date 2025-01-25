@@ -4,6 +4,7 @@ namespace App\Models\Game\Rpg;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SavedataHasItem extends Model
 {
@@ -15,14 +16,20 @@ class SavedataHasItem extends Model
         'id',
     ];
 
-    public function item()
+    /**
+     * @return belongsTo<Item, $this>
+     */
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class, 'item_id');
     }
 
-    public function savedata()
+    /**
+     * @return belongsTo<SaveData, $this>
+     */
+    public function savedata(): BelongsTo
     {
-        return $this->belongsTo(Savedata::class, 'item_id');
+        return $this->belongsTo(SaveData::class, 'item_id');
     }
 
     public static function updateItemsAfterBattle($savedata_id, $json_items_data)

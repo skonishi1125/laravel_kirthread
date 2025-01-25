@@ -2,9 +2,11 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\User;
 use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaveData extends Model
 {
@@ -32,9 +34,12 @@ class SaveData extends Model
         });
     }
 
-    public function user()
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function parties()
@@ -69,7 +74,10 @@ class SaveData extends Model
         if (Auth::check() == false) {
             return null;
         } else {
-            return Auth::user()->rpg_savedata;
+            /** @var \App\User $user */
+            $user = Auth::user();
+
+            return $user->rpg_savedata;
         }
     }
 

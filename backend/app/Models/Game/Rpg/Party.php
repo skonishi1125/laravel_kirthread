@@ -5,6 +5,8 @@ namespace App\Models\Game\Rpg;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Party extends Model
 {
@@ -28,7 +30,7 @@ class Party extends Model
 
     public function savedata()
     {
-        return $this->belongsTo(Savedata::class, 'savedata_id');
+        return $this->belongsTo(SaveData::class, 'savedata_id');
     }
 
     // $p->party_learned_skills
@@ -37,6 +39,11 @@ class Party extends Model
         return $this->hasMany(PartyLearnedSkill::class, 'party_id');
     }
 
+    /**
+     * 多対多のリレーション
+     *
+     * @return BelongsToMany<Skill, $this>
+     */
     public function skills()
     {
         // pivotの定義により、$party->skills[0]->pivot->skill_level というような形で中間tableの値を取得できる
@@ -45,7 +52,10 @@ class Party extends Model
             ->withPivot('skill_level');
     }
 
-    public function role()
+    /**
+     * @return belongsTo<Role, $this>
+     */
+    public function role(): BelongsTo
     {
         // 子側は自分の持つカラムを指定して、相手の主キーと紐づける
         return $this->belongsTo(Role::class, 'role_id');
@@ -173,9 +183,10 @@ class Party extends Model
     // beginning画面で指定した情報から、パーティメンバーを作成する
     public static function generateRpgPartyMember($savedata_id, $role_id, $nickname)
     {
+        $role_data = [];
         switch ($role_id) {
             case Role::ROLE_STRIKER:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_STRIKER,
                     'level' => 1,
@@ -188,10 +199,10 @@ class Party extends Model
                     'value_spd' => '25',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
             case Role::ROLE_MEDIC:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_MEDIC,
                     'level' => 1,
@@ -204,10 +215,10 @@ class Party extends Model
                     'value_spd' => '10',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
             case Role::ROLE_PARADIN:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_PARADIN,
                     'level' => 1,
@@ -220,10 +231,10 @@ class Party extends Model
                     'value_spd' => '5',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
             case Role::ROLE_MAGE:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_MAGE,
                     'level' => 1,
@@ -236,10 +247,10 @@ class Party extends Model
                     'value_spd' => '15',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
             case Role::ROLE_RANGER:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_RANGER,
                     'level' => 1,
@@ -252,10 +263,10 @@ class Party extends Model
                     'value_spd' => '20',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
             case Role::ROLE_BUFFER:
-                return self::create([
+                $role_data = [
                     'savedata_id' => $savedata_id,
                     'role_id' => Role::ROLE_BUFFER,
                     'level' => 1,
@@ -268,16 +279,17 @@ class Party extends Model
                     'value_spd' => '20',
                     'value_luc' => '10',
                     'total_exp' => '0',
-                ]);
+                ];
                 break;
         }
+
+        return $role_data;
     }
 
-    // デバッグ用
-    /*
-      ステータス初期値設定
-      App\Models\Game\Rpg\Party::debugSetDefaultStatus();
-    */
+    //
+    /**
+     * デバッグ用 ステータス初期値設定 \App\Models\Game\Rpg\Party::debugSetDefaultStatus();
+     */
     public static function debugSetDefaultStatus()
     {
         $all_parties = self::get();

@@ -5,6 +5,7 @@ namespace App\Models\Game\Rpg;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
 class Skill extends Model
@@ -33,12 +34,15 @@ class Skill extends Model
 
     const TARGET_RANGE_ALL = 2; // 全体を対象
 
-    /*
-      スキルレベル skill_level を取得したい場合は、下記のような形で取得が可能。
-      $party->skills->where('id', $skill->id)->first()->pivot->skill_level
-    */
-
-    public function parties()
+    /**
+     * 多対多のリレーション
+     *
+     * スキルレベル skill_level を取得したい場合は、下記のような形で取得が可能。
+     * $party->skills->where('id', $skill->id)->first()->pivot->skill_level
+     *
+     * @return BelongsToMany<Party, $this>
+     */
+    public function parties(): BelongsToMany
     {
         return $this->belongsToMany(Party::class, 'rpg_party_learned_skills', 'skill_id', 'party_id')
             ->withPivot('skill_level')
@@ -71,6 +75,7 @@ class Skill extends Model
                 // パーティが覚えているスキルのレベルと習得対象スキルの必要なスキルレベルを比較する
                 // ただし親スキルは必要となるスキルが存在しないため、考慮する必要がない。
                 $parent_skill_requirement_skill_level = $parent_skill_requirement->requirement_skill_level;
+
                 $parent_skill_is_checked_skill_level = true;
 
                 // パーティレベルが習得対象スキルの必要なパーティレベルより高ければ、trueとする
@@ -82,6 +87,7 @@ class Skill extends Model
                 }
 
                 // スキルレベル・パーティレベルどちらの条件も満たしていればtrueとする
+                // @phpstan-ignore-next-line
                 if ($parent_skill_is_checked_skill_level && $parent_skill_is_checked_party_level) {
                     $parent_skill_is_learned = true;
                 } else {
@@ -404,7 +410,7 @@ class Skill extends Model
         }
 
         self::separateStoreProcessAccrodingToEffectType(
-            $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, $damage, $heal_point, $buffs
+            $selected_skill, $self_data, $opponents_data, $opponents_index, $logs, (int) $damage, (int) $heal_point, $buffs
         );
 
     }
@@ -428,13 +434,13 @@ class Skill extends Model
                 BattleState::storePartySpecialSkill($self_data, $opponents_data, $opponents_index, $logs, $buffs, $selected_skill);
                 break;
             case self::EFFECT_DAMAGE_TYPE:
-                $damage = ceil($damage);
+                $damage = (int) ceil($damage);
                 BattleState::storePartyDamage(
                     'SKILL', $self_data, $opponents_data, null, $opponents_index, $logs, $damage, $selected_skill->target_range, $selected_skill->attack_type
                 );
                 break;
             case self::EFFECT_HEAL_TYPE:
-                $heal_point = ceil($heal_point);
+                $heal_point = (int) ceil($heal_point);
                 BattleState::storePartyHeal(
                     'SKILL', $self_data, $opponents_data,
                     $opponents_index, $logs, $heal_point, $selected_skill->target_range, null, null

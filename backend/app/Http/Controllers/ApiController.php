@@ -16,26 +16,27 @@ class ApiController extends Controller
             $item = 1000;
         }
 
-        $posts = Post::select('posts.id AS post_id', 'users.id AS user_id', 'users.name',
+        $posts = Post::select('posts.id', 'users.id AS user_id', 'users.name AS user_name',
             'posts.message', 'posts.picture', 'posts.youtube_url', 'posts.created_at')
             ->join('users', 'posts.user_id', 'users.id')
             ->limit($item)
             ->orderBy('posts.id', 'desc')
-            ->get();
+            ->get()
+            ->toArray();
 
         $rtn = [];
         $log_array = collect();
 
         foreach ($posts as $p) {
             $rtn[] = [
-                'post_id' => $p->post_id,
-                'user_id' => $p->user_id,
-                'user_name' => $p->name,
-                'message' => $p->message,
-                'picture' => $p->picture,
-                'youtube_url' => $p->youtube_url,
+                'post_id' => $p['id'],
+                'user_id' => $p['user_id'],
+                'user_name' => $p['user_name'],
+                'message' => $p['message'],
+                'picture' => $p['picture'],
+                'youtube_url' => $p['youtube_url'],
             ];
-            $log_array->push($p->post_id);
+            $log_array->push($p['id']);
         }
 
         Log::channel('apilog')

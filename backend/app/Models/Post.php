@@ -90,16 +90,18 @@ class Post extends Model
             return null;
         }
 
+        $youtube_video_id = '';
+
         if (substr($youtube_url, 0, 16) == 'https://youtu.be') {
-            $yotube_video_id = substr($youtube_url, 17, 11);
+            $youtube_video_id = substr($youtube_url, 17, 11);
         } else {
             preg_match('/v=((.){11})/', $youtube_url, $match);
-            if (isset($match)) {
-                $yotube_video_id = $match[1];
+            if (! empty($match[1])) {
+                $youtube_video_id = $match[1];
             }
         }
 
-        return $yotube_video_id;
+        return $youtube_video_id;
 
     }
 }
