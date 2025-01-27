@@ -411,7 +411,7 @@ class BattleState extends Model
 
                         break;
                     case 'DEFENCE':
-                        // 防御は現状味方だけだが、作るなら
+                        // 防御は現状味方だけだが、敵も作るならelseに書けば良い。
                         if ($data->is_enemy === false) {
                             // 防御というバフを1ターン、150%の補正でかけておく
                             Debugbar::debug("【防御】使用者: {$data->name} ");
@@ -427,6 +427,23 @@ class BattleState extends Model
 
                         }
 
+                        break;
+                    case 'ESCAPE':
+                        // 逃走も同じく、現状味方だけだが、敵も作るならelseに書けば良い。
+
+                        // 対象者の素早さを取得
+                        $actual_speed = self::calculateActualStatusValue($data, 'spd');
+
+                        if ($data->is_enemy === false) {
+                            Debugbar::debug("【ESCAPE】使用者: {$data->name} 基礎 + バフの合計スピード: {$actual_speed}");
+                            // 相手の素早さの平均値をチェック。
+                            foreach ($enemies_data as $enemy_data) {
+                                // ...
+                            }
+                            
+                        } else {
+
+                        }
                         break;
                     default:
                         $logs->push("{$data->name}は攻撃とスキルと防御以外を選択した。");

@@ -18,7 +18,7 @@
 }
 
 .command-list-row {
-  padding: 6% 0%;
+  padding: 4% 0%;
   cursor: pointer;
 }
 .command-list-row:hover {
@@ -215,6 +215,7 @@
             </div>
 
             <div class="command-list-row" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">RETURN</div>
+            <div class="command-list-row" @click="handleCommandSelection('ESCAPE')" @mouseover="showCommandDescription('ESCAPE')" @mouseleave="clearAllDescription">ESCAPE</div>
            </div>
            <!-- 味方の立ち絵を出す -->
            <div class="character-picture" :style="backgroundImageStyle"></div>
@@ -561,6 +562,13 @@ export default {
           console.log('RETURN選択。');
           this.$store.dispatch('resetSelectedCommands');
           this.$store.dispatch('resetPartyMemberIndex');
+          this.battleCommandSetup();
+          break;
+        case ("ESCAPE") :
+          // DEFENCEと同じ。コマンド情報を格納し、敵を指定する必要はないので次のキャラに。
+          console.log('ESCAPE選択。');
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
+          this.$store.dispatch('incrementPartyMemberIndex');
           this.battleCommandSetup();
           break;
       }
