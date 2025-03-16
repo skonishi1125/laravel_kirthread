@@ -123,6 +123,7 @@ class BattleState extends Model
                 'buffs' => $buffs,
                 'role_portrait' => $role_portrait,
                 'is_defeated_flag' => false,
+                'is_escaped' => false,
                 'player_index' => $player_index, // 味方のパーティ中での並び。
                 'is_enemy' => false,
             ]);
@@ -177,6 +178,7 @@ class BattleState extends Model
                 'portrait' => $enemy->portrait_image_path,
                 'buffs' => $buffs,
                 'is_defeated_flag' => false,
+                'is_escaped' => false,
                 'enemy_index' => $enemy_index, // 敵の並び。
                 'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
                 'exp' => $enemy->exp,
@@ -283,6 +285,13 @@ class BattleState extends Model
                     Debugbar::debug("敵は全員討伐済みのため、行動をスキップします。 コマンド: {$data->command}");
 
                     continue; // 敵が全滅していたら、コマンドを実行せずスキップ
+                }
+
+                // 逃走チェック
+                if (self::isPlayerSuccessEscape($players_data)) {
+                    Debugbar::debug("味方がESCAPEコマンドを選択し、成功しているため行動をスキップします。 コマンド: {$data->command} escapedフラグ: {$data->is_escaped}");
+
+                    continue;
                 }
 
                 Debugbar::debug("行動者やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
@@ -437,10 +446,27 @@ class BattleState extends Model
                         if ($data->is_enemy === false) {
                             Debugbar::debug("【ESCAPE】使用者: {$data->name} 基礎 + バフの合計スピード: {$actual_speed}");
                             // 相手の素早さの平均値をチェック。
+                            $total_enemy_spd = 0;
+                            $average_enemy_spd = 0;
                             foreach ($enemies_data as $enemy_data) {
-                                // ...
+                                $total_enemy_spd += $enemy_data->value_spd;
                             }
-                            
+                            if ($enemies_data->count() > 0) {
+                                $average_enemy_spd = $total_enemy_spd / $enemies_data->count();
+                            }
+                            Debugbar::debug(" 敵人数: {$enemies_data->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
+
+                            // TODO: 確率で成功か失敗するようにする
+                            if ($average_enemy_spd < $data->value_spd) {
+                                Debugbar::debug("逃走成功！");
+                                $data->is_escaped = true;
+                                $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
+                            } else {
+                                Debugbar::debug("逃走失敗...");
+                                $logs->push("{$data->name}はは逃走を試みた！しかし回り込まれてしまった！");
+                            }
+
+                        // 敵が逃げるを選択した場合の処理。現状想定なし。
                         } else {
 
                         }
@@ -464,6 +490,13 @@ class BattleState extends Model
                     Debugbar::debug("パーティは全員戦闘不能のため、敵の行動をスキップします。 コマンド: {$data->command}");
 
                     continue; // 敵が全滅していたら、コマンドを実行せずスキップ
+                }
+
+                // プレイヤー逃走チェック
+                if (self::isPlayerSuccessEscape($players_data)) {
+                    Debugbar::debug("パーティ側がESCAPEコマンドを選択し、成功しているため敵の行動をスキップします。 コマンド: {$data->command}");
+
+                    continue;
                 }
 
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
@@ -1598,5 +1631,21 @@ class BattleState extends Model
         }
 
         return true;
+    }
+
+    /**
+     * player側がESCAPEが成功している状況であるかどうかをboolで返す。※現状playersにのみ有効
+     */
+
+    public static function isPlayerSuccessEscape(Collection $players_data): bool
+    {
+        foreach ($players_data as $data) {
+            // パーティメンバーにESCAPEが成功している人物がいた場合、true。
+            if ($data->is_escaped) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
