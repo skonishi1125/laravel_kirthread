@@ -136,6 +136,20 @@
   border-bottom: 1px dotted white;
 }
 
+.nextScene_button {
+    font-size: 18px;
+    position: absolute;
+    right: 43%;
+    bottom: 50px;
+    background-color: white;
+    padding: 20px 55px;
+    cursor: pointer;
+}
+
+.nextScene_button:hover {
+    background-color: beige;
+}
+
 
 </style>
 
@@ -251,6 +265,7 @@
             </div>
           </div>
           <p v-if="battle.status == 'resultLose'">全滅した...</p>
+          <p v-if="battle.status == 'escaped'">{{ this.partyData[0].name }}たちは体制を立て直すため、敵から逃げ出した。</p>
         </div>
 
         <!-- enemy -->
@@ -273,8 +288,15 @@
 
           <!-- 勝利時、次の戦闘に遷移 -->
           <div v-if="battle.status == 'resultWin'"  style="position: relative;">
-            <div style="position: absolute; right: 8%; bottom: 0%; background-color: white; padding: 5px 10px; cursor: pointer;">
-              <a @click="nextBattle">次の戦闘へ進む</a>
+            <div class="nextScene_button" @click="nextBattle">
+              <a>次の戦闘へ進む</a>
+            </div>
+          </div>
+
+          <!-- 逃走成功時、街に戻るためのボタンを作成 -->
+          <div v-if="battle.status == 'escaped'"  style="position: relative;">
+            <div class="nextScene_button" @click="escapeBattle">
+                <a>街に戻る</a>
             </div>
           </div>
 
@@ -304,10 +326,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <div v-if="battle.status !== 'resultWin'">
-    <button @click="escapeBattle">逃げる</button>
   </div>
 
   <div class="battlelog_result_wrapper overflow-auto">
@@ -377,7 +395,10 @@ export default {
           description = '所持中のアイテムを使用します。'
           break;
         case 'RETURN': 
-          description = 'コマンドの選択を最初からやり直します。'
+          description = 'コマンド選択状態をリセットし、最初からやり直します。'
+          break;
+        case 'ESCAPE': 
+          description = '戦闘から逃走を試み、成功すると街に戻ります。'
           break;
       }
       this.hoveredDescription = description;
@@ -444,6 +465,12 @@ export default {
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
       this.hoveredDescription = null; // スキルの説明文を消しておく
+
+      // ESCAPEコマンドを成功しているパーティがいた場合は、逃走画面に。
+      if (this.partyData.some(player => player.is_escaped === true)) {
+        this.$store.dispatch('setBattleStatus', 'escaped');
+        return;
+      }
 
       // 敵を全て討伐していた場合は、勝利画面に。
       if (this.enemyData.every(enemy => enemy.is_defeated_flag === true)){
