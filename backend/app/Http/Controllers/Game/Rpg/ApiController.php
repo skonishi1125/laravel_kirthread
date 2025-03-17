@@ -612,6 +612,7 @@ class ApiController extends Controller
                 $increase_values = [];
 
                 // 金額処理
+                // TODO 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
                 $savedata->increment('money', $total_aquire_money);
                 Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
@@ -738,6 +739,72 @@ class ApiController extends Controller
     {
         Debugbar::debug('escapeBattle(): ---------------------');
         $session_id = $request->session_id;
+
+        try {
+            $battle_state = BattleState::where('session_id', $session_id)->first();
+
+            // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて処理
+            if (is_null($battle_state)) {
+                $savedata = Savedata::getLoginUserCurrentSavedata();
+                Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
+                $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
+            }
+            // このケースでbattle_stateが存在しなかった場合は、例外として処理（有り得ないが、書いておく）
+            if (is_null($battle_state)) {
+                throw new \RuntimeException('Failed to find battle state.');
+            }
+            // ---------- ステータス反映 ----------
+            $current_players_data = collect(json_decode($battle_state['players_json_data']));
+            foreach ($current_players_data as $json_data) {
+                $updated_party = Party::find($json_data->id);
+                if (is_null($updated_party)) {
+                    throw new \RuntimeException('Failed to find party for json_data->id: '.$json_data->id);
+                }
+                $updated_party->level = $json_data->level;
+                $updated_party->value_hp = $json_data->max_value_hp;
+                $updated_party->value_ap = $json_data->max_value_ap;
+                $updated_party->value_str = $json_data->value_str;
+                $updated_party->value_def = $json_data->value_def;
+                $updated_party->value_int = $json_data->value_int;
+                $updated_party->value_spd = $json_data->value_spd;
+                $updated_party->value_luc = $json_data->value_luc;
+                $updated_party->total_exp = $json_data->total_exp;
+                $updated_party->freely_skill_point = $json_data->freely_skill_point;
+                $updated_party->freely_status_point = $json_data->freely_status_point;
+
+                $updated_party->save();
+
+                Debugbar::debug($updated_party);
+            }
+
+            // ---------- アイテム反映 ----------
+            // TODO
+            $current_items_data = collect(json_decode($battle_state['items_json_data']));
+
+            // ---------- ゴールドやドロップ品(現状は未実装)の反映 ----------
+            // TODO 現状、戦闘勝利時に即時反映されているので合わせたい
+
+        } catch (\RuntimeException $e) {
+            \Log::error("{$e->getMessage()} {$e->getFile()}:{$e->getLine()}");
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+
+        // 終わった後は、戦闘セッションを削除。
+        $battle_state->delete();
+
+        Debugbar::debug('ステータス反映完了。逃走処理終わり。');
+    }
+
+    /**
+     * 戦闘に敗北した場合、battlestateの情報を保存せず、削除する
+     */
+    public function resultLoseBattle(Request $request)
+    {
+        Debugbar::debug('resultLoseBattle(): ---------------------');
+        $session_id = $request->session_id;
         $battle_state = BattleState::where('session_id', $session_id)->first();
 
         // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて削除する
@@ -752,6 +819,6 @@ class ApiController extends Controller
             $battle_state->delete();
         }
 
-        Debugbar::debug('戦闘セッションを削除しました。');
+        Debugbar::debug('敗北。戦闘セッションをデータとして保存せず削除しました。');
     }
 }

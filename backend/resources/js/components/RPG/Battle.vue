@@ -293,6 +293,13 @@
             </div>
           </div>
 
+          <!-- 敗北時、街に戻るためのボタンを作成 -->
+          <div v-if="battle.status == 'resultLose'"  style="position: relative;">
+            <div class="nextScene_button" @click="resultLose">
+                <a>街に戻る</a>
+            </div>
+          </div>
+
           <!-- 逃走成功時、街に戻るためのボタンを作成 -->
           <div v-if="battle.status == 'escaped'"  style="position: relative;">
             <div class="nextScene_button" @click="escapeBattle">
@@ -664,6 +671,25 @@ export default {
         }
       );
     },
+
+    resultLose() {
+        console.log('resultLose(): ----------------------------------');
+        axios.post('/api/game/rpg/battle/result_lose', {
+            session_id: this.battle.battleSessionId,
+        })
+            .then(response => { 
+            this.$store.dispatch('resetAllBattleStatus');
+            this.$store.dispatch('setScreen', 'menu');
+            this.$router.push('/game/rpg/menu'); // 任意の画面に遷移
+            })
+            .catch(error => {
+                // エラーが返る = すでに消えている ということなのでメニュー画面に戻す。
+                this.$store.dispatch('resetAllBattleStatus');
+                this.$store.dispatch('setScreen', 'menu');
+                this.$router.push('/game/rpg/menu');
+            });
+    },
+
 
     nextBattle() {
       // 戦闘終了後、次のステージに進む。
