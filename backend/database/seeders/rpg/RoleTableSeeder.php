@@ -21,7 +21,7 @@ class RoleTableSeeder extends Seeder
         $roles = [
             [
                 'id' => Role::ROLE_STRIKER,
-                'class' => 'striker',
+                'class' => Role::ROLE_STRIKER_CLASS_NAME,
                 'class_japanese' => '格闘家',
                 'default_name' => 'スト',
                 'growth_hp' => 4,
@@ -39,7 +39,7 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'id' => Role::ROLE_MEDIC,
-                'class' => 'medic',
+                'class' => Role::ROLE_MEDIC_CLASS_NAME,
                 'class_japanese' => '治療師',
                 'default_name' => 'メディ',
                 'growth_hp' => 3,
@@ -57,7 +57,7 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'id' => Role::ROLE_PALADIN,
-                'class' => 'paladin',
+                'class' => Role::ROLE_PALADIN_CLASS_NAME,
                 'class_japanese' => '重騎士',
                 'default_name' => 'パラ',
                 'growth_hp' => 5,
@@ -75,7 +75,7 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'id' => Role::ROLE_MAGE,
-                'class' => 'mage',
+                'class' => Role::ROLE_MAGE_CLASS_NAME,
                 'class_japanese' => '魔導士',
                 'default_name' => 'メイ',
                 'growth_hp' => 2,
@@ -93,7 +93,7 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'id' => Role::ROLE_RANGER,
-                'class' => 'ranger',
+                'class' => Role::ROLE_RANGER_CLASS_NAME,
                 'class_japanese' => '弓馭者', // ゆみぎょしゃ
                 'default_name' => 'レン',
                 'growth_hp' => 4,
@@ -111,7 +111,7 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'id' => Role::ROLE_BUFFER,
-                'class' => 'buffer',
+                'class' => Role::ROLE_BUFFER_CLASS_NAME,
                 'class_japanese' => '理術師',
                 'default_name' => 'バファ',
                 'growth_hp' => 3,
