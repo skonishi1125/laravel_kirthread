@@ -180,110 +180,31 @@ class Party extends Model
         return $increase_values;
     }
 
-    // beginning画面で指定した情報から、パーティメンバーを作成する
+    /**
+     * beginning画面で指定した情報から、パーティメンバーを作成する
+     *
+     * @return self $created_party
+     */
     public static function generateRpgPartyMember($savedata_id, $role_id, $nickname)
     {
-        $role_data = [];
-        switch ($role_id) {
-            case Role::ROLE_STRIKER:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_STRIKER,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '40',
-                    'value_ap' => '10',
-                    'value_str' => '25',
-                    'value_def' => '5',
-                    'value_int' => '5',
-                    'value_spd' => '25',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-            case Role::ROLE_MEDIC:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_MEDIC,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '30',
-                    'value_ap' => '20',
-                    'value_str' => '10',
-                    'value_def' => '15',
-                    'value_int' => '20',
-                    'value_spd' => '10',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-            case Role::ROLE_PARADIN:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_PARADIN,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '50',
-                    'value_ap' => '15',
-                    'value_str' => '15',
-                    'value_def' => '25',
-                    'value_int' => '5',
-                    'value_spd' => '5',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-            case Role::ROLE_MAGE:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_MAGE,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '20',
-                    'value_ap' => '25',
-                    'value_str' => '5',
-                    'value_def' => '10',
-                    'value_int' => '25',
-                    'value_spd' => '15',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-            case Role::ROLE_RANGER:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_RANGER,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '40',
-                    'value_ap' => '15',
-                    'value_str' => '15',
-                    'value_def' => '10',
-                    'value_int' => '10',
-                    'value_spd' => '20',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-            case Role::ROLE_BUFFER:
-                $role_data = [
-                    'savedata_id' => $savedata_id,
-                    'role_id' => Role::ROLE_BUFFER,
-                    'level' => 1,
-                    'nickname' => $nickname,
-                    'value_hp' => '30',
-                    'value_ap' => '20',
-                    'value_str' => '5',
-                    'value_def' => '15',
-                    'value_int' => '15',
-                    'value_spd' => '20',
-                    'value_luc' => '10',
-                    'total_exp' => '0',
-                ];
-                break;
-        }
+        $role_default_status = Role::getDefaultStatusById($role_id);
 
-        return $role_data;
+        $created_party = self::create([
+            'savedata_id' => $savedata_id,
+            'role_id' => $role_id,
+            'nickname' => $nickname,
+            'level' => 1,
+            'value_hp' => $role_default_status['value_hp'],
+            'value_ap' => $role_default_status['value_ap'],
+            'value_str' => $role_default_status['value_str'],
+            'value_def' => $role_default_status['value_def'],
+            'value_int' => $role_default_status['value_int'],
+            'value_spd' => $role_default_status['value_spd'],
+            'value_luc' => $role_default_status['value_luc'],
+            // EXP, statuspoint, skillpointはデータベース側の初期値として設定している。
+        ]);
+
+        return $created_party;
     }
 
     //
@@ -323,7 +244,7 @@ class Party extends Model
                         'total_exp' => '0',
                     ]);
                     break;
-                case Role::ROLE_PARADIN_CLASS_NAME:
+                case Role::ROLE_PALADIN_CLASS_NAME:
                     $party->update([
                         'level' => 1,
                         'value_hp' => '50',

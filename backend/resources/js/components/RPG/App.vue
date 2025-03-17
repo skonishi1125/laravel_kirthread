@@ -29,6 +29,8 @@
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
+          <!-- メニュー: ステータス画面デバッグ -->
+            <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small>
         </h4>
       </div>
     </div>
@@ -40,9 +42,6 @@
     <router-view></router-view>
 
   </div>
-  <!-- メニュー: ステータス画面デバッグ -->
-  <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }}<br></small>
-
 </template>
 
 <script>
@@ -57,6 +56,7 @@
     ...mapState(['screen']), // state.screen 全体を取得
     ...mapState({
         status: state => state.menu.status,
+        battleCommands: myState => myState.battle.selectedCommands, // 検証 myStateで定義しても問題なく取得できるかチェック
       }),
     },
     created() { // DOMに依存しない処理を書く(state処理など。)

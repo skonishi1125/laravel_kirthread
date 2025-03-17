@@ -319,7 +319,7 @@ class Skill extends Model
                 $damage = ceil(BattleState::calculateActualStatusValue($self_data, 'str') * $selected_skill->skill_percent + 5);
                 break;
                 /**
-                 * 重騎士(Paradin)
+                 * 重騎士(Paladin)
                  */
             case 30:
                 Debugbar::debug('ワイドスラスト');

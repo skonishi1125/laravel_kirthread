@@ -389,7 +389,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '30',
                 'name' => 'ワイドスラスト',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_PHYSICAL_TYPE,
                 'effect_type' => Skill::EFFECT_DAMAGE_TYPE,
                 'target_range' => Skill::TARGET_RANGE_ALL,
@@ -407,7 +407,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '31',
                 'name' => 'ワイドガード',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_SPECIAL_TYPE,
                 'target_range' => Skill::TARGET_RANGE_ALL,
@@ -428,7 +428,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '32',
                 'name' => 'ブレイヴスラッシュ',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_PHYSICAL_TYPE,
                 'effect_type' => Skill::EFFECT_DAMAGE_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -446,7 +446,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '33',
                 'name' => 'ガードアップ',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -467,7 +467,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '34',
                 'name' => 'スキル34',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -488,7 +488,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '35',
                 'name' => 'スキル35',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -509,7 +509,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '36',
                 'name' => 'スキル36',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -530,7 +530,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '37',
                 'name' => 'スキル37',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -551,7 +551,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '38',
                 'name' => 'スキル38',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,
@@ -572,7 +572,7 @@ class SkillTableSeeder extends Seeder
             [
                 'id' => '39',
                 'name' => 'スキル39',
-                'available_role_id' => Role::ROLE_PARADIN,
+                'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => Skill::ATTACK_NO_TYPE,
                 'effect_type' => Skill::EFFECT_BUFF_TYPE,
                 'target_range' => Skill::TARGET_RANGE_SINGLE,

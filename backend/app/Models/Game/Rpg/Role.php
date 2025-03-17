@@ -16,7 +16,7 @@ class Role extends Model
 
     const ROLE_MEDIC = 2;
 
-    const ROLE_PARADIN = 3;
+    const ROLE_PALADIN = 3;
 
     const ROLE_MAGE = 4;
 
@@ -29,13 +29,92 @@ class Role extends Model
 
     const ROLE_MEDIC_CLASS_NAME = 'medic';
 
-    const ROLE_PARADIN_CLASS_NAME = 'paradin';
+    const ROLE_PALADIN_CLASS_NAME = 'paladin';
 
     const ROLE_MAGE_CLASS_NAME = 'mage';
 
     const ROLE_RANGER_CLASS_NAME = 'ranger';
 
     const ROLE_BUFFER_CLASS_NAME = 'buffer';
+
+    // 職業別 Lv.1時点でのステータス
+    public const STRIKER_DEFAULT_STATUS = [
+        'value_hp' => 40,
+        'value_ap' => 10,
+        'value_str' => 25,
+        'value_def' => 5,
+        'value_int' => 5,
+        'value_spd' => 25,
+        'value_luc' => 10,
+    ];
+
+    public const MEDIC_DEFAULT_STATUS = [
+        'value_hp' => 30,
+        'value_ap' => 20,
+        'value_str' => 10,
+        'value_def' => 15,
+        'value_int' => 20,
+        'value_spd' => 10,
+        'value_luc' => 10,
+    ];
+
+    public const PALADIN_DEFAULT_STATUS = [
+        'value_hp' => 50,
+        'value_ap' => 15,
+        'value_str' => 15,
+        'value_def' => 25,
+        'value_int' => 5,
+        'value_spd' => 5,
+        'value_luc' => 10,
+    ];
+
+    public const MAGE_DEFAULT_STATUS = [
+        'value_hp' => 20,
+        'value_ap' => 25,
+        'value_str' => 5,
+        'value_def' => 10,
+        'value_int' => 25,
+        'value_spd' => 15,
+        'value_luc' => 10,
+    ];
+
+    public const RANGER_DEFAULT_STATUS = [
+        'value_hp' => 40,
+        'value_ap' => 15,
+        'value_str' => 15,
+        'value_def' => 10,
+        'value_int' => 10,
+        'value_spd' => 20,
+        'value_luc' => 10,
+    ];
+
+    public const BUFFER_DEFAULT_STATUS = [
+        'value_hp' => 30,
+        'value_ap' => 20,
+        'value_str' => 5,
+        'value_def' => 15,
+        'value_int' => 15,
+        'value_spd' => 20,
+        'value_luc' => 10,
+    ];
+
+    /**
+     * 渡したrole_idに対応するステータス情報を返す。
+     *
+     * @return array<string,int>
+     */
+    public static function getDefaultStatusById(int $role_id): array
+    {
+        return match ($role_id) {
+            self::ROLE_STRIKER => self::STRIKER_DEFAULT_STATUS,
+            self::ROLE_MEDIC => self::MEDIC_DEFAULT_STATUS,
+            self::ROLE_PALADIN => self::PALADIN_DEFAULT_STATUS,
+            self::ROLE_MAGE => self::MAGE_DEFAULT_STATUS,
+            self::ROLE_RANGER => self::RANGER_DEFAULT_STATUS,
+            self::ROLE_BUFFER => self::BUFFER_DEFAULT_STATUS,
+            default => throw new \InvalidArgumentException('Invalid role_id: '.$role_id),
+        };
+    }
 
     public function Parties()
     {

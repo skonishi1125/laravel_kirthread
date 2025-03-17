@@ -26,7 +26,7 @@ export default createStore({
     },
     // 戦闘画面
     battle: {
-      status: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escape'
+      status: 'start', // 'start' 'encount', 'command', 'enemySelect', 'partySelect', 'exec', 'outputLog', 'resultWin', 'resultLose', 'escaped'
       selectedCommands: [], // 味方の選択コマンド
       selectedEnemies: [],  // 味方が選択したEnemy情報
       currentPartyMemberIndex: 0, // どの味方のコマンドを選択しているかのindex [0]か[1]か[2]
