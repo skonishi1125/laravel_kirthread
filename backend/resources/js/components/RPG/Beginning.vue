@@ -21,7 +21,7 @@
 .parameter-role.medic {
   clip-path: polygon(50% 20%, 84% 25%, 75% 56%, 65% 81%, 28% 92%, 30% 54%, 33% 36%);
 }
-.parameter-role.paradin {
+.parameter-role.paladin {
   clip-path: polygon(50% 0%, 72% 28%, 85% 60%, 75% 100%, 43% 65%, 33% 55%, 29% 31%);
 }
 .parameter-role.mage {
@@ -163,7 +163,7 @@
             <div class="parameter-role paint medic"></div>
           </div>
           <div v-else-if="beginning.currentDisplayRoleIndex === 2">
-            <div class="parameter-role paint paradin"></div>
+            <div class="parameter-role paint paladin"></div>
           </div>
           <div v-else-if="beginning.currentDisplayRoleIndex === 3">
             <div class="parameter-role paint mage"></div>

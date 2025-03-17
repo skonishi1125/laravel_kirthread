@@ -244,7 +244,7 @@ class Party extends Model
                         'total_exp' => '0',
                     ]);
                     break;
-                case Role::ROLE_PARADIN_CLASS_NAME:
+                case Role::ROLE_PALADIN_CLASS_NAME:
                     $party->update([
                         'level' => 1,
                         'value_hp' => '50',

@@ -16,7 +16,7 @@ class Role extends Model
 
     const ROLE_MEDIC = 2;
 
-    const ROLE_PARADIN = 3;
+    const ROLE_PALADIN = 3;
 
     const ROLE_MAGE = 4;
 
@@ -29,7 +29,7 @@ class Role extends Model
 
     const ROLE_MEDIC_CLASS_NAME = 'medic';
 
-    const ROLE_PARADIN_CLASS_NAME = 'paradin';
+    const ROLE_PALADIN_CLASS_NAME = 'paladin';
 
     const ROLE_MAGE_CLASS_NAME = 'mage';
 
@@ -58,7 +58,7 @@ class Role extends Model
         'value_luc' => 10,
     ];
 
-    public const PARADIN_DEFAULT_STATUS = [
+    public const PALADIN_DEFAULT_STATUS = [
         'value_hp' => 50,
         'value_ap' => 15,
         'value_str' => 15,
@@ -108,7 +108,7 @@ class Role extends Model
         return match ($role_id) {
             self::ROLE_STRIKER => self::STRIKER_DEFAULT_STATUS,
             self::ROLE_MEDIC => self::MEDIC_DEFAULT_STATUS,
-            self::ROLE_PARADIN => self::PARADIN_DEFAULT_STATUS,
+            self::ROLE_PALADIN => self::PALADIN_DEFAULT_STATUS,
             self::ROLE_MAGE => self::MAGE_DEFAULT_STATUS,
             self::ROLE_RANGER => self::RANGER_DEFAULT_STATUS,
             self::ROLE_BUFFER => self::BUFFER_DEFAULT_STATUS,
