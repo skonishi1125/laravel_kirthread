@@ -178,17 +178,17 @@ class ApiController extends Controller
                     }
 
                     $created_party = Party::generateRpgPartyMember($savedata->id, $party['roleId'], $party['partyName']);
-                    Debugbar::debug("作成完了。id: {$created_party->id} nickname: {$created_party->nickname}");
+                    Debugbar::debug("作成完了。id: {$savedata->id} nickname: {$party['partyName']}");
                     Debugbar::debug($created_party);
                     $created_parties->push($created_party);
                 }
             });
         } catch (\Exception $e) {
             Debugbar::debug('createParties() でエラーが発生しました。');
+            \Log::error("{$e->getMessage()} {$e->getFile()}:{$e->getLine()}");
 
-            // \Log::error('createParties() でエラーが発生しました。', ['error' => $e->getMessage()]);
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'キャラクター作成処理でエラーが発生しました。再度お試しいただくか、改善しない場合は管理者に連絡ください。',
             ], 422);
         }
 

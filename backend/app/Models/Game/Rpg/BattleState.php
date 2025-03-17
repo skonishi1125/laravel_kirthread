@@ -458,15 +458,15 @@ class BattleState extends Model
 
                             // TODO: 確率で成功か失敗するようにする
                             if ($average_enemy_spd < $data->value_spd) {
-                                Debugbar::debug("逃走成功！");
+                                Debugbar::debug('逃走成功！');
                                 $data->is_escaped = true;
                                 $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
                             } else {
-                                Debugbar::debug("逃走失敗...");
+                                Debugbar::debug('逃走失敗...');
                                 $logs->push("{$data->name}はは逃走を試みた！しかし回り込まれてしまった！");
                             }
 
-                        // 敵が逃げるを選択した場合の処理。現状想定なし。
+                            // 敵が逃げるを選択した場合の処理。現状想定なし。
                         } else {
 
                         }
@@ -1636,7 +1636,6 @@ class BattleState extends Model
     /**
      * player側がESCAPEが成功している状況であるかどうかをboolで返す。※現状playersにのみ有効
      */
-
     public static function isPlayerSuccessEscape(Collection $players_data): bool
     {
         foreach ($players_data as $data) {

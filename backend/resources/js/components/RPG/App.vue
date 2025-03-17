@@ -29,6 +29,8 @@
       <div class="col-12" style="text-align: center;">
         <h4>
           App.vue
+          <!-- メニュー: ステータス画面デバッグ -->
+            <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small>
         </h4>
       </div>
     </div>
@@ -40,10 +42,6 @@
     <router-view></router-view>
 
   </div>
-  <!-- メニュー: ステータス画面デバッグ -->
-  <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }}<br></small>
-  <small style="font-size: 12px;">{{ battleCommands }}<br></small>
-
 </template>
 
 <script>
