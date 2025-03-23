@@ -14,7 +14,7 @@ class Field extends Model
     // 難易度の幅。最大5
     private const DIFFICULTY_RANGE = 5;
 
-    public function savedata_cleared_field()
+    public function savedata_cleared_fields()
     {
         /**
          * tinkerでテストする場合の例

@@ -3,6 +3,24 @@
   display: inline-block;
 }
 
+.message-container {
+    background-color: #ffffff;
+    margin: 30px auto;
+    padding: 5px 10px;
+    border: 3px solid #a2cbe8;
+    border-radius: 10px;
+    font-size: 14px;
+    min-height: 125px; 
+    width: 100%;
+    position: relative;
+    color: #333;
+}
+
+.message-container p {
+  font-weight: bold;
+  margin-bottom: 0.7rem;
+}
+
 .command-list {
   display: flex; 
   flex-flow: column; 
@@ -47,7 +65,6 @@
   overflow-y: scroll;
 }
 
-
 .party-status-wrapper {
   display: flex; 
   justify-content: space-evenly; 
@@ -85,15 +102,26 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.party-status-container {
+    background-color: #ffffff;
+    border:3px solid #a2cbe8;
+    border-radius: 10px;
+    position: relative;
+    color: #333;
+    margin: auto;
+    text-align:center; 
+    padding: 10px 20px; 
+}
+
 /* battle.status === 'partySelect'の場合のみ割り当てる */
 .party-hover-active {
-  cursor: pointer;
-  transition: border 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
 .party-hover-active:hover {
-  border: thick double #ffcc00 !important;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 3px solid #ffd966; /* 明るめイエロー */
+    box-shadow: 0 0 8px rgba(255, 217, 102, 0.6); /* 黄系ぼかし光 */
 }
 
 .log-container {
@@ -118,6 +146,11 @@
   margin-bottom: -15px; /* 各ログアイテムの下に余白を追加（任意） */
 }
 
+.log-item p {
+  font-weight: bold;
+  margin-bottom: 0.7rem;
+}
+
 .battlelog_result_wrapper {
   background-color: black;
   color: rgb(58, 250, 58);
@@ -137,19 +170,31 @@
 }
 
 .nextScene_button {
-    font-size: 18px;
-    position: absolute;
-    right: 43%;
-    bottom: 50px;
-    background-color: white;
-    padding: 20px 55px;
-    cursor: pointer;
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-size: 18px;
+  padding: 20px 55px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  transition: all 0.15s ease;
 }
 
 .nextScene_button:hover {
-    background-color: beige;
+  background-color: #f5f5dc;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
 }
 
+.nextScene_button:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
 
 </style>
 
@@ -160,7 +205,7 @@
 
       <div v-if="battle.status == 'error'">
         <div style="cursor: pointer; background-color: white;">
-          <p @click="escapeBattle" >エラーが発生しました。このメッセージをクリックして一度戻ってください</p>
+          <p @click="finishBattle" >エラーが発生しました。このメッセージをクリックして一度戻ってください</p>
         </div>
       </div>
 
@@ -236,12 +281,12 @@
          </div>
 
         <!-- messageフィールド -->
-        <div style="background-color: white; margin: 30px; border: thick double rgb(50, 161, 206); min-height: 120px; padding: 5px 10px; font-size: 14px; position: relative;">
+        <div class="message-container">
           <!-- <<{{ battle.currentPartyMemberIndex }} 人目選択中>> -->
            <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div> -->
-          <p v-if="battle.status == 'encount'">敵が現れた！</p>
+          <p class="log-item" v-if="battle.status == 'encount'">敵が現れた！</p>
           <p v-if="battle.status == 'command'">
             {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
@@ -251,8 +296,8 @@
               <span v-html="hoveredDescription"></span>
             </div>
           </p>
-          <p v-if="battle.status == 'enemySelect'">対象の敵を選択してください</p>
-          <p v-if="battle.status == 'partySelect'">対象の味方を選択してください</p>
+          <p v-if="battle.status == 'enemySelect'">対象の <span style="color:red;">敵</span> を選択してください。</p>
+          <p v-if="battle.status == 'partySelect'">対象の <span style="color:green;">味方</span> を選択してください</p>
           <p v-if="battle.status == 'exec'">戦闘開始します。</p>
           <div v-if="battle.status == 'outputLog'" class="log-container">
             <div v-for="(log, index) in battleLog" :key="index" class="log-item">
@@ -287,10 +332,18 @@
         </div>
 
           <!-- 勝利時、次の戦闘に遷移 -->
-          <div v-if="battle.status == 'resultWin'"  style="position: relative;">
-            <div class="nextScene_button" @click="nextBattle">
-              <a>次の戦闘へ進む</a>
+          <div v-if="battle.status == 'resultWin'" style="position: relative;">
+            <div v-if="isFieldCleared === true">
+                <div class="nextScene_button" @click="finishBattle">
+                    <a>探索を終え、街に戻る</a>
+                </div>
             </div>
+            <div v-else-if="isFieldCleared === false">
+                <div class="nextScene_button" @click="nextBattle">
+                    <a>次の戦闘へ進む</a>
+                </div>
+            </div>
+
           </div>
 
           <!-- 敗北時、街に戻るためのボタンを作成 -->
@@ -302,7 +355,7 @@
 
           <!-- 逃走成功時、街に戻るためのボタンを作成 -->
           <div v-if="battle.status == 'escaped'"  style="position: relative;">
-            <div class="nextScene_button" @click="escapeBattle">
+            <div class="nextScene_button" @click="finishBattle">
                 <a>街に戻る</a>
             </div>
           </div>
@@ -314,7 +367,7 @@
             <div 
             @click="selectParty(partyMember.player_index)"
             :class="{'party-hover-active': battle.status === 'partySelect'}"
-            style="margin: auto; text-align:center;  padding: 10px 20px; background-color: white; border: thick double rgb(50, 161, 206);" 
+            class="party-status-container" 
             >
               <p style="font-size: 14px;">{{ partyMember.name }}</p>
               <div class="progress" style="width: 150px; margin-bottom: 5px">
@@ -359,6 +412,10 @@ export default {
       battleLog: {}, // リアルタイムの戦闘結果
       battleLogHistory: [], // これまでの戦闘結果を配列として履歴に残す。最大100件を考えている
       resultLog: {}, // 戦闘勝利時のゴールド、経験値情報などを格納
+      // フィールド自体のクリア判定。 
+      // 初期値をnullとしているが、戦闘クリア後のメッセージの分岐時にnullのパラメータを使ってボタンを出さないようにしている
+      // ボスでない戦闘を終えた場合は false 「次の戦闘へ進む」ボスを倒した場合は true 「探索を終え、街に戻る」
+      isFieldCleared: null, 
     }
   },
   computed: {
@@ -655,21 +712,21 @@ export default {
     },
 
     resultWin() {
-      // 経験値と獲得ゴールドを加算させ、レベルアップ処理を行う
-      console.log('resultWin: ----------------------------------');
-      this.resultLog = null;
-      this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
-      axios.post('/api/game/rpg/battle/result_win', {
-        session_id: this.battle.battleSessionId,
-        is_win: true,
-      })
-        .then(response => {
-          console.log('リザルト結果処理完了。');
-          let data = response.data;
-          this.resultLog = data; //戦闘結果を取得する
-          console.dir(response.data);
-        }
-      );
+        // 経験値と獲得ゴールドを加算させ、レベルアップ処理を行う
+        console.log('resultWin: ----------------------------------');
+        this.resultLog = null;
+        this.$store.dispatch('setClearStage', this.fieldId + '-' + this.stageId);
+        axios.post('/api/game/rpg/battle/result_win', {
+            session_id: this.battle.battleSessionId,
+            is_win: true,
+        })
+            .then(response => {
+                console.log('リザルト結果処理完了。');
+                this.resultLog = response.data[0] || [];
+                this.isFieldCleared = response.data[1] || false;
+                console.dir(response.data);
+            }
+        );
     },
 
     resultLose() {
@@ -710,8 +767,13 @@ export default {
       this.$router.push(`/game/rpg/battle/${fieldId}/${nextStageId}`); // 任意の画面に遷移
     },
 
-    escapeBattle() {
-      console.log('escapeBattle(): ----------------------------------');
+    /**
+     * 街に戻る時のアクション
+     * 逃走成功時・エラーメッセージクリックでの強制遷移時、フィールド自体のクリア時に実行
+     * ※戦闘敗北時は resultLose() で処理する
+     */
+    finishBattle() {
+      console.log('finishBattle(): ----------------------------------');
       axios.post('/api/game/rpg/battle/escape', {
         session_id: this.battle.battleSessionId,
       })

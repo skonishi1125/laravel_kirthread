@@ -36,6 +36,24 @@ class Savedata extends Model
     }
 
     /**
+     * リレーションメモ
+     * ->rpg_savedata 等
+     *   こちらで受け取ると、そのDBのレコードをcollectionで受け取れる
+     * ->rpg_savedata() 等
+     *   ()を付与した形で受け取ると、クエリビルダとして取得する
+     * createなど、そういったアクションを使う場合は()を付与して使うと良い。
+     *
+     * (例)
+     *   // クリアしたフィールドの一覧をCollectionで取得
+     *   $savedata->savedata_cleared_fields;
+     *
+     *   // savedata_cleared_fieldsに新しいレコードを追加する
+     *   $savedata->savedata_cleared_fields()->create([
+     *     'field_id' => 1
+     *   ]);
+     */
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
@@ -53,13 +71,13 @@ class Savedata extends Model
         return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 
-    public function savedata_cleared_field()
+    public function savedata_cleared_fields()
     {
         /**
          * tinkerでテストする場合の例
          *   $s = Savedata::first();
-         *   $s->savedata_cleared_field;
-         *   $s->savedata_cleared_field->first()->field;
+         *   $s->savedata_cleared_fields;
+         *   $s->savedata_cleared_fields->first()->field;
          */
         return $this->hasMany(SavedataClearedField::class, 'savedata_id');
     }
@@ -84,12 +102,6 @@ class Savedata extends Model
         } else {
             /** @var \App\User $user */
             $user = Auth::user();
-
-            /**
-             * リレーションメモ
-             * rpg_savedata   で受け取ると、そのDBのレコードをcollectionで受け取れる
-             * rpg_davedata() で受け取ると、クエリビルダとして取得する
-             */
 
             return $user->rpg_savedata;
         }

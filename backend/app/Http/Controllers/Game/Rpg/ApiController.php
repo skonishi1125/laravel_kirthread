@@ -612,7 +612,7 @@ class ApiController extends Controller
                 $increase_values = [];
 
                 // 金額処理
-                // TODO 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
+                // TODO: 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
                 $savedata->increment('money', $total_aquire_money);
                 Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
@@ -736,24 +736,28 @@ class ApiController extends Controller
             return $enemy->is_boss === true;
         });
         if ($is_beat_boss) {
-            Debugbar::debug('ボス討伐.');
             $result_logs->push('ボスを討伐し、この周辺の地形の探索を終えた！');
-
-        } else {
-            Debugbar::debug('ボスではない.');
+            // 重複チェックし、存在しなければクリアしたフィールドを保存。
+            if (! $savedata->savedata_cleared_fields()->where('field_id', $battle_state->current_field_id)->exists()) {
+                $savedata->savedata_cleared_fields()->create([
+                    'field_id' => $battle_state->current_field_id,
+                ]);
+            }
+            Debugbar::debug("ボス討伐処理完了。savedata_id: {$savedata->id} field_id: {$battle_state->current_field_id}");
         }
 
         // vueに渡すデータ
-        // $vue_data = collect()
-        //     ->push($result_logs)
-        //     ->push($is_beat_boss);
-        // return $vue_data;
+        $vue_data = collect()
+            ->push($result_logs)
+            ->push($is_beat_boss);
 
-        return response()->json($result_logs);
+        return $vue_data;
 
     }
 
-    // 戦闘途中終了をした場合、戦闘データを消す
+    /**
+     * 戦闘逃走時、エラーメッセージからの遷移時、フィールド自体のクリア時の処理
+     */
     public function escapeBattle(Request $request)
     {
         Debugbar::debug('escapeBattle(): ---------------------');
