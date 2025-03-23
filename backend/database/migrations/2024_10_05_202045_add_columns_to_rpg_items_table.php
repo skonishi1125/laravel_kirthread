@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('fixed_value')->unsigned()->nullable()->after('percent');
             $table->integer('buff_turn')->unsigned()->nullable()->after('fixed_value');
             $table->integer('elemental_id')->unsigned()->after('buff_turn');
-            $table->integer('max_possesion_number')->unsigned()->after('elemental_id')->comment('所持できる数の最大');
+            $table->integer('max_possession_number')->unsigned()->after('elemental_id')->comment('所持できる数の最大');
         });
     }
 
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->dropColumn('fixed_value');
             $table->dropColumn('buff_turn');
             $table->dropColumn('elemental_id');
-            $table->dropColumn('max_possesion_number');
+            $table->dropColumn('max_possession_number');
         });
     }
 };

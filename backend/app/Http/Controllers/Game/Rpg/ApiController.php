@@ -213,7 +213,7 @@ class ApiController extends Controller
                 'name' => $item->name,
                 'price' => $item->price,
                 'description' => $item->description,
-                'max_possesion_number' => $item->max_possesion_number,
+                'max_possession_number' => $item->max_possession_number,
                 'money' => $savedata->money,
             ]);
             $shop_element_data->push($data);
@@ -814,7 +814,7 @@ class ApiController extends Controller
             foreach ($battle_item_collections as $battle_item) {
                 $item = Item::find($battle_item->id);
                 $item->savedata_has_item()->update([
-                    'possesion_number' => $battle_item->possesion_number,
+                    'possession_number' => $battle_item->possession_number,
                 ]);
             }
             // 2. JSONに含まれていないアイテム → 所持数が0と判断して削除

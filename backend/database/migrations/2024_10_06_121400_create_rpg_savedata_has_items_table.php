@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('savedata_id')->unsigned();
             $table->bigInteger('item_id')->unsigned();
-            $table->bigInteger('possesion_number')->unsigned()->comment('所持数');
+            $table->bigInteger('possession_number')->unsigned()->comment('所持数');
             $table->timestamps();
         });
     }

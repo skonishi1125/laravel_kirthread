@@ -404,9 +404,9 @@ class BattleState extends Model
                         $selected_item_id = $selected_item->id;
                         $items_data = $items_data->map(function ($item) use ($selected_item_id) {
                             if ($item->id === $selected_item_id) {
-                                $item->possesion_number -= 1;
+                                $item->possession_number -= 1;
                                 // 所持数が0以下になったら、return $itemとしてではなくnullで返すようにする
-                                if ($item->possesion_number <= 0) {
+                                if ($item->possession_number <= 0) {
                                     Debugbar::debug("{$item->name}が0個になったためitems_json_dataからは取り除きます。");
 
                                     return null;

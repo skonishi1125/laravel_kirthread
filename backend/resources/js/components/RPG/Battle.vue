@@ -263,7 +263,7 @@
                     <div @click="handleCommandSelection('ITEM', item.id, item.attack_type, item.effect_type, item.target_range)" class="command-list-row-skills-and-items">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ item.name }}</span>
-                        <span>x {{ item.possesion_number }}</span>
+                        <span>x {{ item.possession_number }}</span>
                       </div>
                       <div>
                       </div>

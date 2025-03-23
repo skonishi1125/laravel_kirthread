@@ -56,7 +56,7 @@ class SavedataHasItem extends Model
                 if ($updated_item) {
                     SavedataHasItem::where('savedata_id', $savedata_id)
                         ->where('item_id', $db_item->item_id)
-                        ->update(['possesion_number' => $updated_item['possesion_number']]);
+                        ->update(['possession_number' => $updated_item['possession_number']]);
                 }
             }
         }
