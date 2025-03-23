@@ -45,7 +45,7 @@ Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('
 Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
 Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
 Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
-Route::post('/api/game/rpg/battle/escape', 'Game\Rpg\ApiController@escapeBattle')->name('api_game_rpg_battle_escape');
+Route::post('/api/game/rpg/battle/finish', 'Game\Rpg\ApiController@finishBattle')->name('api_game_rpg_battle_finish');
 Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
 Route::post('/api/game/rpg/battle/result_lose', 'Game\Rpg\ApiController@resultLoseBattle')->name('api_game_rpg_battle_result_lose');
 

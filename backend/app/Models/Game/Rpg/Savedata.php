@@ -25,14 +25,33 @@ class Savedata extends Model
         // 削除した時、セーブデータに紐づく情報もすべて削除する
         static::deleting(function ($savedata) {
             // $savedata->parties()->delete();
-            // でまとめて消すことができるが、Partyモデル側のイベントが発火しないので個別に消していく。
+            // 上記でまとめて消すことができるが、Partyモデル側のdeletingイベントが発火しないので個別に消していく。
             foreach ($savedata->parties as $party) {
-                $party->delete(); // Party側のdeletingイベントを発火させる
+                $party->delete();
             }
             $savedata->battle_state()->delete();
             $savedata->savedata_has_item()->delete();
+            $savedata->savedata_cleared_Field()->delete();
         });
     }
+
+    /**
+     * リレーションメモ
+     * ->rpg_savedata 等
+     *   こちらで受け取ると、そのDBのレコードをcollectionで受け取れる
+     * ->rpg_savedata() 等
+     *   ()を付与した形で受け取ると、クエリビルダとして取得する
+     * createなど、そういったアクションを使う場合は()を付与して使うと良い。
+     *
+     * (例)
+     *   // クリアしたフィールドの一覧をCollectionで取得
+     *   $savedata->savedata_cleared_fields;
+     *
+     *   // savedata_cleared_fieldsに新しいレコードを追加する
+     *   $savedata->savedata_cleared_fields()->create([
+     *     'field_id' => 1
+     *   ]);
+     */
 
     /**
      * @return BelongsTo<User, $this>
@@ -52,12 +71,23 @@ class Savedata extends Model
         return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 
-    // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possesion_number で実現ができる
+    public function savedata_cleared_fields()
+    {
+        /**
+         * tinkerでテストする場合の例
+         *   $s = Savedata::first();
+         *   $s->savedata_cleared_fields;
+         *   $s->savedata_cleared_fields->first()->field;
+         */
+        return $this->hasMany(SavedataClearedField::class, 'savedata_id');
+    }
+
+    // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possession_number で実現ができる
     public function items()
     {
         return $this
             ->belongsToMany(Item::class, 'rpg_savedata_has_items', 'savedata_id', 'item_id')
-            ->withPivot('possesion_number');
+            ->withPivot('possession_number');
     }
 
     public function battle_state()
@@ -65,10 +95,6 @@ class Savedata extends Model
         return $this->hasOne(BattleState::class, 'savedata_id');
     }
 
-    // リレーションメモ
-    // 1:1でリレーションしているものは rpg_savedata で受け取る(単体取得になる)
-    // 1:nでリレーションしているものは rpg_savedata()->get() みたいな形で受け取る(カッコつける)
-    // ->追記: 違うかも rpg_savedataだとcollectionとして取得するが、rpg_savedata(だとクエリビルダとして取得できる
     public static function getLoginUserCurrentSavedata()
     {
         if (Auth::check() == false) {

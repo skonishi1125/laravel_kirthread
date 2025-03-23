@@ -32,6 +32,8 @@ class BattleState extends Model
 
     const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
+    private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
+
     // エンカウント時の処理
     public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
     {
@@ -181,6 +183,7 @@ class BattleState extends Model
                 'is_escaped' => false,
                 'enemy_index' => $enemy_index, // 敵の並び。
                 'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+                'is_boss' => $enemy->is_boss,
                 'exp' => $enemy->exp,
                 'drop_money' => $enemy->drop_money,
             ]);
@@ -401,9 +404,9 @@ class BattleState extends Model
                         $selected_item_id = $selected_item->id;
                         $items_data = $items_data->map(function ($item) use ($selected_item_id) {
                             if ($item->id === $selected_item_id) {
-                                $item->possesion_number -= 1;
+                                $item->possession_number -= 1;
                                 // 所持数が0以下になったら、return $itemとしてではなくnullで返すようにする
-                                if ($item->possesion_number <= 0) {
+                                if ($item->possession_number <= 0) {
                                     Debugbar::debug("{$item->name}が0個になったためitems_json_dataからは取り除きます。");
 
                                     return null;
@@ -456,8 +459,20 @@ class BattleState extends Model
                             }
                             Debugbar::debug(" 敵人数: {$enemies_data->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
 
-                            // TODO: 確率で成功か失敗するようにする
-                            if ($average_enemy_spd < $data->value_spd) {
+                            /**
+                             * 逃走成功確率の計算
+                             * (self::BASE_ESCAPE_CHANCE + (spdの差 * 2) ) * 100
+                             * なお最低値10%, 最大値90%
+                             */
+                            $spd_diff = $data->value_spd - $average_enemy_spd;
+                            $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
+                            $escape_chance = max(0.1, min(0.9, $escape_chance));
+
+                            $random_int = random_int(0, 100);
+                            Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
+                            Debugbar::debug($random_int);
+
+                            if ($random_int < ($escape_chance * 100)) {
                                 Debugbar::debug('逃走成功！');
                                 $data->is_escaped = true;
                                 $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
@@ -706,8 +721,6 @@ class BattleState extends Model
      * $opponents_data: 攻撃対象のデータ
      * $damage: 敵の守備力などを考慮しない、純粋なダメージ量
      */
-    //
-    //
     public static function storePartyDamage(
         string $command, object $self_data,
         Collection $opponents_data, ?object $selected_item, ?int $opponents_index, Collection $logs,
@@ -766,7 +779,10 @@ class BattleState extends Model
                             self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
                             self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
                         );
-                        $calculated_damage = $damage -= $opponent_mdef;
+                        $calculated_damage = self::calculateMagicDamage(
+                            $damage,
+                            $opponent_mdef
+                        );
                     }
 
                     if ($calculated_damage > 0) {
@@ -817,7 +833,10 @@ class BattleState extends Model
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
-                            $calculated_damage = $base_damage - $opponent_mdef;
+                            $calculated_damage = self::calculateMagicDamage(
+                                $base_damage,
+                                $opponent_mdef
+                            );
                         }
 
                         if ($calculated_damage > 0) {
@@ -871,7 +890,10 @@ class BattleState extends Model
                                 self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
                                 self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
                             );
-                            $calculated_damage = $damage -= $opponent_mdef;
+                            $calculated_damage = self::calculateMagicDamage(
+                                $damage,
+                                $opponent_mdef
+                            );
                         }
                     }
 
@@ -927,7 +949,10 @@ class BattleState extends Model
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($opponent_data, 'int')
                                 );
-                                $calculated_damage = $base_damage - $opponent_mdef;
+                                $calculated_damage = self::calculateMagicDamage(
+                                    $base_damage,
+                                    $opponent_mdef
+                                );
                             }
                         }
 
@@ -972,7 +997,7 @@ class BattleState extends Model
             case 'ATTACK':
                 Debugbar::warning('storeEnemyDamage(): ATTACK');
 
-                // 通常攻撃力: 自分のstr - 相手のdef (安直すぎるので今後変更する予定)
+                // ダメージ計算
                 $calculated_damage = self::calculatePhysicalDamage(
                     $damage,
                     self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
@@ -1005,8 +1030,9 @@ class BattleState extends Model
         }
     }
 
-    // スキル回復時、アイテム回復の時に使う
-    // $percentはint|double (1, 0.5など)
+    /**
+     * スキルまたはアイテムを使用しての回復処理
+     */
     public static function storePartyHeal(
         string $command, object $self_data, Collection $opponents_data,
         ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range, int|float|null $percent, ?int $heal_type
@@ -1131,7 +1157,9 @@ class BattleState extends Model
         }
     }
 
-    // バフスキルもしくは、アイテムでバフをかける時に使う
+    /**
+     * スキルまたはアイテムを使用してのバフ付与処理
+     */
     public static function storePartyBuff(
         string $command, object $self_data, Collection $opponents_data,
         ?int $opponents_index, Collection $logs, array $new_buff, int $target_range
@@ -1309,6 +1337,11 @@ class BattleState extends Model
         }
     }
 
+    /**
+     * パラ の ワイドガード など、固有の能力を持つスキル処理。
+     *
+     * switch文で独自の処理を書いて対応する。
+     */
     public static function storePartySpecialSkill(
         object $self_data, object $opponents_data, ?int $opponents_index,
         Collection $logs, array $new_buff, object $selected_skill
@@ -1512,13 +1545,81 @@ class BattleState extends Model
         }
     }
 
-    // 通常攻撃 (物理・単体)や物理スキルの計算
-    // 攻撃する側のSTR - 相手のDEF 安直すぎるので調整すること。
-    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def)
+    /**
+     * 通常攻撃 (物理・単体)や物理スキルのダメージ計算
+     *
+     * 基礎計算式: damage² / (damage + def) ※ただし、多少のばらつきを入れる。
+     */
+    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def): int
     {
         Debugbar::debug("calculatePhysicalDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_def}");
 
-        return ceil($pure_damage - $opponent_def);
+        // ゼロ除算対策
+        if ($pure_damage <= 0) {
+            return 0;
+        }
+
+        // 非線形のベースダメージ計算 atk² / (atk + def)
+        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_def);
+
+        // ダメージにばらつきを加える（±10%）
+        $variance_rate = random_int(95, 105) / 100;
+        $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
+        Debugbar::debug("計算結果: base = {$base_damage}, variance = {$variance_rate}, final = {$final_damage}");
+
+        // ダメージが0の場合、確率で1ダメージにする
+        // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
+        if ($final_damage < 1) {
+            $random = random_int(1, 100);
+            $chance = 60; // 60%で1ダメージ
+            if ($chance <= $random) {
+                $final_damage = 1;
+            } else {
+                $final_damage = 0;
+            }
+            Debugbar::debug("基礎ダメージが0だったため、確率で1ダメージ。random: {$random} final_damage: {$final_damage}");
+        }
+
+        return $final_damage;
+    }
+
+    /**
+     * 魔法攻撃 ,及びスキルのダメージ計算
+     *
+     * 基礎計算式: damage² / (damage + mdef) ※ただし、多少のばらつきを入れる。
+     * 物理と同じなのでメソッドを統一してもいいが、今後の拡張性を持たせるために分割しておく
+     */
+    public static function calculateMagicDamage(int $pure_damage, int $opponent_mdef): int
+    {
+        Debugbar::debug("calculateMagicDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_mdef}");
+
+        // ゼロ除算対策
+        if ($pure_damage <= 0) {
+            return 0;
+        }
+
+        // 非線形のベースダメージ計算 atk² / (atk + mdef)
+        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_mdef);
+
+        // ダメージにばらつきを加える（±10%）
+        $variance_rate = random_int(95, 105) / 100;
+        $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
+        Debugbar::debug("計算結果: base = {$base_damage}, variance = {$variance_rate}, final = {$final_damage}");
+
+        // ダメージが0の場合、確率で1ダメージにする
+        // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
+        if ($final_damage < 1) {
+            $random = random_int(1, 100);
+            $chance = 60; // 60%で1ダメージ
+            if ($chance <= $random) {
+                $final_damage = 1;
+            } else {
+                $final_damage = 0;
+            }
+            Debugbar::debug("基礎ダメージが0だったため、確率で1ダメージ。random: {$random} final_damage: {$final_damage}");
+        }
+
+        return $final_damage;
     }
 
     // 魔法防御力 = (def * 0.25) + (int * 0.75)

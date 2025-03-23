@@ -24,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('rpg_items', function (Blueprint $table) {
             $table->dropColumn('heal_type');
+            $table->dropColumn('is_battle_available');
         });
     }
 };

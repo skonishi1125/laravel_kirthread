@@ -10,6 +10,7 @@ use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
+use App\Models\Game\Rpg\SavedataHasItem;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Profile;
 use App\User;
@@ -21,7 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // todo: constructなどでログインしているユーザーがアクセスできる前提とする
+    // TODO: constructなどでログインしているユーザーがアクセスできる前提とする
 
     /**
      * タイトル画面。ユーザーの状態に応じてパターンを分ける。
@@ -212,7 +213,7 @@ class ApiController extends Controller
                 'name' => $item->name,
                 'price' => $item->price,
                 'description' => $item->description,
-                'max_possesion_number' => $item->max_possesion_number,
+                'max_possession_number' => $item->max_possession_number,
                 'money' => $savedata->money,
             ]);
             $shop_element_data->push($data);
@@ -581,10 +582,10 @@ class ApiController extends Controller
         // 獲得した合計経験値・ゴールドの計算
         $result_logs = collect();
         $exp_tables = Exp::get();
-        $enemies_json_data = collect(json_decode($battle_state['enemies_json_data']));
+        $enemies_collection_data = collect(json_decode($battle_state['enemies_json_data']));
         $total_aquire_exp = 0;
         $total_aquire_money = 0;
-        foreach ($enemies_json_data as $enemy) {
+        foreach ($enemies_collection_data as $enemy) {
             $total_aquire_exp += $enemy->exp;
             $total_aquire_money += $enemy->drop_money;
         }
@@ -612,7 +613,7 @@ class ApiController extends Controller
                 $increase_values = [];
 
                 // 金額処理
-                // TODO 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
+                // TODO: 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
                 $savedata->increment('money', $total_aquire_money);
                 Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
@@ -711,6 +712,7 @@ class ApiController extends Controller
                 $next_stage_id = $battle_state->current_stage_id + 1;
                 $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
 
+                // TODO: ボス討伐時は作らなくて良い
                 $create_next_battle_state = BattleState::createBattleState(
                     $savedata->id, $cleared_players_data, $next_enemies_data, $cleared_items_data, $field_id, $next_stage_id
                 );
@@ -730,14 +732,40 @@ class ApiController extends Controller
         Debugbar::debug('ゴールド | 経験値獲得処理完了。');
         Debugbar::debug($result_logs);
 
-        return response()->json($result_logs);
+        // ボス討伐処理。
+        // 敵の中にボスが1人でもいた場合、現在のステージをクリアとする。
+        $is_beat_boss = $enemies_collection_data->contains(function ($enemy) {
+            return $enemy->is_boss === true;
+        });
+        if ($is_beat_boss) {
+            $result_logs->push('ボスを討伐し、この周辺の地形の探索を終えた！');
+            // 重複チェックし、存在しなければクリアしたフィールドを保存。
+            if (! $savedata->savedata_cleared_fields()->where('field_id', $battle_state->current_field_id)->exists()) {
+                $savedata->savedata_cleared_fields()->create([
+                    'field_id' => $battle_state->current_field_id,
+                ]);
+            }
+            Debugbar::debug("ボス討伐処理完了。savedata_id: {$savedata->id} field_id: {$battle_state->current_field_id}");
+        }
+
+        // vueに渡すデータ
+        $vue_data = collect()
+            ->push($result_logs)
+            ->push($is_beat_boss);
+
+        return $vue_data;
 
     }
 
-    // 戦闘途中終了をした場合、戦闘データを消す
-    public function escapeBattle(Request $request)
+    /**
+     * 戦闘逃走時、エラーメッセージからの遷移時、フィールド自体のクリア時の処理
+     *
+     * 戦闘で変化したステータスやアイテム等のデータをデータベースに格納し反映させる
+     */
+    public function finishBattle(Request $request)
     {
-        Debugbar::debug('escapeBattle(): ---------------------');
+        Debugbar::debug('finishBattle(): ---------------------');
+        $savedata = Savedata::getLoginUserCurrentSavedata();
         $session_id = $request->session_id;
 
         try {
@@ -745,7 +773,6 @@ class ApiController extends Controller
 
             // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて処理
             if (is_null($battle_state)) {
-                $savedata = Savedata::getLoginUserCurrentSavedata();
                 Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
                 $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
             }
@@ -778,8 +805,25 @@ class ApiController extends Controller
             }
 
             // ---------- アイテム反映 ----------
-            // TODO
-            $current_items_data = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_collections = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_ids = $battle_item_collections->pluck('id')->all();
+            $savedata_has_items = SavedataHasItem::where('savedata_id', $savedata->id)->get();
+
+            // foreachが重複しているので、できればjson側に使い終わったアイテムのIDを持たせたりして、一度のループで調整したい
+            // 1. JSONに含まれているアイテム → 数量を更新
+            foreach ($battle_item_collections as $battle_item) {
+                $item = Item::find($battle_item->id);
+                $item->savedata_has_item()->update([
+                    'possession_number' => $battle_item->possession_number,
+                ]);
+            }
+            // 2. JSONに含まれていないアイテム → 所持数が0と判断して削除
+            foreach ($savedata_has_items as $savedata_has_item) {
+                if (! in_array($savedata_has_item->item_id, $battle_item_ids)) {
+                    Debugbar::debug("{$savedata_has_item->item->name}が使い切られたため、削除します。");
+                    $savedata_has_item->delete();
+                }
+            }
 
             // ---------- ゴールドやドロップ品(現状は未実装)の反映 ----------
             // TODO 現状、戦闘勝利時に即時反映されているので合わせたい

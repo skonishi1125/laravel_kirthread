@@ -47,7 +47,7 @@ class Item extends Model
     {
         return $this
             ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
-            ->withPivot('possesion_number');
+            ->withPivot('possession_number');
     }
 
     public static function getShopListItem()
@@ -81,7 +81,7 @@ class Item extends Model
                 'fixed_value' => $item->fixed_value,
                 'buff_turn' => $item->buff_turn,
                 'description' => $item->description,
-                'possesion_number' => $savedata_has_item->possesion_number,
+                'possession_number' => $savedata_has_item->possession_number,
             ]);
 
             $items_data->push($item_data);

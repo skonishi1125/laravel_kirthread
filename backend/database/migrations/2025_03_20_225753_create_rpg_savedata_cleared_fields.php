@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rpg_savedata_has_items', function (Blueprint $table) {
+        Schema::create('rpg_savedata_cleared_fields', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('savedata_id')->unsigned();
-            $table->bigInteger('item_id')->unsigned();
-            $table->bigInteger('possession_number')->unsigned()->comment('所持数');
+            $table->integer('savedata_id')->unsigned();
+            $table->integer('field_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rpg_savedata_has_items');
+        Schema::dropIfExists('rpg_savedata_cleared_fields');
     }
 };
