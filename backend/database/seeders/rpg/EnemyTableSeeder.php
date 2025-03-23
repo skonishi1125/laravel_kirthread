@@ -105,7 +105,7 @@ class EnemyTableSeeder extends Seeder
                 'exp' => 250,
                 'drop_money' => 500,
                 'portrait_image_path' => 'oyadamawani.png',
-                'description' => 'ノラワニ達をを仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない。',
+                'description' => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない。',
                 'is_boss' => true,
                 'created_at' => $now,
                 'updated_at' => $now,
