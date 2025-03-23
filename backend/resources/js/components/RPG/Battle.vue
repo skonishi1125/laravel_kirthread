@@ -369,7 +369,7 @@
             :class="{'party-hover-active': battle.status === 'partySelect'}"
             class="party-status-container" 
             >
-              <p style="font-size: 14px;">{{ partyMember.name }}</p>
+              <p style="font-weight: bold; font-size: 14px;">{{ partyMember.name }}</p>
               <div class="progress" style="width: 150px; margin-bottom: 5px">
                 <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
                   HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
