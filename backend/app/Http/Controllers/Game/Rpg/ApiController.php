@@ -10,6 +10,7 @@ use App\Models\Game\Rpg\Item;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
+use App\Models\Game\Rpg\SavedataHasItem;
 use App\Models\Game\Rpg\Skill;
 use App\Models\Profile;
 use App\User;
@@ -711,6 +712,7 @@ class ApiController extends Controller
                 $next_stage_id = $battle_state->current_stage_id + 1;
                 $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
 
+                // TODO: ボス討伐時は作らなくて良い
                 $create_next_battle_state = BattleState::createBattleState(
                     $savedata->id, $cleared_players_data, $next_enemies_data, $cleared_items_data, $field_id, $next_stage_id
                 );
@@ -757,10 +759,13 @@ class ApiController extends Controller
 
     /**
      * 戦闘逃走時、エラーメッセージからの遷移時、フィールド自体のクリア時の処理
+     *
+     * 戦闘で変化したステータスやアイテム等のデータをデータベースに格納し反映させる
      */
-    public function escapeBattle(Request $request)
+    public function finishBattle(Request $request)
     {
-        Debugbar::debug('escapeBattle(): ---------------------');
+        Debugbar::debug('finishBattle(): ---------------------');
+        $savedata = Savedata::getLoginUserCurrentSavedata();
         $session_id = $request->session_id;
 
         try {
@@ -768,7 +773,6 @@ class ApiController extends Controller
 
             // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて処理
             if (is_null($battle_state)) {
-                $savedata = Savedata::getLoginUserCurrentSavedata();
                 Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
                 $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
             }
@@ -801,8 +805,25 @@ class ApiController extends Controller
             }
 
             // ---------- アイテム反映 ----------
-            // TODO
-            $current_items_data = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_collections = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_ids = $battle_item_collections->pluck('id')->all();
+            $savedata_has_items = SavedataHasItem::where('savedata_id', $savedata->id)->get();
+
+            // foreachが重複しているので、できればjson側に使い終わったアイテムのIDを持たせたりして、一度のループで調整したい
+            // 1. JSONに含まれているアイテム → 数量を更新
+            foreach ($battle_item_collections as $battle_item) {
+                $item = Item::find($battle_item->id);
+                $item->savedata_has_item()->update([
+                    'possesion_number' => $battle_item->possesion_number,
+                ]);
+            }
+            // 2. JSONに含まれていないアイテム → 所持数が0と判断して削除
+            foreach ($savedata_has_items as $savedata_has_item) {
+                if (! in_array($savedata_has_item->item_id, $battle_item_ids)) {
+                    Debugbar::debug("{$savedata_has_item->item->name}が使い切られたため、削除します。");
+                    $savedata_has_item->delete();
+                }
+            }
 
             // ---------- ゴールドやドロップ品(現状は未実装)の反映 ----------
             // TODO 現状、戦闘勝利時に即時反映されているので合わせたい

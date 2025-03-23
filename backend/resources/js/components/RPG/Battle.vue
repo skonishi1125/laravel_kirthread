@@ -774,7 +774,7 @@ export default {
      */
     finishBattle() {
       console.log('finishBattle(): ----------------------------------');
-      axios.post('/api/game/rpg/battle/escape', {
+      axios.post('/api/game/rpg/battle/finish', {
         session_id: this.battle.battleSessionId,
       })
         .then(response => { 
