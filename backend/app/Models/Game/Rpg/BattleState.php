@@ -183,6 +183,7 @@ class BattleState extends Model
                 'is_escaped' => false,
                 'enemy_index' => $enemy_index, // 敵の並び。
                 'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+                'is_boss' => $enemy->is_boss,
                 'exp' => $enemy->exp,
                 'drop_money' => $enemy->drop_money,
             ]);

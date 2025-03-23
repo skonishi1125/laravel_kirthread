@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // todo: constructなどでログインしているユーザーがアクセスできる前提とする
+    // TODO: constructなどでログインしているユーザーがアクセスできる前提とする
 
     /**
      * タイトル画面。ユーザーの状態に応じてパターンを分ける。
@@ -581,10 +581,10 @@ class ApiController extends Controller
         // 獲得した合計経験値・ゴールドの計算
         $result_logs = collect();
         $exp_tables = Exp::get();
-        $enemies_json_data = collect(json_decode($battle_state['enemies_json_data']));
+        $enemies_collection_data = collect(json_decode($battle_state['enemies_json_data']));
         $total_aquire_exp = 0;
         $total_aquire_money = 0;
-        foreach ($enemies_json_data as $enemy) {
+        foreach ($enemies_collection_data as $enemy) {
             $total_aquire_exp += $enemy->exp;
             $total_aquire_money += $enemy->drop_money;
         }
@@ -729,6 +729,25 @@ class ApiController extends Controller
 
         Debugbar::debug('ゴールド | 経験値獲得処理完了。');
         Debugbar::debug($result_logs);
+
+        // ボス討伐処理。
+        // 敵の中にボスが1人でもいた場合、現在のステージをクリアとする。
+        $is_beat_boss = $enemies_collection_data->contains(function ($enemy) {
+            return $enemy->is_boss === true;
+        });
+        if ($is_beat_boss) {
+            Debugbar::debug('ボス討伐.');
+            $result_logs->push('ボスを討伐し、この周辺の地形の探索を終えた！');
+
+        } else {
+            Debugbar::debug('ボスではない.');
+        }
+
+        // vueに渡すデータ
+        // $vue_data = collect()
+        //     ->push($result_logs)
+        //     ->push($is_beat_boss);
+        // return $vue_data;
 
         return response()->json($result_logs);
 

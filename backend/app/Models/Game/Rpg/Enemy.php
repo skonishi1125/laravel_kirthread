@@ -10,4 +10,8 @@ class Enemy extends Model
     use HasFactory;
 
     protected $table = 'rpg_enemies';
+
+    protected $casts = [
+        'is_boss' => 'boolean',
+    ];
 }

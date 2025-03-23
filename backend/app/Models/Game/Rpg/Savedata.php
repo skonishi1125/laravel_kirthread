@@ -25,12 +25,13 @@ class Savedata extends Model
         // 削除した時、セーブデータに紐づく情報もすべて削除する
         static::deleting(function ($savedata) {
             // $savedata->parties()->delete();
-            // でまとめて消すことができるが、Partyモデル側のイベントが発火しないので個別に消していく。
+            // 上記でまとめて消すことができるが、Partyモデル側のdeletingイベントが発火しないので個別に消していく。
             foreach ($savedata->parties as $party) {
-                $party->delete(); // Party側のdeletingイベントを発火させる
+                $party->delete();
             }
             $savedata->battle_state()->delete();
             $savedata->savedata_has_item()->delete();
+            $savedata->savedata_cleared_Field()->delete();
         });
     }
 
@@ -52,6 +53,17 @@ class Savedata extends Model
         return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 
+    public function savedata_cleared_field()
+    {
+        /**
+         * tinkerでテストする場合の例
+         *   $s = Savedata::first();
+         *   $s->savedata_cleared_field;
+         *   $s->savedata_cleared_field->first()->field;
+         */
+        return $this->hasMany(SavedataClearedField::class, 'savedata_id');
+    }
+
     // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possesion_number で実現ができる
     public function items()
     {
@@ -65,10 +77,6 @@ class Savedata extends Model
         return $this->hasOne(BattleState::class, 'savedata_id');
     }
 
-    // リレーションメモ
-    // 1:1でリレーションしているものは rpg_savedata で受け取る(単体取得になる)
-    // 1:nでリレーションしているものは rpg_savedata()->get() みたいな形で受け取る(カッコつける)
-    // ->追記: 違うかも rpg_savedataだとcollectionとして取得するが、rpg_savedata(だとクエリビルダとして取得できる
     public static function getLoginUserCurrentSavedata()
     {
         if (Auth::check() == false) {
@@ -76,6 +84,12 @@ class Savedata extends Model
         } else {
             /** @var \App\User $user */
             $user = Auth::user();
+
+            /**
+             * リレーションメモ
+             * rpg_savedata   で受け取ると、そのDBのレコードをcollectionで受け取れる
+             * rpg_davedata() で受け取ると、クエリビルダとして取得する
+             */
 
             return $user->rpg_savedata;
         }
