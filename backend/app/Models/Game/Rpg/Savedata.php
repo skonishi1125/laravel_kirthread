@@ -31,7 +31,7 @@ class Savedata extends Model
             }
             $savedata->battle_state()->delete();
             $savedata->savedata_has_item()->delete();
-            $savedata->savedata_cleared_Field()->delete();
+            $savedata->savedata_cleared_Fields()->delete();
         });
     }
 

@@ -192,33 +192,35 @@
 
   <!-- 確認モーダル -->
    <!-- data-keyboard="false" data-backdrop="static" として、灰色の枠をクリックした場合でも閉じないようにする -->
-  <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">パーティメンバーの確認</h4>
-        </div>
+  <teleport to="body">
+    <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">パーティメンバーの確認</h4>
+            </div>
 
-        <div class="modal-body">
-          <p>
-            以下のメンバーで確定してよろしいですか？ <br> 
-            ※進行途中で変更することはできません
-          </p>
-          <ul>
-            <span v-for="member in beginning.selectedRoleInformations">
-            <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
-            </span>
-          </ul>
-        </div>
+            <div class="modal-body">
+            <p>
+                以下のメンバーで確定してよろしいですか？ <br> 
+                ※進行途中で変更することはできません
+            </p>
+            <ul>
+                <span v-for="member in beginning.selectedRoleInformations">
+                <li>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</li>
+                </span>
+            </ul>
+            </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
-          <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
-        </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
+            <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
+            </div>
 
-      </div>
+        </div>
+        </div>
     </div>
-  </div>
+  </teleport>
 
   <div v-if="beginning.status == 'monologue'">
     <div class="row">

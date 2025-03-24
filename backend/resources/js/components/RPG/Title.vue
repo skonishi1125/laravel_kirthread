@@ -19,97 +19,99 @@
   </div>
 
   <!-- セーブデータ削除モーダル -->
-  <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">セーブデータの削除</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
+  <teleport to="body">
+    <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">セーブデータの削除</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
 
-        <div class="modal-body">
-          <p>
-            以下のファイルを削除しますが本当によろしいですか？ <br> 
-          </p>
-          <ul>
-            <span v-for="party in dataParties">
-              <li>{{ party['nickname'] }}【Lv.{{ party['level'] }}: {{party['class_japanese']}}】</li>
-            </span>
-          </ul>
-          <div v-if="errorMessage !== null">
-            <small style="color:red">{{ errorMessage }}</small>
-          </div>
-        </div>
+            <div class="modal-body">
+            <p>
+                以下のファイルを削除しますが本当によろしいですか？ <br> 
+            </p>
+            <ul>
+                <span v-for="party in dataParties">
+                <li>{{ party['nickname'] }}【Lv.{{ party['level'] }}: {{party['class_japanese']}}】</li>
+                </span>
+            </ul>
+            <div v-if="errorMessage !== null">
+                <small style="color:red">{{ errorMessage }}</small>
+            </div>
+            </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-dismiss="modal" @click="resetData">やめる</button>
-          <button type="button" class="btn btn-danger" @click="deleteSavedata">削除</button>
-        </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal" @click="resetData">やめる</button>
+            <button type="button" class="btn btn-danger" @click="deleteSavedata">削除</button>
+            </div>
 
-      </div>
+        </div>
+        </div>
     </div>
-  </div>
-
+  </teleport>
 
   <!-- すぐつく機能 -->
-  <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-    <div class="modal-dialog modal-xl" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">遊ぶ前に</h5>
-        </div>
+  <teleport to="body">
+    <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">遊ぶ前に</h5>
+            </div>
 
-        <div class="modal-body">
-          <p>
-            ゲームを遊ぶ前に<a target="_blank" href="/register">新規登録</a>または<a target="_blank" href="/login">ログイン</a>が必要です。<br>
-            各手続きが面倒な方は「すぐ作る」ボタンから、登録兼ログインも可能です。
-          </p>
-          <div style="text-align: center;" >
-            <button class="btn btn-sm btn-success" @click="generateCredential">
-              <span v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
-                再生成する
-              </span>
-              <span v-else>
-                すぐ作る
-              </span>
-            </button>
-          </div>
-          <div v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
-            <hr>
-            <div>
-              <p>
-                以下の情報で作成します。<small>(一部編集可能)</small><br>
-                <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
-                <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sample.com</b></small> <br>
-                <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
-                <br>
-                <div v-if="errorMessage !== null">
-                  <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
+            <div class="modal-body">
+            <p>
+                ゲームを遊ぶ前に<a target="_blank" href="/register">新規登録</a>または<a target="_blank" href="/login">ログイン</a>が必要です。<br>
+                各手続きが面倒な方は「すぐ作る」ボタンから、登録兼ログインも可能です。
+            </p>
+            <div style="text-align: center;" >
+                <button class="btn btn-sm btn-success" @click="generateCredential">
+                <span v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
+                    再生成する
+                </span>
+                <span v-else>
+                    すぐ作る
+                </span>
+                </button>
+            </div>
+            <div v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
+                <hr>
+                <div>
+                <p>
+                    以下の情報で作成します。<small>(一部編集可能)</small><br>
+                    <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
+                    <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sample.com</b></small> <br>
+                    <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
+                    <br>
+                    <div v-if="errorMessage !== null">
+                    <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
+                    </div>
+                </p>
                 </div>
-              </p>
+                <div style="text-align: center;">
+                <button class="btn btn-sm btn-primary" @click="createUser">こちらの情報でログイン</button>
+                </div>
             </div>
-            <div style="text-align: center;">
-              <button class="btn btn-sm btn-primary" @click="createUser">こちらの情報でログイン</button>
+            <hr>
+            <p>
+                <small>
+                ※"すぐ作る"について<br>
+                登録に必要なemailとパスワードを自動生成し、ユーザー情報を作成します。<br>
+                作られたemailとパスワードは画面に表示されますが、メモを忘れると以降ログインができなくなります。<br>
+                「とりあえずサービスを触ってみたい！」と言う目的の方はこちらをぜひお試しください。<br>
+                <br>
+                ※かあスレッドについて<br>
+                基本的に掲示板ベースのwebサービスです。詳しくは<a target="_blank" href="/about">こちら</a>を参照ください。<br>
+                </small>
+            </p>
             </div>
-          </div>
-          <hr>
-          <p>
-            <small>
-              ※"すぐ作る"について<br>
-              登録に必要なemailとパスワードを自動生成し、ユーザー情報を作成します。<br>
-              作られたemailとパスワードは画面に表示されますが、メモを忘れると以降ログインができなくなります。<br>
-              「とりあえずサービスを触ってみたい！」と言う目的の方はこちらをぜひお試しください。<br>
-              <br>
-              ※かあスレッドについて<br>
-              基本的に掲示板ベースのwebサービスです。詳しくは<a target="_blank" href="/about">こちら</a>を参照ください。<br>
-            </small>
-          </p>
+
         </div>
-
-      </div>
+        </div>
     </div>
-  </div>
-
+  </teleport> 
 </template>
 
 <script>

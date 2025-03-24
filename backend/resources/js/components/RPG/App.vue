@@ -1,7 +1,16 @@
 <style>
-.game-scale-wrapper {
-    /* statusなどのモーダルが壊れる不具合があるので、直すと画面のサイズを自由に調整できる */
-    /* transform: scale(0.85); */
+/*
+ * 画面を大きく作りすぎたので、scaleで調整している
+ * scaleはbootstrapと相性が悪く、scaleを使用すると、bootstrapのmodal-backdropの優先度が崩れてしまう。
+ * 対応するため、modalを使用する際はVue3のTeleportを使用して、bodyの外にmodalを出している。
+ * 
+*/
+.app-root {
+    transform: scale(0.85);
+}
+
+.modal {
+    transform: scale(0.85);
 }
 
 .main-screen {
@@ -24,11 +33,12 @@
     /* border: 1px solid rgb(60, 0, 255); */
 }
 
+
+
 </style>
 
 <template>
-    <!-- 全体をスケールさせたいラッパー -->
-    <div class="game-scale-wrapper">
+    <div class="app-root">
         <!-- titleなど? 現状デバッグ要素の表示 -->
         <div class="container" style="background-color: whitesmoke; border: 1px solid black; min-width: 1280px">
             <div class="row">
