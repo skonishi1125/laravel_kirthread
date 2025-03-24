@@ -32,6 +32,12 @@ class BattleState extends Model
 
     const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
+    const ENEMY_DROPS_DEFAULT_DATA = [
+        'money' => 0,
+        'drop_item_id' => [],
+        'drop_weapon_id' => [],
+    ];
+
     private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
     // エンカウント時の処理
@@ -202,7 +208,7 @@ class BattleState extends Model
     }
 
     public static function createBattleState(
-        int $savedata_id, Collection $players_data, Collection $enemies_data, Collection $items_data, int $field_id, int $stage_id
+        int $savedata_id, Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data, int $field_id, int $stage_id
     ) {
         $session_id = \Str::uuid()->toString();
         $created_battle_state = BattleState::create([
@@ -211,6 +217,7 @@ class BattleState extends Model
             'players_json_data' => json_encode($players_data),
             'items_json_data' => json_encode($items_data),
             'enemies_json_data' => json_encode($enemies_data),
+            'enemy_drops_json_data' => json_encode($enemy_drops_data),
             'current_field_id' => $field_id,
             'current_stage_id' => $stage_id,
         ]);

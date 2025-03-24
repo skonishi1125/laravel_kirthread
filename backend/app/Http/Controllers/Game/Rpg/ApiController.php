@@ -437,10 +437,11 @@ class ApiController extends Controller
             // アイテムデータを読み込む
             $savedata = Savedata::getLoginUserCurrentSavedata();
             $items_data = BattleState::createItemsData($savedata->id);
+            $enemy_drops_data = collect(BattleState::ENEMY_DROPS_DEFAULT_DATA);
 
             // 戦闘データをセッションIDで一意に管理する
             $battle_state = BattleState::createBattleState(
-                $savedata->id, $players_data, $enemies_data, $items_data, $field_id, $stage_id
+                $savedata->id, $players_data, $enemies_data, $items_data, $enemy_drops_data, $field_id, $stage_id
             );
 
         } else {
@@ -584,11 +585,16 @@ class ApiController extends Controller
         $exp_tables = Exp::get();
         $enemies_collection_data = collect(json_decode($battle_state['enemies_json_data']));
         $total_aquire_exp = 0;
-        $total_aquire_money = 0;
+
+        // money計算処理
+        $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
+        $total_aquire_money = $enemy_drops_collection_data['money'];
         foreach ($enemies_collection_data as $enemy) {
             $total_aquire_exp += $enemy->exp;
             $total_aquire_money += $enemy->drop_money;
         }
+        $enemy_drops_collection_data['money'] = $total_aquire_money;
+        Debugbar::debug("money加算完了。合計金額: {$enemy_drops_collection_data['money']}");
 
         // 戦闘不能のユーザーを除外し、振り分ける(戦闘不能のキャラクターはEXPが0)
         $cleared_players_data = collect(json_decode($battle_state->players_json_data));
@@ -604,18 +610,11 @@ class ApiController extends Controller
 
         // 戦闘後のアイテム状況
         $cleared_items_data = collect(json_decode($battle_state['items_json_data']));
-        Debugbar::debug('アイテムデータ');
-        Debugbar::debug(gettype($cleared_items_data));
 
         $savedata = Savedata::getLoginUserCurrentSavedata();
         try {
-            DB::transaction(function () use ($savedata, $total_aquire_money, $cleared_players_data, $cleared_items_data, $per_exp, $exp_tables, $battle_state, $result_logs) {
+            DB::transaction(function () use ($savedata, $cleared_players_data, $cleared_items_data, $enemy_drops_collection_data, $per_exp, $exp_tables, $battle_state, $result_logs) {
                 $increase_values = [];
-
-                // 金額処理
-                // TODO: 戦闘終了時に即時反映させるのではなく、escape時の処理のように、まとめて反映させるようにする
-                $savedata->increment('money', $total_aquire_money);
-                Debugbar::debug("ゴールド加算完了。 現在金額: {$savedata->money}");
 
                 // レベル処理
                 Debugbar::debug("ループ対象のパーティメンバーの数: {$cleared_players_data->count()} 人");
@@ -714,7 +713,7 @@ class ApiController extends Controller
 
                 // TODO: ボス討伐時は作らなくて良い
                 $create_next_battle_state = BattleState::createBattleState(
-                    $savedata->id, $cleared_players_data, $next_enemies_data, $cleared_items_data, $field_id, $next_stage_id
+                    $savedata->id, $cleared_players_data, $next_enemies_data, $cleared_items_data, $enemy_drops_collection_data, $field_id, $next_stage_id
                 );
                 $battle_state->delete();
                 Debugbar::debug('現在の戦闘データを削除しました。');
@@ -780,7 +779,7 @@ class ApiController extends Controller
             if (is_null($battle_state)) {
                 throw new \RuntimeException('Failed to find battle state.');
             }
-            // ---------- ステータス反映 ----------
+            Debugbar::debug('---------- ステータス反映 ----------');
             $current_players_data = collect(json_decode($battle_state['players_json_data']));
             foreach ($current_players_data as $json_data) {
                 $updated_party = Party::find($json_data->id);
@@ -804,7 +803,7 @@ class ApiController extends Controller
                 Debugbar::debug($updated_party);
             }
 
-            // ---------- アイテム反映 ----------
+            Debugbar::debug('---------- アイテム反映 ----------');
             $battle_item_collections = collect(json_decode($battle_state['items_json_data']));
             $battle_item_ids = $battle_item_collections->pluck('id')->all();
             $savedata_has_items = SavedataHasItem::where('savedata_id', $savedata->id)->get();
@@ -825,8 +824,12 @@ class ApiController extends Controller
                 }
             }
 
-            // ---------- ゴールドやドロップ品(現状は未実装)の反映 ----------
-            // TODO 現状、戦闘勝利時に即時反映されているので合わせたい
+            Debugbar::debug('---------- ゴールドやドロップ品(現状は未実装)の反映 ----------');
+            $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
+            $savedata->increment('money', $enemy_drops_collection_data['money']);
+            Debugbar::debug("moneyをセーブデータに加算完了。 金額: {$savedata->money}");
+            // TODO: アイテム
+            // TODO: ドロップ品
 
         } catch (\RuntimeException $e) {
             \Log::error("{$e->getMessage()} {$e->getFile()}:{$e->getLine()}");
@@ -839,7 +842,7 @@ class ApiController extends Controller
         // 終わった後は、戦闘セッションを削除。
         $battle_state->delete();
 
-        Debugbar::debug('ステータス反映完了。逃走処理終わり。');
+        Debugbar::debug('---------- 戦闘終了処理 完了 ----------');
     }
 
     /**
