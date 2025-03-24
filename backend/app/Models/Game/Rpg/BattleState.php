@@ -22,21 +22,21 @@ class BattleState extends Model
         return $this->belongsTo(Savedata::class);
     }
 
-    // 戦闘後に回復させるHPの倍率
-    // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
-    const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
-
-    const AFTER_CLEARED_RECOVERY_AP_MULTIPLIER = 0.30;
-
-    const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
-
-    const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
-
-    const ENEMY_DROPS_DEFAULT_DATA = [
+    public const ENEMY_DROPS_DEFAULT_DATA = [
         'money' => 0,
         'drop_item_id' => [],
         'drop_weapon_id' => [],
     ];
+
+    // 戦闘後に回復させるHPの倍率
+    // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
+    private const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
+
+    private const AFTER_CLEARED_RECOVERY_AP_MULTIPLIER = 0.30;
+
+    private const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
+
+    private const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
     private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 

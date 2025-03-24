@@ -585,15 +585,15 @@ class ApiController extends Controller
         $exp_tables = Exp::get();
         $enemies_collection_data = collect(json_decode($battle_state['enemies_json_data']));
         $total_aquire_exp = 0;
+        $total_aquire_money = 0;
 
         // money計算処理
         $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
-        $total_aquire_money = $enemy_drops_collection_data['money'];
         foreach ($enemies_collection_data as $enemy) {
             $total_aquire_exp += $enemy->exp;
             $total_aquire_money += $enemy->drop_money;
         }
-        $enemy_drops_collection_data['money'] = $total_aquire_money;
+        $enemy_drops_collection_data['money'] += $total_aquire_money;
         Debugbar::debug("money加算完了。合計金額: {$enemy_drops_collection_data['money']}");
 
         // 戦闘不能のユーザーを除外し、振り分ける(戦闘不能のキャラクターはEXPが0)
@@ -847,7 +847,7 @@ class ApiController extends Controller
 
     /**
      * 戦闘に敗北した場合、または、戦闘不具合時のエラーボタンからの処理
-     * 
+     *
      * battle_stateの情報を保存せずに削除する。
      */
     public function refreshBattleState(Request $request)
