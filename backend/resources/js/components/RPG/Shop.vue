@@ -51,52 +51,54 @@
   </div>
 
   <!-- 購入モーダル -->
-  <div class="modal fade" id="modal-item-purchase" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">購入フォーム</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        </div>
-        <div class="modal-body">
-          <!-- error message -->
-          <div v-if="error_message">
-            <p style="color:red;">{{ error_message }}</p>
-          </div>
-
-          <!-- Edit purchase form -->
-          <form class="form-horizontal" role="form">
-            <!-- Date -->
-            <div class="form-group">
-              <label class="control-label">
-                {{ purchaseForm.name }}をいくつ購入しますか？<br>
-              </label>
-              <div style="max-width: 100px;">
-                <!-- 
-                  inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
-                    https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
-                    https://www.softel.co.jp/blogs/tech/archives/3614?
-                  -->
-                <input type="text" style="display: none;">
-                <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
-
-              </div>
-              <hr>
-              <div style="text-align: right;">
-                合計: {{ purchaseForm.price * number }} G
-              </div>
+  <teleport to="body">
+    <div class="modal fade" id="modal-item-purchase" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h4 class="modal-title">購入フォーム</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-          </form>
-        </div>
+            <div class="modal-body">
+            <!-- error message -->
+            <div v-if="error_message">
+                <p style="color:red;">{{ error_message }}</p>
+            </div>
 
-        <!-- Modal Actions -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-          <button type="button" class="btn btn-primary" @click="paymentItem">購入する</button>
+            <!-- Edit purchase form -->
+            <form class="form-horizontal" role="form">
+                <!-- Date -->
+                <div class="form-group">
+                <label class="control-label">
+                    {{ purchaseForm.name }}をいくつ購入しますか？<br>
+                </label>
+                <div style="max-width: 100px;">
+                    <!-- 
+                    inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
+                        https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
+                        https://www.softel.co.jp/blogs/tech/archives/3614?
+                    -->
+                    <input type="text" style="display: none;">
+                    <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
+
+                </div>
+                <hr>
+                <div style="text-align: right;">
+                    合計: {{ purchaseForm.price * number }} G
+                </div>
+                </div>
+            </form>
+            </div>
+
+            <!-- Modal Actions -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-primary" @click="paymentItem">購入する</button>
+            </div>
         </div>
-      </div>
+        </div>
     </div>
-  </div>
+  </teleport>
 
 </template>
 

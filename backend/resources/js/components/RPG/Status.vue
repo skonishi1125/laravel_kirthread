@@ -191,83 +191,85 @@
       </div>
 
       <!-- ステータスモーダル -->
-      <div class="modal fade" id="modal-status-confirm" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h6 class="modal-title"><b>ステータス: HP</b></h6>
-              <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
+      <teleport to="body">
+        <div class="modal fade" id="modal-status-confirm" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title"><b>ステータス: HP</b></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
 
-            <div class="modal-body">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-12">
-                    <p>
-                      何ポイント振り分けますか？<br>
-                      <small>※未振り分けのステータスポイント: {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point - inputFreelyStatusPoints }}</small>
-                    </p>
-                    <div class="input-group input-group-sm mb-3">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-sm">振り分けるポイント数: </span>
+              <div class="modal-body">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-12">
+                      <p>
+                        何ポイント振り分けますか？<br>
+                        <small>※未振り分けのステータスポイント: {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point - inputFreelyStatusPoints }}</small>
+                      </p>
+                      <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="inputGroup-sizing-sm">振り分けるポイント数: </span>
+                        </div>
+                        <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
+                          v-model.number="inputFreelyStatusPoints"
+                          @input="validateStatusInput"
+                          :max="partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point"
+                          min="0"
+                          placeholder="振り分けるポイントを入力"
+                        >
                       </div>
-                      <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
-                        v-model.number="inputFreelyStatusPoints"
-                        @input="validateStatusInput"
-                        :max="partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point"
-                        min="0"
-                        placeholder="振り分けるポイントを入力"
-                      >
                     </div>
-                  </div>
 
-                  <div class="col-3"></div>
-                  <div class="col-6">
-                    <div class="d-flex justify-content-between">
-                      <span class="badge badge-secondary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue }}</span>
-                      <span>→</span>
-                      <span v-if="modalStatusName !== 'HP'">
-                        <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + inputFreelyStatusPoints }}</span>
-                      </span>
-                      <!-- HPは倍伸ばす -->
-                      <span v-else>
-                        <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + (inputFreelyStatusPoints * 2) }}</span>
-                      </span>
+                    <div class="col-3"></div>
+                    <div class="col-6">
+                      <div class="d-flex justify-content-between">
+                        <span class="badge badge-secondary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue }}</span>
+                        <span>→</span>
+                        <span v-if="modalStatusName !== 'HP'">
+                          <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + inputFreelyStatusPoints }}</span>
+                        </span>
+                        <!-- HPは倍伸ばす -->
+                        <span v-else>
+                          <span class="badge badge-primary" style="padding: 6px 10px">{{ modalStatusName }}:{{ modalStatusBaseValue + (inputFreelyStatusPoints * 2) }}</span>
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="col-3"></div>
+                    <div class="col-3"></div>
 
-                </div>
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-12 mb-3">
-                    <p style="font-size: 14px">
-                      <b>※HPステータスについて</b><br>
-                      HPのみ振り分けた際の伸びが大きく、1ポイントで2UPします。
-                    </p>
                   </div>
                 </div>
               </div>
 
-              <div v-if="modalErrorMessage != null">
-                <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
+              <div class="modal-footer">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-12 mb-3">
+                      <p style="font-size: 14px">
+                        <b>※HPステータスについて</b><br>
+                        HPのみ振り分けた際の伸びが大きく、1ポイントで2UPします。
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-if="modalErrorMessage != null">
+                  <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
+                </div>
+                <!-- ポイントがない場合は押せなくするとよい -->
+                <button type="button" class="btn btn-info" @click="postIncrementStatus"
+                  :class="{'disabled': inputFreelyStatusPoints < 1 || partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point < 1}"
+                >
+                  確定
+                </button>
+
               </div>
-              <!-- ポイントがない場合は押せなくするとよい -->
-              <button type="button" class="btn btn-info" @click="postIncrementStatus"
-                :class="{'disabled': inputFreelyStatusPoints < 1 || partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point < 1}"
-              >
-                確定
-              </button>
 
             </div>
-
           </div>
-        </div>
-      </div> <!-- modal -->
+        </div> <!-- modal -->
+      </teleport>
 
     </div>
 
@@ -427,132 +429,134 @@
       </div>
 
       <!-- モーダル内部でもaxiosで受け取った情報を使用するため、読み込み後のdiv要素に含める -->
-      <div class="modal fade" id="modal-skill-confirm" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h6 class="modal-title">
-                <b>{{ modalSkillInfo.skill_name }}</b>
-                <span class="badge badge-light"
+      <teleport to="body">
+        <div class="modal fade" id="modal-skill-confirm" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title">
+                  <b>{{ modalSkillInfo.skill_name }}</b>
+                  <span class="badge badge-light"
+                      :class="{
+                        'badge-light-physical': modalSkillInfo.attack_type === '物理',
+                        'badge-light-magic': modalSkillInfo.attack_type === '魔法',
+                        }"
+                  >
+                    {{ modalSkillInfo.attack_type }}
+                  </span>
+                  <span class="badge"
                     :class="{
-                      'badge-light-physical': modalSkillInfo.attack_type === '物理',
-                      'badge-light-magic': modalSkillInfo.attack_type === '魔法',
+                      'badge-primary': modalSkillInfo.effect_type === '攻撃',
+                      'badge-success': modalSkillInfo.effect_type === '回復',
+                      'badge-light badge-light-buff': modalSkillInfo.effect_type === 'バフ',
                       }"
-                >
-                  {{ modalSkillInfo.attack_type }}
-                </span>
-                <span class="badge"
-                  :class="{
-                    'badge-primary': modalSkillInfo.effect_type === '攻撃',
-                    'badge-success': modalSkillInfo.effect_type === '回復',
-                    'badge-light badge-light-buff': modalSkillInfo.effect_type === 'バフ',
-                    }"
-                >
-                  {{ modalSkillInfo.effect_type }}
-                </span>
-                <span class="badge badge-light"
-                  :class="{
-                    'badge-light-self': modalSkillInfo.target_range === '自身',
-                    'badge-light-single': modalSkillInfo.target_range === '単体',
-                    'badge-light-all': modalSkillInfo.target_range === '全体',
-                    }"
-                >
-                  {{ modalSkillInfo.target_range }}
-                </span>
-              </h6>
-              <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-
-            <div class="modal-body">
-              <div class="container-fluid">
-                <div class="row">
-                  <!-- スキルレベルがnull (未習得)の時 -->
-                  <div v-if="!modalSkillInfo.current_skill_level">
-                    <div class="col-12">
-                      <span class="badge badge-info">NEXT</span>
-                      <p>
-                        【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
-                        使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span><br>
-                        基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
-                        <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
-                      </p>
-                    </div>
-                  </div>
-                  <!-- スキルレベルが1 or 2の時 -->
-                  <div v-else-if="modalSkillInfo.current_skill_level < 3">
-                    <div class="col-12">
-                      <span class="badge badge-secondary">現在</span>
-                      <p>
-                        【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
-                        使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span> <br>
-                        基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
-                        <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
-                      </p>
-                      <hr>
-                      <div style="text-align: center;">
-                        <p>↓</p>
+                  >
+                    {{ modalSkillInfo.effect_type }}
+                  </span>
+                  <span class="badge badge-light"
+                    :class="{
+                      'badge-light-self': modalSkillInfo.target_range === '自身',
+                      'badge-light-single': modalSkillInfo.target_range === '単体',
+                      'badge-light-all': modalSkillInfo.target_range === '全体',
+                      }"
+                  >
+                    {{ modalSkillInfo.target_range }}
+                  </span>
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+  
+              <div class="modal-body">
+                <div class="container-fluid">
+                  <div class="row">
+                    <!-- スキルレベルがnull (未習得)の時 -->
+                    <div v-if="!modalSkillInfo.current_skill_level">
+                      <div class="col-12">
+                        <span class="badge badge-info">NEXT</span>
+                        <p>
+                          【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
+                          使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span><br>
+                          基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
+                          <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
+                        </p>
                       </div>
-                      <span class="badge badge-info">NEXT</span>
-                      <p>
-                        【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
-                        使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span> <br>
-                        基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
-                        <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
+                    </div>
+                    <!-- スキルレベルが1 or 2の時 -->
+                    <div v-else-if="modalSkillInfo.current_skill_level < 3">
+                      <div class="col-12">
+                        <span class="badge badge-secondary">現在</span>
+                        <p>
+                          【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
+                          使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span> <br>
+                          基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
+                          <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
+                        </p>
+                        <hr>
+                        <div style="text-align: center;">
+                          <p>↓</p>
+                        </div>
+                        <span class="badge badge-info">NEXT</span>
+                        <p>
+                          【スキルレベル: {{ modalSkillInfo.next_skill_level}}】<br>
+                          使用AP: <span style="color:orange">{{ modalSkillInfo.next_skill_ap_cost }}</span> <br>
+                          基礎倍率: <span style="color:orange">{{ modalSkillInfo.next_skill_percent }}</span>% <br>
+                          <span v-if="modalSkillInfo.next_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.next_skill_buff_turn }}</span></span>
+                        </p>
+                      </div>
+                    </div>
+  
+                    <!-- スキルレベルが3 (max)の時 -->
+                    <div v-else-if="modalSkillInfo.current_skill_level > 2">
+                      <div class="col-12">
+                        <span class="badge badge-dark">MAX</span>
+                        <p>
+                          【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
+                          使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span><br>
+                          基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
+                          <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
+                        </p>
+                      </div>
+                    </div>
+  
+                  </div>
+                </div>
+              </div>
+  
+              <div class="modal-footer">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-12 mb-3">
+                      <p style="font-size: 14px">
+                        <b>※基礎倍率</b><br>
+                        ステータスの値を100%とした、スキル使用時の効果倍率。<br>
+                        【例】<br>
+                        ●<span class="badge badge-light badge-light-physical">物理</span><span class="badge badge-primary">攻撃</span>, 基礎倍率200%のスキル<br>
+                        　→通常攻撃(基礎倍率100%)の倍程度のダメージ。<br>
+                        ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
+                        　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。
                       </p>
                     </div>
                   </div>
-
-                  <!-- スキルレベルが3 (max)の時 -->
-                  <div v-else-if="modalSkillInfo.current_skill_level > 2">
-                    <div class="col-12">
-                      <span class="badge badge-dark">MAX</span>
-                      <p>
-                        【スキルレベル: {{ modalSkillInfo.current_skill_level }}】<br>
-                        使用AP: <span style="color:orange">{{ modalSkillInfo.current_skill_ap_cost }}</span><br>
-                        基礎倍率: <span style="color:orange">{{ modalSkillInfo.current_skill_percent }}</span>% <br>
-                        <span v-if="modalSkillInfo.current_skill_buff_turn"> ターン数: <span style="color:orange">{{ modalSkillInfo.current_skill_buff_turn }}</span></span>
-                      </p>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-12 mb-3">
-                    <p style="font-size: 14px">
-                      <b>※基礎倍率</b><br>
-                      ステータスの値を100%とした、スキル使用時の効果倍率。<br>
-                      【例】<br>
-                      ●<span class="badge badge-light badge-light-physical">物理</span><span class="badge badge-primary">攻撃</span>, 基礎倍率200%のスキル<br>
-                      　→通常攻撃(基礎倍率100%)の倍程度のダメージ。<br>
-                      ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
-                      　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。
-                    </p>
+                  <div v-if="modalErrorMessage != null">
+                    <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
                   </div>
                 </div>
-                <div v-if="modalErrorMessage != null">
-                  <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
+                <div v-if="modalSkillInfo.current_skill_level !== 3">
+                  <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
+                    :class="{'disabled': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point < 1}"
+                  >
+                    習得
+                  </button>
+                </div>
+                <div v-else-if="modalSkillInfo.current_skill_level === 3">
+                  <small>このスキルはマスターしています。</small>
                 </div>
               </div>
-              <div v-if="modalSkillInfo.current_skill_level !== 3">
-                <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
-                  :class="{'disabled': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point < 1}"
-                >
-                  習得
-                </button>
-              </div>
-              <div v-else-if="modalSkillInfo.current_skill_level === 3">
-                <small>このスキルはマスターしています。</small>
-              </div>
+  
             </div>
-
           </div>
         </div>
-      </div>
+      </teleport> 
 
     </div>
   </div>
