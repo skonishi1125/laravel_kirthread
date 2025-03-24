@@ -47,7 +47,7 @@ Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountEl
 Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
 Route::post('/api/game/rpg/battle/finish', 'Game\Rpg\ApiController@finishBattle')->name('api_game_rpg_battle_finish');
 Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
-Route::post('/api/game/rpg/battle/result_lose', 'Game\Rpg\ApiController@resultLoseBattle')->name('api_game_rpg_battle_result_lose');
+Route::post('/api/game/rpg/battle/refresh', 'Game\Rpg\ApiController@refreshBattleState')->name('api_game_rpg_battle_refresh_battle_state');
 
 Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
 Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');

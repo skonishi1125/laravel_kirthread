@@ -204,8 +204,11 @@
     <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;">
 
       <div v-if="battle.status == 'error'">
-        <div style="cursor: pointer; background-color: white;">
-          <p @click="finishBattle" >エラーが発生しました。このメッセージをクリックして一度戻ってください</p>
+        <div class="nextScene_button" @click="refreshBattleStateAndReturnToMenu">
+          <a style="font-size: 16px; font-weight: bold; margin-bottom: 0.7rem;">
+            ※読み込みエラーが発生しました。<br>
+            このメッセージをクリックして一度戻ってください
+          </a>
         </div>
       </div>
 
@@ -348,7 +351,7 @@
 
           <!-- 敗北時、街に戻るためのボタンを作成 -->
           <div v-if="battle.status == 'resultLose'"  style="position: relative;">
-            <div class="nextScene_button" @click="resultLose">
+            <div class="nextScene_button" @click="refreshBattleStateAndReturnToMenu">
                 <a>街に戻る</a>
             </div>
           </div>
@@ -729,9 +732,17 @@ export default {
         );
     },
 
-    resultLose() {
-        console.log('resultLose(): ----------------------------------');
-        axios.post('/api/game/rpg/battle/result_lose', {
+    /**
+     * 敗北時または、URLを手入力で操作した場合の処理
+     * 
+     * 敗北時のボタンまたは、不具合でbattle_stateが取得できなかった場合に表示されるボタンの処理
+     * axiosでLaravelへと連絡し、該当ユーザーのbattle_stateをリフレッシュする。
+     * その後、メニュー画面に遷移させて正常に戻す。
+     * finishBattleはセッションの情報をDBに反映させるが、この場合はDBに反映させず、セッションを削除するのみの挙動とする
+     */
+    refreshBattleStateAndReturnToMenu() {
+        console.log('refreshBattleStateAndReturnToMenu(): ----------------------------------');
+        axios.post('/api/game/rpg/battle/refresh', {
             session_id: this.battle.battleSessionId,
         })
             .then(response => { 
@@ -746,7 +757,6 @@ export default {
                 this.$router.push('/game/rpg/menu');
             });
     },
-
 
     nextBattle() {
       // 戦闘終了後、次のステージに進む。
@@ -768,9 +778,10 @@ export default {
     },
 
     /**
-     * 街に戻る時のアクション
-     * 逃走成功時・エラーメッセージクリックでの強制遷移時、フィールド自体のクリア時に実行
-     * ※戦闘敗北時は resultLose() で処理する
+     * "街に戻る"ボタンのアクション
+     * 
+     * 逃走成功時・フィールド自体のクリア時に実行
+     * ※戦闘敗北時、またはbattle_stateのエラー時は refreshBattleStateAndReturnToMenu() で処理する
      */
     finishBattle() {
       console.log('finishBattle(): ----------------------------------');
@@ -789,6 +800,7 @@ export default {
         this.$router.push('/game/rpg/menu');
         });
     },
+
     pushBattleLogHistory(logs) {
       console.log("pushBattleLogHistory(): -------------------");
       logs.forEach(log => {
@@ -797,6 +809,7 @@ export default {
       this.battleLogHistory.unshift('------------------------------------------------【ターン終了】------------------------------------------------');
     }
   },
+
   beforeRouteUpdate(to, from, next) {
     console.log('beforeRouteUpdate(): URL変更を確認しました ----------------------------------');
     // 戦闘ステータスが変更されたときにデータを再取得

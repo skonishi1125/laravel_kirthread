@@ -846,15 +846,18 @@ class ApiController extends Controller
     }
 
     /**
-     * 戦闘に敗北した場合、battlestateの情報を保存せず、削除する
+     * 戦闘に敗北した場合、または、戦闘不具合時のエラーボタンからの処理
+     * 
+     * battle_stateの情報を保存せずに削除する。
      */
-    public function resultLoseBattle(Request $request)
+    public function refreshBattleState(Request $request)
     {
-        Debugbar::debug('resultLoseBattle(): ---------------------');
+        Debugbar::debug('refreshBattleState(): ---------------------');
         $session_id = $request->session_id;
         $battle_state = BattleState::where('session_id', $session_id)->first();
 
         // 現在のセッションIDで見つからなければ、ユーザーIDで検索をかけて削除する
+        // エラー画面からの遷移時は、基本的にこの処理になる
         if (! $battle_state) {
             $savedata = Savedata::getLoginUserCurrentSavedata();
             Debugbar::debug("セッションID {$session_id} から情報を見つけられないため、セーブデータIDで検索をかけ削除します。");
@@ -866,6 +869,6 @@ class ApiController extends Controller
             $battle_state->delete();
         }
 
-        Debugbar::debug('敗北。戦闘セッションをデータとして保存せず削除しました。');
+        Debugbar::debug('敗北または戦闘エラー処理対応。戦闘セッションをデータとして保存せず削除しました。');
     }
 }
