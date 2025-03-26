@@ -57,10 +57,16 @@ class Field extends Model
     {
         // クリア済みのフィールドの数
         $cleared_count = $savedata->savedata_cleared_fields()->count();
+        $cleared_field_ids = $savedata->savedata_cleared_fields->pluck('field_id')->toArray();
 
         $fields = self::where('required_clears', '<=', $cleared_count)
             ->orderBy('id', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($field) use ($cleared_field_ids) {
+                // クリア済みかどうかの要素を追加。
+                $field->is_cleared = in_array($field->id, $cleared_field_ids, true);
+                return $field;
+            });
 
         return $fields;
 

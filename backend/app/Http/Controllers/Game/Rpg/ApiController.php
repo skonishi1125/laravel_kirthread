@@ -389,6 +389,7 @@ class ApiController extends Controller
                 'id' => $field->id,
                 'name' => $field->name,
                 'difficulty' => $field->convertDifficultyStars(),
+                'is_cleared' => $field->is_cleared,
             ]);
         }
 
