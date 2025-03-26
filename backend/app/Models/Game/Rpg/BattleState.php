@@ -485,7 +485,7 @@ class BattleState extends Model
                                 $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
                             } else {
                                 Debugbar::debug('逃走失敗...');
-                                $logs->push("{$data->name}はは逃走を試みた！しかし回り込まれてしまった！");
+                                $logs->push("{$data->name}は逃走を試みた！しかし回り込まれてしまった！");
                             }
 
                             // 敵が逃げるを選択した場合の処理。現状想定なし。

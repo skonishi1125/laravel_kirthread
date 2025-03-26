@@ -374,6 +374,7 @@ class ApiController extends Controller
     // フィールド
     public function fieldList()
     {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
         $fields = Field::get();
         $field_json_data = collect();
 
