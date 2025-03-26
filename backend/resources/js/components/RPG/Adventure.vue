@@ -1,7 +1,22 @@
 <style scoped>
-  .action-link {
+.action-link {
     cursor: pointer;
-  }
+}
+.sub-sucreen-text-space {
+    padding: 10px 0px;
+}
+
+.weight-bold {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 0.7rem;
+}
+
+.table-hoverable tbody tr:hover {
+    background-color: #fdf6e3;
+    transition: background-color 0.2s ease;
+}
+
 </style>
 
 <template>
@@ -16,20 +31,20 @@
 
     <div class="row mt-3 sub-sucreen-main-space">
       <div class="col-12">
-        <table class="table table-borderless">
+        <table class="table table-borderless table-hoverable">
           <thead>
               <tr>
                 <th>フィールド名</th>
                 <th>難易度</th>
-                <th>ステージ</th>
+                <th></th>
               </tr>
           </thead>
           <tbody>
             <tr v-for="field in fieldList">
-              <td>{{ field.name }}</td>
+              <td  class="weight-bold">{{ field.name }}</td>
               <td>{{ field.difficulty }}</td>
               <td>
-                <a class="action-link" @click="startFirstStageBattle(field.id)">行く</a>
+                <a class="action-link weight-bold" @click="startFirstStageBattle(field.id)">行く</a>
               </td>
             </tr>
           </tbody>

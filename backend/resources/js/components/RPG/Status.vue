@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 .character-nav-tab {
   cursor: pointer;
 }

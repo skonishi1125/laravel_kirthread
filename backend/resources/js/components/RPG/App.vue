@@ -30,7 +30,7 @@
 .sub-sucreen-main-space {
     height: 500px;
     border: 1px solid rgba(0, 0, 0, .5);
-    /* border: 1px solid rgb(60, 0, 255); */
+    overflow-y: scroll;
 }
 
 

@@ -40,7 +40,7 @@
   cursor: pointer;
 }
 .command-list-row:hover {
-  background-color: beige;
+  background-color: #fdf6e3;
 }
 
 .command-list-row-skills-and-items {
@@ -50,7 +50,7 @@
   cursor: pointer;
 }
 .command-list-row-skills-and-items:hover {
-  background-color: beige;
+  background-color: #fdf6e3;
 }
 .command-list-row-skills-and-items_not_enough_ap {
   width: 300px;
@@ -187,7 +187,7 @@
 }
 
 .nextScene_button:hover {
-  background-color: #f5f5dc;
+  background-color: #fdf6e3;
   /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
 }
 

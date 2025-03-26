@@ -1,4 +1,7 @@
 <style scoped>
+.sub-sucreen-text-space {
+    padding: 10px 0px;
+}
   .action-link {
     cursor: pointer;
   }
