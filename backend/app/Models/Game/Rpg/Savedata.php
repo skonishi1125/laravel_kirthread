@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Savedata extends Model
 {
@@ -71,7 +72,7 @@ class Savedata extends Model
         return $this->hasOne(SavedataHasItem::class, 'savedata_id');
     }
 
-    public function savedata_cleared_fields()
+    public function savedata_cleared_fields(): HasMany
     {
         /**
          * tinkerでテストする場合の例

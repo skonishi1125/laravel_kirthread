@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property bool $is_cleared
+ */
 class Field extends Model
 {
     use HasFactory;
@@ -63,8 +66,9 @@ class Field extends Model
             ->orderBy('id', 'desc')
             ->get()
             ->map(function ($field) use ($cleared_field_ids) {
-                // クリア済みかどうかの要素を追加。
+                // クリア済みかどうかを判定するカラムを追加。
                 $field->is_cleared = in_array($field->id, $cleared_field_ids, true);
+
                 return $field;
             });
 
