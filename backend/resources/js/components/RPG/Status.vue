@@ -37,6 +37,9 @@
 .skill-items {
   margin: 20px;
 }
+.freely-point-red {
+  color: red;
+}
 
 </style>
 
@@ -178,10 +181,19 @@
 
           <div class="row">
             <div class="col-12">
-              <small>
-                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
+              <p style="font-size: 0.9rem; font-weight: bold;">
+                ステータスポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
+                  </span>
+                】
+                スキルポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point > 0}">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}
+                  </span>
+                】
                 ※スキルツリーはスクロール可能。
-              </small>
+              </p>
               <div v-if="successStatusMessage !== null">
                 <small style="color:red">
                   {{ successStatusMessage }}
@@ -416,10 +428,19 @@
 
           <div class="row">
             <div class="col-12">
-              <small>
-                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
+              <p style="font-size: 0.9rem; font-weight: bold;">
+                ステータスポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
+                  </span>
+                】
+                スキルポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point > 0}">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}
+                  </span>
+                】
                 ※スキルツリーはスクロール可能。
-              </small>
+              </p>
               <div v-if="successSkillMessage !== null">
                 <small style="color:red">
                   {{ successSkillMessage }}
@@ -664,7 +685,6 @@
           .then(response => {
             console.log(`通信OK`);
             console.log(response.data.message);
-            this.successStatusMessage = 'ステータスの振り分けが完了しました！';
 
             // 振り分け後のデータ再取得
             this.updatePartiesInformation();
@@ -672,6 +692,7 @@
             // stateを'status'に戻し、modalを閉じる
             this.$store.dispatch('setMenuStatusStatus', 'status');
             $('#modal-status-confirm').modal('hide');
+            this.successStatusMessage = 'ステータスの振り分けが完了しました！';
           })
           .catch(error => {
             console.log(`通信失敗。`);
