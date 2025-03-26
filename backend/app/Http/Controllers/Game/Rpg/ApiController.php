@@ -375,10 +375,16 @@ class ApiController extends Controller
     public function fieldList()
     {
         $savedata = Savedata::getLoginUserCurrentSavedata();
-        $fields = Field::get();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $selectable_fields = Field::acquireCurrentSelectableFieldList($savedata);
         $field_json_data = collect();
 
-        foreach ($fields as $field) {
+        foreach ($selectable_fields as $field) {
             $field_json_data->push([
                 'id' => $field->id,
                 'name' => $field->name,
