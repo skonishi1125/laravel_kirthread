@@ -25,17 +25,17 @@ class Role extends Model
     const ROLE_BUFFER = 6;
 
     // 職業名
-    const ROLE_STRIKER_CLASS_NAME = 'striker';
+    const ROLE_STRIKER_CLASS_NAME = 'Striker';
 
-    const ROLE_MEDIC_CLASS_NAME = 'medic';
+    const ROLE_MEDIC_CLASS_NAME = 'Medic';
 
-    const ROLE_PALADIN_CLASS_NAME = 'paladin';
+    const ROLE_PALADIN_CLASS_NAME = 'Paladin';
 
-    const ROLE_MAGE_CLASS_NAME = 'mage';
+    const ROLE_MAGE_CLASS_NAME = 'Mage';
 
-    const ROLE_RANGER_CLASS_NAME = 'ranger';
+    const ROLE_RANGER_CLASS_NAME = 'Ranger';
 
-    const ROLE_BUFFER_CLASS_NAME = 'buffer';
+    const ROLE_BUFFER_CLASS_NAME = 'Buffer';
 
     // 職業別 Lv.1時点でのステータス
     public const STRIKER_DEFAULT_STATUS = [

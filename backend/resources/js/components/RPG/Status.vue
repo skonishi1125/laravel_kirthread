@@ -113,8 +113,10 @@
                 <h6>
                   {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
                   <small>
+                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
                     <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
-                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】 Total Exp: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Next Lv: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small>
+                    / Next: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> Exp
+                    / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Exp
                   </small>
                 </h6>
               </div>
@@ -196,7 +198,7 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h6 class="modal-title"><b>ステータス: HP</b></h6>
+                <h6 class="modal-title"><b>ステータス 【{{ modalStatusName }}】</b></h6>
                 <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
               </div>
 
