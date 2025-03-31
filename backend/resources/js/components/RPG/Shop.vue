@@ -1,4 +1,7 @@
 <style scoped>
+.sub-sucreen-text-space {
+    padding: 10px 0px;
+}
   .action-link {
     cursor: pointer;
   }
@@ -8,103 +11,122 @@
 <template>
 
   <div class="container">
-
-    <div class="row sub-sucreen-text-space">
-      <div class="col-12">
-        <p>何を買おうかな？(所持金: {{ money }} G)</p>
-
-      </div>
-        <div class="col-12" style="color: blue" v-if="after_purchase_array.after_purchase_flag">
+    <div v-if="status == 'start'">
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p><small>読み込み中...</small></p>
+          </div>
           <hr>
-          <p>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</p>
         </div>
+      </div>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12"></div>
+      </div>
+
     </div>
 
-    <div class="row mt-3 sub-sucreen-main-space">
-      <div class="col-12">
-        <ul class="nav nav-tabs">
-          <a class="nav-link active">買う</a>
-          <a class="nav-link ">売る</a>
-        </ul>
+    <div v-if="status == 'buyable'">
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <p>何を買おうかな？(所持金: {{ money }} G)</p>
+        </div>
+          <div class="col-12" style="color: blue" v-if="after_purchase_array.after_purchase_flag">
+            <hr>
+            <p>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</p>
+          </div>
       </div>
-      <div class="col-12">
-        <table class="table table-borderless">
-          <thead>
-              <tr>
-                <th>名前</th>
-                <th>価格</th>
-                <th>説明</th>
-                <th></th>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12">
+          <ul class="nav nav-tabs">
+            <a class="nav-link active">買う</a>
+            <a class="nav-link ">売る</a>
+          </ul>
+        </div>
+        <div class="col-12">
+          <table class="table table-borderless">
+            <thead>
+                <tr>
+                  <th>名前</th>
+                  <th>価格</th>
+                  <th>説明</th>
+                  <th></th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr v-for="shopListItem in shopListItems">
+                <td>{{ shopListItem.name }}</td>
+                <td>{{ shopListItem.price }} G</td>
+                <td>{{ shopListItem.description }}</td>
+                <td><a class="action-link" @click="showPurchaseForm(shopListItem)">買う</a></td>
               </tr>
-          </thead>
-          <tbody>
-            <tr v-for="shopListItem in shopListItems">
-              <td>{{ shopListItem.name }}</td>
-              <td>{{ shopListItem.price }} G</td>
-              <td>{{ shopListItem.description }}</td>
-              <td><a class="action-link" @click="showPurchaseForm(shopListItem)">買う</a></td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+  
+    <!-- 購入モーダル -->
+    <teleport to="body">
+      <div class="modal fade" id="modal-item-purchase" tabindex="-1" role="dialog">
+          <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h4 class="modal-title">購入フォーム</h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+              <!-- error message -->
+              <div v-if="error_message">
+                  <p style="color:red;">{{ error_message }}</p>
+              </div>
+  
+              <!-- Edit purchase form -->
+              <form class="form-horizontal" role="form">
+                  <!-- Date -->
+                  <div class="form-group">
+                  <label class="control-label">
+                      {{ purchaseForm.name }}をいくつ購入しますか？<br>
+                  </label>
+                  <div style="max-width: 100px;">
+                      <!-- 
+                      inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
+                          https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
+                          https://www.softel.co.jp/blogs/tech/archives/3614?
+                      -->
+                      <input type="text" style="display: none;">
+                      <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
+  
+                  </div>
+                  <hr>
+                  <div style="text-align: right;">
+                      合計: {{ purchaseForm.price * number }} G
+                  </div>
+                  </div>
+              </form>
+              </div>
+  
+              <!-- Modal Actions -->
+              <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+              <button type="button" class="btn btn-primary" @click="paymentItem">購入する</button>
+              </div>
+          </div>
+          </div>
+      </div>
+    </teleport>
   </div>
 
-  <!-- 購入モーダル -->
-  <teleport to="body">
-    <div class="modal fade" id="modal-item-purchase" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h4 class="modal-title">購入フォーム</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            <div class="modal-body">
-            <!-- error message -->
-            <div v-if="error_message">
-                <p style="color:red;">{{ error_message }}</p>
-            </div>
 
-            <!-- Edit purchase form -->
-            <form class="form-horizontal" role="form">
-                <!-- Date -->
-                <div class="form-group">
-                <label class="control-label">
-                    {{ purchaseForm.name }}をいくつ購入しますか？<br>
-                </label>
-                <div style="max-width: 100px;">
-                    <!-- 
-                    inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
-                        https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
-                        https://www.softel.co.jp/blogs/tech/archives/3614?
-                    -->
-                    <input type="text" style="display: none;">
-                    <input id="purchase-number" min="1" max="100" type="number" class="form-control" v-model="number" @keyup.enter="false">
-
-                </div>
-                <hr>
-                <div style="text-align: right;">
-                    合計: {{ purchaseForm.price * number }} G
-                </div>
-                </div>
-            </form>
-            </div>
-
-            <!-- Modal Actions -->
-            <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-            <button type="button" class="btn btn-primary" @click="paymentItem">購入する</button>
-            </div>
-        </div>
-        </div>
-    </div>
-  </teleport>
 
 </template>
 
 <script>
   import $ from 'jquery';
   import axios from 'axios';
+  import { mapState } from 'vuex';
   export default {
     data() {
       return {
@@ -126,11 +148,20 @@
       }
     },
     created() {
+      // 初期値をセット 
+      // これで"ショップ" > "ステータス"  > "ショップ"と遷移しても、初めの表示からとなる
+      this.$store.dispatch('setMenuShopStatus', 'start'); 
       this.getShopList();
       this.getCurrentMoney();
     },
+    computed: {
+      // menu.shop.status == 'start' の値がcomponentで呼べるようになる
+      ...mapState({
+        status: state => state.menu.shop.status,
+      }),
+    },
     mounted() {
-      console.log('shop.vue');
+      console.log(this.status); // state.menu.shop.status
       $('#modal-item-purchase').on('shown.bs.modal', () => {
         $('#purchase-number').focus();
       })
@@ -146,10 +177,13 @@
       },
       // 所持金をセーブデータから取得
       getCurrentMoney() {
+        console.log("getCurrentMoney(): -----------------------------------------");
         axios.get('/api/game/rpg/savedata')
           .then(response => {
             this.money = response.data.money;
-          });
+            this.$store.dispatch('setMenuShopStatus', 'buyable'); // 所持金が取得でき次第、statusを変更
+          }
+        );
       },
 
       // 購入モーダル表示

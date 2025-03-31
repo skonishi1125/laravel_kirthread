@@ -24,5 +24,6 @@ class DatabaseSeeder extends Seeder
         $this->call(\Database\Seeders\rpg\SkillRequirementTableSeeder::class);
         $this->call(\Database\Seeders\rpg\EnemyTableSeeder::class);
         $this->call(\Database\Seeders\rpg\PresetAppearingEnemyTableSeeder::class);
+        $this->call(\Database\Seeders\rpg\FieldTableSeeder::class);
     }
 }

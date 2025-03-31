@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 .character-nav-tab {
   cursor: pointer;
 }
@@ -37,14 +37,27 @@
 .skill-items {
   margin: 20px;
 }
+.freely-point-red {
+  color: red;
+}
 
 </style>
 
 <template>
   <div class="container">
     <div v-if="status.status == 'start'">
-      <div class="row sub-sucreen-text-space"></div>
-      <div class="row mt-3 sub-sucreen-main-space"></div>
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p><small>読み込み中...</small></p>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12"></div>
+      </div>
     </div>
 
     <div v-if="status.status == 'status'">
@@ -113,8 +126,10 @@
                 <h6>
                   {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
                   <small>
+                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
                     <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
-                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】 Total Exp: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Next Lv: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small>
+                    / Next: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> Exp
+                    / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Exp
                   </small>
                 </h6>
               </div>
@@ -176,10 +191,19 @@
 
           <div class="row">
             <div class="col-12">
-              <small>
-                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
+              <p style="font-size: 0.9rem; font-weight: bold;">
+                ステータスポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
+                  </span>
+                】
+                スキルポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point > 0}">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}
+                  </span>
+                】
                 ※スキルツリーはスクロール可能。
-              </small>
+              </p>
               <div v-if="successStatusMessage !== null">
                 <small style="color:red">
                   {{ successStatusMessage }}
@@ -196,7 +220,7 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h6 class="modal-title"><b>ステータス: HP</b></h6>
+                <h6 class="modal-title"><b>ステータス 【{{ modalStatusName }}】</b></h6>
                 <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
               </div>
 
@@ -414,10 +438,19 @@
 
           <div class="row">
             <div class="col-12">
-              <small>
-                未振り分けのステータスポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}】 | スキルポイント:【{{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}】
+              <p style="font-size: 0.9rem; font-weight: bold;">
+                ステータスポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
+                  </span>
+                】
+                スキルポイント:【
+                  <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point > 0}">
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point }}
+                  </span>
+                】
                 ※スキルツリーはスクロール可能。
-              </small>
+              </p>
               <div v-if="successSkillMessage !== null">
                 <small style="color:red">
                   {{ successSkillMessage }}
@@ -662,7 +695,6 @@
           .then(response => {
             console.log(`通信OK`);
             console.log(response.data.message);
-            this.successStatusMessage = 'ステータスの振り分けが完了しました！';
 
             // 振り分け後のデータ再取得
             this.updatePartiesInformation();
@@ -670,6 +702,7 @@
             // stateを'status'に戻し、modalを閉じる
             this.$store.dispatch('setMenuStatusStatus', 'status');
             $('#modal-status-confirm').modal('hide');
+            this.successStatusMessage = 'ステータスの振り分けが完了しました！';
           })
           .catch(error => {
             console.log(`通信失敗。`);

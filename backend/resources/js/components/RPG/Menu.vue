@@ -1,4 +1,8 @@
-<style>
+<style scoped>
+.sub-sucreen-text-space {
+    padding: 10px 0px;
+}
+
 .menu-bar {
   display: flex;
   flex-flow: column;
@@ -21,7 +25,8 @@
   <div class="row my-5 h-100">
     <div class="col-2 menu-bar">
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/adventure')">冒険に出る</button></div>
-      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/skill')">中心広場</button></div>
+      <!-- <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/skill')">中心広場</button></div> -->
+      <div><button class="btn btn-info btn-menu" disabled>中心広場</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
       <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
@@ -33,7 +38,7 @@
         <div class="row sub-sucreen-text-space">
           <div class="col-12">
             <div>
-            <p>街に到着した。どうしようか？</p>
+            <p>街に辿り着いた。どうしようか？</p>
             </div>
           </div>
         </div>
