@@ -45,7 +45,7 @@
               </tr>
           </thead>
           <tbody>
-            <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }"  @click="showConfirmModal(field)">
+            <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }" @click="showConfirmModal(field)">
               <td  class="weight-bold">{{ field.name }}</td>
               <td>{{ field.difficulty }}</td>
             </tr>

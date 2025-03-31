@@ -2,9 +2,16 @@
 .sub-sucreen-text-space {
     padding: 10px 0px;
 }
-  .action-link {
+.action-link {
     cursor: pointer;
-  }
+}
+
+.table-hoverable tbody tr:hover {
+    cursor: pointer;
+    background-color: #fdf6e3;
+    transition: background-color 0.2s ease;
+}
+
 </style>
 
 <!-- v-if系はtemplateの内部に書く。 -->
@@ -46,21 +53,19 @@
           </ul>
         </div>
         <div class="col-12">
-          <table class="table table-borderless">
+          <table class="table table-borderless table-hoverable">
             <thead>
                 <tr>
                   <th>名前</th>
                   <th>価格</th>
                   <th>説明</th>
-                  <th></th>
                 </tr>
             </thead>
             <tbody>
-              <tr v-for="shopListItem in shopListItems">
+              <tr v-for="shopListItem in shopListItems" @click="showPurchaseForm(shopListItem)">
                 <td>{{ shopListItem.name }}</td>
                 <td>{{ shopListItem.price }} G</td>
                 <td>{{ shopListItem.description }}</td>
-                <td><a class="action-link" @click="showPurchaseForm(shopListItem)">買う</a></td>
               </tr>
             </tbody>
           </table>
