@@ -46,8 +46,18 @@
 <template>
   <div class="container">
     <div v-if="status.status == 'start'">
-      <div class="row sub-sucreen-text-space"></div>
-      <div class="row mt-3 sub-sucreen-main-space"></div>
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p><small>読み込み中...</small></p>
+          </div>
+          <hr>
+        </div>
+      </div>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12"></div>
+      </div>
     </div>
 
     <div v-if="status.status == 'status'">

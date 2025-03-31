@@ -75,7 +75,12 @@ export default createStore({
     },
 
     // menu 
-    // スキル|ステ振り
+    // ------------- ショップ画面 -------------
+    setMenuShopStatus(state, status) {
+      state.menu.shop.status = status;
+    },
+
+    // ------------- スキル|ステ振り -------------
     setMenuStatusStatus(state, status) {
       state.menu.status.status = status;
     },
@@ -200,7 +205,12 @@ export default createStore({
     },
 
     // menu
-    // スキル|ステ振り
+    // ------------- ショップ画面 -------------
+    setMenuShopStatus({ commit }, status) {
+      commit('setMenuShopStatus', status);
+    },
+
+    // ------------- スキル|ステ振り -------------
     setMenuStatusStatus({ commit }, status) {
       commit('setMenuStatusStatus', status);
     },
