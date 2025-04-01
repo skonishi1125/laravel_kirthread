@@ -197,6 +197,9 @@
         this.purchaseForm.item_id = shopListItem.id;
         this.purchaseForm.name = shopListItem.name;
         this.purchaseForm.price = shopListItem.price;
+        this.purchaseForm.max_possession_number = shopListItem.max_possession_number;
+
+        console.log(this.purchaseForm.max_possession_number);
 
         // エラーメッセージを消しておく
         this.number = 1;

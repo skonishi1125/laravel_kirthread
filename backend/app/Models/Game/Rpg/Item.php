@@ -46,7 +46,7 @@ class Item extends Model
     public function Savedatas()
     {
         return $this
-            ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
+            ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'savedata_id')
             ->withPivot('possession_number');
     }
 

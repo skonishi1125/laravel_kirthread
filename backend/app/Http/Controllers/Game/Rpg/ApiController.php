@@ -197,8 +197,55 @@ class ApiController extends Controller
         return $created_parties;
     }
 
-    // TODO:
-    // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
+    // TODO: POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
+
+    /**
+     * ショップ画面に必要な情報をjsonで返す。
+     *
+     *  購入/売却可能なアイテムや、現在の所持数、現在の所持金など。
+     */
+    public function getItemInfo()
+    {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $return_list = [
+            'money' => 0,
+            'buyItemList' => [],
+            'sellItemList' => [],
+        ];
+
+        // --------- 所持金の取得 ---------
+        $return_list['money'] = $savedata->money;
+
+        //  --------- 購入アイテムの取得 ---------
+        $buyable_items = Item::getShopListItem();
+        $owned_items = $savedata->items()->withPivot('possession_number')->get(); // 所持中のアイテム一覧
+        // 所持数を確認しし、配列にその値を格納
+        $buyable_items->map(function ($item) use ($owned_items) {
+            $owned = $owned_items->firstWhere('id', $item->id);
+            $item->possession_number = $owned ? $owned->pivot->possession_number : 0;
+
+            return $item;
+        });
+        $buyable_items = $buyable_items
+            ->select('id', 'name', 'price', 'description', 'possession_number', 'max_possession_number');
+        $return_list['buyItemList'] = $buyable_items;
+
+        //  --------- 売却アイテムの取得 ---------
+        // pivotの値を取る時は、mapで加工する
+        $sellable_items = $owned_items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'price' => $item->price,
+                'description' => $item->description,
+                'possession_number' => $item->pivot->possession_number,
+            ];
+        });
+
+        $return_list['sellItemList'] = $sellable_items;
+
+        return $return_list;
+    }
 
     // ショップ
     public function shopList()
