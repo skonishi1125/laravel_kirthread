@@ -129,6 +129,8 @@
       }
     },
     created() {
+      // 初期値をセット 
+      this.$store.dispatch('setMenuAdventureStatus', 'start'); 
       // this.$store.dispatch('setScreen', 'menu');
       // ↑本来はこちらが必要だが、親側のMenu.vueでstateをmenuにしているので不要。
       // (通常adventure画面でreloadすると、stateがデフォルトのtitleに戻るためメニュー画面が出なくなる)
