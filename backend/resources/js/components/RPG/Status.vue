@@ -50,8 +50,8 @@
         <div class="col-12">
           <div>
             <p><small>読み込み中...</small></p>
+            <hr>
           </div>
-          <hr>
         </div>
       </div>
 

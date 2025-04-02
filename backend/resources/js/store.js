@@ -14,6 +14,10 @@ export default createStore({
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
     },
     menu: {
+      // フィールド選択画面
+      adventure: {
+        status: 'start',  // 'start', 'selectable'
+      },
       // ショップ画面
       shop: {
         status: 'start',  // 'start' 'buy' 'sell'とかかな。
@@ -75,6 +79,11 @@ export default createStore({
     },
 
     // menu 
+    // ------------- フィールド選択画面 -------------
+    setMenuAdventureStatus(state, status) {
+      state.menu.adventure.status = status;
+    },
+
     // ------------- ショップ画面 -------------
     setMenuShopStatus(state, status) {
       state.menu.shop.status = status;
@@ -205,6 +214,11 @@ export default createStore({
     },
 
     // menu
+    // ------------- ショップ画面 -------------
+    setMenuAdventureStatus({ commit }, status) {
+      commit('setMenuAdventureStatus', status);
+    },
+
     // ------------- ショップ画面 -------------
     setMenuShopStatus({ commit }, status) {
       commit('setMenuShopStatus', status);
