@@ -283,7 +283,7 @@
                 </div>
                 <!-- ポイントがない場合は押せなくするとよい -->
                 <button type="button" class="btn btn-info" @click="postIncrementStatus"
-                  :class="{'disabled': inputFreelyStatusPoints < 1 || partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point < 1}"
+                  :disabled="inputFreelyStatusPoints < 1 || partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point < 1"
                 >
                   確定
                 </button>
@@ -399,7 +399,6 @@
                 <li class="skill-items">
                   <button class="btn btn-sm"
                     :class="{
-                      'disabled': !parentSkill.is_learned,
                       'btn-outline-secondary': parentSkill.effect_type === 0,
                       'btn-outline-primary': parentSkill.effect_type === 1,
                       'btn-outline-success': parentSkill.effect_type === 2,
@@ -407,6 +406,7 @@
                     }"
                     @click="displaySkillConfirmModal(parentSkill)"
                     @mouseover="showSkillInformation(parentSkill)"
+                    :disabled="!parentSkill.is_learned"
                   >
                     <span v-if="parentSkill.is_learned">{{ parentSkill.skill_name }} <small>(SLv:<b>{{ parentSkill.skill_level }}</b>)</small></span>
                     <span v-else="parentSkill.is_learned">???</span>
@@ -417,7 +417,6 @@
                     <li>
                       <button class="btn btn-sm"
                         :class="{
-                          'disabled': !childSkill.is_learned,
                           'btn-outline-secondary': parentSkill.effect_type === 0,
                           'btn-outline-primary': parentSkill.effect_type === 1,
                           'btn-outline-success': parentSkill.effect_type === 2,
@@ -425,6 +424,8 @@
                         }"
                         @click="displaySkillConfirmModal(childSkill)"
                         @mouseover="showSkillInformation(childSkill)"
+                        :disabled="!childSkill.is_learned"
+
                       >
                         <span v-if="childSkill.is_learned">{{ childSkill.skill_name }}<small>(SLv:<b>{{ childSkill.skill_level }}</b>)</small></span>
                         <span v-else="childSkill.is_learned">???</span>
@@ -576,7 +577,7 @@
                 </div>
                 <div v-if="modalSkillInfo.current_skill_level !== 3">
                   <button type="button" class="btn btn-info" @click="postLearnSkillData(modalSkillInfo)"
-                    :class="{'disabled': partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point < 1}"
+                    :disabled="partiesInformation[status.currentSelectedPartyMemberIndex].freely_skill_point < 1"
                   >
                     習得
                   </button>

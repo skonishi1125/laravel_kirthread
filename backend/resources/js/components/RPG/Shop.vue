@@ -92,7 +92,7 @@
               <div class="modal-body">
               <!-- error message -->
               <div v-if="error_message">
-                  <p style="color:red;">{{ error_message }}</p>
+                  <p style="color:red;"><small>{{ error_message }}</small></p>
               </div>
   
               <!-- Edit purchase form -->
@@ -135,7 +135,7 @@
                 <!-- 購入しないときは、押せなくする -->
                 <button type="button" class="btn btn-info" 
                   @click="paymentItem"
-                  :class="{'disabled': inputPurchaseItemNumber < 1 || purchaseForm.max_possession_number - purchaseForm.possession_number < 1}"
+                  :disabled="inputPurchaseItemNumber < 1 || purchaseForm.max_possession_number - purchaseForm.possession_number < 1"
                 >
                   購入する
               </button>
@@ -170,7 +170,6 @@
         },
         money: 0,
         price: 0,
-        number: 1,
         after_purchase_array: {
           name: '',
           number: 0,
@@ -251,12 +250,13 @@
       // 支払確定処理
       paymentItem() {
         let form = {
-          money: this.money,
-          number: this.number,
+          item_id: this.purchaseForm.item_id,
+          number: this.inputPurchaseItemNumber,
           name: this.purchaseForm.name,
           price: this.purchaseForm.price,
         }
 
+        // TODO: 所持金が足りないケースなどはバックエンドで対応しているが、フロントエンド側で制御してやってもいい
         axios['post']('/api/game/rpg/shop/payment', form)
           .then(response => {
             // 処理が終わるまで、読み込み中画面を出しておこうと思ったが動作しないので一旦コメントアウト

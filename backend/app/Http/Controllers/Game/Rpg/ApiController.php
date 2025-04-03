@@ -271,9 +271,15 @@ class ApiController extends Controller
 
     public function paymentItem(Request $request)
     {
-        $money = $request->money;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $money = $savedata->money;
+
+        $item_id = $request->item_id;
         $item_price = $request->price;
         $number = (int) $request->number;
+
+        $total_price = $item_price * $number;
+        $after_payment_money = $money - $total_price;
 
         // 決済処理
         // エラー時はthrow new Exceptionだとうまくvue側でcatchできないので、responseで返して受け取る。
@@ -282,31 +288,33 @@ class ApiController extends Controller
             if ($number < 1) {
                 return response()->json(['error' => '数量を1以上指定してください'], 400);
             }
-            $total_price = $item_price * $number;
-            $after_payment_money = $money - $total_price;
-
             if ($after_payment_money < 0) {
                 return response()->json(['error' => '所持金額が足りません。'], 400);
             }
 
-            $savedata = Savedata::getLoginUserCurrentSavedata();
-
-            // TODO: アイテムが増える挙動も書く。その際はトランザクションを使う。
+            // 金額反映処理
             $savedata->update([
                 'money' => $after_payment_money,
             ]);
 
-            Debugbar::debug([
-                'money' => $money,
-                'item_price' => $item_price,
-                'number' => $number,
-                'total_price' => $total_price,
-                'after_payment_money' => $after_payment_money,
-                'savedata' => $savedata,
-            ]);
+            // アイテム反映処理
+            $savedata_has_item = SavedataHasItem::where('savedata_id', $savedata->id)
+                ->where('item_id', $item_id)
+                ->first();
+            if ($savedata_has_item) {
+                // 既に持ってる場合、所持数を加算
+                $savedata_has_item->increment('possession_number', $number);
+            } else {
+                // 未所持の場合、新規作成
+                SavedataHasItem::create([
+                    'savedata_id' => $savedata->id,
+                    'item_id' => $item_id,
+                    'possession_number' => $number,
+                ]);
+            }
 
         } catch (Exception $e) {
-
+            return response()->json(['error' => 'エラーが発生しました。何度も遭遇する場合、お手数ですが連絡をお願いします。'], 500);
         }
     }
 
