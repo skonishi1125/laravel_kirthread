@@ -45,9 +45,8 @@
           <p><small>何を買おうかな？(所持金: <b>{{ money }}</b> G)</small></p>
           <hr>
         </div>
-          <div class="col-12" style="color: blue" v-if="after_purchase_array.after_purchase_flag">
-            <hr>
-            <p>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</p>
+          <div class="col-12" style="color: red" v-if="after_purchase_array.after_purchase_flag">
+            <p><small>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</small></p>
           </div>
       </div>
 
@@ -65,6 +64,7 @@
                   <th>名前</th>
                   <th>価格</th>
                   <th>説明</th>
+                  <th>所持</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,6 +72,7 @@
                 <td class="weight-bold">{{ buyItem.name }}</td>
                 <td class="weight-bold">{{ buyItem.price }} G</td>
                 <td class="weight-bold">{{ buyItem.description }}</td>
+                <td class="weight-bold">{{ buyItem.possession_number }}/<span color:red></span>{{ buyItem.max_possession_number }}</td>
               </tr>
             </tbody>
           </table>
@@ -85,7 +86,7 @@
           <div class="modal-dialog" role="document">
           <div class="modal-content">
               <div class="modal-header">
-              <h4 class="modal-title">購入フォーム</h4>
+              <h6 class="modal-title"><b>購入品の確認</b></h6>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               </div>
               <div class="modal-body">
@@ -131,8 +132,13 @@
   
               <!-- Modal Actions -->
               <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-              <button type="button" class="btn btn-primary" @click="paymentItem">購入する</button>
+                <!-- 購入しないときは、押せなくする -->
+                <button type="button" class="btn btn-info" 
+                  @click="paymentItem"
+                  :class="{'disabled': inputPurchaseItemNumber < 1 || purchaseForm.max_possession_number - purchaseForm.possession_number < 1}"
+                >
+                  購入する
+              </button>
               </div>
           </div>
           </div>
@@ -177,8 +183,6 @@
       // これで"ショップ" > "ステータス"  > "ショップ"と遷移しても、初めの表示からとなる
       this.$store.dispatch('setMenuShopStatus', 'start'); 
       this.getShopInfo();
-      // this.getShopList();
-      // this.getCurrentMoney();
     },
     computed: {
       // menu.shop.status == 'start' の値がcomponentで呼べるようになる
@@ -255,16 +259,19 @@
 
         axios['post']('/api/game/rpg/shop/payment', form)
           .then(response => {
-            // 所持金更新
-            this.getCurrentMoney();
+            // 処理が終わるまで、読み込み中画面を出しておこうと思ったが動作しないので一旦コメントアウト
+            // this.$store.dispatch('setMenuShopStatus', 'start'); 
+            // リスト更新
+            this.getShopInfo();
 
-            // 購入情報を配列に入れておく
+            // 購入した商品を画面に出すため、情報を保管しておく
             this.after_purchase_array.after_purchase_flag = true;
             this.after_purchase_array.name = form.name;
             this.after_purchase_array.number = form.number;
 
             // モーダルを閉じる
             $('#modal-item-purchase').modal('hide');
+            // this.$store.dispatch('setMenuShopStatus', 'buyable'); 
           })
           .catch(error => {
             console.log(error.response.data.error);

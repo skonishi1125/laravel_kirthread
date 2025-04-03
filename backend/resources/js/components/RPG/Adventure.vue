@@ -102,8 +102,7 @@
             </div>
             <!-- Modal Actions -->
             <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-              <button type="button" class="btn btn-primary" @click="startFirstStageBattle(confirmModalFIeld.id)">出発する</button>
+              <button type="button" class="btn btn-info" @click="startFirstStageBattle(confirmModalFIeld.id)">出発する</button>
             </div>
           </div>
         </div>
