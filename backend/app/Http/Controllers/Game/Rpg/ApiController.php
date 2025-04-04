@@ -197,36 +197,68 @@ class ApiController extends Controller
         return $created_parties;
     }
 
-    // TODO:
-    // POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
+    // TODO: POSTのページに直接アクセスしたときエラーログに残るのでリダイレクトされるようにしたい
 
-    // ショップ
-    public function shopList()
+    /**
+     * ショップ画面に必要な情報をjsonで返す。
+     *
+     *  購入/売却可能なアイテムや、現在の所持数、現在の所持金など。
+     */
+    public function getItemInfo()
     {
-        $shop_element_data = collect();
-        $shop_list_items = Item::getShopListItem();
         $savedata = Savedata::getLoginUserCurrentSavedata();
+        $return_list = [
+            'money' => 0,
+            'buyItemList' => [],
+            'sellItemList' => [],
+        ];
 
-        foreach ($shop_list_items as $item) {
-            $data = collect([
+        // --------- 所持金の取得 ---------
+        $return_list['money'] = $savedata->money;
+
+        //  --------- 購入アイテムの取得 ---------
+        $buyable_items = Item::getShopListItem($savedata);
+        $owned_items = $savedata->items()->withPivot('possession_number')->get(); // 所持中のアイテム一覧
+        // 所持数を確認しし、配列にその値を格納
+        $buyable_items->map(function ($item) use ($owned_items) {
+            $owned = $owned_items->firstWhere('id', $item->id);
+            $item->possession_number = $owned ? $owned->pivot->possession_number : 0;
+
+            return $item;
+        });
+        $buyable_items = $buyable_items
+            ->select('id', 'name', 'price', 'description', 'possession_number', 'max_possession_number');
+        $return_list['buyItemList'] = $buyable_items;
+
+        //  --------- 売却アイテムの取得 ---------
+        // pivotの値を取る時は、mapで加工する
+        $sellable_items = $owned_items->map(function ($item) {
+            return [
                 'id' => $item->id,
                 'name' => $item->name,
                 'price' => $item->price,
                 'description' => $item->description,
-                'max_possession_number' => $item->max_possession_number,
-                'money' => $savedata->money,
-            ]);
-            $shop_element_data->push($data);
-        }
+                'possession_number' => $item->pivot->possession_number,
+            ];
+        });
 
-        return $shop_element_data;
+        $return_list['sellItemList'] = $sellable_items;
+
+        return $return_list;
     }
 
+    // ショップ アイテム購入処理
     public function paymentItem(Request $request)
     {
-        $money = $request->money;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $money = $savedata->money;
+
+        $item_id = $request->item_id;
         $item_price = $request->price;
         $number = (int) $request->number;
+
+        $total_price = $item_price * $number;
+        $after_payment_money = $money - $total_price;
 
         // 決済処理
         // エラー時はthrow new Exceptionだとうまくvue側でcatchできないので、responseで返して受け取る。
@@ -235,31 +267,33 @@ class ApiController extends Controller
             if ($number < 1) {
                 return response()->json(['error' => '数量を1以上指定してください'], 400);
             }
-            $total_price = $item_price * $number;
-            $after_payment_money = $money - $total_price;
-
             if ($after_payment_money < 0) {
                 return response()->json(['error' => '所持金額が足りません。'], 400);
             }
 
-            $savedata = Savedata::getLoginUserCurrentSavedata();
-
-            // TODO: アイテムが増える挙動も書く。その際はトランザクションを使う。
+            // 金額反映処理
             $savedata->update([
                 'money' => $after_payment_money,
             ]);
 
-            Debugbar::debug([
-                'money' => $money,
-                'item_price' => $item_price,
-                'number' => $number,
-                'total_price' => $total_price,
-                'after_payment_money' => $after_payment_money,
-                'savedata' => $savedata,
-            ]);
+            // アイテム反映処理
+            $savedata_has_item = SavedataHasItem::where('savedata_id', $savedata->id)
+                ->where('item_id', $item_id)
+                ->first();
+            if ($savedata_has_item) {
+                // 既に持ってる場合、所持数を加算
+                $savedata_has_item->increment('possession_number', $number);
+            } else {
+                // 未所持の場合、新規作成
+                SavedataHasItem::create([
+                    'savedata_id' => $savedata->id,
+                    'item_id' => $item_id,
+                    'possession_number' => $number,
+                ]);
+            }
 
         } catch (Exception $e) {
-
+            return response()->json(['error' => 'エラーが発生しました。何度も遭遇する場合、お手数ですが連絡をお願いします。'], 500);
         }
     }
 

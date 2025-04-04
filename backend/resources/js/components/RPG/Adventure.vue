@@ -27,75 +27,95 @@
 
 <template>
   <div class="container">
-    <div class="row sub-sucreen-text-space">
-      <div class="col-12">
-        <div>
-        <p>どこに向かおうか？</p>
+
+    <div v-if="status == 'start'">
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p><small>読み込み中...</small></p>
+          </div>
+          <hr>
         </div>
       </div>
+
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12"></div>
+      </div>
+
     </div>
 
-    <div class="row mt-3 sub-sucreen-main-space">
-      <div class="col-12">
-        <table class="table table-borderless table-hoverable">
-          <thead>
-              <tr>
-                <th>フィールド名</th>
-                <th>難易度</th>
+    <div v-if="status == 'selectable'">
+      <div class="row sub-sucreen-text-space">
+        <div class="col-12">
+          <div>
+            <p><small>どこに向かおうか。</small></p>
+            <hr>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row mt-3 sub-sucreen-main-space">
+        <div class="col-12">
+          <table class="table table-borderless table-hoverable">
+            <thead>
+                <tr>
+                  <th>フィールド名</th>
+                  <th>難易度</th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }" @click="showConfirmModal(field)">
+                <td class="weight-bold">{{ field.name }}</td>
+                <td>{{ field.difficulty }}</td>
               </tr>
-          </thead>
-          <tbody>
-            <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }"  @click="showConfirmModal(field)">
-              <td  class="weight-bold">{{ field.name }}</td>
-              <td>{{ field.difficulty }}</td>
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
+  
     </div>
-
-  </div>
-
-  <!-- 確認モーダル -->
-  <teleport to="body">
-    <div class="modal fade" id="modal-confirm-field" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h6 class="modal-title"><b>確認</b></h6>
-            <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
-          </div>
-          <div class="modal-body">
-            <!-- error message -->
-            <div v-if="error_message">
-                <p style="color:red;">{{ error_message }}</p>
+  
+    <!-- 確認モーダル -->
+    <teleport to="body">
+      <div class="modal fade" id="modal-confirm-field" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h6 class="modal-title"><b>確認</b></h6>
+              <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
             </div>
-
-            <!-- Edit purchase form -->
-            <form class="form-horizontal" role="form">
-                <!-- Date -->
-                <div class="form-group">
-                  <label class="control-label">
-                      {{ confirmModalFIeld.name }}に向かいます。
-                  </label>
-                </div>
-            </form>
-          </div>
-          <!-- Modal Actions -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-            <button type="button" class="btn btn-primary" @click="startFirstStageBattle(confirmModalFIeld.id)">出発する</button>
+            <div class="modal-body">
+              <!-- error message -->
+              <div v-if="error_message">
+                  <p style="color:red;">{{ error_message }}</p>
+              </div>
+  
+              <!-- Edit purchase form -->
+              <form class="form-horizontal" role="form">
+                  <!-- Date -->
+                  <div class="form-group">
+                    <label class="control-label">
+                        {{ confirmModalFIeld.name }}に向かいます。
+                    </label>
+                  </div>
+              </form>
+            </div>
+            <!-- Modal Actions -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-info" @click="startFirstStageBattle(confirmModalFIeld.id)">出発する</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </teleport>
+    </teleport>
+  </div>
 
 </template>
 
 <script>
   import $ from 'jquery';
   import axios from 'axios';
+  import { mapState } from 'vuex';
   export default {
     data() {
       return {
@@ -108,6 +128,8 @@
       }
     },
     created() {
+      // 初期値をセット 
+      this.$store.dispatch('setMenuAdventureStatus', 'start'); 
       // this.$store.dispatch('setScreen', 'menu');
       // ↑本来はこちらが必要だが、親側のMenu.vueでstateをmenuにしているので不要。
       // (通常adventure画面でreloadすると、stateがデフォルトのtitleに戻るためメニュー画面が出なくなる)
@@ -115,6 +137,12 @@
     },
     mounted() {
       console.log('Adventure.vue');
+    },
+    computed: {
+      // menu.shop.status == 'start' の値がcomponentで呼べるようになる
+      ...mapState({
+        status: state => state.menu.adventure.status,
+      }),
     },
     methods: {
 
@@ -125,6 +153,7 @@
         axios.get('/api/game/rpg/field/list')
           .then(response => {
             this.fieldList = response.data;
+            this.$store.dispatch('setMenuAdventureStatus', 'selectable');
           });
       },
 

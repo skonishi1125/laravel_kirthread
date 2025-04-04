@@ -41,7 +41,7 @@ Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createPart
 Route::post('/api/game/rpg/status/increment', 'Game\Rpg\ApiController@incrementStatus')->name('api_game_rpg_status_increment');
 Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
 
-Route::get('/api/game/rpg/shop/list', 'Game\Rpg\ApiController@shopList')->name('api_game_rpg_shop_list');
+Route::get('/api/game/rpg/shop/information', 'Game\Rpg\ApiController@getItemInfo')->name('api_game_rpg_shop_information');
 Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
 Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
 Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');

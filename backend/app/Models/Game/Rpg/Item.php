@@ -46,13 +46,22 @@ class Item extends Model
     public function Savedatas()
     {
         return $this
-            ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'skill_id')
+            ->belongsToMany(Savedata::class, 'rpg_savedata_has_items', 'item_id', 'savedata_id')
             ->withPivot('possession_number');
     }
 
-    public static function getShopListItem()
+    /**
+     * ショップに並ぶアイテムを取得する。
+     *
+     * プレイヤーのクリアしたステージ数に応じて、陳列される数を増やす。
+     */
+    public static function getShopListItem(Savedata $savedata)
     {
-        return self::where('is_buyable', true)->get();
+        $cleared_count = $savedata->savedata_cleared_fields()->count();
+
+        return self::where('is_buyable', true)
+            ->where('required_clears', '<=', $cleared_count)
+            ->get();
     }
 
     public static function getBattleStateItemFromSavedata(int $savedata_id)
