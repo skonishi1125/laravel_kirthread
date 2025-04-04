@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rpg_items', function (Blueprint $table) {
-            $table->unsignedInteger('required_clears')->nullable()->after('is_battle_available')->comment('ショップに販売されるために必要となるクリアしたフィールドの数');
+            $table->unsignedInteger('required_clears')->default(0)->after('is_battle_available')->comment('ショップに販売されるために必要となるクリアしたフィールドの数');
         });
     }
 

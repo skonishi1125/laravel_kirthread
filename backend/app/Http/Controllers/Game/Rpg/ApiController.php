@@ -217,7 +217,7 @@ class ApiController extends Controller
         $return_list['money'] = $savedata->money;
 
         //  --------- 購入アイテムの取得 ---------
-        $buyable_items = Item::getShopListItem();
+        $buyable_items = Item::getShopListItem($savedata);
         $owned_items = $savedata->items()->withPivot('possession_number')->get(); // 所持中のアイテム一覧
         // 所持数を確認しし、配列にその値を格納
         $buyable_items->map(function ($item) use ($owned_items) {
@@ -247,28 +247,7 @@ class ApiController extends Controller
         return $return_list;
     }
 
-    // ショップ
-    public function shopList()
-    {
-        $shop_element_data = collect();
-        $shop_list_items = Item::getShopListItem();
-        $savedata = Savedata::getLoginUserCurrentSavedata();
-
-        foreach ($shop_list_items as $item) {
-            $data = collect([
-                'id' => $item->id,
-                'name' => $item->name,
-                'price' => $item->price,
-                'description' => $item->description,
-                'max_possession_number' => $item->max_possession_number,
-                'money' => $savedata->money,
-            ]);
-            $shop_element_data->push($data);
-        }
-
-        return $shop_element_data;
-    }
-
+    // ショップ アイテム購入処理
     public function paymentItem(Request $request)
     {
         $savedata = Savedata::getLoginUserCurrentSavedata();

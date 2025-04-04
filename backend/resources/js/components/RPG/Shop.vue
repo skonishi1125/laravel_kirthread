@@ -57,7 +57,7 @@
             <a class="nav-link ">売る</a>
           </ul>
         </div>
-        <div class="col-12">
+        <div class="col-12" style="height: 100%;">
           <table class="table table-borderless table-hoverable">
             <thead>
                 <tr>
@@ -102,18 +102,16 @@
                   <label class="control-label">
                       {{ purchaseForm.name }}をいくつ購入しますか？<br>
                   </label>
-                  <div style="max-width: 100px;">
-                      <!-- 
-                      inputが1つだけの場合、enterを押すと勝手にリロードされるので対策 
-                          https://qiita.com/koara-local/items/0c8343bc34e46d3d6390
-                          https://www.softel.co.jp/blogs/tech/archives/3614?
-                      -->
-                      <input type="text" style="display: none;">
-                      <input id="purchase-number" min="0" type="number" class="form-control" 
+                  <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text" id="inputGroup-sizing-sm">購入数: </span>
+                    </div>
+                    <input type="text" style="display: none;">
+                    <input id="purchase-number" min="0" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
                         v-model.number="inputPurchaseItemNumber"
                         :max="purchaseForm.max_possession_number - purchaseForm.possession_number"
                         @input="validatePurchaseItem"
-                      >
+                    >
                   </div>
                   <hr>
                   <div>

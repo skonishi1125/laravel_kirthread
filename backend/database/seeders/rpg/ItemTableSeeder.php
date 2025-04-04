@@ -53,6 +53,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '服用者の生命力に効果が依存する薬。仲間1人のHPを50%分回復。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -72,6 +73,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '冒険中級者の必需品。仲間全員のHPを40回復。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -91,6 +93,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '仲間全員のHPを全回復。',
                 'is_buyable' => false,
                 'is_battle_available' => true,
+                'required_clears' => 7,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -129,6 +132,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '純度の高いマナの詰まった水。仲間1人のAPを50%回復。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -148,6 +152,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '仲間全員のAPを20回復。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -167,6 +172,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '仲間全員のAPを全回復。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 7,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -185,6 +191,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '飲むと一時的に攻撃力が上昇する不思議な雫。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -203,6 +210,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '振り撒くことで一時的に味方全員の攻撃力が上昇する。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 5,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -221,6 +229,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '敵単体にダメージを与える。小さいが火力は充分。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 1,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -239,6 +248,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '広い範囲を吹っ飛ばし敵全体に大ダメージ。取扱注意！',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 5,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -257,6 +267,7 @@ class ItemTableSeeder extends Seeder
                 'description' => '無属性の魔法が込められたカプセル。投げつけた敵単体に魔法攻撃。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 3,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -275,6 +286,7 @@ class ItemTableSeeder extends Seeder
                 'description' => 'クリスタルに込めた魔導を解き放ち、敵全体に魔法攻撃。',
                 'is_buyable' => true,
                 'is_battle_available' => true,
+                'required_clears' => 7,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
