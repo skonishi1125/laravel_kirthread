@@ -318,12 +318,18 @@ class BattleState extends Model
 
     }
 
-    // 敵味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
-    // 条件: DEFENSE選択 > 特殊スキル選択 > 速度順
-    public static function sortByBattleExec(Collection $players_and_enemies_data)
+    /**
+     * 敵味方のデータの並びを、行動実行順に並べる
+     *
+     * 素早さや特殊スキル等を考慮させた順番とする
+     * DEFENSE選択 > 特殊スキル選択 > 速度順
+     *
+     * @return Collection
+     */
+    public static function sortByBattleExec(Collection $battle_state_players_and_enemies_collection)
     {
-        // 同速の場合、現状は味方が優先される
-        $sorted_data = $players_and_enemies_data->sort(function ($a, $b) {
+        // 敵味方が同速の場合、現状は味方が優先される
+        $sorted_data = $battle_state_players_and_enemies_collection->sort(function ($a, $b) {
 
             // 1. 'DEFENSE'コマンド選択
             if ($a->command === 'DEFENSE' && $b->command !== 'DEFENSE') {

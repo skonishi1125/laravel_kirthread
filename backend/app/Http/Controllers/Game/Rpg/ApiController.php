@@ -512,23 +512,30 @@ class ApiController extends Controller
         return $all_data;
     }
 
-    // 選択されたデータを元に、コマンド実行
+    /**
+     * 選択されたデータを元に、コマンドを実行。戦闘部分のメイン処理。
+     */
     public function execBattleCommand(Request $request)
     {
-
-        Debugbar::debug('vueからデータを受け取る。---------------');
+        Debugbar::debug('execBattleCommand(): ---------------');
         $session_id = $request->session_id;
         $battle_state = BattleState::where('session_id', $session_id)->first();
-        $battle_logs = collect(); // 結果を格納していく
-        $current_players_data = collect(json_decode($battle_state['players_json_data']));
-        $current_enemies_data = collect(json_decode($battle_state['enemies_json_data']));
-        $current_items_data = collect(json_decode($battle_state['items_json_data']));
-        $commands = collect($request->selectedCommands);
+        $battle_logs_collection = collect(); // 結果を格納していく
+        $battle_state_players_collection = collect(json_decode($battle_state['players_json_data']));
+        $battle_state_enemies_collection = collect(json_decode($battle_state['enemies_json_data']));
+        $battle_state_items_collection = collect(json_decode($battle_state['items_json_data']));
 
-        Debugbar::debug('コマンド情報格納-------------');
-        // コマンド情報格納 players_json_data['id']と$coomands['partyId']を紐づける。
-        $current_players_data->transform(function ($data) use ($commands) {
-            $command = $commands->firstWhere('partyId', $data->id);
+        // ["partyId" => 1, "command" => "ATTACK","enemyIndex" => 0],[...]といった、パーティ人数分のコマンド配列
+        $selected_commands_collection = collect($request->selectedCommands);
+
+        Debugbar::debug('コマンド情報格納 -------------');
+        // コマンド情報格納
+        // $battle_state_players_collection['id']と$selected_commands_collection['partyId']を紐づける。
+        // transform()で使用する $data はstdClass型のため、-> でアクセスする
+        $battle_state_players_collection->transform(function ($data) use ($selected_commands_collection) {
+            $command = $selected_commands_collection->firstWhere('partyId', $data->id);
+            // stdClass Object
+            // Debugbar::debug(get_class($data));
             if ($command) {
                 $data->command = $command['command'];
                 $data->target_enemy_index = $command['enemyIndex'] ?? null;
@@ -539,57 +546,54 @@ class ApiController extends Controller
                 // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
                 if (! is_null($data->selected_skill_id)) {
                     Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
-                    $selected_skill_effect_type = collect($data->skills)
-                        ->firstWhere('id', $data->selected_skill_id)
-                        ->effect_type;
+                    /** @var int $selected_skill_effect_type */
+                    $selected_skill_effect_type =
+                        // firstWhereを使うため、Collectionに変換している
+                        collect($data->skills)->firstWhere('id', $data->selected_skill_id)->effect_type;
                     $data->selected_skill_effect_type = $selected_skill_effect_type;
                 } else {
                     $data->selected_skill_effect_type = null;
                 }
-
-                // todo: item。
             }
 
             return $data;
         });
 
-        Debugbar::debug('速度順に整理-------------');
-        $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-        $sorted_players_and_enemies_data = BattleState::sortByBattleExec($players_and_enemies_data);
-
-        // Debugbar::debug(get_class($sorted_players_and_enemies_data), get_class($current_enemies_data), get_class( $current_players_data), get_class($battle_logs));
+        Debugbar::debug('行動順決定処理 BattleState::sortByBattleExec() -------------');
+        $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
+        $sorted_battle_state_players_and_enemies_collection = BattleState::sortByBattleExec($battle_state_players_and_enemies_collection);
 
         Debugbar::debug('戦闘実行！ BattleState::execBattleCommand()----------------');
         BattleState::execBattleCommand(
-            $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $current_items_data, $battle_logs
+            $sorted_battle_state_players_and_enemies_collection, $battle_state_players_collection, $battle_state_enemies_collection, $battle_state_items_collection, $battle_logs_collection
         );
 
         Debugbar::debug('--------------戦闘処理完了(ステータス一覧)----------------');
         Debugbar::debug([
-            'current_players_data' => $current_players_data,
-            'current_enemies_data' => $current_enemies_data,
-            'current_items_data' => $current_items_data,
-            'battle_logs' => $battle_logs,
+            'battle_state_players_collection' => $battle_state_players_collection,
+            'battle_state_enemies_collection' => $battle_state_enemies_collection,
+            'battle_state_items_collection' => $battle_state_items_collection,
+            'battle_logs' => $battle_logs_collection,
         ]);
         Debugbar::debug('----------------------------------------------------------');
 
-        Debugbar::debug('バフターン数計算処理-------------------------------');
-        $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-        BattleState::afterExecCommandCalculateBuff($players_and_enemies_data, $battle_logs);
+        Debugbar::debug('バフターン数計算処理 BattleState::afterExecCommandCalculateBuff ------------------------');
+        // $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
+        BattleState::afterExecCommandCalculateBuff($battle_state_players_and_enemies_collection, $battle_logs_collection);
 
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
-            'players_json_data' => json_encode($current_players_data),
-            'items_json_data' => json_encode($current_items_data),
-            'enemies_json_data' => json_encode($current_enemies_data),
+            'players_json_data' => json_encode($battle_state_players_collection),
+            'items_json_data' => json_encode($battle_state_items_collection),
+            'enemies_json_data' => json_encode($battle_state_enemies_collection),
         ]);
 
         // vueに渡すデータ
         $all_vue_data = collect()
-            ->push($current_players_data)
-            ->push($current_enemies_data)
-            ->push($battle_logs)
-            ->push($current_items_data);
+            ->push($battle_state_players_collection)
+            ->push($battle_state_enemies_collection)
+            ->push($battle_logs_collection)
+            ->push($battle_state_items_collection);
 
         return $all_vue_data;
     }
