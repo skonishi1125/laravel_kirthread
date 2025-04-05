@@ -573,7 +573,7 @@ class ApiController extends Controller
             'battle_state_players_collection' => $battle_state_players_collection,
             'battle_state_enemies_collection' => $battle_state_enemies_collection,
             'battle_state_items_collection' => $battle_state_items_collection,
-            'battle_logs' => $battle_logs_collection,
+            'battle_logs_collection' => $battle_logs_collection,
         ]);
         Debugbar::debug('----------------------------------------------------------');
 
