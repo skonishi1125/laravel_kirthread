@@ -6,7 +6,15 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
+/**
+ * コレクションなどから値を呼ぶ時、"->"と"['...']"のどちらでも呼ぶことができるが、
+ * 戦闘中は値の呼び出しが多数発生する。
+ * stdClassの参照エラー、及びarrayの参照エラーが開発中に頻発したため、
+ * 極力コレクションで値を呼べる時であっても、"['...']"で呼ぶようにする。
+ * また、returnされる想定の値も極力配列の形で返すようにする。
+ */
 class BattleState extends Model
 {
     use HasFactory;
@@ -268,18 +276,33 @@ class BattleState extends Model
         return $enemies_data;
     }
 
+    /**
+     * 指定したセーブデータIDから、アイテムの情報を読み込んで返す。
+     *
+     * 処理自体はItem::getBattleStateItemFromSavedataがほぼほぼ担っている。
+     *
+     * @return Collection
+     */
     public static function createItemsData(int $savedata_id)
     {
         Debugbar::debug('createItemsData(): ------------');
         $items_data = Item::getBattleStateItemFromSavedata($savedata_id);
+        Debugbar::debug($items_data);
 
         return $items_data;
     }
 
+    /**
+     * 作成した各データをDBに格納し、以降セッションIDで呼び出せるようにする。
+     *
+     * @return BattleState
+     */
     public static function createBattleState(
-        int $savedata_id, Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data, int $field_id, int $stage_id
+        int $savedata_id,
+        Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data,
+        int $field_id, int $stage_id
     ) {
-        $session_id = \Str::uuid()->toString();
+        $session_id = Str::uuid()->toString();
         $created_battle_state = BattleState::create([
             'savedata_id' => $savedata_id,
             'session_id' => $session_id,

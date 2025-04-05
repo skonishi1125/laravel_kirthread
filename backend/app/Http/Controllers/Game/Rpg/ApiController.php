@@ -470,25 +470,19 @@ class ApiController extends Controller
         if (! $is_user_battle) {
             Debugbar::debug('戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------');
 
-            // パーティ3人の情報(ステータス,スキル,アイテム)を格納する
-            $players_data = BattleState::createPlayersData($savedata->id, null);
+            // -------------- jsonのベースとなるデータの取得 --------------
+            $players_collection = BattleState::createPlayersData($savedata->id, null);
+            $enemies_collection = BattleState::createEnemiesData($field_id, $stage_id);
+            $items_collection = BattleState::createItemsData($savedata->id);
+            $enemy_drops_collection = collect(BattleState::ENEMY_DROPS_DEFAULT_DATA);
 
-            // ステージの敵情報を読み込む
-            $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
-
-            // アイテムデータを読み込む
-            $savedata = Savedata::getLoginUserCurrentSavedata();
-            $items_data = BattleState::createItemsData($savedata->id);
-            $enemy_drops_data = collect(BattleState::ENEMY_DROPS_DEFAULT_DATA);
-
-            // 戦闘データをセッションIDで一意に管理する
+            // 各データをbattle_statesテーブルに格納
             $battle_state = BattleState::createBattleState(
-                $savedata->id, $players_data, $enemies_data, $items_data, $enemy_drops_data, $field_id, $stage_id
+                $savedata->id, $players_collection, $enemies_collection, $items_collection, $enemy_drops_collection, $field_id, $stage_id
             );
 
         } else {
-            // 戦闘中のデータを取得する
-            Debugbar::debug('戦闘中です。セッションIDから戦闘履歴を取得します。  ---------------');
+            Debugbar::debug('戦闘中です。セーブデータIDから直近の戦闘履歴を取得します。  ---------------');
             $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
 
             // $battle_stateの情報と現在のfield_id, stage_idが一致しているか確認する
@@ -500,18 +494,20 @@ class ApiController extends Controller
                 return abort(500, '現URLとbattle_stateのデータの整合性が確認できませんでした。');
             }
 
-            $players_data = json_decode($battle_state['players_json_data']);
-            $enemies_data = json_decode($battle_state['enemies_json_data']);
-            $items_data = json_decode($battle_state['items_json_data']);
+            // 初回戦闘時、各データをCollectionとして返しているため、そちらの形に合わせてCollection型に変換しておく
+            $players_collection = collect(json_decode($battle_state->players_json_data));
+            $enemies_collection = collect(json_decode($battle_state->enemies_json_data));
+            $items_collection = collect(json_decode($battle_state->items_json_data));
+
         }
 
         // vueに渡すデータ
         // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム
         $all_data = collect()
-            ->push($players_data)
-            ->push($enemies_data)
+            ->push($players_collection)
+            ->push($enemies_collection)
             ->push($battle_state->session_id)
-            ->push($items_data);
+            ->push($items_collection);
 
         return $all_data;
     }
