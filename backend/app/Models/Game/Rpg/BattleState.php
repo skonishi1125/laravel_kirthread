@@ -6,7 +6,15 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
+/**
+ * コレクションなどから値を呼ぶ時、"->"と"['...']"のどちらでも呼ぶことができるが、
+ * 戦闘中は値の呼び出しが多数発生する。
+ * stdClassの参照エラー、及びarrayの参照エラーが開発中に頻発したため、
+ * 極力コレクションで値を呼べる時であっても、"['...']"で呼ぶようにする。
+ * また、returnされる想定の値も極力配列の形で返すようにする。
+ */
 class BattleState extends Model
 {
     use HasFactory;
@@ -28,6 +36,77 @@ class BattleState extends Model
         'drop_weapon_id' => [],
     ];
 
+    // jsonデータに格納する、playersの基本要素
+    public const PLAYERS_JSON_DEFAULT_DATA = [
+        'id' => null,
+        'role_id' => null,
+        'name' => '',
+        'command' => '',
+        'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
+        'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
+        'max_value_hp' => 0, // HP最大値
+        'max_value_ap' => 0, // AP最大値
+        'value_hp' => 0,
+        'value_ap' => 0,
+        'value_str' => 0,
+        'value_def' => 0,
+        'value_int' => 0,
+        'value_spd' => 0,
+        'value_luc' => 0,
+        'level' => 0,
+        'total_exp' => 0,
+        'freely_status_point' => 0,
+        'freely_skill_point' => 0,
+        'skills' => 0,
+        'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
+        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'role_portrait' => null,
+        'is_defeated_flag' => false,
+        'is_escaped' => false,
+        'player_index' => null,
+        'is_enemy' => false,
+    ];
+
+    public const ENEMIES_JSON_DEFAULT_DATA = [
+        'id' => null,
+        'name' => null,
+        'command' => null, // exec時に格納する
+        'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
+        'max_value_hp' => 0, // HP最大値
+        'max_value_ap' => 0, // AP最大値
+        'value_hp' => 0,
+        'value_ap' => 0,
+        'value_str' => 0,
+        'value_def' => 0,
+        'value_int' => 0,
+        'value_spd' => 0,
+        'value_luc' => 0,
+        'portrait' => null,
+        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'is_defeated_flag' => false,
+        'is_escaped' => false,
+        'enemy_index' => null, // 敵の並び。
+        'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+        'is_boss' => false,
+        'exp' => 0,
+        'drop_money' => 0,
+    ];
+
+    // jsonデータに格納する、buffsの基本要素
+    public const BUFFS_DEFAULT_DATA = [
+        'buffed_skill_id' => null,
+        'buffed_item_id' => null,
+        'buffed_skill_name' => null,
+        'buffed_item_name' => null,
+        'buffed_str' => null,
+        'buffed_def' => null,
+        'buffed_int' => null,
+        'buffed_spd' => null,
+        'buffed_luc' => null,
+        'remaining_turn' => 0,
+        'buffed_from' => '', // 'DEFENSE', 'ITEM', 'SKILL'など、どのコマンドで付与されたものか。
+    ];
+
     // 戦闘後に回復させるHPの倍率
     // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
     private const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
@@ -40,15 +119,22 @@ class BattleState extends Model
 
     private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
-    // エンカウント時の処理
+    /**
+     * 戦闘初回時と、2回目以降のplayers_json_dataに格納する値を作成して返す。
+     *
+     * @return Collection
+     */
     public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
     {
-        Debugbar::debug('プレイヤーのエンカウントデータ(battlestates.playeys_json_data)を作成します。----------');
+        Debugbar::debug('createPlayersData(): jsonのベースとなるplayers_data 作成。----------');
         $parties = Party::where('savedata_id', $savedata_id)->get();
-        $players_data = collect();
 
-        // クリア後にbattlestateのplayers_dataを作成する場合、HP/APを戦闘後の状態にしておく
+        // id,name,curent_hp,current_apを配列ベースで格納するCollection
+        // ステージクリア後に、HPとAPを引き継ぐために使用する
+        // 0 => ["id" => 72,"name" => "パラ", "current_hp" => 50,"current_ap" => 15],  1 => [...], 2 => [...]
         $players_hp_and_ap_status = collect();
+
+        // TODO: ->を['']を使った形に直す
         if (isset($when_cleared_players_data)) {
             Debugbar::debug('ステージクリア後の作成です。');
             foreach ($when_cleared_players_data as $player_index => $player_data) {
@@ -83,58 +169,50 @@ class BattleState extends Model
                 Debugbar::debug("調整後:{$status['name']} | HP: {$status['current_hp']} AP: {$status['current_ap']}");
 
             }
-            // 新規戦闘の場合は、デフォルトのHP/APを格納する
         } else {
-            Debugbar::debug('新規作成です');
+            // 初回戦闘時
+            Debugbar::debug('新規作成. (player_dataはCollection想定)');
             foreach ($parties as $player_index => $player_data) {
-                $status = collect([
-                    'id' => $player_data->id,
-                    'name' => $player_data->nickname,
-                    'current_hp' => $player_data->value_hp,
-                    'current_ap' => $player_data->value_ap,
-                ]);
+                $status = [
+                    'id' => $player_data['id'],
+                    'name' => $player_data['nickname'],
+                    'current_hp' => $player_data['value_hp'],
+                    'current_ap' => $player_data['value_ap'],
+                ];
                 $players_hp_and_ap_status->push($status);
             }
         }
 
+        $players_data = collect();
         Debugbar::debug('players_json_data登録開始。');
         foreach ($parties as $player_index => $party) {
-            Debugbar::debug("################# {$player_index} 人目");
-            // 会得しているスキルの取得
+            Debugbar::debug("################# {$player_index} 人目 #################");
+            // 会得スキルの取得 (Collection想定)
             $learned_skills = Skill::getLearnedSkill($party);
-            $buffs = [];
-            $role = Role::find($party->role_id);
-            $role_portrait = $role->portrait_image_path;
+            $role_portrait = Role::where('id', $party['role_id'])->value('portrait_image_path');
+
             // vue側に渡すデータ
-            $player_data = collect([
-                'id' => $party->id,
-                'role_id' => $party->role_id,
-                'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
-                'command' => null, // exec時に格納する
-                'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
-                'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
-                'max_value_hp' => $party->value_hp, // HP最大値
-                'max_value_ap' => $party->value_ap, // AP最大値
-                'value_hp' => $players_hp_and_ap_status[$player_index]['current_hp'],
-                'value_ap' => $players_hp_and_ap_status[$player_index]['current_ap'],
-                'value_str' => $party->value_str,
-                'value_def' => $party->value_def,
-                'value_int' => $party->value_int,
-                'value_spd' => $party->value_spd,
-                'value_luc' => $party->value_luc,
-                'level' => $party->level,
-                'total_exp' => $party->total_exp,
-                'freely_status_point' => $party->freely_status_point,
-                'freely_skill_point' => $party->freely_skill_point,
-                'skills' => $learned_skills,
-                'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
-                'buffs' => $buffs,
-                'role_portrait' => $role_portrait,
-                'is_defeated_flag' => false,
-                'is_escaped' => false,
-                'player_index' => $player_index, // 味方のパーティ中での並び。
-                'is_enemy' => false,
-            ]);
+            $player_data = self::PLAYERS_JSON_DEFAULT_DATA;
+            $player_data['id'] = $party['id'];
+            $player_data['role_id'] = $party['role_id'];
+            $player_data['name'] = $party['nickname']; // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
+            $player_data['max_value_hp'] = $party['value_hp']; // HP最大値
+            $player_data['max_value_ap'] = $party['value_ap']; // AP最大値
+            $player_data['value_hp'] = $players_hp_and_ap_status[$player_index]['current_hp'];
+            $player_data['value_ap'] = $players_hp_and_ap_status[$player_index]['current_ap'];
+            $player_data['value_str'] = $party['value_str'];
+            $player_data['value_def'] = $party['value_def'];
+            $player_data['value_int'] = $party['value_int'];
+            $player_data['value_spd'] = $party['value_spd'];
+            $player_data['value_luc'] = $party['value_luc'];
+            $player_data['level'] = $party['level'];
+            $player_data['total_exp'] = $party['total_exp'];
+            $player_data['freely_status_point'] = $party['freely_status_point'];
+            $player_data['freely_skill_point'] = $party['freely_skill_point'];
+            $player_data['skills'] = $learned_skills;
+            $player_data['role_portrait'] = $role_portrait;
+            $player_data['player_index'] = $player_index; // 味方のパーティ中での並び。
+
             $players_data->push($player_data);
             DebugBar::debug("{$player_data['name']} 登録完了。");
         }
@@ -143,74 +221,88 @@ class BattleState extends Model
 
     }
 
+    /**
+     * 指定したフィールドID、及びステージIDから敵の情報を読み込んで返す。
+     *
+     * @return Collection
+     */
     public static function createEnemiesData(int $field_id, int $stage_id)
     {
-
+        Debugbar::debug('createEnemiesData(): jsonのベースとなるenemies_data 作成。----------');
         $enemies = collect();
-        $enemies_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
-
         Debugbar::debug('敵のプリセットデータを読み込みます。----------');
         $preset_appearing_enemies = PresetAppearingEnemy::where('field_id', $field_id)
             ->where('stage_id', $stage_id)
             ->get();
         foreach ($preset_appearing_enemies as $preset) {
-            $preset_enemy = Enemy::find($preset->enemy_id);
+            $preset_enemy = Enemy::find($preset['enemy_id']);
             if ($preset_enemy) {
-                for ($i = 0; $i < $preset->number; $i++) {
+                for ($i = 0; $i < $preset['number']; $i++) {
                     $enemies->push($preset_enemy);
                 }
             }
         }
-        Debugbar::debug([
-            'preset_appearing_enemies' => $preset_appearing_enemies,
-            'enemies' => $enemies,
-        ]);
+        // Debugbar::debug([
+        //     'preset_appearing_enemies' => $preset_appearing_enemies,
+        //     'enemies' => $enemies,
+        // ]);
 
+        // $enemiesを加工して格納するためのCollection
+        $enemies_data = collect();
         foreach ($enemies as $enemy_index => $enemy) {
-            $buffs = [];
+            $enemy_data = self::ENEMIES_JSON_DEFAULT_DATA;
+            $enemy_data['id'] = $enemy['id'];
+            $enemy_data['name'] = $enemy['name'];
+            $enemy_data['max_value_hp'] = $enemy['value_hp']; // HP最大値
+            $enemy_data['max_value_ap'] = $enemy['value_ap']; // AP最大値
+            $enemy_data['value_hp'] = $enemy['value_hp'];
+            $enemy_data['value_ap'] = $enemy['value_ap'];
+            $enemy_data['value_str'] = $enemy['value_str'];
+            $enemy_data['value_def'] = $enemy['value_def'];
+            $enemy_data['value_int'] = $enemy['value_int'];
+            $enemy_data['value_spd'] = $enemy['value_spd'];
+            $enemy_data['value_luc'] = $enemy['value_luc'];
+            $enemy_data['portrait'] = $enemy['portrait_image_path'];
+            $enemy_data['enemy_index'] = $enemy_index; // 敵の並び。
+            $enemy_data['is_boss'] = $enemy['is_boss'];
+            $enemy_data['exp'] = $enemy['exp'];
+            $enemy_data['drop_money'] = $enemy['drop_money'];
 
-            $enemy_data = collect([
-                'id' => $enemy->id,
-                'name' => $enemy->name,
-                'command' => null, // exec時に格納する
-                'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
-                'max_value_hp' => $enemy->value_hp, // HP最大値
-                'max_value_ap' => $enemy->value_ap, // AP最大値
-                'value_hp' => $enemy->value_hp,
-                'value_ap' => $enemy->value_ap,
-                'value_str' => $enemy->value_str,
-                'value_def' => $enemy->value_def,
-                'value_int' => $enemy->value_int,
-                'value_spd' => $enemy->value_spd,
-                'value_luc' => $enemy->value_luc,
-                'portrait' => $enemy->portrait_image_path,
-                'buffs' => $buffs,
-                'is_defeated_flag' => false,
-                'is_escaped' => false,
-                'enemy_index' => $enemy_index, // 敵の並び。
-                'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
-                'is_boss' => $enemy->is_boss,
-                'exp' => $enemy->exp,
-                'drop_money' => $enemy->drop_money,
-            ]);
             $enemies_data->push($enemy_data);
         }
+
+        Debugbar::debug($enemies_data);
 
         return $enemies_data;
     }
 
+    /**
+     * 指定したセーブデータIDから、アイテムの情報を読み込んで返す。
+     *
+     * 処理自体はItem::getBattleStateItemFromSavedataがほぼほぼ担っている。
+     *
+     * @return Collection
+     */
     public static function createItemsData(int $savedata_id)
     {
         Debugbar::debug('createItemsData(): ------------');
         $items_data = Item::getBattleStateItemFromSavedata($savedata_id);
+        Debugbar::debug($items_data);
 
         return $items_data;
     }
 
+    /**
+     * 作成した各データをDBに格納し、以降セッションIDで呼び出せるようにする。
+     *
+     * @return BattleState
+     */
     public static function createBattleState(
-        int $savedata_id, Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data, int $field_id, int $stage_id
+        int $savedata_id,
+        Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data,
+        int $field_id, int $stage_id
     ) {
-        $session_id = \Str::uuid()->toString();
+        $session_id = Str::uuid()->toString();
         $created_battle_state = BattleState::create([
             'savedata_id' => $savedata_id,
             'session_id' => $session_id,
@@ -226,18 +318,24 @@ class BattleState extends Model
 
     }
 
-    // 敵味方のデータを素早さなどを考慮し、戦闘を実行する順に並べる
-    // 条件: DEFENCE選択 > 特殊スキル選択 > 速度順
-    public static function sortByBattleExec(Collection $players_and_enemies_data)
+    /**
+     * 敵味方のデータの並びを、行動実行順に並べる
+     *
+     * 素早さや特殊スキル等を考慮させた順番とする
+     * DEFENSE選択 > 特殊スキル選択 > 速度順
+     *
+     * @return Collection
+     */
+    public static function sortByBattleExec(Collection $battle_state_players_and_enemies_collection)
     {
-        // 同速の場合、現状は味方が優先される
-        $sorted_data = $players_and_enemies_data->sort(function ($a, $b) {
+        // 敵味方が同速の場合、現状は味方が優先される
+        $sorted_data = $battle_state_players_and_enemies_collection->sort(function ($a, $b) {
 
-            // 1. 'DEFENCE'コマンド選択
-            if ($a->command === 'DEFENCE' && $b->command !== 'DEFENCE') {
+            // 1. 'DEFENSE'コマンド選択
+            if ($a->command === 'DEFENSE' && $b->command !== 'DEFENSE') {
                 return -1; // $aが先に行動
             }
-            if ($b->command === 'DEFENCE' && $a->command !== 'DEFENCE') {
+            if ($b->command === 'DEFENSE' && $a->command !== 'DEFENSE') {
                 return 1;  // $bが先に行動
             }
 
@@ -266,61 +364,72 @@ class BattleState extends Model
     }
 
     /**
-     * 戦闘処理実行。コマンドの処理に移る前に、下記内容を確認する
+     * コマンド実行処理
+     *
+     * コマンドの処理に移る前に、下記内容を確認する
      * 【敵/味方の行動か, 行動者は戦闘不能状態ではないか, 敵/味方は全滅していないか】
-     * &$item_data: 通常これはjsonの$current_items_dataを使用する想定
+     *  &$battle_state_items_collection: 通常これはjsonの$current_items_dataを使用する想定
      *  こちらのメソッド上で使った数に応じて配列の加工を行なっているため、参照渡しとすることで反映させている
      */
     public static function execBattleCommand(
-        Collection $sorted_players_and_enemies_data,
-        Collection $players_data, Collection $enemies_data, Collection &$items_data,
-        Collection $logs
+        Collection $sorted_battle_state_players_and_enemies_collection,
+        Collection $battle_state_players_collection,
+        Collection $battle_state_enemies_collection,
+        Collection &$battle_state_items_collection,
+        Collection $battle_logs_collection
     ) {
-        // Debugbar::debug(get_class($sorted_players_and_enemies_data)); // この時点ではCollection
-        foreach ($sorted_players_and_enemies_data as $index => $data) {
-            Debugbar::debug("########################### ループ: {$index}人目。 行動対象: {$data->name} 素早さ: {$data->value_spd} ###########################");
-            // Debugbar::debug(get_class($data)); // この時点ではstdClass (Object型)
+        // $actor_dataはstdClass Object型となるため、"->"で参照する。
+        /** @var \stdClass $actor_data */
+        foreach ($sorted_battle_state_players_and_enemies_collection as $action_index => $actor_data) {
+            Debugbar::debug("########################### ループ: {$action_index}人目。 行動対象: {$actor_data->name} 素早さ: {$actor_data->value_spd} ###########################");
 
-            // 味方の行動
-            if ($data->is_enemy == false) {
-                Debugbar::debug("味方( {$data->name} )行動開始");
-                if ($data->is_defeated_flag == true) {
-                    Debugbar::debug("{$data->name}は戦闘不能のためスキップします。");
-
-                    continue; // 戦闘不能の場合は何も行わない
-                }
-
-                // 敵全滅チェック
-                if (BattleState::confirmDataIsAllDefeated($enemies_data)) {
-                    Debugbar::debug("敵は全員討伐済みのため、行動をスキップします。 コマンド: {$data->command}");
-
-                    continue; // 敵が全滅していたら、コマンドを実行せずスキップ
-                }
-
-                // 逃走チェック
-                if (self::isPlayerSuccessEscape($players_data)) {
-                    Debugbar::debug("味方がESCAPEコマンドを選択し、成功しているため行動をスキップします。 コマンド: {$data->command} escapedフラグ: {$data->is_escaped}");
+            if ($actor_data->is_enemy == false) {
+                /**
+                 * コマンド実行に移る前に、下記内容を確認する
+                 * * $actor_dataが戦闘不能かどうか。
+                 * * 敵は全滅しているかどうか。
+                 * * $actor_data以外の味方が、闘争を成功しているかどうか。
+                 */
+                Debugbar::debug("--------------------味方( {$actor_data->name} )行動開始--------------------");
+                // 戦闘不能の場合は何も行わない
+                if ($actor_data->is_defeated_flag == true) {
+                    Debugbar::debug("{$actor_data->name}は戦闘不能のためスキップします。");
 
                     continue;
                 }
 
-                Debugbar::debug("行動者やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
-                /* ATTACK */
-                switch ($data->command) {
+                // 敵全滅チェック
+                if (BattleState::confirmDataIsAllDefeated($battle_state_enemies_collection)) {
+                    Debugbar::debug("敵は全員討伐済みのため、行動をスキップします。 コマンド: {$actor_data->command}");
+
+                    continue;
+                }
+
+                // 逃走チェック
+                if (self::isPlayerSuccessEscape($battle_state_players_collection)) {
+                    Debugbar::debug("味方がESCAPEコマンドを選択し、成功しているため行動をスキップします。 コマンド: {$actor_data->command} escapedフラグ: {$actor_data->is_escaped}");
+
+                    continue;
+                }
+
+                Debugbar::debug("行動者やられ、敵全員討伐チェックOK。 コマンド: {$actor_data->command}");
+                // switch文で曖昧な判定となるが、一旦問題ないはず。
+                // (matchで書くと難解になるかもしれないので、switch文を採用)
+                switch ($actor_data->command) {
                     case 'ATTACK':
-                        self::execCommandAttack($data, $enemies_data, false, $data->target_enemy_index, $logs);
+                        self::execCommandAttack($actor_data, $battle_state_enemies_collection, false, $actor_data->target_enemy_index, $battle_logs_collection);
                         break;
                     case 'SKILL':
                         // 対象が味方の場合があるので、$opponents_dataとして定義する
                         $opponents_data = collect();
-                        if (($data->target_enemy_index !== null)) {
+                        if (($actor_data->target_enemy_index !== null)) {
                             Debugbar::debug('target_enemy_indexが入っているので敵グループを対象として格納。');
-                            $opponents_data = $enemies_data;
-                            $opponents_index = $data->target_enemy_index;
-                        } elseif (($data->target_player_index !== null)) {
+                            $opponents_data = $battle_state_enemies_collection;
+                            $opponents_index = $actor_data->target_enemy_index;
+                        } elseif (($actor_data->target_player_index !== null)) {
                             Debugbar::debug('target_player_indexが入っているので味方グループを対象として選択。');
-                            $opponents_data = $players_data;
-                            $opponents_index = $data->target_player_index;
+                            $opponents_data = $battle_state_players_collection;
+                            $opponents_index = $actor_data->target_player_index;
                         } else {
                             // 敵味方ともに対象のindexが格納されていないなら、範囲系のスキル。
                             // それぞれ$opponents_dataに条件に合うデータを格納。
@@ -329,37 +438,38 @@ class BattleState extends Model
                             $opponents_index = null;
                             Debugbar::debug('target_player_indexが格納されていないため、範囲系のスキルが選択されました。');
 
-                            switch ($data->selected_skill_effect_type) {
+                            switch ($actor_data->selected_skill_effect_type) {
                                 case Skill::EFFECT_SPECIAL_TYPE:
+                                    // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
                                     Debugbar::debug('特殊系範囲スキル。');
-                                    if ($data->selected_skill_id == 31) {
-                                        Debugbar::debug("ワイドガード: 味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
-                                        $opponents_data = $players_data;
+                                    if ($actor_data->selected_skill_id == 31) {
+                                        Debugbar::debug("ワイドガード: 味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                        $opponents_data = $battle_state_players_collection;
                                     }
                                     break;
                                 case Skill::EFFECT_DAMAGE_TYPE:
-                                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
-                                    $opponents_data = $enemies_data;
+                                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $opponents_data = $battle_state_enemies_collection;
                                     break;
                                 case Skill::EFFECT_HEAL_TYPE:
-                                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
-                                    $opponents_data = $players_data;
+                                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $opponents_data = $battle_state_players_collection;
                                     break;
                                 case Skill::EFFECT_BUFF_TYPE:
-                                    // todo: デバフを採用するなら敵データを入れたいかも。
-                                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
-                                    $opponents_data = $players_data;
+                                    // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
+                                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $opponents_data = $battle_state_players_collection;
                                     break;
                             }
                         }
-                        self::execCommandSkill($data, $opponents_data, false, $opponents_index, $logs);
+                        self::execCommandSkill($actor_data, $opponents_data, false, $opponents_index, $battle_logs_collection);
                         break;
                     case 'ITEM':
-                        // 選択したアイテムの情報を$items_dataから取得する
-                        $selected_item = $items_data->firstWhere('id', $data->selected_item_id);
+                        // 選択したアイテムの情報を$battle_state_items_collectionから取得する
+                        $selected_item = $battle_state_items_collection->firstWhere('id', $actor_data->selected_item_id);
                         // 選択アイテムが無い場合、スキップする(残り2個のアイテムを3人選択していた場合など)
                         if (is_null($selected_item)) {
-                            $logs->push("{$data->name}はアイテムを使おうと試みたが、手持ちには用意がなかった！");
+                            $battle_logs_collection->push("{$actor_data->name}はアイテムを使おうと試みたが、手持ちには用意がなかった！");
                             break;
                         }
                         Debugbar::debug([
@@ -369,14 +479,14 @@ class BattleState extends Model
 
                         // 対象決定処理 (SKILLと同じなので、統一化できそう。)
                         $opponents_data = collect();
-                        if (($data->target_enemy_index !== null)) {
+                        if (($actor_data->target_enemy_index !== null)) {
                             Debugbar::debug('【ITEM】target_enemy_indexが入っているので敵グループを対象として格納。');
-                            $opponents_data = $enemies_data;
-                            $opponents_index = $data->target_enemy_index;
-                        } elseif (($data->target_player_index !== null)) {
+                            $opponents_data = $battle_state_enemies_collection;
+                            $opponents_index = $actor_data->target_enemy_index;
+                        } elseif (($actor_data->target_player_index !== null)) {
                             Debugbar::debug('【ITEM】target_player_indexが入っているので味方グループを個別対象として選択。');
-                            $opponents_data = $players_data;
-                            $opponents_index = $data->target_player_index;
+                            $opponents_data = $battle_state_players_collection;
+                            $opponents_index = $actor_data->target_player_index;
                         } else {
                             // 敵味方ともに対象のindexが格納されていないなら、範囲系のアイテム
                             // それぞれ$opponents_dataに条件に合うデータを格納。
@@ -387,29 +497,31 @@ class BattleState extends Model
 
                             switch ($selected_item->effect_type) {
                                 case Item::EFFECT_SPECIAL_TYPE:
+                                    // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
+                                    // 今のところ実装なし
                                     Debugbar::debug('特殊系範囲アイテム');
                                     break;
                                 case Item::EFFECT_DAMAGE_TYPE:
                                     Debugbar::debug("攻撃系範囲アイテムのため敵情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
-                                    $opponents_data = $enemies_data;
+                                    $opponents_data = $battle_state_enemies_collection;
                                     break;
                                 case Item::EFFECT_HEAL_TYPE:
                                     Debugbar::debug("回復系範囲アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
-                                    $opponents_data = $players_data;
+                                    $opponents_data = $battle_state_players_collection;
                                     break;
                                 case Item::EFFECT_BUFF_TYPE:
-                                    // todo: デバフを採用するなら敵データを入れたいかも。
+                                    // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
                                     Debugbar::debug("バフ系範囲アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
-                                    $opponents_data = $players_data;
+                                    $opponents_data = $battle_state_players_collection;
                                     break;
                             }
                         }
-                        self::execCommandItem($data, $opponents_data, false, $opponents_index, $selected_item, $logs);
+                        self::execCommandItem($actor_data, $opponents_data, false, $opponents_index, $selected_item, $battle_logs_collection);
 
                         // アイテムの数を減らす
                         Debugbar::debug('アイテム処理完了。所持数調整....');
                         $selected_item_id = $selected_item->id;
-                        $items_data = $items_data->map(function ($item) use ($selected_item_id) {
+                        $battle_state_items_collection = $battle_state_items_collection->map(function ($item) use ($selected_item_id) {
                             if ($item->id === $selected_item_id) {
                                 $item->possession_number -= 1;
                                 // 所持数が0以下になったら、return $itemとしてではなくnullで返すようにする
@@ -424,115 +536,118 @@ class BattleState extends Model
                         })
                         // filter()メソッドはコレクションの要素を真偽値でフィルタリングする
                         // nullとして返された要素(所持数が0となった要素)はfalseで返り、コレクションから取り除かれる
-                        // &$item_dataと参照渡しとしているので、フィルタリング結果は元々の$current_items_dataと同期する
+                        // &$item_dataと参照渡しとしているので、フィルタリング結果は元々の$current_battle_state_items_collectionと同期する
                             ->filter();
-                        Debugbar::debug($items_data);
+                        Debugbar::debug($battle_state_items_collection);
 
                         break;
-                    case 'DEFENCE':
-                        // 防御は現状味方だけだが、敵も作るならelseに書けば良い。
-                        if ($data->is_enemy === false) {
-                            // 防御というバフを1ターン、150%の補正でかけておく
-                            Debugbar::debug("【防御】使用者: {$data->name} ");
-                            $buffs = [
-                                // 10の場合、+5されて合計15になる
-                                'buffed_def' => ceil((int) $data->value_def * 0.5),
-                                'remaining_turn' => 1,
-                                'buffed_from' => 'DEFENCE',
-                            ];
-                            $data->buffs[] = $buffs;
-                            $logs->push("{$data->name}は防御の構えを取った！");
-                        } else {
-
-                        }
-
+                    case 'DEFENSE':
+                        // 防御というバフを1ターン、150%の補正でかけておく
+                        Debugbar::debug("【防御】使用者: {$actor_data->name} ");
+                        $buffs = [
+                            // 10の場合、+5されて合計15になる
+                            'buffed_def' => ceil((int) $actor_data->value_def * 0.5),
+                            'remaining_turn' => 1,
+                            'buffed_from' => 'DEFENSE',
+                        ];
+                        $actor_data->buffs[] = $buffs;
+                        $battle_logs_collection->push("{$actor_data->name}は防御の構えを取った！");
                         break;
                     case 'ESCAPE':
-                        // 逃走も同じく、現状味方だけだが、敵も作るならelseに書けば良い。
-
                         // 対象者の素早さを取得
-                        $actual_speed = self::calculateActualStatusValue($data, 'spd');
+                        $actual_speed = self::calculateActualStatusValue($actor_data, 'spd');
+                        Debugbar::debug("【ESCAPE】使用者: {$actor_data->name} 基礎 + バフの合計スピード: {$actual_speed}");
+                        // 相手の素早さの平均値をチェック。
+                        $total_enemy_spd = 0;
+                        $average_enemy_spd = 0;
+                        foreach ($battle_state_enemies_collection as $enemy_data) {
+                            $total_enemy_spd += $enemy_data->value_spd;
+                        }
+                        if ($battle_state_enemies_collection->count() > 0) {
+                            $average_enemy_spd = $total_enemy_spd / $battle_state_enemies_collection->count();
+                        }
+                        Debugbar::debug(" 敵人数: {$battle_state_enemies_collection->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
 
-                        if ($data->is_enemy === false) {
-                            Debugbar::debug("【ESCAPE】使用者: {$data->name} 基礎 + バフの合計スピード: {$actual_speed}");
-                            // 相手の素早さの平均値をチェック。
-                            $total_enemy_spd = 0;
-                            $average_enemy_spd = 0;
-                            foreach ($enemies_data as $enemy_data) {
-                                $total_enemy_spd += $enemy_data->value_spd;
-                            }
-                            if ($enemies_data->count() > 0) {
-                                $average_enemy_spd = $total_enemy_spd / $enemies_data->count();
-                            }
-                            Debugbar::debug(" 敵人数: {$enemies_data->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
+                        /**
+                         * 逃走成功確率の計算
+                         * (基礎成功率 + (spdの差 * 2) ) * 100
+                         * なお最低値10%, 最大値90%
+                         */
+                        $spd_diff = $actor_data->value_spd - $average_enemy_spd;
+                        $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
+                        $escape_chance = max(0.1, min(0.9, $escape_chance));
 
-                            /**
-                             * 逃走成功確率の計算
-                             * (self::BASE_ESCAPE_CHANCE + (spdの差 * 2) ) * 100
-                             * なお最低値10%, 最大値90%
-                             */
-                            $spd_diff = $data->value_spd - $average_enemy_spd;
-                            $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
-                            $escape_chance = max(0.1, min(0.9, $escape_chance));
+                        $random_int = random_int(0, 100);
+                        Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
+                        Debugbar::debug($random_int);
 
-                            $random_int = random_int(0, 100);
-                            Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
-                            Debugbar::debug($random_int);
-
-                            if ($random_int < ($escape_chance * 100)) {
-                                Debugbar::debug('逃走成功！');
-                                $data->is_escaped = true;
-                                $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
-                            } else {
-                                Debugbar::debug('逃走失敗...');
-                                $logs->push("{$data->name}は逃走を試みた！しかし回り込まれてしまった！");
-                            }
-
-                            // 敵が逃げるを選択した場合の処理。現状想定なし。
+                        if ($random_int < ($escape_chance * 100)) {
+                            Debugbar::debug('逃走成功！');
+                            $actor_data->is_escaped = true;
+                            $battle_logs_collection->push("{$actor_data->name}は逃走を試みた！うまく逃げ切れた。");
                         } else {
-
+                            Debugbar::debug('逃走失敗...');
+                            $battle_logs_collection->push("{$actor_data->name}は逃走を試みた！しかし回り込まれてしまった！");
                         }
                         break;
                     default:
-                        $logs->push("{$data->name}は攻撃とスキルと防御以外を選択した。");
+                        $battle_logs_collection->push("【debug】{$actor_data->name} 無効なコマンドです。");
                         break;
                 }
-
-                // 敵の行動
             } else {
-                Debugbar::warning("敵( {$data->name} )行動開始");
-                if ($data->is_defeated_flag == true) {
-                    Debugbar::warning("{$data->name}はすでにやられているので行動をスキップします。");
+                Debugbar::warning("--------------------敵( {$actor_data->name} )行動開始--------------------");
+                if ($actor_data->is_defeated_flag == true) {
+                    Debugbar::warning("{$actor_data->name}はすでにやられているので行動をスキップします。");
 
                     continue; // 行動する敵がやられている場合は何も行わない
                 }
 
                 // プレイヤー全滅チェック
-                if (BattleState::confirmDataIsAllDefeated($players_data)) {
-                    Debugbar::debug("パーティは全員戦闘不能のため、敵の行動をスキップします。 コマンド: {$data->command}");
+                if (BattleState::confirmDataIsAllDefeated($battle_state_players_collection)) {
+                    Debugbar::debug("パーティは全員戦闘不能のため、敵の行動をスキップします。 コマンド: {$actor_data->command}");
 
                     continue; // 敵が全滅していたら、コマンドを実行せずスキップ
                 }
 
                 // プレイヤー逃走チェック
-                if (self::isPlayerSuccessEscape($players_data)) {
-                    Debugbar::debug("パーティ側がESCAPEコマンドを選択し、成功しているため敵の行動をスキップします。 コマンド: {$data->command}");
+                if (self::isPlayerSuccessEscape($battle_state_players_collection)) {
+                    Debugbar::debug("パーティ側がESCAPEコマンドを選択し、成功しているため敵の行動をスキップします。 コマンド: {$actor_data->command}");
 
                     continue;
                 }
 
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
                 // コマンド対象となる相手をランダムに指定
-                $index = rand(0, $players_data->count() - 1);
-                // todo: 敵の行動コマンド指定方法を考える
-                $data->command = 'ATTACK';
-                // @phpstan-ignore-next-line
-                if ($data->command === 'ATTACK') {
-                    self::execCommandAttack($data, $players_data, true, $index, $logs);
-                    // todo: 攻撃以外の選択肢を揃える
-                } else {
-                    $logs->push("{$data->name}は攻撃以外を選択した。");
+                $index = rand(0, $battle_state_players_collection->count() - 1);
+
+                // TODO: 敵の行動コマンド ATTACK以外の選択肢を揃える
+                // TODO: ボスの場合だけ、この辺りは個別に調整できるようにしておく(固定行動にしたい。)
+                $actor_data->command = 'ATTACK';
+                switch ($actor_data->command) {
+                    case 'ATTACK':
+                        $battle_logs_collection->push("【ATTACK】{$actor_data->name} ");
+                        self::execCommandAttack($actor_data, $battle_state_players_collection, true, $index, $battle_logs_collection);
+                        break;
+                    case 'SKILL':
+                        $battle_logs_collection->push("【SKILL】{$actor_data->name} ");
+                        break;
+                    case 'ITEM':
+                        // 実装予定はないが、使う想定をしておく
+                        $battle_logs_collection->push("【ITEM】{$actor_data->name} ");
+                        break;
+                    case 'DEFENSE':
+                        // 実装予定はないが、使う想定をしておく
+                        $battle_logs_collection->push("【DEFENSE】{$actor_data->name} ");
+                        break;
+                    case 'ESCAPE':
+                        // 実装予定はないが、使う想定をしておく
+                        $battle_logs_collection->push("【ESCAPE】{$actor_data->name} ");
+                        break;
+                    default:
+                        $battle_logs_collection->push("【debug】{$actor_data->name} 無効なコマンドです。");
+                        break;
                 }
+
             }
         }
     }
@@ -782,7 +897,7 @@ class BattleState extends Model
                         );
                     } elseif ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
                         Debugbar::debug('魔法。');
-                        $opponent_mdef = self::calculateMagicDefenceValue(
+                        $opponent_mdef = self::calculateMagicDefenseValue(
                             self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
                             self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
                         );
@@ -836,7 +951,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDefenceValue(
+                            $opponent_mdef = self::calculateMagicDefenseValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -893,7 +1008,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type == Item::ATTACK_MAGIC_TYPE) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDefenceValue(
+                            $opponent_mdef = self::calculateMagicDefenseValue(
                                 self::calculateActualStatusValue($opponents_data[$opponents_index], 'def'),
                                 self::calculateActualStatusValue($opponents_data[$opponents_index], 'int')
                             );
@@ -952,7 +1067,7 @@ class BattleState extends Model
                                 );
                             } elseif ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
                                 Debugbar::debug('魔法。');
-                                $opponent_mdef = self::calculateMagicDefenceValue(
+                                $opponent_mdef = self::calculateMagicDefenseValue(
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($opponent_data, 'int')
                                 );
@@ -1541,7 +1656,7 @@ class BattleState extends Model
                                 $logs->push("{$data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
                             }
                             break;
-                        case 'DEFENCE':
+                        case 'DEFENSE':
                             Debugbar::debug("{$data->name}の 防御コマンドを解除。");
                             break;
 
@@ -1630,10 +1745,10 @@ class BattleState extends Model
     }
 
     // 魔法防御力 = (def * 0.25) + (int * 0.75)
-    public static function calculateMagicDefenceValue(int $opponent_def, int $opponent_int)
+    public static function calculateMagicDefenseValue(int $opponent_def, int $opponent_int)
     {
         $mdef = ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
-        Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
+        Debugbar::debug("calculateMagicDefenseValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
 
         return $mdef;
     }
@@ -1728,10 +1843,15 @@ class BattleState extends Model
 
     }
 
-    // 渡したパーティか敵を全滅しているかどうかをboolで判定する
-    public static function confirmDataIsAllDefeated(Collection $player_or_enemy_data): bool
+    /**
+     * 渡した配列が全滅済みかどうかの判定敵を全滅しているかどうかをboolで判定する
+     *
+     * @param  Collection  $player_or_enemy_collection  敵もしくは味方のCollection配列
+     */
+    public static function confirmDataIsAllDefeated(Collection $player_or_enemy_collection): bool
     {
-        foreach ($player_or_enemy_data as $data) {
+        /** @var \stdClass $data */
+        foreach ($player_or_enemy_collection as $data) {
             // 回しているデータに1つでもフラグが立っていなければ、falseを返せば良い
             if (! $data->is_defeated_flag) {
                 return false;
@@ -1744,9 +1864,10 @@ class BattleState extends Model
     /**
      * player側がESCAPEが成功している状況であるかどうかをboolで返す。※現状playersにのみ有効
      */
-    public static function isPlayerSuccessEscape(Collection $players_data): bool
+    public static function isPlayerSuccessEscape(Collection $players_collection): bool
     {
-        foreach ($players_data as $data) {
+        /** @var \stdClass $data */
+        foreach ($players_collection as $data) {
             // パーティメンバーにESCAPEが成功している人物がいた場合、true。
             if ($data->is_escaped) {
                 return true;

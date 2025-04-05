@@ -242,7 +242,7 @@ export default createStore({
     setBattleStatus({ commit }, status) {
       commit('setBattleStatus', status);
     },
-    // ATTACK, DEFENCE選択
+    // ATTACK, DEFENSE選択
     setSelectedCommand({ commit }, { partyId, command }) {
       commit('setSelectedCommand', { partyId, command  });
     },

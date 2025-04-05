@@ -14,25 +14,40 @@ class Skill extends Model
 
     protected $table = 'rpg_skills';
 
-    const ATTACK_NO_TYPE = 0; // 分類なし(ワイドガードなど)
+    public const ATTACK_NO_TYPE = 0; // 分類なし(ワイドガードなど)
 
-    const ATTACK_PHYSICAL_TYPE = 1; // 物理
+    public const ATTACK_PHYSICAL_TYPE = 1; // 物理
 
-    const ATTACK_MAGIC_TYPE = 2; // 魔法
+    public const ATTACK_MAGIC_TYPE = 2; // 魔法
 
-    const EFFECT_SPECIAL_TYPE = 0; // 特殊系スキル(ワイドガードなど)
+    public const EFFECT_SPECIAL_TYPE = 0; // 特殊系スキル(ワイドガードなど)
 
-    const EFFECT_DAMAGE_TYPE = 1; // 攻撃系スキル
+    public const EFFECT_DAMAGE_TYPE = 1; // 攻撃系スキル
 
-    const EFFECT_HEAL_TYPE = 2; // 治療系スキル
+    public const EFFECT_HEAL_TYPE = 2; // 治療系スキル
 
-    const EFFECT_BUFF_TYPE = 3; // バフ系スキル
+    public const EFFECT_BUFF_TYPE = 3; // バフ系スキル
 
-    const TARGET_RANGE_SELF = 0; // 自身を対象
+    public const TARGET_RANGE_SELF = 0; // 自身を対象
 
-    const TARGET_RANGE_SINGLE = 1; // 単体を対象
+    public const TARGET_RANGE_SINGLE = 1; // 単体を対象
 
-    const TARGET_RANGE_ALL = 2; // 全体を対象
+    public const TARGET_RANGE_ALL = 2; // 全体を対象
+
+    // battle_state.players_json_dataのskillsに格納する基本要素
+    public const PLAYERS_JSON_SKILLS_DEFAULT_DATA = [
+        'id' => null,
+        'name' => null,
+        'description' => null,
+        'attack_type' => null,
+        'effect_type' => null,
+        'target_range' => null,
+        'skill_level' => null,
+        'ap_cost' => null,
+        'buff_turn' => null,
+        'elemental_id' => null,
+        'skill_percent' => null,
+    ];
 
     /**
      * 多対多のリレーション
@@ -231,15 +246,21 @@ class Skill extends Model
 
     }
 
-    // 現在会得しているスキル情報を取得
+    /**
+     * players_json_dataのskillsに格納するスキル情報を取得する
+     *
+     * @return Collection
+     */
     public static function getLearnedSkill($party)
     {
+        Debugbar::debug('getLearnedSkill(): --------------------');
         $learned_skills = $party->skills->map(function ($skill) {
 
+            $skill_level = $skill->pivot->skill_level;
             // レベルに応じた消費APのコスト計算 スキルの数だけ回すので、これはループの生成する必要がある
-            $ap_cost_property = 'lv'.$skill->pivot->skill_level.'_ap_cost';
-            $skill_percent_property = 'lv'.$skill->pivot->skill_level.'_percent';
-            $buff_turn_property = 'lv'.$skill->pivot->skill_level.'_buff_turn';
+            $ap_cost_property = 'lv'.$skill_level.'_ap_cost';
+            $skill_percent_property = 'lv'.$skill_level.'_percent';
+            $buff_turn_property = 'lv'.$skill_level.'_buff_turn';
             $ap_cost = 99;        // デフォルト値。エラーの場合は99にしてとりあえずわかるようにしとく
             $skill_percent = 999; // デフォルト値。
             $buff_turn = 9;       // デフォルト値。
@@ -256,20 +277,24 @@ class Skill extends Model
                 $buff_turn = $skill_attributes[$buff_turn_property];
             }
 
-            return [
-                'id' => $skill->id,
-                'name' => $skill->name,
-                'description' => $skill->description,
-                'attack_type' => $skill->attack_type,
-                'effect_type' => $skill->effect_type,
-                'target_range' => $skill->target_range,
-                'skill_level' => $skill->pivot->skill_level,  // pivotのskill_levelを取得
-                'ap_cost' => $ap_cost,
-                'buff_turn' => $buff_turn,
-                'elemental_id' => $skill->elemental_id,
-                'skill_percent' => $skill_percent,
-            ];
+            $players_json_skills_data = self::PLAYERS_JSON_SKILLS_DEFAULT_DATA;
+
+            $players_json_skills_data['id'] = $skill['id'];
+            $players_json_skills_data['name'] = $skill['name'];
+            $players_json_skills_data['description'] = $skill['description'];
+            $players_json_skills_data['attack_type'] = $skill['attack_type'];
+            $players_json_skills_data['effect_type'] = $skill['effect_type'];
+            $players_json_skills_data['target_range'] = $skill['target_range'];
+            $players_json_skills_data['skill_level'] = $skill_level;
+            $players_json_skills_data['ap_cost'] = $ap_cost;
+            $players_json_skills_data['buff_turn'] = $buff_turn;
+            $players_json_skills_data['elemental_id'] = $skill['elemental_id'];
+            $players_json_skills_data['skill_percent'] = $skill_percent;
+
+            return $players_json_skills_data;
         });
+
+        Debugbar::debug($learned_skills);
 
         return $learned_skills;
     }
