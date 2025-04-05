@@ -508,15 +508,35 @@ class BattleState extends Model
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
                 // コマンド対象となる相手をランダムに指定
                 $index = rand(0, $players_data->count() - 1);
-                // todo: 敵の行動コマンド指定方法を考える
+
+                // TODO: 敵の行動コマンド ATTACK以外の選択肢を揃える
+                // TODO: ボスの場合だけ、この辺りは個別に調整できるようにしておく(固定行動にしたい。)
                 $data->command = 'ATTACK';
-                // @phpstan-ignore-next-line
-                if ($data->command === 'ATTACK') {
+                switch ($data->command) {
+                  case 'ATTACK':
+                    $logs->push("【ATTACK】{$data->name} ");
                     self::execCommandAttack($data, $players_data, true, $index, $logs);
-                    // todo: 攻撃以外の選択肢を揃える
-                } else {
-                    $logs->push("{$data->name}は攻撃以外を選択した。");
+                    break;
+                  case 'SKILL':
+                    $logs->push("【SKILL】{$data->name} ");
+                    break;
+                  case 'ITEM':
+                    // 実装予定はないが、使う想定をしておく
+                    $logs->push("【ITEM】{$data->name} ");
+                    break;
+                  case 'DEFENCE':
+                    // 実装予定はないが、使う想定をしておく
+                    $logs->push("【DEFENCE】{$data->name} ");
+                    break;
+                  case 'ESCAPE':
+                    // 実装予定はないが、使う想定をしておく
+                    $logs->push("【ESCAPE】{$data->name} ");
+                    break;
+                  default:
+                    $logs->push("【debug】{$data->name} 無効なコマンドです。");
+                    break;
                 }
+
             }
         }
     }
