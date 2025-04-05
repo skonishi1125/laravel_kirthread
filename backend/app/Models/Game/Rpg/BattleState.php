@@ -281,9 +281,8 @@ class BattleState extends Model
             Debugbar::debug("########################### ループ: {$index}人目。 行動対象: {$data->name} 素早さ: {$data->value_spd} ###########################");
             // Debugbar::debug(get_class($data)); // この時点ではstdClass (Object型)
 
-            // 味方の行動
             if ($data->is_enemy == false) {
-                Debugbar::debug("味方( {$data->name} )行動開始");
+                Debugbar::debug("--------------------味方( {$data->name} )行動開始--------------------");
                 if ($data->is_defeated_flag == true) {
                     Debugbar::debug("{$data->name}は戦闘不能のためスキップします。");
 
@@ -305,7 +304,6 @@ class BattleState extends Model
                 }
 
                 Debugbar::debug("行動者やられ、敵全員討伐チェックOK。 コマンド: {$data->command}");
-                /* ATTACK */
                 switch ($data->command) {
                     case 'ATTACK':
                         self::execCommandAttack($data, $enemies_data, false, $data->target_enemy_index, $logs);
@@ -331,6 +329,7 @@ class BattleState extends Model
 
                             switch ($data->selected_skill_effect_type) {
                                 case Skill::EFFECT_SPECIAL_TYPE:
+                                    // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
                                     Debugbar::debug('特殊系範囲スキル。');
                                     if ($data->selected_skill_id == 31) {
                                         Debugbar::debug("ワイドガード: 味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
@@ -346,7 +345,7 @@ class BattleState extends Model
                                     $opponents_data = $players_data;
                                     break;
                                 case Skill::EFFECT_BUFF_TYPE:
-                                    // todo: デバフを採用するなら敵データを入れたいかも。
+                                    // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
                                     Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$data->selected_skill_effect_type}");
                                     $opponents_data = $players_data;
                                     break;
@@ -387,6 +386,8 @@ class BattleState extends Model
 
                             switch ($selected_item->effect_type) {
                                 case Item::EFFECT_SPECIAL_TYPE:
+                                    // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
+                                    // 今のところ実装なし
                                     Debugbar::debug('特殊系範囲アイテム');
                                     break;
                                 case Item::EFFECT_DAMAGE_TYPE:
@@ -398,7 +399,7 @@ class BattleState extends Model
                                     $opponents_data = $players_data;
                                     break;
                                 case Item::EFFECT_BUFF_TYPE:
-                                    // todo: デバフを採用するなら敵データを入れたいかも。
+                                    // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
                                     Debugbar::debug("バフ系範囲アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item->effect_type}");
                                     $opponents_data = $players_data;
                                     break;
@@ -430,77 +431,60 @@ class BattleState extends Model
 
                         break;
                     case 'DEFENCE':
-                        // 防御は現状味方だけだが、敵も作るならelseに書けば良い。
-                        if ($data->is_enemy === false) {
-                            // 防御というバフを1ターン、150%の補正でかけておく
-                            Debugbar::debug("【防御】使用者: {$data->name} ");
-                            $buffs = [
-                                // 10の場合、+5されて合計15になる
-                                'buffed_def' => ceil((int) $data->value_def * 0.5),
-                                'remaining_turn' => 1,
-                                'buffed_from' => 'DEFENCE',
-                            ];
-                            $data->buffs[] = $buffs;
-                            $logs->push("{$data->name}は防御の構えを取った！");
-                        } else {
-
-                        }
-
+                        // 防御というバフを1ターン、150%の補正でかけておく
+                        Debugbar::debug("【防御】使用者: {$data->name} ");
+                        $buffs = [
+                            // 10の場合、+5されて合計15になる
+                            'buffed_def' => ceil((int) $data->value_def * 0.5),
+                            'remaining_turn' => 1,
+                            'buffed_from' => 'DEFENCE',
+                        ];
+                        $data->buffs[] = $buffs;
+                        $logs->push("{$data->name}は防御の構えを取った！");
                         break;
                     case 'ESCAPE':
-                        // 逃走も同じく、現状味方だけだが、敵も作るならelseに書けば良い。
-
                         // 対象者の素早さを取得
                         $actual_speed = self::calculateActualStatusValue($data, 'spd');
+                        Debugbar::debug("【ESCAPE】使用者: {$data->name} 基礎 + バフの合計スピード: {$actual_speed}");
+                        // 相手の素早さの平均値をチェック。
+                        $total_enemy_spd = 0;
+                        $average_enemy_spd = 0;
+                        foreach ($enemies_data as $enemy_data) {
+                            $total_enemy_spd += $enemy_data->value_spd;
+                        }
+                        if ($enemies_data->count() > 0) {
+                            $average_enemy_spd = $total_enemy_spd / $enemies_data->count();
+                        }
+                        Debugbar::debug(" 敵人数: {$enemies_data->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
 
-                        if ($data->is_enemy === false) {
-                            Debugbar::debug("【ESCAPE】使用者: {$data->name} 基礎 + バフの合計スピード: {$actual_speed}");
-                            // 相手の素早さの平均値をチェック。
-                            $total_enemy_spd = 0;
-                            $average_enemy_spd = 0;
-                            foreach ($enemies_data as $enemy_data) {
-                                $total_enemy_spd += $enemy_data->value_spd;
-                            }
-                            if ($enemies_data->count() > 0) {
-                                $average_enemy_spd = $total_enemy_spd / $enemies_data->count();
-                            }
-                            Debugbar::debug(" 敵人数: {$enemies_data->count()} 合計SPD: {$total_enemy_spd} 平均値: {$average_enemy_spd} ");
+                        /**
+                         * 逃走成功確率の計算
+                         * (基礎成功率 + (spdの差 * 2) ) * 100
+                         * なお最低値10%, 最大値90%
+                         */
+                        $spd_diff = $data->value_spd - $average_enemy_spd;
+                        $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
+                        $escape_chance = max(0.1, min(0.9, $escape_chance));
 
-                            /**
-                             * 逃走成功確率の計算
-                             * (self::BASE_ESCAPE_CHANCE + (spdの差 * 2) ) * 100
-                             * なお最低値10%, 最大値90%
-                             */
-                            $spd_diff = $data->value_spd - $average_enemy_spd;
-                            $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
-                            $escape_chance = max(0.1, min(0.9, $escape_chance));
+                        $random_int = random_int(0, 100);
+                        Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
+                        Debugbar::debug($random_int);
 
-                            $random_int = random_int(0, 100);
-                            Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
-                            Debugbar::debug($random_int);
-
-                            if ($random_int < ($escape_chance * 100)) {
-                                Debugbar::debug('逃走成功！');
-                                $data->is_escaped = true;
-                                $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
-                            } else {
-                                Debugbar::debug('逃走失敗...');
-                                $logs->push("{$data->name}は逃走を試みた！しかし回り込まれてしまった！");
-                            }
-
-                            // 敵が逃げるを選択した場合の処理。現状想定なし。
+                        if ($random_int < ($escape_chance * 100)) {
+                            Debugbar::debug('逃走成功！');
+                            $data->is_escaped = true;
+                            $logs->push("{$data->name}は逃走を試みた！うまく逃げ切れた。");
                         } else {
-
+                            Debugbar::debug('逃走失敗...');
+                            $logs->push("{$data->name}は逃走を試みた！しかし回り込まれてしまった！");
                         }
                         break;
                     default:
-                        $logs->push("{$data->name}は攻撃とスキルと防御以外を選択した。");
+                        $logs->push("【debug】{$data->name} 無効なコマンドです。");
                         break;
                 }
-
-                // 敵の行動
             } else {
-                Debugbar::warning("敵( {$data->name} )行動開始");
+                Debugbar::warning("--------------------敵( {$data->name} )行動開始--------------------");
                 if ($data->is_defeated_flag == true) {
                     Debugbar::warning("{$data->name}はすでにやられているので行動をスキップします。");
 
