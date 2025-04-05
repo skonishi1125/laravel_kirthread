@@ -22,6 +22,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 #### PHP
 * PHP v8.2.21
 * Laravel Framework 11.21.0
+* Composer version 2.7.8
 
 #### Vue
 * Vue.js v3.4
@@ -33,7 +34,6 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 * Amazon Linux 2023
 * mysql  Ver 8.0.39 for Linux on x86_64 (MySQL Community Server - GPL)
 * nginx version: nginx/1.24.0
-* Composer version 2.7.8
 
 ### その他
 #### SSL証明書
