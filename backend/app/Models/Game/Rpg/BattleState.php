@@ -28,6 +28,52 @@ class BattleState extends Model
         'drop_weapon_id' => [],
     ];
 
+    // jsonデータに格納する、playersの基本要素
+    public const PLAYERS_JSON_DEFAULT_DATA = [
+        'id' => null,
+        'role_id' => null,
+        'name' => '',
+        'command' => '',
+        'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
+        'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
+        'max_value_hp' => 0, // HP最大値
+        'max_value_ap' => 0, // AP最大値
+        'value_hp' => 0,
+        'value_ap' => 0,
+        'value_str' => 0,
+        'value_def' => 0,
+        'value_int' => 0,
+        'value_spd' => 0,
+        'value_luc' => 0,
+        'level' => 0,
+        'total_exp' => 0,
+        'freely_status_point' => 0,
+        'freely_skill_point' => 0,
+        'skills' => 0,
+        'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
+        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'role_portrait' => null,
+        'is_defeated_flag' => false,
+        'is_escaped' => false,
+        'player_index' => null,
+        'is_enemy' => false,
+    ];
+
+    // jsonデータに格納する、buffsの基本要素
+    public const BUFFS_DEFAULT_DATA = [
+        'buffed_skill_id' => null,
+        'buffed_item_id' => null,
+        'buffed_skill_name' => null,
+        'buffed_item_name' => null,
+        'buffed_str' => null,
+        'buffed_def' => null,
+        'buffed_int' => null,
+        'buffed_spd' => null,
+        'buffed_luc' => null,
+        'remaining_turn' => 0,
+        'buffed_from' => '', // 'DEFENSE', 'ITEM', 'SKILL'など、どのコマンドで付与されたものか。
+    ];
+
     // 戦闘後に回復させるHPの倍率
     // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
     private const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
@@ -40,15 +86,22 @@ class BattleState extends Model
 
     private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
-    // エンカウント時の処理
+    /**
+     * 戦闘初回時と、2回目以降のplayers_json_dataに格納する値を作成して返す。
+     * 
+     * @return Collection
+     */
     public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
     {
-        Debugbar::debug('プレイヤーのエンカウントデータ(battlestates.playeys_json_data)を作成します。----------');
+        Debugbar::debug('createPlayersData(): players_json_data 作成。----------');
         $parties = Party::where('savedata_id', $savedata_id)->get();
-        $players_data = collect();
 
-        // クリア後にbattlestateのplayers_dataを作成する場合、HP/APを戦闘後の状態にしておく
+        // id,name,curent_hp,current_apを配列ベースで格納するCollection
+        // ステージクリア後に、HPとAPを引き継ぐために使用する
+        // 0 => ["id" => 72,"name" => "パラ", "current_hp" => 50,"current_ap" => 15],  1 => [...], 2 => [...]
         $players_hp_and_ap_status = collect();
+
+        // TODO: ->を['']を使った形に直す
         if (isset($when_cleared_players_data)) {
             Debugbar::debug('ステージクリア後の作成です。');
             foreach ($when_cleared_players_data as $player_index => $player_data) {
@@ -83,58 +136,50 @@ class BattleState extends Model
                 Debugbar::debug("調整後:{$status['name']} | HP: {$status['current_hp']} AP: {$status['current_ap']}");
 
             }
-            // 新規戦闘の場合は、デフォルトのHP/APを格納する
         } else {
-            Debugbar::debug('新規作成です');
+            // 初回戦闘時
+            Debugbar::debug('新規作成. (player_dataはCollection想定)');
             foreach ($parties as $player_index => $player_data) {
-                $status = collect([
-                    'id' => $player_data->id,
-                    'name' => $player_data->nickname,
-                    'current_hp' => $player_data->value_hp,
-                    'current_ap' => $player_data->value_ap,
-                ]);
+                $status = [
+                    'id' => $player_data['id'],
+                    'name' => $player_data['nickname'],
+                    'current_hp' => $player_data['value_hp'],
+                    'current_ap' => $player_data['value_ap'],
+                ];
                 $players_hp_and_ap_status->push($status);
             }
         }
 
+        $players_data = collect();
         Debugbar::debug('players_json_data登録開始。');
         foreach ($parties as $player_index => $party) {
-            Debugbar::debug("################# {$player_index} 人目");
-            // 会得しているスキルの取得
+            Debugbar::debug("################# {$player_index} 人目 #################");
+            // 会得スキルの取得 (Collection想定)
             $learned_skills = Skill::getLearnedSkill($party);
-            $buffs = [];
-            $role = Role::find($party->role_id);
-            $role_portrait = $role->portrait_image_path;
+            $role_portrait = Role::where('id', $party['role_id'])->value('portrait_image_path');
+
             // vue側に渡すデータ
-            $player_data = collect([
-                'id' => $party->id,
-                'role_id' => $party->role_id,
-                'name' => $party->nickname, // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
-                'command' => null, // exec時に格納する
-                'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
-                'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
-                'max_value_hp' => $party->value_hp, // HP最大値
-                'max_value_ap' => $party->value_ap, // AP最大値
-                'value_hp' => $players_hp_and_ap_status[$player_index]['current_hp'],
-                'value_ap' => $players_hp_and_ap_status[$player_index]['current_ap'],
-                'value_str' => $party->value_str,
-                'value_def' => $party->value_def,
-                'value_int' => $party->value_int,
-                'value_spd' => $party->value_spd,
-                'value_luc' => $party->value_luc,
-                'level' => $party->level,
-                'total_exp' => $party->total_exp,
-                'freely_status_point' => $party->freely_status_point,
-                'freely_skill_point' => $party->freely_skill_point,
-                'skills' => $learned_skills,
-                'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
-                'buffs' => $buffs,
-                'role_portrait' => $role_portrait,
-                'is_defeated_flag' => false,
-                'is_escaped' => false,
-                'player_index' => $player_index, // 味方のパーティ中での並び。
-                'is_enemy' => false,
-            ]);
+            $player_data = self::PLAYERS_JSON_DEFAULT_DATA;
+            $player_data['id'] = $party['id'];
+            $player_data['role_id'] = $party['role_id'];
+            $player_data['name'] = $party['nickname']; // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
+            $player_data['max_value_hp'] = $party['value_hp']; // HP最大値
+            $player_data['max_value_ap'] = $party['value_ap']; // AP最大値
+            $player_data['value_hp'] = $players_hp_and_ap_status[$player_index]['current_hp'];
+            $player_data['value_ap'] = $players_hp_and_ap_status[$player_index]['current_ap'];
+            $player_data['value_str'] = $party['value_str'];
+            $player_data['value_def'] = $party['value_def'];
+            $player_data['value_int'] = $party['value_int'];
+            $player_data['value_spd'] = $party['value_spd'];
+            $player_data['value_luc'] = $party['value_luc'];
+            $player_data['level'] = $party['level'];
+            $player_data['total_exp'] = $party['total_exp'];
+            $player_data['freely_status_point'] = $party['freely_status_point'];
+            $player_data['freely_skill_point'] = $party['freely_skill_point'];
+            $player_data['skills'] = $learned_skills;
+            $player_data['role_portrait'] = $role_portrait;
+            $player_data['player_index'] = $player_index; // 味方のパーティ中での並び。
+
             $players_data->push($player_data);
             DebugBar::debug("{$player_data['name']} 登録完了。");
         }
@@ -513,28 +558,28 @@ class BattleState extends Model
                 // TODO: ボスの場合だけ、この辺りは個別に調整できるようにしておく(固定行動にしたい。)
                 $data->command = 'ATTACK';
                 switch ($data->command) {
-                  case 'ATTACK':
-                    $logs->push("【ATTACK】{$data->name} ");
-                    self::execCommandAttack($data, $players_data, true, $index, $logs);
-                    break;
-                  case 'SKILL':
-                    $logs->push("【SKILL】{$data->name} ");
-                    break;
-                  case 'ITEM':
-                    // 実装予定はないが、使う想定をしておく
-                    $logs->push("【ITEM】{$data->name} ");
-                    break;
-                  case 'DEFENSE':
-                    // 実装予定はないが、使う想定をしておく
-                    $logs->push("【DEFENSE】{$data->name} ");
-                    break;
-                  case 'ESCAPE':
-                    // 実装予定はないが、使う想定をしておく
-                    $logs->push("【ESCAPE】{$data->name} ");
-                    break;
-                  default:
-                    $logs->push("【debug】{$data->name} 無効なコマンドです。");
-                    break;
+                    case 'ATTACK':
+                        $logs->push("【ATTACK】{$data->name} ");
+                        self::execCommandAttack($data, $players_data, true, $index, $logs);
+                        break;
+                    case 'SKILL':
+                        $logs->push("【SKILL】{$data->name} ");
+                        break;
+                    case 'ITEM':
+                        // 実装予定はないが、使う想定をしておく
+                        $logs->push("【ITEM】{$data->name} ");
+                        break;
+                    case 'DEFENSE':
+                        // 実装予定はないが、使う想定をしておく
+                        $logs->push("【DEFENSE】{$data->name} ");
+                        break;
+                    case 'ESCAPE':
+                        // 実装予定はないが、使う想定をしておく
+                        $logs->push("【ESCAPE】{$data->name} ");
+                        break;
+                    default:
+                        $logs->push("【debug】{$data->name} 無効なコマンドです。");
+                        break;
                 }
 
             }
