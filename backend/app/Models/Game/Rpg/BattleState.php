@@ -88,7 +88,7 @@ class BattleState extends Model
 
     /**
      * 戦闘初回時と、2回目以降のplayers_json_dataに格納する値を作成して返す。
-     * 
+     *
      * @return Collection
      */
     public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
