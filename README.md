@@ -17,7 +17,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 ### ツールのバージョン
 
-24.8.24 にインフラ周りの更新作業を行なった。 Pull Request: https://github.com/skonishi1125/laravel_kirthread/pull/34
+24.8.24 にインフラ周りを刷新。 Pull Request: https://github.com/skonishi1125/laravel_kirthread/pull/34
 
 #### PHP
 * PHP v8.2.21
@@ -25,7 +25,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 #### Vue
 * Vue.js v3.4
-* node.js v20.17.0 ※npm導入用
+* node.js v20.17.0 (npm導入用)
 * npm v10.8.2
 * vite v5.4.2 (laravel-mixから移行)
 
@@ -54,7 +54,9 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 * TablePlus
 * SourceTree
 * Pint
+  * https://github.com/skonishi1125/laravel_kirthread/pull/64
 * Larastan (Level5で設定中)
+  * https://github.com/skonishi1125/laravel_kirthread/pull/65
 
 
 
