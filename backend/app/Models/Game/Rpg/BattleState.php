@@ -59,6 +59,31 @@ class BattleState extends Model
         'is_enemy' => false,
     ];
 
+    public const ENEMIES_JSON_DEFAULT_DATA = [
+        'id' => null,
+        'name' => null,
+        'command' => null, // exec時に格納する
+        'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
+        'max_value_hp' => 0, // HP最大値
+        'max_value_ap' => 0, // AP最大値
+        'value_hp' => 0,
+        'value_ap' => 0,
+        'value_str' => 0,
+        'value_def' => 0,
+        'value_int' => 0,
+        'value_spd' => 0,
+        'value_luc' => 0,
+        'portrait' => null,
+        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'is_defeated_flag' => false,
+        'is_escaped' => false,
+        'enemy_index' => null, // 敵の並び。
+        'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+        'is_boss' => false,
+        'exp' => 0,
+        'drop_money' => 0,
+    ];
+
     // jsonデータに格納する、buffsの基本要素
     public const BUFFS_DEFAULT_DATA = [
         'buffed_skill_id' => null,
@@ -93,7 +118,7 @@ class BattleState extends Model
      */
     public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
     {
-        Debugbar::debug('createPlayersData(): players_json_data 作成。----------');
+        Debugbar::debug('createPlayersData(): jsonのベースとなるplayers_data 作成。----------');
         $parties = Party::where('savedata_id', $savedata_id)->get();
 
         // id,name,curent_hp,current_apを配列ベースで格納するCollection
@@ -188,58 +213,57 @@ class BattleState extends Model
 
     }
 
+    /**
+     * 指定したフィールドID、及びステージIDから敵の情報を読み込んで返す。
+     *
+     * @return Collection
+     */
     public static function createEnemiesData(int $field_id, int $stage_id)
     {
-
+        Debugbar::debug('createEnemiesData(): jsonのベースとなるenemies_data 作成。----------');
         $enemies = collect();
-        $enemies_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
-
         Debugbar::debug('敵のプリセットデータを読み込みます。----------');
         $preset_appearing_enemies = PresetAppearingEnemy::where('field_id', $field_id)
             ->where('stage_id', $stage_id)
             ->get();
         foreach ($preset_appearing_enemies as $preset) {
-            $preset_enemy = Enemy::find($preset->enemy_id);
+            $preset_enemy = Enemy::find($preset['enemy_id']);
             if ($preset_enemy) {
-                for ($i = 0; $i < $preset->number; $i++) {
+                for ($i = 0; $i < $preset['number']; $i++) {
                     $enemies->push($preset_enemy);
                 }
             }
         }
-        Debugbar::debug([
-            'preset_appearing_enemies' => $preset_appearing_enemies,
-            'enemies' => $enemies,
-        ]);
+        // Debugbar::debug([
+        //     'preset_appearing_enemies' => $preset_appearing_enemies,
+        //     'enemies' => $enemies,
+        // ]);
 
+        // $enemiesを加工して格納するためのCollection
+        $enemies_data = collect();
         foreach ($enemies as $enemy_index => $enemy) {
-            $buffs = [];
+            $enemy_data = self::ENEMIES_JSON_DEFAULT_DATA;
+            $enemy_data['id'] = $enemy['id'];
+            $enemy_data['name'] = $enemy['name'];
+            $enemy_data['max_value_hp'] = $enemy['value_hp']; // HP最大値
+            $enemy_data['max_value_ap'] = $enemy['value_ap']; // AP最大値
+            $enemy_data['value_hp'] = $enemy['value_hp'];
+            $enemy_data['value_ap'] = $enemy['value_ap'];
+            $enemy_data['value_str'] = $enemy['value_str'];
+            $enemy_data['value_def'] = $enemy['value_def'];
+            $enemy_data['value_int'] = $enemy['value_int'];
+            $enemy_data['value_spd'] = $enemy['value_spd'];
+            $enemy_data['value_luc'] = $enemy['value_luc'];
+            $enemy_data['portrait'] = $enemy['portrait_image_path'];
+            $enemy_data['enemy_index'] = $enemy_index; // 敵の並び。
+            $enemy_data['is_boss'] = $enemy['is_boss'];
+            $enemy_data['exp'] = $enemy['exp'];
+            $enemy_data['drop_money'] = $enemy['drop_money'];
 
-            $enemy_data = collect([
-                'id' => $enemy->id,
-                'name' => $enemy->name,
-                'command' => null, // exec時に格納する
-                'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
-                'max_value_hp' => $enemy->value_hp, // HP最大値
-                'max_value_ap' => $enemy->value_ap, // AP最大値
-                'value_hp' => $enemy->value_hp,
-                'value_ap' => $enemy->value_ap,
-                'value_str' => $enemy->value_str,
-                'value_def' => $enemy->value_def,
-                'value_int' => $enemy->value_int,
-                'value_spd' => $enemy->value_spd,
-                'value_luc' => $enemy->value_luc,
-                'portrait' => $enemy->portrait_image_path,
-                'buffs' => $buffs,
-                'is_defeated_flag' => false,
-                'is_escaped' => false,
-                'enemy_index' => $enemy_index, // 敵の並び。
-                'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
-                'is_boss' => $enemy->is_boss,
-                'exp' => $enemy->exp,
-                'drop_money' => $enemy->drop_money,
-            ]);
             $enemies_data->push($enemy_data);
         }
+
+        Debugbar::debug($enemies_data);
 
         return $enemies_data;
     }
