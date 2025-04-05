@@ -254,7 +254,7 @@
               </div>
             </div>
 
-            <div class="command-list-row" @click="handleCommandSelection('DEFENCE')" @mouseover="showCommandDescription('DEFENCE')" @mouseleave="clearAllDescription">DEFENCE</div>
+            <div class="command-list-row" @click="handleCommandSelection('DEFENSE')" @mouseover="showCommandDescription('DEFENSE')" @mouseleave="clearAllDescription">DEFENSE</div>
 
             <div class="btn-group dropright">
               <div class="command-list-row dropdown-toggle" style="width: 100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @mouseover="showCommandDescription('ITEM')" @mouseleave="clearAllDescription">
@@ -455,7 +455,7 @@ export default {
         case 'SKILL': 
           description = 'APを消費した技を使うことで戦闘を優位に進めることができます。'
           break;
-        case 'DEFENCE': 
+        case 'DEFENSE': 
           description = '選択したターンの間、相手の攻撃を軽減します。'
           break;
         case 'ITEM': 
@@ -528,7 +528,7 @@ export default {
       }
     },
 
-    // 敵選択後もしくは DEFENCEなど敵選択の必要がない処理を選択後、コマンド処理に戻る時に動かす処理
+    // 敵選択後もしくは DEFENSEなど敵選択の必要がない処理を選択後、コマンド処理に戻る時に動かす処理
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
       this.hoveredDescription = null; // スキルの説明文を消しておく
@@ -619,8 +619,8 @@ export default {
             this.$store.dispatch('setBattleStatus', 'partySelect');
           }
           break;
-        case ("DEFENCE") :
-          console.log('DEFENCE選択。');
+        case ("DEFENSE") :
+          console.log('DEFENSE選択。');
           this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
           // 防御は敵を指定する必要がないので、enemySelectに遷移させない。
           this.$store.dispatch('incrementPartyMemberIndex');
@@ -659,7 +659,7 @@ export default {
           this.battleCommandSetup();
           break;
         case ("ESCAPE") :
-          // DEFENCEと同じ。コマンド情報を格納し、敵を指定する必要はないので次のキャラに。
+          // DEFENSEと同じ。コマンド情報を格納し、敵を指定する必要はないので次のキャラに。
           console.log('ESCAPE選択。');
           this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
           this.$store.dispatch('incrementPartyMemberIndex');
