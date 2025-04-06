@@ -57,9 +57,9 @@ class BattleState extends Model
         'total_exp' => 0,
         'freely_status_point' => 0,
         'freely_skill_point' => 0,
-        'skills' => 0,
+        'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::getLearnedSkill($party);みたいな感じでそのまま上書きされる
         'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
-        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
         'role_portrait' => null,
         'is_defeated_flag' => false,
         'is_escaped' => false,
@@ -82,23 +82,28 @@ class BattleState extends Model
         'value_spd' => 0,
         'value_luc' => 0,
         'portrait' => null,
-        'buffs' => self::BUFFS_DEFAULT_DATA,
+        'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
         'is_defeated_flag' => false,
         'is_escaped' => false,
         'enemy_index' => null, // 敵の並び。
-        'is_enemy' => true, // 味方と敵で同じデータを呼んでいるので、敵フラグを立てておく
+        'is_enemy' => true, // 味方と敵で同じデータ構造をベースとしているので、判別するためのフラグ
         'is_boss' => false,
         'exp' => 0,
         'drop_money' => 0,
     ];
 
-    // jsonデータに格納する、buffsの基本要素
+    /**
+     * jsonデータに格納する、buffsの基本要素
+     *
+     * 実際はこの配列が、順に格納されていく形になる
+     * 'buffs => [ [バフ1], [バフ2], [バフ3], ... ]'
+     */
     public const BUFFS_DEFAULT_DATA = [
         'buffed_skill_id' => null,
         'buffed_item_id' => null,
         'buffed_skill_name' => null,
         'buffed_item_name' => null,
-        'buffed_str' => 15,
+        'buffed_str' => null,
         'buffed_def' => null,
         'buffed_int' => null,
         'buffed_spd' => null,
@@ -542,15 +547,22 @@ class BattleState extends Model
 
                         break;
                     case 'DEFENSE':
-                        // 防御というバフを1ターン、150%の補正でかけておく
+                        // "防御"バフを 1ターン、def * 0.5の補正として付与する。
+                        // 例: value_defが60の場合、バフは30となり合計DEFは90となる
                         Debugbar::debug("【防御】使用者: {$actor_data->name} ");
-                        $buffs = [
-                            // 10の場合、+5されて合計15になる
-                            'buffed_def' => ceil((int) $actor_data->value_def * 0.5),
-                            'remaining_turn' => 1,
-                            'buffed_from' => 'DEFENSE',
-                        ];
-                        $actor_data->buffs[] = $buffs;
+                        $new_buff = self::BUFFS_DEFAULT_DATA;
+                        $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * 0.5);
+                        $new_buff['remaining_turn'] = 1;
+                        $new_buff['buffed_from'] = 'DEFENSE';
+
+                        $actor_data->buffs[] = $new_buff;
+                        Debugbar::debug([
+                            'message' => 'CASE: DEFENSE ---------------------- ',
+                            'new_buff' => $new_buff,
+                            'gettype($new_buff)' => gettype($new_buff),
+                            'actor_data' => $actor_data,
+                            'actor_data->buffs' => $actor_data->buffs,
+                        ]);
                         $battle_logs_collection->push("{$actor_data->name}は防御の構えを取った！");
                         break;
                     case 'ESCAPE':
@@ -682,7 +694,7 @@ class BattleState extends Model
                     return;
                 }
             }
-            // ATTACK時のダメージ計算
+            // ATTACK時の基礎ダメージ: 基礎STRとバフのSTRの合計値
             $pure_damage = self::calculateActualStatusValue($actor_data, 'str');
 
             Debugbar::debug("【味方】STRの実数値。（ATTACKの場合、これが純粋なダメージ量となる。） : {$pure_damage}");
@@ -706,13 +718,13 @@ class BattleState extends Model
                     Debugbar::warning("すべての味方が倒れました。敵数: {$battle_state_opponents_collection->count()}");
                 }
             }
-            // ATTACK時のダメージ計算 相手の防御力などは後で考慮する
-            $damage = self::calculateActualStatusValue($actor_data, 'str');
-            Debugbar::warning("（敵）純粋なダメージ量(STRの値。) : {$damage}");
+            // ATTACK時の基礎ダメージ: 基礎STRとバフのSTRの合計値
+            $pure_damage = self::calculateActualStatusValue($actor_data, 'str');
+            Debugbar::debug("【味方】STRの実数値。（ATTACKの場合、これが純粋なダメージ量となる。） : {$pure_damage}");
 
             // 画面に表示するログの記録
             self::storeEnemyDamage(
-                'ATTACK', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $damage
+                'ATTACK', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $pure_damage
             );
         }
     }
@@ -1745,7 +1757,7 @@ class BattleState extends Model
      */
     public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def): int
     {
-        Debugbar::debug("calculatePhysicalDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_def}");
+        Debugbar::debug("calculatePhysicalDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_def}");
 
         // ゼロ除算対策
         if ($pure_damage <= 0) {
@@ -1754,11 +1766,12 @@ class BattleState extends Model
 
         // 非線形のベースダメージ計算 atk² / (atk + def)
         $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_def);
+        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_def}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
         $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
-        Debugbar::debug("計算結果: base = {$base_damage}, variance = {$variance_rate}, final = {$final_damage}");
+        Debugbar::debug("計算結果: ダメージ = {$base_damage}, ばらつき = {$variance_rate}, 最終ダメージ: {$final_damage}");
 
         // ダメージが0の場合、確率で1ダメージにする
         // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
@@ -1784,7 +1797,7 @@ class BattleState extends Model
      */
     public static function calculateMagicDamage(int $pure_damage, int $opponent_mdef): int
     {
-        Debugbar::debug("calculateMagicDamage(): --- 純粋なダメージ: {$pure_damage} 相手DEF: {$opponent_mdef}");
+        Debugbar::debug("calculateMagicDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_mdef}");
 
         // ゼロ除算対策
         if ($pure_damage <= 0) {
@@ -1793,11 +1806,12 @@ class BattleState extends Model
 
         // 非線形のベースダメージ計算 atk² / (atk + mdef)
         $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_mdef);
+        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_mdef}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
         $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
-        Debugbar::debug("計算結果: base = {$base_damage}, variance = {$variance_rate}, final = {$final_damage}");
+        Debugbar::debug("計算結果: ダメージ = {$base_damage}, ばらつき = {$variance_rate}, 最終ダメージ: {$final_damage}");
 
         // ダメージが0の場合、確率で1ダメージにする
         // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
@@ -1834,45 +1848,26 @@ class BattleState extends Model
      */
     public static function calculateActualStatusValue(object $actor_or_opponent_data, string $status_name)
     {
-        // returnする、基礎値 + バフが加算された実数値
-        $actual_status_value = 0;
-        $buffed_status_name = '';
-
         Debugbar::debug("calculateActualStatusValue(): --- {$actor_or_opponent_data->name}のバフ含めたステータス {$status_name} の計算");
+        $buffed_status_name = 'buffed_'.$status_name;
 
-        switch ($status_name) {
-            case 'hp':
-                $actual_status_value = $actor_or_opponent_data->value_hp;
-                $buffed_status_name = 'buffed_hp';
-                break;
-            case 'ap':
-                $actual_status_value = $actor_or_opponent_data->value_ap;
-                $buffed_status_name = 'buffed_ap';
-                break;
-            case 'str':
-                $actual_status_value = $actor_or_opponent_data->value_str;
-                $buffed_status_name = 'buffed_str';
-                break;
-            case 'def':
-                $actual_status_value = $actor_or_opponent_data->value_def;
-                $buffed_status_name = 'buffed_def';
-                break;
-            case 'int':
-                $actual_status_value = $actor_or_opponent_data->value_int;
-                $buffed_status_name = 'buffed_int';
-                break;
-            case 'spd':
-                $actual_status_value = $actor_or_opponent_data->value_spd;
-                $buffed_status_name = 'buffed_spd';
-                break;
-            case 'luc':
-                $actual_status_value = $actor_or_opponent_data->value_luc;
-                $buffed_status_name = 'buffed_luc';
-                break;
+        // 前提として、$actor_or_opponent_data->buffsが空配列[]ならそのままステータスの値を返す。
+        if (empty($actor_or_opponent_data->buffs)) {
+            Debugbar::debug('付与されているバフがないため、ステータス基準の値をそのまま返します。');
+
+            return $actor_or_opponent_data->{'value_'.$status_name};
         }
 
-        // Debugbar::debug($actor_or_opponent_data->buffs, $actor_or_opponent_data->buffs->$buffed_status_name);
-        $actual_status_value += $actor_or_opponent_data->buffs->$buffed_status_name;
+        // 素の値を取得
+        $actual_status_value = $actor_or_opponent_data->{'value_'.$status_name};
+
+        // 各バフの合計値を加算する
+        foreach ($actor_or_opponent_data->buffs as $buff) {
+            if (isset($buff[$buffed_status_name])) {
+                $actual_status_value += (int) $buff[$buffed_status_name];
+            }
+        }
+
         Debugbar::debug("バフを考慮した合計 {$status_name} : {$actual_status_value}");
 
         return $actual_status_value;
