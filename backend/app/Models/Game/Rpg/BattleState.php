@@ -1363,6 +1363,36 @@ class BattleState extends Model
     }
 
     /**
+     * 固有の能力を持つスキル処理メソッド。
+     *
+     * パラ の ワイドガード など、使いまわせない固有スキルの処理をswitch文で対応する。
+     */
+    public static function storePartySpecialSkill(
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        array $new_buff,
+        object $selected_skill_data
+    ) {
+
+        Debugbar::debug("【特殊スキル】使用者: {$actor_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
+
+        // スキル別に個別の処理を回す。
+        switch ($selected_skill_data->id) {
+            case 31 : // ワイドガード
+                foreach ($battle_state_opponents_collection as $opponent_data) {
+                    Debugbar::debug("付与対象:{$opponent_data->name}");
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
      * 状況に応じて、バフを上書きするか追加する処理
      *
      * バフスキル,アイテムを使用した時、戦闘不能な場合やすでに同じバフが付与されている時に重複させるかなどを調整する
@@ -1409,36 +1439,6 @@ class BattleState extends Model
         Debugbar::debug('新しいバフ追加');
         $opponent_data->buffs[] = $new_buff;
 
-    }
-
-    /**
-     * 固有の能力を持つスキル処理メソッド。
-     *
-     * パラ の ワイドガード など、使いまわせない固有スキルの処理をswitch文で対応する。
-     */
-    public static function storePartySpecialSkill(
-        object $actor_data,
-        Collection $battle_state_opponents_collection,
-        ?int $opponents_index,
-        Collection $battle_logs_collection,
-        array $new_buff,
-        object $selected_skill_data
-    ) {
-
-        Debugbar::debug("【特殊スキル】使用者: {$actor_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
-
-        // スキル別に個別の処理を回す。
-        switch ($selected_skill_data->id) {
-            case 31 : // ワイドガード
-                foreach ($battle_state_opponents_collection as $opponent_data) {
-                    Debugbar::debug("付与対象:{$opponent_data->name}");
-                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
-                }
-                break;
-
-            default:
-                break;
-        }
     }
 
     /**
