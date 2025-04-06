@@ -426,49 +426,49 @@ class BattleState extends Model
                         self::execCommandAttack($actor_data, $battle_state_enemies_collection, false, $actor_data->target_enemy_index, $battle_logs_collection);
                         break;
                     case 'SKILL':
-                        // 対象が味方の場合があるので、$opponents_dataとして定義する
-                        $opponents_data = collect();
+                        $battle_state_opponents_collection = collect();
                         if (($actor_data->target_enemy_index !== null)) {
                             Debugbar::debug('target_enemy_indexが入っているので敵グループを対象として格納。');
-                            $opponents_data = $battle_state_enemies_collection;
+                            $battle_state_opponents_collection = $battle_state_enemies_collection;
                             $opponents_index = $actor_data->target_enemy_index;
                         } elseif (($actor_data->target_player_index !== null)) {
                             Debugbar::debug('target_player_indexが入っているので味方グループを対象として選択。');
-                            $opponents_data = $battle_state_players_collection;
+                            $battle_state_opponents_collection = $battle_state_players_collection;
                             $opponents_index = $actor_data->target_player_index;
                         } else {
-                            // 敵味方ともに対象のindexが格納されていないなら、範囲系のスキル。
-                            // それぞれ$opponents_dataに条件に合うデータを格納。
+                            // 敵味方ともに対象のindexが格納されていないなら、それ以外のスキル。
+                            // 範囲スキル, もしくは自己強化(target_indexを指定する必要がないスキル)。
+                            // それぞれ$battle_state_opponents_collectionに条件に合うデータを格納。
                             // 攻撃系スキルなら敵を, 回復またはバフ系スキルなら味方を入れる。
-                            // 範囲技の場合は$opponents_indexは格納せず、nullのままとする。
+                            // それ以外技の場合は$opponents_indexは格納せず、nullのままとする。
                             $opponents_index = null;
-                            Debugbar::debug('target_player_indexが格納されていないため、範囲系のスキルが選択されました。');
+                            Debugbar::debug('target_player_indexが格納されていないため、それ以外のスキルが選択されました。');
 
                             switch ($actor_data->selected_skill_effect_type) {
                                 case Skill::EFFECT_SPECIAL_TYPE:
                                     // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
-                                    Debugbar::debug('特殊系範囲スキル。');
+                                    Debugbar::debug('特殊系スキル。');
                                     if ($actor_data->selected_skill_id == 31) {
                                         Debugbar::debug("ワイドガード: 味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
-                                        $opponents_data = $battle_state_players_collection;
+                                        $battle_state_opponents_collection = $battle_state_players_collection;
                                     }
                                     break;
                                 case Skill::EFFECT_DAMAGE_TYPE:
-                                    Debugbar::debug("攻撃系範囲スキルのため敵情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
-                                    $opponents_data = $battle_state_enemies_collection;
+                                    Debugbar::debug("攻撃系スキルのため敵情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $battle_state_opponents_collection = $battle_state_enemies_collection;
                                     break;
                                 case Skill::EFFECT_HEAL_TYPE:
-                                    Debugbar::debug("回復系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
-                                    $opponents_data = $battle_state_players_collection;
+                                    Debugbar::debug("回復系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                                 case Skill::EFFECT_BUFF_TYPE:
                                     // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
-                                    Debugbar::debug("バフ系範囲スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
-                                    $opponents_data = $battle_state_players_collection;
+                                    Debugbar::debug("バフ系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                             }
                         }
-                        self::execCommandSkill($actor_data, $opponents_data, false, $opponents_index, $battle_logs_collection);
+                        self::execCommandSkill($actor_data, $battle_state_opponents_collection, false, $opponents_index, $battle_logs_collection);
                         break;
                     case 'ITEM':
                         // 選択したアイテムの情報を$battle_state_items_collectionから取得する
@@ -730,33 +730,41 @@ class BattleState extends Model
         }
     }
 
-    /*
-     コマンドとして"SKILL"を選択した時の処理
-     * $self_data: 行動実行するキャラクター/敵のデータ
-     * $opponent_data: 対象とするキャラクター/敵のデータ
-     * $opponents_index:
-        対象とするキャラクター/敵のインデックス。 真ん中の味方に向けた場合は[1]などが入る
-        全体攻撃スキルを使った場合, $opponents_indexはnullであるため許容しておく (?int)
-    */
+    /**
+     * コマンド "SKILL" 選択時の処理
+     *
+     * $opponents_indexは 並び中央の味方に向けた場合は[1]が入るが、
+     * 全体攻撃スキルを使った場合, $opponents_indexはnullであるため?で許容しておく。
+     *
+     * @param  object  $actor_data  Collectionをforeachで回しているうちのデータの1つ stdClass Object型
+     * @param  bool  $is_enemy  $battle_state_opponents_collectionが敵かどうかの判定フラグ
+     * @param  ?int  $opponents_index  $actor_dataが対象とした相手のindex (ここで言うインデックスは、画面上の並びのこと)
+     * @param  Collection  $battle_logs_collection  画面に表示させるログを格納するコレクション
+     */
     private static function execCommandSkill(
-        object $self_data, Collection $opponents_data, bool $is_enemy, ?int $opponents_index, Collection $logs
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        bool $is_enemy,
+        ?int $opponents_index,
+        Collection $battle_logs_collection
     ) {
         Debugbar::debug('execCommandSkill(): ----------------------');
-        $selected_skill = collect($self_data->skills)->firstWhere('id', $self_data->selected_skill_id);
-        // Debugbar::debug(get_class($selected_skill)); // stdClass
-
+        // firstWhereを使用するため、collectionとして一時的にキャスト
+        /** @var \stdClass $selected_skill Skill::PLAYERS_JSON_SKILLS_DEFAULT_DATA に各データが格納されたオブジェクト。 */
+        $selected_skill = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
+        Debugbar::debug($selected_skill);
         // APがなければ、ログに入れて処理を終了する
-        if ($self_data->value_ap < $selected_skill->ap_cost) {
-            $logs->push("{$self_data->name}は{$selected_skill->name}を試みたがAPが足りなかった！");
+        if ($actor_data->value_ap < $selected_skill->ap_cost) {
+            $battle_logs_collection->push("{$actor_data->name}は{$selected_skill->name}の発動を試みたがAPが足りなかった！");
 
             return;
         }
 
         if ($is_enemy == false) {
-            // どの職業の、どのスキル
-            Skill::decideExecSkill($self_data->role_id, $selected_skill, $self_data, $opponents_data, $is_enemy, $opponents_index, $logs);
+            // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
+            Skill::decideExecSkill($actor_data->role_id, $selected_skill, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
         } else {
-            // todo: 敵もこの処理で技を使えるようにする
+            // TODO: 敵もこの処理で技を使えるようにする
         }
     }
 
@@ -1308,31 +1316,40 @@ class BattleState extends Model
 
     /**
      * スキルまたはアイテムを使用してのバフ付与処理
+     *
+     * $battle_state_opponents_collectionは、battle_stateのCollection化したjsonデータ。
+     * 複数データ入っているので、単体で使いたい場合は$opponents_indexで添字を指定して使う。
      */
     public static function storePartyBuff(
-        string $command, object $self_data, Collection $opponents_data,
-        ?int $opponents_index, Collection $logs, array $new_buff, int $target_range
+        string $command,
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        array $new_buff,
+        int $target_range
     ) {
         switch ($command) {
             case 'SKILL':
-                Debugbar::debug('バフスキル発動。');
-                if ($target_range == Skill::TARGET_RANGE_SINGLE) {
-                    Debugbar::debug("【単体バフ】使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+                Debugbar::debug('storePartyBuff(): SKILL ------------------------------');
+                if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                    /** @var \stdClass $opponent_data */
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                    Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
 
                     // 戦闘不能ならスキップ
-                    if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
-                        $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+                    // TODO: if-elseで描いてるけどcontinueとかreturnでさっさと終わらせて、無駄なインデントをなくす
+                    if ($opponent_data->is_defeated_flag == true) {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
                     } else {
-                        // 同じバフがかかっているかどうかをチェック
-                        Debugbar::debug($opponents_data[$opponents_index]->buffs);
+                        // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
                         $buff_exists = false;
 
-                        // $new_buffの方は配列なので['']で呼ばないとエラーになる
-                        foreach ($opponents_data[$opponents_index]->buffs as &$already_buff) {
+                        foreach ($opponent_data->buffs as &$already_buff) {
+                            // 配列・オブジェクトどちらにも対応させるためキャスト
+                            // afterExecCommandCalculateBuff()の方ではバフをobjectにキャストしているが、今回はarrayの$new_buffの方に合わせてみる。
+                            // どっちがいいのかは判断が現状難しいので、また決める。
                             $already_buff = (array) $already_buff;
-                            Debugbar::debug($new_buff['buffed_skill_id']); // 型キャストチェック
-                            Debugbar::debug($already_buff['buffed_skill_id']); // 型キャストチェック
-
                             if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
                                 Debugbar::debug('既にバフが付与されているためターン数を更新します。');
                                 $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
@@ -1344,26 +1361,23 @@ class BattleState extends Model
                         // 同じ buffed_skill_id がなければ、新しいバフを追加
                         if (! $buff_exists) {
                             Debugbar::debug('新しいバフ追加');
-                            $opponents_data[$opponents_index]->buffs[] = $new_buff;
+                            $opponent_data->buffs[] = $new_buff;
                         }
 
-                        $logs->push("{$opponents_data[$opponents_index]->name}のステータスが向上！");
+                        $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
 
                     }
 
                 } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
-                    // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
-                    Debugbar::debug("【全体バフ】使用者: {$self_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
-                    foreach ($opponents_data as $opponent_data) {
-                        // 戦闘不能ならスキップ
+                    Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
                         if ($opponent_data->is_defeated_flag == true) {
+                            // 全体バフの場合は、バフがつかなかったということをbattle_collection_logsには記載しない
                             Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
                         } else {
-                            // 同じバフがかかっているかどうかをチェック
-                            Debugbar::debug($opponent_data->buffs);
+                            // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
                             $buff_exists = false;
 
-                            // $new_buffの方は配列なので['']で呼ばないとエラーになる
                             foreach ($opponent_data->buffs as &$already_buff) {
                                 $already_buff = (array) $already_buff;
                                 if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
@@ -1383,16 +1397,14 @@ class BattleState extends Model
                         }
                     }
 
-                    $logs->push('全員の特定の能力値が向上！');
+                    $battle_logs_collection->push('全員のステータスが向上！');
                 } elseif ($target_range == Skill::TARGET_RANGE_SELF) {
                     // 自分に付与する
-                    Debugbar::debug("【自分自身へのバフ】使用者: {$self_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
-                    // 同じバフがかかっているかどうかをチェック
-                    Debugbar::debug($self_data->buffs);
+                    Debugbar::debug("【自分自身へのバフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+                    // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
                     $buff_exists = false;
 
-                    // $new_buffの方は配列なので['']で呼ばないとエラーになる
-                    foreach ($self_data->buffs as &$already_buff) {
+                    foreach ($actor_data->buffs as &$already_buff) {
                         $already_buff = (array) $already_buff;
                         if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
                             Debugbar::debug('既にバフが付与されているためターン数を更新します。');
@@ -1405,27 +1417,27 @@ class BattleState extends Model
                     // 同じ buffed_skill_id がなければ、新しいバフを追加
                     if (! $buff_exists) {
                         Debugbar::debug('新しいバフ追加');
-                        $self_data->buffs[] = $new_buff;
+                        $actor_data->buffs[] = $new_buff;
                     }
 
-                    $logs->push("{$self_data->name}のステータスが向上！");
+                    $battle_logs_collection->push("{$actor_data->name}のステータスが向上！");
                 }
                 break;
             case 'ITEM':
                 Debugbar::debug('バフアイテム使用。');
                 if ($target_range == Item::TARGET_RANGE_SINGLE) {
-                    Debugbar::debug("【単体バフ】使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+                    Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$battle_state_opponents_collection[$opponents_index]->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
 
                     // 戦闘不能ならスキップ
-                    if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
-                        $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+                    if ($battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true) {
+                        $battle_logs_collection->push("しかし{$battle_state_opponents_collection[$opponents_index]->name}は戦闘不能のため効果が無かった！");
                     } else {
                         // 同じバフがかかっているかどうかをチェック
-                        Debugbar::debug($opponents_data[$opponents_index]->buffs);
+                        Debugbar::debug($battle_state_opponents_collection[$opponents_index]->buffs);
                         $buff_exists = false;
 
                         // $new_buffの方は配列なので['']で呼ばないとエラーになる
-                        foreach ($opponents_data[$opponents_index]->buffs as &$already_buff) {
+                        foreach ($battle_state_opponents_collection[$opponents_index]->buffs as &$already_buff) {
                             $already_buff = (array) $already_buff;
                             Debugbar::debug($new_buff['buffed_item_id']); // 型キャストチェック
                             Debugbar::debug($already_buff['buffed_item_id']); // 型キャストチェック
@@ -1441,17 +1453,17 @@ class BattleState extends Model
                         // 同じ buffed_skill_id がなければ、新しいバフを追加
                         if (! $buff_exists) {
                             Debugbar::debug('新しいバフ追加');
-                            $opponents_data[$opponents_index]->buffs[] = $new_buff;
+                            $battle_state_opponents_collection[$opponents_index]->buffs[] = $new_buff;
                         }
 
-                        $logs->push("{$opponents_data[$opponents_index]->name}のステータスが向上！");
+                        $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}のステータスが向上！");
 
                     }
 
                 } elseif ($target_range == Item::TARGET_RANGE_ALL) {
-                    // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
-                    Debugbar::debug("【全体バフ】使用者: {$self_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
-                    foreach ($opponents_data as $opponent_data) {
+                    // $battle_state_opponents_collectionに対象が全て入っているはずなので、それで回復を回すと良い
+                    Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
                         // 戦闘不能ならスキップ
                         if ($opponent_data->is_defeated_flag == true) {
                             Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
@@ -1478,7 +1490,7 @@ class BattleState extends Model
                             }
                         }
                     }
-                    $logs->push('全員の特定の能力値が向上！');
+                    $battle_logs_collection->push('全員の特定の能力値が向上！');
                 }
                 break;
             default:
