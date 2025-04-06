@@ -1337,91 +1337,15 @@ class BattleState extends Model
                     /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
-
-                    // 戦闘不能ならスキップ
-                    // TODO: if-elseで描いてるけどcontinueとかreturnでさっさと終わらせて、無駄なインデントをなくす
-                    if ($opponent_data->is_defeated_flag == true) {
-                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
-                    } else {
-                        // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
-                        $buff_exists = false;
-
-                        foreach ($opponent_data->buffs as &$already_buff) {
-                            // 配列・オブジェクトどちらにも対応させるためキャスト
-                            // afterExecCommandCalculateBuff()の方ではバフをobjectにキャストしているが、今回はarrayの$new_buffの方に合わせてみる。
-                            // どっちがいいのかは判断が現状難しいので、また決める。
-                            $already_buff = (array) $already_buff;
-                            if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
-                                Debugbar::debug('既にバフが付与されているためターン数を更新します。');
-                                $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
-                                $buff_exists = true;
-                                break;
-                            }
-                        }
-
-                        // 同じ buffed_skill_id がなければ、新しいバフを追加
-                        if (! $buff_exists) {
-                            Debugbar::debug('新しいバフ追加');
-                            $opponent_data->buffs[] = $new_buff;
-                        }
-
-                        $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
-
-                    }
-
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
                 } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
                     Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
                     foreach ($battle_state_opponents_collection as $opponent_data) {
-                        if ($opponent_data->is_defeated_flag == true) {
-                            // 全体バフの場合は、バフがつかなかったということをbattle_collection_logsには記載しない
-                            Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
-                        } else {
-                            // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
-                            $buff_exists = false;
-
-                            foreach ($opponent_data->buffs as &$already_buff) {
-                                $already_buff = (array) $already_buff;
-                                if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
-                                    Debugbar::debug('既にバフが付与されているためターン数を更新します。');
-                                    $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
-                                    $buff_exists = true;
-                                    break;
-                                }
-                            }
-
-                            // 同じ buffed_skill_id がなければ、新しいバフを追加
-                            if (! $buff_exists) {
-                                Debugbar::debug('新しいバフ追加');
-                                $opponent_data->buffs[] = $new_buff;
-                            }
-
-                        }
+                        self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
                     }
-
-                    $battle_logs_collection->push('全員のステータスが向上！');
                 } elseif ($target_range == Skill::TARGET_RANGE_SELF) {
-                    // 自分に付与する
                     Debugbar::debug("【自分自身へのバフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
-                    // まずはじめに、すでに存在しているバフを重複して付与したかをチェック
-                    $buff_exists = false;
-
-                    foreach ($actor_data->buffs as &$already_buff) {
-                        $already_buff = (array) $already_buff;
-                        if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
-                            Debugbar::debug('既にバフが付与されているためターン数を更新します。');
-                            $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
-                            $buff_exists = true;
-                            break;
-                        }
-                    }
-
-                    // 同じ buffed_skill_id がなければ、新しいバフを追加
-                    if (! $buff_exists) {
-                        Debugbar::debug('新しいバフ追加');
-                        $actor_data->buffs[] = $new_buff;
-                    }
-
-                    $battle_logs_collection->push("{$actor_data->name}のステータスが向上！");
+                    self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $target_range);
                 }
                 break;
             case 'ITEM':
@@ -1500,16 +1424,69 @@ class BattleState extends Model
     }
 
     /**
+     * 状況に応じて、バフを上書きするか追加する処理
+     */
+    private static function adjustBuffFromSituation(
+        object $opponent_data,
+        array $new_buff,
+        Collection $battle_logs_collection,
+        int $target_range
+    ) {
+        Debugbar::debug("adjustBuffFromSituation() {$opponent_data->name}のバフを調整します。");
+        // 戦闘不能ならスキップ
+        if ($opponent_data->is_defeated_flag == true) {
+            if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
+                $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+            }
+            // 全体バフの場合は、バフがつかなかったということをbattle_collection_logsには記載しない
+            Debugbar::debug("{$opponent_data->name} は戦闘不能のため不発。(ただしAPは減衰する) 処理終了");
+
+            return;
+        }
+
+        if ($target_range === Skill::TARGET_RANGE_SINGLE || $target_range === Skill::TARGET_RANGE_SELF) {
+            $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
+        } elseif ($target_range === Skill::TARGET_RANGE_ALL) {
+            $battle_logs_collection->push('全員のステータスが向上！');
+        }
+
+        // すでに存在しているバフを重複して付与した場合は、ターン数を伸ばしてreturnする
+        foreach ($opponent_data->buffs as &$already_buff) {
+            // 配列・オブジェクトどちらにも対応させるためキャスト
+            // afterExecCommandCalculateBuff()の方ではバフをobjectにキャストしているが、今回はarrayの$new_buffの方に合わせてみる。
+            // どっちがいいのかは判断が現状難しいので、また決める。
+            $already_buff = (array) $already_buff;
+            if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
+                Debugbar::debug('既にバフが付与されているためターン数を更新します。');
+                $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
+
+                return;
+            }
+        }
+
+        // 同じ buffed_skill_id がなければ、新しいバフを追加
+        Debugbar::debug('新しいバフ追加');
+        $opponent_data->buffs[] = $new_buff;
+
+        if ($target_range === Skill::TARGET_RANGE_SINGLE || $target_range === Skill::TARGET_RANGE_SELF) {
+            $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
+        } elseif ($target_range === Skill::TARGET_RANGE_ALL) {
+            $battle_logs_collection->push('全員のステータスが向上！');
+        }
+    }
+
+    /**
      * 固有の能力を持つスキル処理メソッド。
-     * 
+     *
      * パラ の ワイドガード など、使いまわせない固有スキルの処理をswitch文で対応する。
      */
     public static function storePartySpecialSkill(
-        object $actor_data, 
+        object $actor_data,
         Collection $battle_state_opponents_collection,
         ?int $opponents_index,
-        Collection $logs,
-        array $new_buff, 
+        Collection $battle_logs_collection,
+        array $new_buff,
         object $selected_skill
     ) {
 
@@ -1521,27 +1498,7 @@ class BattleState extends Model
                 // TODO: storePartyBuffの処理とほぼ同じなので、共通化できるかも。
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
-                    // 戦闘不能ならスキップ
-                    if ($opponent_data->is_defeated_flag == true) {
-                        Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
-                    } else {
-                        $buff_exists = false; // 同じバフがかかっているかどうかをチェック
-                        foreach ($opponent_data->buffs as &$already_buff) {
-                            $already_buff = (array) $already_buff;
-                            if ($already_buff['buffed_skill_id'] === $new_buff['buffed_skill_id']) {
-                                Debugbar::debug('既にバフが付与されているためターン数を更新します。');
-                                $already_buff['remaining_turn'] = $new_buff['remaining_turn']; // 新しいバフターン数で上書き
-                                $buff_exists = true;
-                                break;
-                            }
-                        }
-
-                        // 同じ buffed_skill_id がなければ、新しいバフを追加
-                        if (! $buff_exists) {
-                            Debugbar::debug('新しいバフ追加');
-                            $opponent_data->buffs[] = $new_buff;
-                        }
-                    }
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill->target_range);
                 }
                 break;
 
