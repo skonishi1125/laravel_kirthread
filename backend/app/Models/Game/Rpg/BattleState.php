@@ -110,7 +110,7 @@ class BattleState extends Model
         'buffed_spd' => null,
         'buffed_luc' => null,
         'remaining_turn' => 0,
-        'buffed_from' => '', // 'DEFENSE', 'ITEM', 'SKILL'など、どのコマンドで付与されたものか。
+        'buffed_from' => '', // 'DEFENCE', 'ITEM', 'SKILL'など、どのコマンドで付与されたものか。
     ];
 
     // 戦闘後に回復させるHPの倍率
@@ -328,7 +328,7 @@ class BattleState extends Model
      * 敵味方のデータの並びを、行動実行順に並べる
      *
      * 素早さや特殊スキル等を考慮させた順番とする
-     * DEFENSE選択 > 特殊スキル選択 > 速度順
+     * DEFENCE選択 > 特殊スキル選択 > 速度順
      *
      * @return Collection
      */
@@ -337,11 +337,11 @@ class BattleState extends Model
         // 敵味方が同速の場合、現状は味方が優先される
         $sorted_data = $battle_state_players_and_enemies_collection->sort(function ($a, $b) {
 
-            // 1. 'DEFENSE'コマンド選択
-            if ($a->command === 'DEFENSE' && $b->command !== 'DEFENSE') {
+            // 1. 'DEFENCE'コマンド選択
+            if ($a->command === 'DEFENCE' && $b->command !== 'DEFENCE') {
                 return -1; // $aが先に行動
             }
-            if ($b->command === 'DEFENSE' && $a->command !== 'DEFENSE') {
+            if ($b->command === 'DEFENCE' && $a->command !== 'DEFENCE') {
                 return 1;  // $bが先に行動
             }
 
@@ -546,18 +546,18 @@ class BattleState extends Model
                         // フィルタリング結果は元々の$current_battle_state_items_collectionと同期する
                             ->filter();
                         break;
-                    case 'DEFENSE':
+                    case 'DEFENCE':
                         // "防御"バフを 1ターン、def * 0.5の補正として付与する。
                         // 例: value_defが60の場合、バフは30となり合計DEFは90となる
                         Debugbar::debug("【防御】使用者: {$actor_data->name} ");
                         $new_buff = self::BUFFS_DEFAULT_DATA;
                         $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * 0.5);
                         $new_buff['remaining_turn'] = 1;
-                        $new_buff['buffed_from'] = 'DEFENSE';
+                        $new_buff['buffed_from'] = 'DEFENCE';
 
                         $actor_data->buffs[] = $new_buff;
                         Debugbar::debug([
-                            'message' => 'CASE: DEFENSE ---------------------- ',
+                            'message' => 'CASE: DEFENCE ---------------------- ',
                             'new_buff' => $new_buff,
                             'gettype($new_buff)' => gettype($new_buff),
                             'actor_data' => $actor_data,
@@ -647,9 +647,9 @@ class BattleState extends Model
                         // 実装予定はないが、使う想定をしておく
                         Debugbar::warning("【ITEM】{$actor_data->name} ");
                         break;
-                    case 'DEFENSE':
+                    case 'DEFENCE':
                         // 実装予定はないが、使う想定をしておく
-                        Debugbar::warning("【DEFENSE】{$actor_data->name} ");
+                        Debugbar::warning("【DEFENCE】{$actor_data->name} ");
                         break;
                     case 'ESCAPE':
                         // 実装予定はないが、使う想定をしておく
@@ -925,7 +925,7 @@ class BattleState extends Model
                         );
                     } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
                         Debugbar::debug('魔法。');
-                        $opponent_mdef = self::calculateMagicDefenseValue(
+                        $opponent_mdef = self::calculateMagicDEFENCEValue(
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($opponent_data, 'int')
                         );
@@ -978,7 +978,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDefenseValue(
+                            $opponent_mdef = self::calculateMagicDEFENCEValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -1036,7 +1036,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type === Item::ATTACK_MAGIC_TYPE) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDefenseValue(
+                            $opponent_mdef = self::calculateMagicDEFENCEValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -1097,7 +1097,7 @@ class BattleState extends Model
                                 );
                             } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
                                 Debugbar::debug('魔法。');
-                                $opponent_mdef = self::calculateMagicDefenseValue(
+                                $opponent_mdef = self::calculateMagicDEFENCEValue(
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($opponent_data, 'int')
                                 );
@@ -1478,7 +1478,7 @@ class BattleState extends Model
     /**
      * コマンド実行処理後に呼び出す、バフのターンを1減らす関数
      *
-     * ターンが0になった場合は、バフを削除する。SKILL, ITEM, DEFENSEのバフを考慮
+     * ターンが0になった場合は、バフを削除する。SKILL, ITEM, DEFENCEのバフを考慮
      */
     public static function afterExecCommandCalculateBuff(
         Collection $battle_state_players_and_enemies_collection,
@@ -1504,7 +1504,7 @@ class BattleState extends Model
                 $remaining_turn = $buff->remaining_turn ?? 0;
 
                 // 防御コマンドのバフは1ターンで消える
-                if ($buff_source === 'DEFENSE') {
+                if ($buff_source === 'DEFENCE') {
                     Debugbar::debug("{$name} 防御バフ解除。");
 
                     continue;
@@ -1616,10 +1616,10 @@ class BattleState extends Model
     /**
      * 魔法防御力の計算
      */
-    public static function calculateMagicDefenseValue(int $opponent_def, int $opponent_int): int
+    public static function calculateMagicDEFENCEValue(int $opponent_def, int $opponent_int): int
     {
         $mdef = ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
-        Debugbar::debug("calculateMagicDefenseValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
+        Debugbar::debug("calculateMagicDEFENCEValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
 
         // cast float to int
         return (int) $mdef;
