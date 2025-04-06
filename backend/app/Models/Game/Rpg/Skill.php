@@ -389,13 +389,13 @@ class Skill extends Model
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ミニヒール');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
             case 41:
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ポップヒール');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの霧が味方を包む！");
-                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
             case 42:
                 // 威力 = (INT * ダメージ%)

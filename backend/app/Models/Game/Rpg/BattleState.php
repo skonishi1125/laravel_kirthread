@@ -752,7 +752,7 @@ class BattleState extends Model
         // firstWhereを使用するため、collectionとして一時的にキャスト
         /** @var \stdClass $selected_skill_data Skill::PLAYERS_JSON_SKILLS_DEFAULT_DATA に各データが格納されたオブジェクト。 */
         $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
-        Debugbar::debug($selected_skill_data);
+        // Debugbar::debug($selected_skill_data);
         // APがなければ、ログに入れて処理を終了する
         if ($actor_data->value_ap < $selected_skill_data->ap_cost) {
             $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}の発動を試みたがAPが足りなかった！");
@@ -852,7 +852,7 @@ class BattleState extends Model
     }
 
     /**
-     * コマンドを実行した際、画面に表示させるダメージなどのログ入力
+     * ダメージ計算処理 併せて、画面に表示させるログも記入する
      *
      * @param  ?object  $selected_item  $commandがITEMの場合、そのアイテムの情報
      * @param  ?int  $pure_damage  敵の守備力などを考慮しない、純粋なダメージ量 nullのケースがある(ITEMの%依存の攻撃など)
@@ -1183,33 +1183,43 @@ class BattleState extends Model
     }
 
     /**
-     * スキルまたはアイテムを使用しての回復処理
+     * 回復処理 併せて、画面に表示させるログも記入する
+     *
+     * スキルまたはアイテムを使用しての回復処理。アイテムを使ってのAP回復処理にも対応。
      */
     public static function storePartyHeal(
-        string $command, object $self_data, Collection $opponents_data,
-        ?int $opponents_index, Collection $logs, ?int $heal_point, int $target_range, int|float|null $percent, ?int $heal_type
+        string $command,
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        ?int $heal_point,
+        int $target_range,
+        int|float|null $percent,
+        ?int $heal_type
     ) {
         switch ($command) {
             case 'SKILL':
                 Debugbar::debug('storePartyHeal(): SKILL ------------------------------');
-                if ($target_range == Skill::TARGET_RANGE_SINGLE) {
-                    Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
-
+                if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                    /** @var \stdClass $opponent_data */
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                    Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
                     // 戦闘不能ならスキップ
-                    if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
-                        $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+                    if ($opponent_data->is_defeated_flag == true) {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
                     } else {
-                        $opponents_data[$opponents_index]->value_hp += $heal_point;
-                        if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
-                            $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+                        $opponent_data->value_hp += $heal_point;
+                        if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                            $opponent_data->value_hp = $opponent_data->max_value_hp;
                         }
-                        $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+                        $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復！");
                     }
 
                 } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
-                    // $opponents_dataに対象が全て入っているはずなので、それで回復を回すと良い
-                    Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$self_data->name}");
-                    foreach ($opponents_data as $opponent_data) {
+                    // $battle_state_opponents_collectionに対象が全て入っているはずなので、それで回復を回すと良い
+                    Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
                         // 戦闘不能ならスキップ
                         if ($opponent_data->is_defeated_flag == true) {
                             Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
@@ -1222,63 +1232,64 @@ class BattleState extends Model
                         }
                     }
 
-                    $logs->push("全員のHPを{$heal_point}ポイント回復！");
+                    $battle_logs_collection->push("全員のHPを{$heal_point}ポイント回復！");
                 }
                 break;
             case 'ITEM':
                 Debugbar::debug('storePartyHeal(): ITEM ------------------------------');
 
                 if ($target_range == Item::TARGET_RANGE_SINGLE) {
-                    Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$self_data->name} 対象者: {$opponents_data[$opponents_index]->name}");
+                    /** @var \stdClass $opponent_data */
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                    Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
                     // 戦闘不能ならスキップ
-                    if ($opponents_data[$opponents_index]->is_defeated_flag == true) {
-                        $logs->push("しかし{$opponents_data[$opponents_index]->name}は戦闘不能のため効果が無かった！");
+                    if ($opponent_data->is_defeated_flag == true) {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
                     } else {
                         switch ($heal_type) {
                             case Item::HEAL_HP_TYPE:
                                 Debugbar::debug('HP回復アイテム');
                                 // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                 if (is_null($heal_point)) {
-                                    $heal_point = ceil($opponents_data[$opponents_index]->max_value_hp * $percent);
+                                    $heal_point = (int) ceil($opponent_data->max_value_hp * $percent);
                                     Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$heal_point} ");
                                 }
-                                $opponents_data[$opponents_index]->value_hp += $heal_point;
-                                if ($opponents_data[$opponents_index]->value_hp > $opponents_data[$opponents_index]->max_value_hp) {
-                                    $opponents_data[$opponents_index]->value_hp = $opponents_data[$opponents_index]->max_value_hp;
+                                $opponent_data->value_hp += $heal_point;
+                                if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                                    $opponent_data->value_hp = $opponent_data->max_value_hp;
                                 }
-                                $logs->push("{$opponents_data[$opponents_index]->name}のHPが{$heal_point}ポイント回復！");
+                                $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復！");
                                 break;
 
                             case Item::HEAL_AP_TYPE:
                                 Debugbar::debug('AP回復アイテム');
                                 // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                 if (is_null($heal_point)) {
-                                    $heal_point = ceil($opponents_data[$opponents_index]->max_value_ap * $percent);
+                                    $heal_point = (int) ceil($opponent_data->max_value_ap * $percent);
                                     Debugbar::debug("回復量nullのため、percentを参照。回復量:  {$heal_point} ");
                                 }
-                                $opponents_data[$opponents_index]->value_ap += $heal_point;
-                                if ($opponents_data[$opponents_index]->value_ap > $opponents_data[$opponents_index]->max_value_ap) {
-                                    $opponents_data[$opponents_index]->value_ap = $opponents_data[$opponents_index]->max_value_ap;
+                                $opponent_data->value_ap += $heal_point;
+                                if ($opponent_data->value_ap > $opponent_data->max_value_ap) {
+                                    $opponent_data->value_ap = $opponent_data->max_value_ap;
                                 }
-                                $logs->push("{$opponents_data[$opponents_index]->name}のAPが{$heal_point}ポイント回復！");
+                                $battle_logs_collection->push("{$opponent_data->name}のAPが{$heal_point}ポイント回復！");
                                 break;
                         }
                     }
 
                 } elseif ($target_range == Item::TARGET_RANGE_ALL) {
-                    Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$self_data->name}");
-                    foreach ($opponents_data as $opponent_data) {
+                    Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
                         $calculated_heal_point = $heal_point;
                         // 戦闘不能ならスキップ
                         if ($opponent_data->is_defeated_flag == true) {
                             Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
                         } else {
-
                             switch ($heal_type) {
                                 case Item::HEAL_HP_TYPE:
                                     // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                     if (is_null($heal_point)) {
-                                        $calculated_heal_point = ceil($opponent_data->max_value_hp * $percent);
+                                        $calculated_heal_point = (int) ceil($opponent_data->max_value_hp * $percent);
                                         Debugbar::debug("回復量nullのため、percentを参照。回復量:{$calculated_heal_point} ");
                                     }
                                     $opponent_data->value_hp += $calculated_heal_point;
@@ -1286,12 +1297,12 @@ class BattleState extends Model
                                         $opponent_data->value_hp = $opponent_data->max_value_hp;
                                     }
                                     Debugbar::debug("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復。");
-                                    $logs->push("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復！");
+                                    $battle_logs_collection->push("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復！");
                                     break;
                                 case Item::HEAL_AP_TYPE:
                                     // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                     if (is_null($heal_point)) {
-                                        $calculated_heal_point = ceil($opponent_data->max_value_ap * $percent);
+                                        $calculated_heal_point = (int) ceil($opponent_data->max_value_ap * $percent);
                                         Debugbar::debug("回復量nullのため、percentを参照。回復量: {$calculated_heal_point} ");
                                     }
                                     $opponent_data->value_ap += $calculated_heal_point;
@@ -1299,7 +1310,7 @@ class BattleState extends Model
                                         $opponent_data->value_ap = $opponent_data->max_value_ap;
                                     }
                                     Debugbar::debug("{$opponent_data->name}のAPを{$calculated_heal_point}ポイント回復。");
-                                    $logs->push("{$opponent_data->name}のAPを{$calculated_heal_point}ポイント回復！");
+                                    $battle_logs_collection->push("{$opponent_data->name}のAPを{$calculated_heal_point}ポイント回復！");
                                     break;
                             }
                         }
@@ -1346,6 +1357,7 @@ class BattleState extends Model
             case 'ITEM':
                 Debugbar::debug('バフアイテム使用。');
                 if ($target_range === Item::TARGET_RANGE_SINGLE) {
+                    /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
 
