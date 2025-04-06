@@ -481,10 +481,7 @@ class BattleState extends Model
                             $battle_logs_collection->push("{$actor_data->name}はアイテムを使おうと試みたが、手持ちに用意がなかった！");
                             break;
                         }
-                        Debugbar::debug([
-                            'message' => "【ITEM】選択アイテムID: {$selected_item_data->id},  {$selected_item_data->name}",
-                            'selected_item' => $selected_item_data,
-                        ]);
+                        Debugbar::debug("【ITEM】選択アイテムID: {$selected_item_data->id},  {$selected_item_data->name}");
 
                         // 対象決定処理 (SKILLと同じなので、統一化できそう。)
                         $battle_state_opponents_collection = collect();
@@ -790,16 +787,19 @@ class BattleState extends Model
     ) {
         Debugbar::debug('execCommandItem(): ---------------------- ');
 
-        // 味方の場合※ただし、アイテムを使えるのは現状味方だけの想定であるが。
+        // 味方の場合
+        // ※ただし、アイテムを使えるのは現状味方だけの想定であるが。
         if ($is_enemy == false) {
+
+            // 使用するアイテムに応じて、ダメージ・回復量・付与されるバフを設定。
             $damage = null;
             $heal_point = null;
+
             $new_buff = BattleState::BUFFS_DEFAULT_DATA; // TODO: BattleStateに配置せず、汎用的な値なのでConstantsとかのフォルダを作って配置してもいいと思う。
             $new_buff['buffed_from'] = 'ITEM';
             $new_buff['buffed_item_id'] = $selected_item_data->id;
             $new_buff['buffed_item_name'] = $selected_item_data->name;
             $new_buff['remaining_turn'] = $selected_item_data->buff_turn;
-            $buffs = null;
 
             $battle_logs_collection->push("{$actor_data->name}は{$selected_item_data->name}を使った！");
 
@@ -1021,23 +1021,24 @@ class BattleState extends Model
                 // 単体攻撃の場合
                 if ($target_range === Item::TARGET_RANGE_SINGLE) {
                     Debugbar::debug('単体攻撃。');
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
 
                     // is_percent_basedのアイテムの場合は、相手の現在体力に合わせたダメージを与える
                     if ($pure_damage == null || $selected_item->is_percent_based) {
-                        $calculated_damage = ceil($battle_state_opponents_collection[$opponents_index]->value_hp * $selected_item->percent);
+                        $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
                     } else {
                         // ダメージ計算 物理か魔法攻撃かで変える
                         if ($attack_type === Item::ATTACK_PHYSICAL_TYPE) {
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $pure_damage,
-                                self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'def')
+                                self::calculateActualStatusValue($opponent_data, 'def')
                             );
                         } elseif ($attack_type === Item::ATTACK_MAGIC_TYPE) {
                             Debugbar::debug('魔法。');
                             $opponent_mdef = self::calculateMagicDefenseValue(
-                                self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'def'),
-                                self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'int')
+                                self::calculateActualStatusValue($opponent_data, 'def'),
+                                self::calculateActualStatusValue($opponent_data, 'int')
                             );
                             $calculated_damage = self::calculateMagicDamage(
                                 $pure_damage,
@@ -1047,26 +1048,26 @@ class BattleState extends Model
                     }
 
                     if ($calculated_damage > 0) {
-                        Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
-                        $battle_state_opponents_collection[$opponents_index]->value_hp -= $calculated_damage;
-                        Debugbar::debug("アイテムで攻撃した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
+                        Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
+                        $opponent_data->value_hp -= $calculated_damage;
+                        Debugbar::debug("アイテムで攻撃した。敵の残り体力: {$opponent_data->value_hp}");
                         // 敵を倒した場合
-                        if ($battle_state_opponents_collection[$opponents_index]->value_hp <= 0) {
-                            $battle_state_opponents_collection[$opponents_index]->value_hp = 0; // マイナスになるのを防ぐ。
-                            $battle_state_opponents_collection[$opponents_index]->is_defeated_flag = true;
-                            self::clearBuff($battle_state_opponents_collection[$opponents_index]);
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ！");
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}を倒した！");
-                            Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}を倒した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                            Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         } else {
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}はまだ生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
                         // ダメージを与えられなかった場合
                     } else {
                         Debugbar::debug('ダメージを与えられない。');
-                        $battle_logs_collection->push("しかし{$battle_state_opponents_collection[$opponents_index]->name}にダメージは与えられなかった！");
-                        Debugbar::debug("攻撃が通らなかった。{$battle_state_opponents_collection[$opponents_index]->name}は当然生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                        $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
+                        Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
                     // 全体攻撃の場合
                 } else {
@@ -1075,7 +1076,7 @@ class BattleState extends Model
                     $base_damage = $pure_damage;
                     foreach ($battle_state_opponents_collection as $opponent_data) {
                         // 討伐判定チェック
-                        if ($opponent_data->is_defeated_flag == true) {
+                        if ($opponent_data->is_defeated_flag === true) {
                             Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
 
                             // returnにした場合は、foreach自体が終了する
@@ -1088,13 +1089,13 @@ class BattleState extends Model
                             $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
                         } else {
                             // ダメージ計算 物理か魔法攻撃かで変える
-                            if ($attack_type == Skill::ATTACK_PHYSICAL_TYPE) {
+                            if ($attack_type === Skill::ATTACK_PHYSICAL_TYPE) {
                                 Debugbar::debug('物理。');
                                 $calculated_damage = self::calculatePhysicalDamage(
                                     $base_damage,
                                     self::calculateActualStatusValue($opponent_data, 'def')
                                 );
-                            } elseif ($attack_type == Skill::ATTACK_MAGIC_TYPE) {
+                            } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
                                 Debugbar::debug('魔法。');
                                 $opponent_mdef = self::calculateMagicDefenseValue(
                                     self::calculateActualStatusValue($opponent_data, 'def'),
