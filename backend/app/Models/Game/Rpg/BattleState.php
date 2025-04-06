@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Helpers\DataHelper;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -1863,9 +1864,7 @@ class BattleState extends Model
 
         // 各バフの合計値を加算する
         foreach ($actor_or_opponent_data->buffs as $buff) {
-            if (isset($buff[$buffed_status_name])) {
-                $actual_status_value += (int) $buff[$buffed_status_name];
-            }
+            $actual_status_value += (int) DataHelper::getValueFlexible($buff, $buffed_status_name, 0);
         }
 
         Debugbar::debug("バフを考慮した合計 {$status_name} : {$actual_status_value}");
