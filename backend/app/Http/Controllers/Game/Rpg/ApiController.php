@@ -528,7 +528,6 @@ class ApiController extends Controller
         // ["partyId" => 1, "command" => "ATTACK","enemyIndex" => 0],[...]といった、パーティ人数分のコマンド配列
         $selected_commands_collection = collect($request->selectedCommands);
 
-        Debugbar::debug('コマンド情報格納 -------------');
         // コマンド情報格納
         // $battle_state_players_collection['id']と$selected_commands_collection['partyId']を紐づける。
         // transform()で使用する $data はstdClass型のため、-> でアクセスする
@@ -543,7 +542,7 @@ class ApiController extends Controller
 
                 // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
                 if (! is_null($data->selected_skill_id)) {
-                    Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
+                    // Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
                     /** @var int $selected_skill_effect_type */
                     $selected_skill_effect_type =
                         // firstWhereを使うため、Collectionに変換している

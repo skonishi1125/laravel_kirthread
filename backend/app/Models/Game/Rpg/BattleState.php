@@ -730,6 +730,7 @@ class BattleState extends Model
                 'ATTACK', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $pure_damage
             );
         }
+        // execBattleCommandに戻る
     }
 
     /**
@@ -768,6 +769,7 @@ class BattleState extends Model
         } else {
             // TODO: 敵もこの処理で技を使えるようにする
         }
+        // execBattleCommandに戻る
     }
 
     /**
@@ -912,44 +914,45 @@ class BattleState extends Model
                 // 単体攻撃の場合
                 if ($target_range === Skill::TARGET_RANGE_SINGLE) {
                     Debugbar::debug('単体攻撃。');
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
 
                     // ダメージ計算 物理か魔法攻撃かで変える
                     if ($attack_type === Skill::ATTACK_PHYSICAL_TYPE) {
                         Debugbar::debug('物理。');
                         $calculated_damage = self::calculatePhysicalDamage(
                             $pure_damage,
-                            self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'def')
+                            self::calculateActualStatusValue($opponent_data, 'def')
                         );
                     } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
                         Debugbar::debug('魔法。');
                         $opponent_mdef = self::calculateMagicDefenseValue(
-                            self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'def'),
-                            self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'int')
+                            self::calculateActualStatusValue($opponent_data, 'def'),
+                            self::calculateActualStatusValue($opponent_data, 'int')
                         );
                         $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
                     }
 
                     if ($calculated_damage > 0) {
-                        Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
-                        $battle_state_opponents_collection[$opponents_index]->value_hp -= $calculated_damage;
-                        Debugbar::debug("攻撃した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
+                        Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
+                        $opponent_data->value_hp -= $calculated_damage;
+                        Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
                         // 敵を倒した場合
-                        if ($battle_state_opponents_collection[$opponents_index]->value_hp <= 0) {
-                            $battle_state_opponents_collection[$opponents_index]->value_hp = 0; // マイナスになるのを防ぐ。
-                            $battle_state_opponents_collection[$opponents_index]->is_defeated_flag = true;
-                            self::clearBuff($battle_state_opponents_collection[$opponents_index]);
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ！");
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}を倒した！");
-                            Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}を倒した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                            Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         } else {
-                            $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}はまだ生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
                     } else {
                         // ダメージを与えられなかった場合
                         Debugbar::debug('ダメージを与えられない。');
-                        $battle_logs_collection->push("しかし{$battle_state_opponents_collection[$opponents_index]->name}にダメージは与えられなかった！");
-                        Debugbar::debug("攻撃が通らなかった。{$battle_state_opponents_collection[$opponents_index]->name}は当然生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                        $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
+                        Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
                     // 全体攻撃の場合
                 } else {

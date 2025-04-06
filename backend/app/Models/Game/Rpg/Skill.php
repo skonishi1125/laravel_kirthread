@@ -356,18 +356,18 @@ class Skill extends Model
             case 10:
                 Debugbar::debug('ミドルブロウ');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 10);
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 10);
                 break;
             case 11:
                 Debugbar::debug('スピンキック');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
                 break;
                 // -------------------- 重騎士(Paladin) --------------------
             case 30:
                 Debugbar::debug('ワイドスラスト');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                 break;
             case 31:
                 Debugbar::debug('ワイドガード');
@@ -377,7 +377,7 @@ class Skill extends Model
             case 32:
                 Debugbar::debug('ブレイヴスラッシュ');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！天地を揺らす一撃！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + BattleState::calculateActualStatusValue($actor_data, 'def');
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + BattleState::calculateActualStatusValue($actor_data, 'def');
                 break;
             case 33:
                 Debugbar::debug('ガードアップ');
@@ -389,40 +389,40 @@ class Skill extends Model
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ミニヒール');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                $heal_point = ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
             case 41:
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ポップヒール');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの霧が味方を包む！");
-                $heal_point = ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
             case 42:
                 // 威力 = (INT * ダメージ%)
                 Debugbar::debug('プチブラスト');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力の粒が相手を襲う！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
             case 43:
                 // 威力 = (INT * ダメージ%) + 基礎ダメージ50
                 Debugbar::debug('クラッシュボルト');
                 // レベルごとに文章を変えられたら熱い
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                 break;
             case 44:
                 // 威力 = (INT * ダメージ%) + 基礎ダメージ30
                 Debugbar::debug('マナエクスプロージョン');
                 // (独り言)レベルごとに文章を変えられたら熱いけど
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解き放ったマナの塊が大爆発を起こす！");
-                $damage = ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                 break;
             case 45:
                 Debugbar::debug('バトルメイジ');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！数々の冒険で修めてきた全ての智力が{$actor_data->name}の力と代わる...");
                 // buffed_str = (value_int * ダメージ%) とし、 intを0とする
-                $new_buff['buffed_str'] = ceil($actor_data->value_int * $selected_skill_data->skill_percent);
-                $new_buff['buffed_int'] = ceil(-$actor_data->value_int);
+                $new_buff['buffed_str'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                 break;
             default:
                 Debugbar::debug('存在しないスキルが選択されました。');
@@ -435,13 +435,11 @@ class Skill extends Model
                 BattleState::storePartySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data);
                 break;
             case self::EFFECT_DAMAGE_TYPE:
-                $damage = (int) ceil($damage);
                 BattleState::storePartyDamage(
                     'SKILL', $actor_data, $battle_state_opponents_collection, null, $opponents_index, $battle_logs_collection, $damage, $selected_skill_data->target_range, $selected_skill_data->attack_type
                 );
                 break;
             case self::EFFECT_HEAL_TYPE:
-                $heal_point = (int) ceil($heal_point);
                 BattleState::storePartyHeal(
                     'SKILL', $actor_data, $battle_state_opponents_collection,
                     $opponents_index, $battle_logs_collection, $heal_point, $selected_skill_data->target_range, null, null
