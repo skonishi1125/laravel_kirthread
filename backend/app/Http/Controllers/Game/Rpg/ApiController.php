@@ -579,7 +579,7 @@ class ApiController extends Controller
 
         Debugbar::debug('バフターン数計算処理 BattleState::afterExecCommandCalculateBuff ------------------------');
         // $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
-        // BattleState::afterExecCommandCalculateBuff($battle_state_players_and_enemies_collection, $battle_logs_collection);
+        BattleState::afterExecCommandCalculateBuff($battle_state_players_and_enemies_collection, $battle_logs_collection);
 
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
