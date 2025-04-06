@@ -1648,60 +1648,60 @@ class BattleState extends Model
 
     /**
      * コマンド実行処理後に呼び出す、バフのターンを1減らす関数
+     *
+     * ターンが0になった場合は、バフを削除する。SKILL, ITEM, DEFENSEのバフを考慮
      */
     public static function afterExecCommandCalculateBuff(
         Collection $battle_state_players_and_enemies_collection,
         Collection $battle_logs_collection
     ) {
+
         foreach ($battle_state_players_and_enemies_collection as $player_or_enemy_data) {
-            // 戦闘不能の場合は全てのバフを解除する
-            // TODO:(?) 戦闘不能→生き返りの挙動が今後あった時、一度リセットする必要がある
-            // そちらには現状対応しておらずバフが続いてしまうので、必要なら戦闘不能になった瞬間にバフを外す修正をする。
-            // (→と思ったが、もしかしてclearBuff()でやってるかもしれない)
-            if ($player_or_enemy_data->is_defeated_flag == true) {
-                Debugbar::debug("{$player_or_enemy_data->name}は戦闘不能のため全てのバフを削除しました");
+            $name = $player_or_enemy_data->name;
+
+            // 戦闘不能時：すべてのバフを削除
+            if ($player_or_enemy_data->is_defeated_flag === true) {
+                Debugbar::debug("{$name}は戦闘不能のため全てのバフを削除しました");
                 $player_or_enemy_data->buffs = [];
 
                 continue;
             }
 
-            // バフに対して1つずつ付与されているバフのターン数を削っていく
+            $remaining_buffs = [];
+
             foreach ($player_or_enemy_data->buffs as $buff) {
-                $name = $player_or_enemy_data->name;
-                $remaining_turn = DataHelper::getValueFlexible($buff, 'remaining_turn');
-                $buffed_from = DataHelper::getValueFlexible($buff, 'buffed_from');
+                $buff = (object) $buff; // 配列・オブジェクトどちらにも対応させるためキャスト
+                $buff_source = $buff->buffed_from ?? '';
+                $remaining_turn = $buff->remaining_turn ?? 0;
 
-                $remaining_turn -= 1;
-                switch ($buffed_from) {
-                    case 'SKILL':
-                        $buffed_skill_id = DataHelper::getValueFlexible($buff, 'buffed_skill_id');
-                        $buffed_skill_name = DataHelper::getValueFlexible($buff, 'buffed_skill_name');
-                        if ($remaining_turn > 0) {
-                            Debugbar::debug("{$name}の バフ 【{$buffed_skill_id}】{$buffed_skill_name} : 残り {$remaining_turn}ターン");
-                            $remaining_buffs[] = $buff;
-                        } else {
-                            Debugbar::debug("{$name}の バフ 【{$buffed_skill_id}】{$buffed_skill_name} が消えました。");
-                            $battle_logs_collection->push("{$name}に付与されていた{$buffed_skill_name}の効果が切れた。");
-                        }
-                        break;
-                    case 'ITEM':
-                        $buffed_item_id = DataHelper::getValueFlexible($buff, 'buffed_item_id');
-                        $buffed_item_name = DataHelper::getValueFlexible($buff, 'buffed_item_name');
-                        if ($remaining_turn > 0) {
-                            Debugbar::debug("{$name}の バフ 【{$buffed_item_id}】{$buffed_item_name} : 残り {$remaining_turn}ターン");
-                            $remaining_buffs[] = $buff;
-                        } else {
-                            Debugbar::debug("{$name}の バフ 【{$buffed_item_id}】{$buffed_item_name} が消えました。");
-                            $battle_logs_collection->push("{$name}に付与されていた{$buffed_item_name}の効果が切れた。");
-                        }
-                        break;
-                    case 'DEFENSE':
-                        Debugbar::debug("{$name}の 防御コマンドを解除。");
-                        $player_or_enemy_data->buffs = [];
-                        break;
+                // 防御コマンドのバフは1ターンで消える
+                if ($buff_source === 'DEFENSE') {
+                    Debugbar::debug("{$name} 防御バフ解除。");
 
+                    continue;
+                }
+
+                // 残りターンを減らす
+                $buff->remaining_turn = max(0, $remaining_turn - 1);
+
+                if ($buff->remaining_turn > 0) {
+                    $remaining_buffs[] = $buff;
+
+                    if ($buff_source === 'SKILL') {
+                        Debugbar::debug("{$name}の バフ（スキル）【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
+                    } elseif ($buff_source === 'ITEM') {
+                        Debugbar::debug("{$name}の バフ（アイテム）【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
+                    }
+                } else {
+                    // 効果が切れたバフのログ出力
+                    $log_name = $buff->buffed_skill_name ?? $buff->buffed_item_name ?? 'バフ';
+                    $battle_logs_collection->push("{$name}に付与されていた{$log_name}の効果が切れた。");
+                    Debugbar::debug("{$name}のバフ {$log_name} が消えました。");
                 }
             }
+
+            // 更新後のバフ一覧を反映
+            $player_or_enemy_data->buffs = $remaining_buffs;
         }
     }
 
