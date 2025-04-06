@@ -859,35 +859,40 @@ class BattleState extends Model
         $calculated_damage = 0;
         switch ($command) {
             case 'ATTACK':
-                Debugbar::debug('storePartyDamage(): ATTACK');
+                // 攻撃対象となるopponents_collectionを、1つの変数に格納して呼びやすくしておく
+                // CollectionはObjectの参照を保持するため、この変数の内容が変わると、元のCollectionも変わる
+                // (こういった仕様があるので、純粋にコピーして使いたい場合は copy という文法がある)
+
+                /** @var \stdClass $opponent_data */
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                Debugbar::debug("storePartyDamage(): ATTACK {$actor_data->name} → {$opponent_data->name}");
 
                 // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
                 $calculated_damage = self::calculatePhysicalDamage(
                     $pure_damage,
-                    self::calculateActualStatusValue($battle_state_opponents_collection[$opponents_index], 'def')
+                    self::calculateActualStatusValue($opponent_data, 'def')
                 );
 
                 if ($calculated_damage > 0) {
-                    Debugbar::debug("【ATTACK】ダメージが1以上。敵の現在体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
-                    $battle_state_opponents_collection[$opponents_index]->value_hp -= $calculated_damage;
-                    Debugbar::debug("攻撃した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp}");
-                    // 敵を倒した場合
-                    if ($battle_state_opponents_collection[$opponents_index]->value_hp <= 0) {
-                        $battle_state_opponents_collection[$opponents_index]->value_hp = 0; // マイナスになるのを防ぐ。
-                        $battle_state_opponents_collection[$opponents_index]->is_defeated_flag = true;
-                        self::clearBuff($battle_state_opponents_collection[$opponents_index]);
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ。");
-                        $battle_logs_collection->push("{$battle_state_opponents_collection[$opponents_index]->name}を倒した！");
-                        Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}を倒した。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                    Debugbar::debug("【ATTACK】ダメージが1以上。相手の現在体力: {$opponent_data->value_hp}");
+                    $opponent_data->value_hp -= $calculated_damage;
+                    Debugbar::debug("攻撃した。相手の残り体力: {$opponent_data->value_hp}");
+                    // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                        $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                        Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     } else {
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$battle_state_opponents_collection[$opponents_index]->name}に{$calculated_damage}のダメージ。");
-                        Debugbar::debug("{$battle_state_opponents_collection[$opponents_index]->name}はまだ生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                        Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
                 } else {
                     // ダメージを与えられなかった場合
-                    Debugbar::debug('ダメージを与えられない。');
-                    $battle_logs_collection->push("{$actor_data->name}の攻撃！しかし{$battle_state_opponents_collection[$opponents_index]->name}にダメージを与えられない！");
-                    Debugbar::debug("攻撃が通らなかった。{$battle_state_opponents_collection[$opponents_index]->name}は当然生存している。敵の残り体力: {$battle_state_opponents_collection[$opponents_index]->value_hp} 敵討伐フラグ: {$battle_state_opponents_collection[$opponents_index]->is_defeated_flag} ");
+                    $battle_logs_collection->push("{$actor_data->name}の攻撃！しかし{$opponent_data->name}にダメージを与えられない！");
+                    Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
                 }
                 break;
             case 'SKILL':
@@ -1610,69 +1615,126 @@ class BattleState extends Model
 
     }
 
-    // 攻撃で倒した時 / やられた時にバフを消す時の処理を書く
-    public static function clearBuff(object $data)
+    /**
+     * 指定した対象のバフをクリアする処理
+     *
+     * 攻撃で倒した時の相手側、自分が倒された時に付与されていたバフをリセットする処理
+     * $collection[$index]もしくは, stdClass objectを渡す。
+     */
+    public static function clearBuff(object $player_or_enemy_data)
     {
-        $remaining_buffs = [];
-        if (count($data->buffs) > 0) {
-            $data->buffs = $remaining_buffs;
+        Debugbar::debug("clearBuff(): is_defeated_flag: {$player_or_enemy_data->is_defeated_flag} {$player_or_enemy_data->name}のバフをクリアします。");
+        if ($player_or_enemy_data->is_defeated_flag === false) {
+            Debugbar::debug('戦闘不能ではありませんでした。（本来はこの関数内では、trueであることが前提のため正しくない挙動です）');
+
+            return;
         }
-        Debugbar::debug("戦闘不能となったので{$data->name}のバフをクリア。");
+        $player_or_enemy_data->buffs = self::BUFFS_DEFAULT_DATA;
+        Debugbar::debug("戦闘不能となったので{$player_or_enemy_data->name}のバフをクリア。");
     }
 
-    // 戦闘処理実行後に呼び出す、バフのターンを1減らす関数
-    public static function afterExecCommandCalculateBuff(Collection $players_and_enemies_data, Collection $logs)
-    {
-        foreach ($players_and_enemies_data as $data) {
-            $remaining_buffs = [];
-
+    /**
+     * コマンド実行処理後に呼び出す、バフのターンを1減らす関数
+     *
+     * TODO: 現状バグってるので改修 !!!! buffのリファクタリングの時に。
+     */
+    public static function afterExecCommandCalculateBuff(
+        Collection $battle_state_players_and_enemies_collection,
+        Collection $battle_logs_collection
+    ) {
+        foreach ($battle_state_players_and_enemies_collection as $player_or_enemy_data) {
             // 戦闘不能の場合は全てのバフを解除する
-            // todo: 戦闘不能→生き返りの挙動があった時、バフが続いてしまうので戦闘不能になった瞬間にバフを外す修正が必要
-            if (count($data->buffs) > 0) {
-                Debugbar::debug('バフが1つ以上存在するので、バフに関する処理を開始。');
-                if ($data->is_defeated_flag == true) {
-                    Debugbar::debug("{$data->name}は戦闘不能のため全てのバフを削除しました");
-                    $data->buffs = $remaining_buffs;
+            // TODO: 戦闘不能→生き返りの挙動が今後あった時、一度リセットする必要がある
+            // そちらには現状対応しておらずバフが続いてしまうので、必要なら戦闘不能になった瞬間にバフを外す修正をする。
+            // (→と思ったが、もしかしてclearBuff()でやってる？)
+            if ($player_or_enemy_data->is_defeated_flag == true) {
+                Debugbar::debug("{$player_or_enemy_data->name}は戦闘不能のため全てのバフを削除しました");
+                $player_or_enemy_data->buffs = self::BUFFS_DEFAULT_DATA;
 
-                    continue;
-                }
-                // 1人ずつ、付与されているバフのターン数を削っていく
-                foreach ($data->buffs as $buff) {
-                    $buff = (object) $buff; // -> で値を呼べるようにオブジェクトにキャストしとく
-                    Debugbar::debug([
-                        'data' => $data,
-                        'buff' => $buff,
-                    ]);
-                    $buff->remaining_turn -= 1;
-                    switch ($buff->buffed_from) {
-                        case 'SKILL':
-                            if ($buff->remaining_turn > 0) {
-                                Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
-                                $remaining_buffs[] = $buff;
-                            } else {
-                                Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
-                                // 切れた時の表示は不要か？
-                                $logs->push("{$data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
-                            }
-                            break;
-                        case 'ITEM':
-                            if ($buff->remaining_turn > 0) {
-                                Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
-                                $remaining_buffs[] = $buff;
-                            } else {
-                                Debugbar::debug("{$data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} が消えました。");
-                                // 切れた時の表示は不要か？
-                                $logs->push("{$data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
-                            }
-                            break;
-                        case 'DEFENSE':
-                            Debugbar::debug("{$data->name}の 防御コマンドを解除。");
-                            break;
-
-                    }
-                }
-                $data->buffs = $remaining_buffs;
+                continue;
             }
+
+            // バフに対して1つずつ付与されているバフのターン数を削っていく
+            foreach ($player_or_enemy_data->buffs as $buff) {
+                // $buff = (object) $buff; // -> で値を呼べるようにオブジェクトにキャストしとく
+                Debugbar::debug([
+                    'data' => $player_or_enemy_data,
+                    'buff' => $buff,
+                ]);
+                $buff->remaining_turn -= 1;
+                switch ($buff->buffed_from) {
+                    case 'SKILL':
+                        if ($buff->remaining_turn > 0) {
+                            Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
+                            $remaining_buffs[] = $buff;
+                        } else {
+                            Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
+                            // 切れた時の表示は不要か？
+                            $battle_logs_collection->push("{$player_or_enemy_data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+                        }
+                        break;
+                    case 'ITEM':
+                        if ($buff->remaining_turn > 0) {
+                            Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
+                            $remaining_buffs[] = $buff;
+                        } else {
+                            Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} が消えました。");
+                            // 切れた時の表示は不要か？
+                            $battle_logs_collection->push("{$player_or_enemy_data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
+                        }
+                        break;
+                    case 'DEFENSE':
+                        Debugbar::debug("{$player_or_enemy_data->name}の 防御コマンドを解除。");
+                        break;
+
+                }
+            }
+
+            // if (count($player_or_enemy_data->buffs) > 0) {
+            //     Debugbar::debug('バフが1つ以上存在するので、バフに関する処理を開始。');
+            //     if ($player_or_enemy_data->is_defeated_flag == true) {
+            //         Debugbar::debug("{$player_or_enemy_data->name}は戦闘不能のため全てのバフを削除しました");
+            //         $player_or_enemy_data->buffs = $remaining_buffs;
+
+            //         continue;
+            //     }
+            // 1人ずつ、付与されているバフのターン数を削っていく
+            // foreach ($player_or_enemy_data->buffs as $buff) {
+            //     $buff = (object) $buff; // -> で値を呼べるようにオブジェクトにキャストしとく
+            //     Debugbar::debug([
+            //         'data' => $player_or_enemy_data,
+            //         'buff' => $buff,
+            //     ]);
+            //     $buff->remaining_turn -= 1;
+            //     switch ($buff->buffed_from) {
+            //         case 'SKILL':
+            //             if ($buff->remaining_turn > 0) {
+            //                 Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} : 残り {$buff->remaining_turn}ターン");
+            //                 $remaining_buffs[] = $buff;
+            //             } else {
+            //                 Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_skill_id}】{$buff->buffed_skill_name} が消えました。");
+            //                 // 切れた時の表示は不要か？
+            //                 $battle_logs_collection->push("{$player_or_enemy_data->name}に付与されていた{$buff->buffed_skill_name}の効果が切れた。");
+            //             }
+            //             break;
+            //         case 'ITEM':
+            //             if ($buff->remaining_turn > 0) {
+            //                 Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} : 残り {$buff->remaining_turn}ターン");
+            //                 $remaining_buffs[] = $buff;
+            //             } else {
+            //                 Debugbar::debug("{$player_or_enemy_data->name}の バフ 【{$buff->buffed_item_id}】{$buff->buffed_item_name} が消えました。");
+            //                 // 切れた時の表示は不要か？
+            //                 $battle_logs_collection->push("{$player_or_enemy_data->name}に付与されていた{$buff->buffed_item_name}の効果が切れた。");
+            //             }
+            //             break;
+            //         case 'DEFENSE':
+            //             Debugbar::debug("{$player_or_enemy_data->name}の 防御コマンドを解除。");
+            //             break;
+
+            //     }
+            // }
+            // $data->buffs = $remaining_buffs;
+            // }
         }
     }
 
