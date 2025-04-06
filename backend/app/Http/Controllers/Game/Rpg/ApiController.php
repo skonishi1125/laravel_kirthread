@@ -534,8 +534,6 @@ class ApiController extends Controller
         // transform()で使用する $data はstdClass型のため、-> でアクセスする
         $battle_state_players_collection->transform(function ($data) use ($selected_commands_collection) {
             $command = $selected_commands_collection->firstWhere('partyId', $data->id);
-            // stdClass Object
-            // Debugbar::debug(get_class($data));
             if ($command) {
                 $data->command = $command['command'];
                 $data->target_enemy_index = $command['enemyIndex'] ?? null;
