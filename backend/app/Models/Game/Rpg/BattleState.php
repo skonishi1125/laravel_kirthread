@@ -2,6 +2,10 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Enums\Rpg\AttackType;
+use App\Enums\Rpg\EffectType;
+use App\Enums\Rpg\HealType;
+use App\Enums\Rpg\TargetRange;
 use App\Helpers\DataHelper;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -348,10 +352,10 @@ class BattleState extends Model
             // 2. 特殊スキル選択
             $a_effect_type = $a->selected_skill_effect_type ?? null;
             $b_effect_type = $b->selected_skill_effect_type ?? null;
-            if ($a_effect_type === Skill::EFFECT_SPECIAL_TYPE && $b_effect_type !== Skill::EFFECT_SPECIAL_TYPE) {
+            if ($a_effect_type === EffectType::Special->value && $b_effect_type !== EffectType::Special->value) {
                 return -1;
             }
-            if ($b_effect_type === Skill::EFFECT_SPECIAL_TYPE && $a_effect_type !== Skill::EFFECT_SPECIAL_TYPE) {
+            if ($b_effect_type === EffectType::Special->value && $a_effect_type !== EffectType::Special->value) {
                 return 1;
             }
 
@@ -448,7 +452,7 @@ class BattleState extends Model
                             Debugbar::debug('target_player_indexが格納されていないため、それ以外のスキルが選択されました。');
 
                             switch ($actor_data->selected_skill_effect_type) {
-                                case Skill::EFFECT_SPECIAL_TYPE:
+                                case EffectType::Special->value:
                                     // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
                                     Debugbar::debug('特殊系スキル。');
                                     if ($actor_data->selected_skill_id == 31) {
@@ -456,15 +460,15 @@ class BattleState extends Model
                                         $battle_state_opponents_collection = $battle_state_players_collection;
                                     }
                                     break;
-                                case Skill::EFFECT_DAMAGE_TYPE:
+                                case EffectType::Damage->value:
                                     Debugbar::debug("攻撃系スキルのため敵情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
                                     $battle_state_opponents_collection = $battle_state_enemies_collection;
                                     break;
-                                case Skill::EFFECT_HEAL_TYPE:
+                                case EffectType::Heal->value:
                                     Debugbar::debug("回復系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
-                                case Skill::EFFECT_BUFF_TYPE:
+                                case EffectType::Buff->value:
                                     // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
                                     Debugbar::debug("バフ系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
@@ -503,20 +507,20 @@ class BattleState extends Model
                             Debugbar::debug('【ITEM】target_player_indexが格納されていないため、それ以外のアイテムが選択されました。');
 
                             switch ($selected_item_data->effect_type) {
-                                case Item::EFFECT_SPECIAL_TYPE:
+                                case EffectType::Special->value:
                                     // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
                                     // 今のところ実装なし
                                     Debugbar::debug('特殊系アイテム');
                                     break;
-                                case Item::EFFECT_DAMAGE_TYPE:
+                                case EffectType::Damage->value:
                                     Debugbar::debug("攻撃系アイテムのため敵情報をopponents_dataに格納。effect_type: {$selected_item_data->effect_type}");
                                     $battle_state_opponents_collection = $battle_state_enemies_collection;
                                     break;
-                                case Item::EFFECT_HEAL_TYPE:
+                                case EffectType::Heal->value:
                                     Debugbar::debug("回復系アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item_data->effect_type}");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
-                                case Item::EFFECT_BUFF_TYPE:
+                                case EffectType::Buff->value:
                                     // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
                                     Debugbar::debug("バフ系アイテムのため味方情報をopponents_dataに格納。effect_type: {$selected_item_data->effect_type}");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
@@ -700,7 +704,7 @@ class BattleState extends Model
             Debugbar::debug("【味方】STRの実数値。（ATTACKの場合、これが純粋なダメージ量となる。） : {$pure_damage}");
             // 単体・物理攻撃として扱う
             self::storePartyDamage(
-                'ATTACK', $actor_data, $battle_state_opponents_collection, null, $opponents_index, $battle_logs_collection, $pure_damage, Skill::TARGET_RANGE_SINGLE, Skill::ATTACK_PHYSICAL_TYPE
+                'ATTACK', $actor_data, $battle_state_opponents_collection, null, $opponents_index, $battle_logs_collection, $pure_damage, TargetRange::Single->value, AttackType::Physical->value
             );
 
             // 敵の場合
@@ -804,10 +808,10 @@ class BattleState extends Model
             $battle_logs_collection->push("{$actor_data->name}は{$selected_item_data->name}を使った！");
 
             switch ($selected_item_data->effect_type) {
-                case Item::EFFECT_SPECIAL_TYPE:
+                case EffectType::Special->value:
                     Debugbar::debug('特殊系※現状考えていない。');
                     break;
-                case Item::EFFECT_DAMAGE_TYPE:
+                case EffectType::Damage->value:
                     Debugbar::debug('攻撃系アイテム');
                     if (! $selected_item_data->is_percent_based) {
                         $damage = $selected_item_data->fixed_value;
@@ -818,7 +822,7 @@ class BattleState extends Model
                         'ITEM', $actor_data, $battle_state_opponents_collection, $selected_item_data, $opponents_index, $battle_logs_collection, $damage, $selected_item_data->target_range, $selected_item_data->attack_type
                     );
                     break;
-                case Item::EFFECT_HEAL_TYPE:
+                case EffectType::Heal->value:
                     if (! $selected_item_data->is_percent_based) {
                         $heal_point = $selected_item_data->fixed_value;
                     }
@@ -829,7 +833,7 @@ class BattleState extends Model
                         $opponents_index, $battle_logs_collection, $heal_point, $selected_item_data->target_range, $selected_item_data->percent, $selected_item_data->heal_type
                     );
                     break;
-                case Item::EFFECT_BUFF_TYPE:
+                case EffectType::Buff->value:
                     // バフは個別に処理
                     switch ($selected_item_data->id) {
                         case 21:
@@ -857,7 +861,7 @@ class BattleState extends Model
      * @param  ?object  $selected_item  $commandがITEMの場合、そのアイテムの情報
      * @param  ?int  $pure_damage  敵の守備力などを考慮しない、純粋なダメージ量 nullのケースがある(ITEMの%依存の攻撃など)
      * @param  int  $target_range  コマンド対象範囲 TARGET_RANGE_SINGLE 等
-     * @param  int  $attack_type  コマンド攻撃タイプ Skill::ATTACK_PHYSICAL_TYPEや、Item::ATTACK_PHYSICAL_TYPE 等
+     * @param  int  $attack_type  コマンド攻撃タイプ AttackType::Physical->valueや、AttackType::Physical->value 等
      */
     public static function storePartyDamage(
         string $command,
@@ -912,18 +916,18 @@ class BattleState extends Model
             case 'SKILL':
                 Debugbar::debug('storePartyDamage(): SKILL');
                 // 単体攻撃の場合
-                if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                if ($target_range === TargetRange::Single->value) {
                     Debugbar::debug('単体攻撃。');
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
 
                     // ダメージ計算 物理か魔法攻撃かで変える
-                    if ($attack_type === Skill::ATTACK_PHYSICAL_TYPE) {
+                    if ($attack_type === AttackType::Physical->value) {
                         Debugbar::debug('物理。');
                         $calculated_damage = self::calculatePhysicalDamage(
                             $pure_damage,
                             self::calculateActualStatusValue($opponent_data, 'def')
                         );
-                    } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
+                    } elseif ($attack_type === AttackType::Magic->value) {
                         Debugbar::debug('魔法。');
                         $opponent_mdef = self::calculateMagicDEFENCEValue(
                             self::calculateActualStatusValue($opponent_data, 'def'),
@@ -970,13 +974,13 @@ class BattleState extends Model
                         }
 
                         // ダメージ計算 物理か魔法攻撃かで変える
-                        if ($attack_type === Skill::ATTACK_PHYSICAL_TYPE) {
+                        if ($attack_type === AttackType::Physical->value) {
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $base_damage,
                                 self::calculateActualStatusValue($opponent_data, 'def')
                             );
-                        } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
+                        } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
                             $opponent_mdef = self::calculateMagicDEFENCEValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
@@ -1019,7 +1023,7 @@ class BattleState extends Model
             case 'ITEM':
                 Debugbar::debug('storePartyDamage(): ITEM');
                 // 単体攻撃の場合
-                if ($target_range === Item::TARGET_RANGE_SINGLE) {
+                if ($target_range === TargetRange::Single->value) {
                     Debugbar::debug('単体攻撃。');
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
 
@@ -1028,13 +1032,13 @@ class BattleState extends Model
                         $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
                     } else {
                         // ダメージ計算 物理か魔法攻撃かで変える
-                        if ($attack_type === Item::ATTACK_PHYSICAL_TYPE) {
+                        if ($attack_type === AttackType::Physical->value) {
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $pure_damage,
                                 self::calculateActualStatusValue($opponent_data, 'def')
                             );
-                        } elseif ($attack_type === Item::ATTACK_MAGIC_TYPE) {
+                        } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
                             $opponent_mdef = self::calculateMagicDEFENCEValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
@@ -1089,13 +1093,13 @@ class BattleState extends Model
                             $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
                         } else {
                             // ダメージ計算 物理か魔法攻撃かで変える
-                            if ($attack_type === Skill::ATTACK_PHYSICAL_TYPE) {
+                            if ($attack_type === AttackType::Physical->value) {
                                 Debugbar::debug('物理。');
                                 $calculated_damage = self::calculatePhysicalDamage(
                                     $base_damage,
                                     self::calculateActualStatusValue($opponent_data, 'def')
                                 );
-                            } elseif ($attack_type === Skill::ATTACK_MAGIC_TYPE) {
+                            } elseif ($attack_type === AttackType::Magic->value) {
                                 Debugbar::debug('魔法。');
                                 $opponent_mdef = self::calculateMagicDEFENCEValue(
                                     self::calculateActualStatusValue($opponent_data, 'def'),
@@ -1201,7 +1205,7 @@ class BattleState extends Model
         switch ($command) {
             case 'SKILL':
                 Debugbar::debug('storePartyHeal(): SKILL ------------------------------');
-                if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                if ($target_range === TargetRange::Single->value) {
                     /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
@@ -1216,7 +1220,7 @@ class BattleState extends Model
                         $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復！");
                     }
 
-                } elseif ($target_range == Skill::TARGET_RANGE_ALL) {
+                } elseif ($target_range == TargetRange::All->value) {
                     // $battle_state_opponents_collectionに対象が全て入っているはずなので、それで回復を回すと良い
                     Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
                     foreach ($battle_state_opponents_collection as $opponent_data) {
@@ -1238,7 +1242,7 @@ class BattleState extends Model
             case 'ITEM':
                 Debugbar::debug('storePartyHeal(): ITEM ------------------------------');
 
-                if ($target_range == Item::TARGET_RANGE_SINGLE) {
+                if ($target_range == TargetRange::Single->value) {
                     /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
@@ -1247,7 +1251,7 @@ class BattleState extends Model
                         $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
                     } else {
                         switch ($heal_type) {
-                            case Item::HEAL_HP_TYPE:
+                            case HealType::Hp->value:
                                 Debugbar::debug('HP回復アイテム');
                                 // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                 if (is_null($heal_point)) {
@@ -1261,7 +1265,7 @@ class BattleState extends Model
                                 $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復！");
                                 break;
 
-                            case Item::HEAL_AP_TYPE:
+                            case HealType::Ap->value:
                                 Debugbar::debug('AP回復アイテム');
                                 // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                 if (is_null($heal_point)) {
@@ -1277,7 +1281,7 @@ class BattleState extends Model
                         }
                     }
 
-                } elseif ($target_range == Item::TARGET_RANGE_ALL) {
+                } elseif ($target_range == TargetRange::All->value) {
                     Debugbar::debug("【全体回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
                     foreach ($battle_state_opponents_collection as $opponent_data) {
                         $calculated_heal_point = $heal_point;
@@ -1286,7 +1290,7 @@ class BattleState extends Model
                             Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
                         } else {
                             switch ($heal_type) {
-                                case Item::HEAL_HP_TYPE:
+                                case HealType::Hp->value:
                                     // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                     if (is_null($heal_point)) {
                                         $calculated_heal_point = (int) ceil($opponent_data->max_value_hp * $percent);
@@ -1299,7 +1303,7 @@ class BattleState extends Model
                                     Debugbar::debug("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復。");
                                     $battle_logs_collection->push("{$opponent_data->name}のHPを{$calculated_heal_point}ポイント回復！");
                                     break;
-                                case Item::HEAL_AP_TYPE:
+                                case HealType::Ap->value:
                                     // % 回復系のアイテムなら、対象者の体力を参考に改めて回復量を決める
                                     if (is_null($heal_point)) {
                                         $calculated_heal_point = (int) ceil($opponent_data->max_value_ap * $percent);
@@ -1338,32 +1342,32 @@ class BattleState extends Model
         switch ($command) {
             case 'SKILL':
                 Debugbar::debug('storePartyBuff(): SKILL ------------------------------');
-                if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+                if ($target_range === TargetRange::Single->value) {
                     /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
-                } elseif ($target_range === Skill::TARGET_RANGE_ALL) {
+                } elseif ($target_range === TargetRange::All->value) {
                     Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
                     foreach ($battle_state_opponents_collection as $opponent_data) {
                         self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
                     }
                     $battle_logs_collection->push('全員のステータスが向上した！');
-                } elseif ($target_range === Skill::TARGET_RANGE_SELF) {
+                } elseif ($target_range === TargetRange::Self->value) {
                     Debugbar::debug("【自分自身へのバフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
                     self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $target_range);
                 }
                 break;
             case 'ITEM':
                 Debugbar::debug('バフアイテム使用。');
-                if ($target_range === Item::TARGET_RANGE_SINGLE) {
+                if ($target_range === TargetRange::Single->value) {
                     /** @var \stdClass $opponent_data */
                     $opponent_data = $battle_state_opponents_collection[$opponents_index];
                     Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
 
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
 
-                } elseif ($target_range == Item::TARGET_RANGE_ALL) {
+                } elseif ($target_range == TargetRange::All->value) {
                     // $battle_state_opponents_collectionに対象が全て入っているはずなので、それで回復を回すと良い
                     Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用アイテムID: {$new_buff['buffed_item_id']}");
                     foreach ($battle_state_opponents_collection as $opponent_data) {
@@ -1422,7 +1426,7 @@ class BattleState extends Model
         Debugbar::debug("adjustBuffFromSituation() {$opponent_data->name}のバフを調整します。");
         // 戦闘不能ならスキップ
         if ($opponent_data->is_defeated_flag == true) {
-            if ($target_range === Skill::TARGET_RANGE_SINGLE) {
+            if ($target_range === TargetRange::Single->value) {
                 Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
                 $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
             }
@@ -1433,7 +1437,7 @@ class BattleState extends Model
         }
 
         // TARGET_RANGE_ALLの場合はこの関数内ではメッセージは表示せず、呼び出し後に個別で処理する
-        if ($target_range === Skill::TARGET_RANGE_SINGLE || $target_range === Skill::TARGET_RANGE_SELF) {
+        if ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) {
             $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
         }
 

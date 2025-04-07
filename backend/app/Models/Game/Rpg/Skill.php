@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Enums\Rpg\EffectType;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,26 +14,6 @@ class Skill extends Model
     use HasFactory;
 
     protected $table = 'rpg_skills';
-
-    public const ATTACK_NO_TYPE = 0; // 分類なし(ワイドガードなど)
-
-    public const ATTACK_PHYSICAL_TYPE = 1; // 物理
-
-    public const ATTACK_MAGIC_TYPE = 2; // 魔法
-
-    public const EFFECT_SPECIAL_TYPE = 0; // 特殊系スキル(ワイドガードなど)
-
-    public const EFFECT_DAMAGE_TYPE = 1; // 攻撃系スキル
-
-    public const EFFECT_HEAL_TYPE = 2; // 治療系スキル
-
-    public const EFFECT_BUFF_TYPE = 3; // バフ系スキル
-
-    public const TARGET_RANGE_SELF = 0; // 自身を対象
-
-    public const TARGET_RANGE_SINGLE = 1; // 単体を対象
-
-    public const TARGET_RANGE_ALL = 2; // 全体を対象
 
     // battle_state.players_json_dataのskillsに格納する基本要素
     public const PLAYERS_JSON_SKILLS_DEFAULT_DATA = [
@@ -318,7 +299,7 @@ class Skill extends Model
     ) {
         Debugbar::debug('decideExecSkill(): --------------------');
         // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
-        if ($selected_skill_data->effect_type == self::EFFECT_DAMAGE_TYPE && ! is_null($opponents_index)) {
+        if ($selected_skill_data->effect_type === EffectType::Damage->value && ! is_null($opponents_index)) {
             // スキル発動前に敵が討伐済みの場合、敵の選択を変更
             if ($battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true) {
                 $new_target_index = $battle_state_opponents_collection->search(function ($enemy) {
@@ -431,21 +412,21 @@ class Skill extends Model
 
         // 特殊・攻撃・回復・バフに応じて処理を分岐する
         switch ($selected_skill_data->effect_type) {
-            case self::EFFECT_SPECIAL_TYPE:
+            case EffectType::Special->value:
                 BattleState::storePartySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data);
                 break;
-            case self::EFFECT_DAMAGE_TYPE:
+            case EffectType::Damage->value:
                 BattleState::storePartyDamage(
                     'SKILL', $actor_data, $battle_state_opponents_collection, null, $opponents_index, $battle_logs_collection, $damage, $selected_skill_data->target_range, $selected_skill_data->attack_type
                 );
                 break;
-            case self::EFFECT_HEAL_TYPE:
+            case EffectType::Heal->value:
                 BattleState::storePartyHeal(
                     'SKILL', $actor_data, $battle_state_opponents_collection,
                     $opponents_index, $battle_logs_collection, $heal_point, $selected_skill_data->target_range, null, null
                 );
                 break;
-            case self::EFFECT_BUFF_TYPE:
+            case EffectType::Buff->value:
                 BattleState::storePartyBuff(
                     'SKILL', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data->target_range
                 );

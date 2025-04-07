@@ -12,32 +12,6 @@ class Item extends Model
 
     protected $table = 'rpg_items';
 
-    public const ATTACK_NO_TYPE = 0; // 分類なし
-
-    public const ATTACK_PHYSICAL_TYPE = 1; // 物理
-
-    public const ATTACK_MAGIC_TYPE = 2; // 魔法
-
-    public const HEAL_NO_TYPE = 0; // 分類なし
-
-    public const HEAL_HP_TYPE = 1; // HP回復系アイテム
-
-    public const HEAL_AP_TYPE = 2; // AP回復系アイテム
-
-    public const EFFECT_SPECIAL_TYPE = 0; // 特殊系アイテム
-
-    public const EFFECT_DAMAGE_TYPE = 1; // 攻撃系アイテム
-
-    public const EFFECT_HEAL_TYPE = 2; // 治療系アイテム
-
-    public const EFFECT_BUFF_TYPE = 3; // バフ系アイテム
-
-    public const TARGET_RANGE_SELF = 0; // 自身を対象
-
-    public const TARGET_RANGE_SINGLE = 1; // 単体を対象
-
-    public const TARGET_RANGE_ALL = 2; // 全体を対象
-
     // battle_state.players_json_dataのitemsに格納する基本要素
     public const PLAYERS_JSON_ITEMS_DEFAULT_DATA = [
         'id' => null,
