@@ -38,22 +38,22 @@ class BattleState extends Model
 
     // 戦闘後に回復させるHPの倍率
     // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
-    private const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
+    public const AFTER_CLEARED_RECOVERY_HP_MULTIPLIER = 0.20;
 
-    private const AFTER_CLEARED_RECOVERY_AP_MULTIPLIER = 0.30;
+    public const AFTER_CLEARED_RECOVERY_AP_MULTIPLIER = 0.30;
 
-    private const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
+    public const AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER = 0.10;
 
-    private const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
+    public const AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER = 0.15;
 
     private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
     /**
-     * 戦闘初回時と、2回目以降のplayers_json_dataに格納する値を作成して返す。
+     * 戦闘初回時のplayers_json_dataに格納する値を作成して返す。
      *
      * @return Collection
      */
-    public static function createPlayersData(int $savedata_id, ?Collection $when_cleared_players_data = null)
+    public static function createPlayersData(int $savedata_id)
     {
         Debugbar::debug('createPlayersData(): jsonのベースとなるplayers_data 作成。----------');
         $parties = Party::where('savedata_id', $savedata_id)->get();
@@ -63,53 +63,15 @@ class BattleState extends Model
         // 0 => ["id" => 72,"name" => "パラ", "current_hp" => 50,"current_ap" => 15],  1 => [...], 2 => [...]
         $players_hp_and_ap_status = collect();
 
-        // TODO: ->を['']を使った形に直す
-        if (isset($when_cleared_players_data)) {
-            Debugbar::debug('ステージクリア後の作成です。');
-            foreach ($when_cleared_players_data as $player_index => $player_data) {
-                Debugbar::debug("################# {$player_data->name} | クリア時点でのHP: {$player_data->value_hp} AP: {$player_data->value_ap}");
-
-                $buffed_hp = $player_data->value_hp;
-                $buffed_ap = $player_data->value_ap;
-                if ($player_data->is_defeated_flag) {
-                    Debugbar::debug('戦闘不能のため、最大HPの10%, 最大APの15%で回復させます。');
-                    $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
-                    $buffed_ap += ceil($player_data->max_value_ap * self::AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER);
-                } else {
-                    $buffed_hp += ceil($player_data->max_value_hp * self::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
-                    $buffed_ap += ceil($player_data->max_value_ap * self::AFTER_CLEARED_RECOVERY_AP_MULTIPLIER);
-                }
-                // 回復によって最大体力を超えた場合は最大体力にする
-                if ($buffed_hp > $player_data->max_value_hp) {
-                    $buffed_hp = $player_data->max_value_hp;
-                }
-                if ($buffed_ap > $player_data->max_value_ap) {
-                    $buffed_ap = $player_data->max_value_ap;
-                }
-
-                $status = collect([
-                    'id' => $player_data->id,
-                    'name' => $player_data->name, // jsonから撮っているので、nicknameではなくname
-                    'current_hp' => $buffed_hp,
-                    'current_ap' => $buffed_ap,
-                ]);
-                $players_hp_and_ap_status->push($status);
-
-                Debugbar::debug("調整後:{$status['name']} | HP: {$status['current_hp']} AP: {$status['current_ap']}");
-
-            }
-        } else {
-            // 初回戦闘時
-            Debugbar::debug('新規作成. (player_dataはCollection想定)');
-            foreach ($parties as $player_index => $player_data) {
-                $status = [
-                    'id' => $player_data['id'],
-                    'name' => $player_data['nickname'],
-                    'current_hp' => $player_data['value_hp'],
-                    'current_ap' => $player_data['value_ap'],
-                ];
-                $players_hp_and_ap_status->push($status);
-            }
+        Debugbar::debug('新規作成. (player_dataはCollection想定)');
+        foreach ($parties as $player_index => $player_data) {
+            $status = [
+                'id' => $player_data['id'],
+                'name' => $player_data['nickname'],
+                'current_hp' => $player_data['value_hp'],
+                'current_ap' => $player_data['value_ap'],
+            ];
+            $players_hp_and_ap_status->push($status);
         }
 
         $players_data = collect();

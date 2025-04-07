@@ -472,7 +472,7 @@ class ApiController extends Controller
             Debugbar::debug('戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------');
 
             // -------------- jsonのベースとなるデータの取得 --------------
-            $players_collection = BattleState::createPlayersData($savedata->id, null);
+            $players_collection = BattleState::createPlayersData($savedata->id);
             $enemies_collection = BattleState::createEnemiesData($field_id, $stage_id);
             $items_collection = BattleState::createItemsData($savedata->id);
             $enemy_drops_collection = collect(BattleData::ENEMY_DROPS_TEMPLATE);
@@ -744,12 +744,36 @@ class ApiController extends Controller
                     }
                 }
 
-                Debugbar::debug('処理後');
-                Debugbar::debug($cleared_players_data);
-
                 $field_id = $battle_state->current_field_id;
                 $next_stage_id = $battle_state->current_stage_id + 1;
                 $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+
+                // レベル処理終了後、各種ステータス調整処理
+                Debugbar::debug('レベル処理完了。続いて、ステータス調整処理(戦闘後体力回復・戦闘不能解除・バフ解除など)');
+                foreach ($cleared_players_data as $player_data) {
+                    $buffed_hp = $player_data->value_hp;
+                    $buffed_ap = $player_data->value_ap;
+                    if ($player_data->is_defeated_flag) {
+                        Debugbar::debug('戦闘不能のため、最大HPの10%, 最大APの15%で回復させます。');
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * BattleState::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * BattleState::AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER);
+                    } else {
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * BattleState::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * BattleState::AFTER_CLEARED_RECOVERY_AP_MULTIPLIER);
+                    }
+                    // 回復によって最大体力を超えた場合は最大体力にする
+                    if ($buffed_hp > $player_data->max_value_hp) {
+                        $buffed_hp = $player_data->max_value_hp;
+                    }
+                    if ($buffed_ap > $player_data->max_value_ap) {
+                        $buffed_ap = $player_data->max_value_ap;
+                    }
+
+                    $player_data->value_hp = $buffed_hp;
+                    $player_data->value_ap = $buffed_ap;
+                    $player_data->is_defeated_flag = false;
+                    $player_data->buffs = [];
+                }
 
                 // TODO: ボス討伐時は作らなくて良い
                 $create_next_battle_state = BattleState::createBattleState(
