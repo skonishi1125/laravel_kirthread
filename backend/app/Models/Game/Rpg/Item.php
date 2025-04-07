@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -11,22 +12,6 @@ class Item extends Model
     use HasFactory;
 
     protected $table = 'rpg_items';
-
-    // battle_state.players_json_dataのitemsに格納する基本要素
-    public const PLAYERS_JSON_ITEMS_DEFAULT_DATA = [
-        'id' => null,
-        'name' => null,
-        'attack_type' => null,
-        'heal_type' => null,
-        'effect_type' => null,
-        'target_range' => null,
-        'is_percent_based' => null,
-        'percent' => null,
-        'fixed_value' => null,
-        'buff_turn' => null,
-        'description' => null,
-        'possession_number' => null,
-    ];
 
     // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
     public function savedata_has_item()
@@ -75,7 +60,7 @@ class Item extends Model
                 continue;
             }
 
-            $item_data = self::PLAYERS_JSON_ITEMS_DEFAULT_DATA;
+            $item_data = BattleData::ITEM_TEMPLATE;
             $item_data['id'] = $item['id'];
             $item_data['name'] = $item['name'];
             $item_data['attack_type'] = $item['attack_type'];

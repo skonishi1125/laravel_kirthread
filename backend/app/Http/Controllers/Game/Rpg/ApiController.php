@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Exp;
@@ -474,7 +475,7 @@ class ApiController extends Controller
             $players_collection = BattleState::createPlayersData($savedata->id, null);
             $enemies_collection = BattleState::createEnemiesData($field_id, $stage_id);
             $items_collection = BattleState::createItemsData($savedata->id);
-            $enemy_drops_collection = collect(BattleState::ENEMY_DROPS_DEFAULT_DATA);
+            $enemy_drops_collection = collect(BattleData::ENEMY_DROPS_TEMPLATE);
 
             // 各データをbattle_statesテーブルに格納
             $battle_state = BattleState::createBattleState(

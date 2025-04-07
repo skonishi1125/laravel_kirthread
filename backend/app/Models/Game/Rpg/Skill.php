@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\EffectType;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,21 +15,6 @@ class Skill extends Model
     use HasFactory;
 
     protected $table = 'rpg_skills';
-
-    // battle_state.players_json_dataのskillsに格納する基本要素
-    public const PLAYERS_JSON_SKILLS_DEFAULT_DATA = [
-        'id' => null,
-        'name' => null,
-        'description' => null,
-        'attack_type' => null,
-        'effect_type' => null,
-        'target_range' => null,
-        'skill_level' => null,
-        'ap_cost' => null,
-        'buff_turn' => null,
-        'elemental_id' => null,
-        'skill_percent' => null,
-    ];
 
     /**
      * 多対多のリレーション
@@ -258,7 +244,7 @@ class Skill extends Model
                 $buff_turn = $skill_attributes[$buff_turn_property];
             }
 
-            $players_json_skills_data = self::PLAYERS_JSON_SKILLS_DEFAULT_DATA;
+            $players_json_skills_data = BattleData::SKILL_TEMPLATE;
 
             $players_json_skills_data['id'] = $skill['id'];
             $players_json_skills_data['name'] = $skill['name'];
@@ -286,7 +272,7 @@ class Skill extends Model
      * $opponents_indexは 並び中央の味方に向けた場合は[1]が入るが、
      * 全体攻撃スキルを使った場合, $opponents_indexはnullであるため?で許容しておく。
      *
-     * @param  object  $selected_skill_data  Skill::PLAYERS_JSON_SKILLS_DEFAULT_DATA に、選択されたスキルの情報が格納されたもの
+     * @param  object  $selected_skill_data  BattleData::SKILL_TEMPLATE に、選択されたスキルの情報が格納されたもの
      */
     public static function decideExecSkill(
         int $role_id,
@@ -326,7 +312,7 @@ class Skill extends Model
         $damage = null;
         $heal_point = null;
 
-        $new_buff = BattleState::BUFFS_DEFAULT_DATA; // TODO: BattleStateに配置せず、汎用的な値なのでConstantsとかのフォルダを作って配置してもいいと思う。
+        $new_buff = BattleData::BUFF_TEMPLATE;
         $new_buff['buffed_from'] = 'SKILL';
         $new_buff['buffed_skill_id'] = $selected_skill_data->id;
         $new_buff['buffed_skill_name'] = $selected_skill_data->name;

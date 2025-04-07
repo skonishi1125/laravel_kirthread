@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AttackType;
 use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\HealType;
@@ -34,88 +35,6 @@ class BattleState extends Model
     {
         return $this->belongsTo(Savedata::class);
     }
-
-    public const ENEMY_DROPS_DEFAULT_DATA = [
-        'money' => 0,
-        'drop_item_id' => [],
-        'drop_weapon_id' => [],
-    ];
-
-    // jsonデータに格納する、playersの基本要素
-    public const PLAYERS_JSON_DEFAULT_DATA = [
-        'id' => null,
-        'role_id' => null,
-        'name' => '',
-        'command' => '',
-        'target_player_index' => null, // exec時に格納する, スキルやアイテムで味方を対象とした場合のindexを格納する
-        'target_enemy_index' => null, // exec時に格納する, 味方の攻撃対象とする敵のindex。
-        'max_value_hp' => 0, // HP最大値
-        'max_value_ap' => 0, // AP最大値
-        'value_hp' => 0,
-        'value_ap' => 0,
-        'value_str' => 0,
-        'value_def' => 0,
-        'value_int' => 0,
-        'value_spd' => 0,
-        'value_luc' => 0,
-        'level' => 0,
-        'total_exp' => 0,
-        'freely_status_point' => 0,
-        'freely_skill_point' => 0,
-        'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::getLearnedSkill($party);みたいな感じでそのまま上書きされる
-        'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
-        'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
-        'role_portrait' => null,
-        'is_defeated_flag' => false,
-        'is_escaped' => false,
-        'player_index' => null,
-        'is_enemy' => false,
-    ];
-
-    public const ENEMIES_JSON_DEFAULT_DATA = [
-        'id' => null,
-        'name' => null,
-        'command' => null, // exec時に格納する
-        'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
-        'max_value_hp' => 0, // HP最大値
-        'max_value_ap' => 0, // AP最大値
-        'value_hp' => 0,
-        'value_ap' => 0,
-        'value_str' => 0,
-        'value_def' => 0,
-        'value_int' => 0,
-        'value_spd' => 0,
-        'value_luc' => 0,
-        'portrait' => null,
-        'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
-        'is_defeated_flag' => false,
-        'is_escaped' => false,
-        'enemy_index' => null, // 敵の並び。
-        'is_enemy' => true, // 味方と敵で同じデータ構造をベースとしているので、判別するためのフラグ
-        'is_boss' => false,
-        'exp' => 0,
-        'drop_money' => 0,
-    ];
-
-    /**
-     * jsonデータに格納する、buffsの基本要素
-     *
-     * 実際はこの配列が、順に格納されていく形になる
-     * 'buffs => [ [バフ1], [バフ2], [バフ3], ... ]'
-     */
-    public const BUFFS_DEFAULT_DATA = [
-        'buffed_skill_id' => null,
-        'buffed_item_id' => null,
-        'buffed_skill_name' => null,
-        'buffed_item_name' => null,
-        'buffed_str' => null,
-        'buffed_def' => null,
-        'buffed_int' => null,
-        'buffed_spd' => null,
-        'buffed_luc' => null,
-        'remaining_turn' => 0,
-        'buffed_from' => '', // 'DEFENCE', 'ITEM', 'SKILL'など、どのコマンドで付与されたものか。
-    ];
 
     // 戦闘後に回復させるHPの倍率
     // 基本的にmaxHPの20%, maxAPの30%分回復させる。 戦闘不能の場合は半減。
@@ -202,7 +121,7 @@ class BattleState extends Model
             $role_portrait = Role::where('id', $party['role_id'])->value('portrait_image_path');
 
             // vue側に渡すデータ
-            $player_data = self::PLAYERS_JSON_DEFAULT_DATA;
+            $player_data = BattleData::PARTY_TEMPLATE;
             $player_data['id'] = $party['id'];
             $player_data['role_id'] = $party['role_id'];
             $player_data['name'] = $party['nickname']; // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
@@ -260,7 +179,7 @@ class BattleState extends Model
         // $enemiesを加工して格納するためのCollection
         $enemies_data = collect();
         foreach ($enemies as $enemy_index => $enemy) {
-            $enemy_data = self::ENEMIES_JSON_DEFAULT_DATA;
+            $enemy_data = BattleData::ENEMY_TEMPLATE;
             $enemy_data['id'] = $enemy['id'];
             $enemy_data['name'] = $enemy['name'];
             $enemy_data['max_value_hp'] = $enemy['value_hp']; // HP最大値
@@ -554,7 +473,7 @@ class BattleState extends Model
                         // "防御"バフを 1ターン、def * 0.5の補正として付与する。
                         // 例: value_defが60の場合、バフは30となり合計DEFは90となる
                         Debugbar::debug("【防御】使用者: {$actor_data->name} ");
-                        $new_buff = self::BUFFS_DEFAULT_DATA;
+                        $new_buff = BattleData::BUFF_TEMPLATE;
                         $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * 0.5);
                         $new_buff['remaining_turn'] = 1;
                         $new_buff['buffed_from'] = 'DEFENCE';
@@ -754,7 +673,7 @@ class BattleState extends Model
     ) {
         Debugbar::debug('execCommandSkill(): ----------------------');
         // firstWhereを使用するため、collectionとして一時的にキャスト
-        /** @var \stdClass $selected_skill_data Skill::PLAYERS_JSON_SKILLS_DEFAULT_DATA に各データが格納されたオブジェクト。 */
+        /** @var \stdClass $selected_skill_data BattleData::SKILL_TEMPLATE に各データが格納されたオブジェクト。 */
         $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
         // Debugbar::debug($selected_skill_data);
         // APがなければ、ログに入れて処理を終了する
@@ -799,7 +718,7 @@ class BattleState extends Model
             $damage = null;
             $heal_point = null;
 
-            $new_buff = BattleState::BUFFS_DEFAULT_DATA; // TODO: BattleStateに配置せず、汎用的な値なのでConstantsとかのフォルダを作って配置してもいいと思う。
+            $new_buff = BattleData::BUFF_TEMPLATE;
             $new_buff['buffed_from'] = 'ITEM';
             $new_buff['buffed_item_id'] = $selected_item_data->id;
             $new_buff['buffed_item_name'] = $selected_item_data->name;
@@ -1475,7 +1394,7 @@ class BattleState extends Model
 
             return;
         }
-        $player_or_enemy_data->buffs = self::BUFFS_DEFAULT_DATA;
+        $player_or_enemy_data->buffs = BattleData::BUFF_TEMPLATE;
         Debugbar::debug("戦闘不能となったので{$player_or_enemy_data->name}のバフをクリア。");
     }
 
