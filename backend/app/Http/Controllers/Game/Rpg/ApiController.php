@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Game\Rpg;
 
 use App\Constants\Rpg\BattleData;
+use App\Enums\Rpg\AfterCleared;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Exp;
@@ -763,12 +764,14 @@ class ApiController extends Controller
                     $buffed_hp = $player_data->value_hp;
                     $buffed_ap = $player_data->value_ap;
                     if ($player_data->is_defeated_flag) {
-                        Debugbar::debug('戦闘不能のため、最大HPの10%, 最大APの15%で回復させます。');
-                        $buffed_hp += (int) ceil($player_data->max_value_hp * BattleState::AFTER_CLEARED_RESURRECTION_HP_MULTIPLIER);
-                        $buffed_ap += (int) ceil($player_data->max_value_ap * BattleState::AFTER_CLEARED_RESURRECTION_AP_MULTIPLIER);
+                        Debugbar::debug('戦闘不能のため、最大HPの10%, 最大APの5%で回復させます。');
+                        $player_data->is_defeated_flag = false;
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * AfterCleared::ResurrectionHp->Multiplier());
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * AfterCleared::ResurrectionAp->Multiplier());
                     } else {
-                        $buffed_hp += (int) ceil($player_data->max_value_hp * BattleState::AFTER_CLEARED_RECOVERY_HP_MULTIPLIER);
-                        $buffed_ap += (int) ceil($player_data->max_value_ap * BattleState::AFTER_CLEARED_RECOVERY_AP_MULTIPLIER);
+                        Debugbar::debug('最大HPの20%, 最大APの10%回復。');
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * AfterCleared::RecoveryHp->Multiplier());
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * AfterCleared::RecoveryAp->Multiplier());
                     }
                     // 回復によって最大体力を超えた場合は最大体力にする
                     if ($buffed_hp > $player_data->max_value_hp) {
@@ -780,7 +783,6 @@ class ApiController extends Controller
 
                     $player_data->value_hp = $buffed_hp;
                     $player_data->value_ap = $buffed_ap;
-                    $player_data->is_defeated_flag = false;
                     $player_data->buffs = [];
                 }
 
