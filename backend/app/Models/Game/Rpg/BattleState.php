@@ -139,7 +139,7 @@ class BattleState extends Model
         // ]);
 
         // $enemiesを加工して格納するためのCollection
-        $enemies_data = collect();
+        $enemies_collection = collect();
         foreach ($enemies as $enemy_index => $enemy) {
             $enemy_data = BattleData::ENEMY_TEMPLATE;
             $enemy_data['id'] = $enemy['id'];
@@ -159,12 +159,12 @@ class BattleState extends Model
             $enemy_data['exp'] = $enemy['exp'];
             $enemy_data['drop_money'] = $enemy['drop_money'];
 
-            $enemies_data->push($enemy_data);
+            $enemies_collection->push($enemy_data);
         }
 
-        Debugbar::debug($enemies_data);
+        Debugbar::debug($enemies_collection);
 
-        return $enemies_data;
+        return $enemies_collection;
     }
 
     /**
@@ -177,10 +177,10 @@ class BattleState extends Model
     public static function createItemsData(int $savedata_id)
     {
         Debugbar::debug('createItemsData(): ------------');
-        $items_data = Item::getBattleStateItemFromSavedata($savedata_id);
-        Debugbar::debug($items_data);
+        $items_collection = Item::getBattleStateItemFromSavedata($savedata_id);
+        Debugbar::debug($items_collection);
 
-        return $items_data;
+        return $items_collection;
     }
 
     /**

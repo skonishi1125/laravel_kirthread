@@ -32,7 +32,7 @@ class Skill extends Model
     }
 
     // 渡したパーティ(単体)に合ったスキルツリーを作成し、それを返す
-    public static function aquireSkillTreeCollection(Party $party)
+    public static function acquireSkillTreeCollection(Party $party)
     {
         $role_skills = self::where('available_role_id', $party->role_id)->get();
         $skills_collection = collect();
