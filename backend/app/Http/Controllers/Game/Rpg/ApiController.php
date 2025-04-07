@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
+use App\Enums\Rpg\AfterCleared;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Exp;
@@ -327,7 +329,7 @@ class ApiController extends Controller
                     'value_spd' => $party->value_spd,
                     'value_luc' => $party->value_luc,
                 ],
-                'skill_tree' => Skill::aquireSkillTreeCollection($party),
+                'skill_tree' => Skill::acquireSkillTreeCollection($party),
             ]
             );
 
@@ -470,25 +472,19 @@ class ApiController extends Controller
         if (! $is_user_battle) {
             Debugbar::debug('戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------');
 
-            // パーティ3人の情報(ステータス,スキル,アイテム)を格納する
-            $players_data = BattleState::createPlayersData($savedata->id, null);
+            // -------------- jsonのベースとなるデータの取得 --------------
+            $players_collection = BattleState::createPlayersCollection($savedata->id);
+            $enemies_collection = BattleState::createEnemiesCollection($field_id, $stage_id);
+            $items_collection = BattleState::createItemsCollection($savedata->id);
+            $enemy_drops_collection = collect(BattleData::ENEMY_DROPS_TEMPLATE);
 
-            // ステージの敵情報を読み込む
-            $enemies_data = BattleState::createEnemiesData($field_id, $stage_id);
-
-            // アイテムデータを読み込む
-            $savedata = Savedata::getLoginUserCurrentSavedata();
-            $items_data = BattleState::createItemsData($savedata->id);
-            $enemy_drops_data = collect(BattleState::ENEMY_DROPS_DEFAULT_DATA);
-
-            // 戦闘データをセッションIDで一意に管理する
+            // 各データをbattle_statesテーブルに格納
             $battle_state = BattleState::createBattleState(
-                $savedata->id, $players_data, $enemies_data, $items_data, $enemy_drops_data, $field_id, $stage_id
+                $savedata->id, $players_collection, $enemies_collection, $items_collection, $enemy_drops_collection, $field_id, $stage_id
             );
 
         } else {
-            // 戦闘中のデータを取得する
-            Debugbar::debug('戦闘中です。セッションIDから戦闘履歴を取得します。  ---------------');
+            Debugbar::debug('戦闘中です。セーブデータIDから直近の戦闘履歴を取得します。  ---------------');
             $battle_state = BattleState::where('savedata_id', $savedata->id)->first();
 
             // $battle_stateの情報と現在のfield_id, stage_idが一致しているか確認する
@@ -500,39 +496,45 @@ class ApiController extends Controller
                 return abort(500, '現URLとbattle_stateのデータの整合性が確認できませんでした。');
             }
 
-            $players_data = json_decode($battle_state['players_json_data']);
-            $enemies_data = json_decode($battle_state['enemies_json_data']);
-            $items_data = json_decode($battle_state['items_json_data']);
+            // 初回戦闘時、各データをCollectionとして返しているため、そちらの形に合わせてCollection型に変換しておく
+            $players_collection = collect(json_decode($battle_state->players_json_data));
+            $enemies_collection = collect(json_decode($battle_state->enemies_json_data));
+            $items_collection = collect(json_decode($battle_state->items_json_data));
+
         }
 
         // vueに渡すデータ
         // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム
         $all_data = collect()
-            ->push($players_data)
-            ->push($enemies_data)
+            ->push($players_collection)
+            ->push($enemies_collection)
             ->push($battle_state->session_id)
-            ->push($items_data);
+            ->push($items_collection);
 
         return $all_data;
     }
 
-    // 選択されたデータを元に、コマンド実行
+    /**
+     * 選択されたデータを元に、コマンドを実行。戦闘部分のメイン処理。
+     */
     public function execBattleCommand(Request $request)
     {
-
-        Debugbar::debug('vueからデータを受け取る。---------------');
+        Debugbar::debug('execBattleCommand(): ---------------');
         $session_id = $request->session_id;
         $battle_state = BattleState::where('session_id', $session_id)->first();
-        $battle_logs = collect(); // 結果を格納していく
-        $current_players_data = collect(json_decode($battle_state['players_json_data']));
-        $current_enemies_data = collect(json_decode($battle_state['enemies_json_data']));
-        $current_items_data = collect(json_decode($battle_state['items_json_data']));
-        $commands = collect($request->selectedCommands);
+        $battle_logs_collection = collect(); // 結果を格納していく
+        $battle_state_players_collection = collect(json_decode($battle_state['players_json_data']));
+        $battle_state_enemies_collection = collect(json_decode($battle_state['enemies_json_data']));
+        $battle_state_items_collection = collect(json_decode($battle_state['items_json_data']));
 
-        Debugbar::debug('コマンド情報格納-------------');
-        // コマンド情報格納 players_json_data['id']と$coomands['partyId']を紐づける。
-        $current_players_data->transform(function ($data) use ($commands) {
-            $command = $commands->firstWhere('partyId', $data->id);
+        // ["partyId" => 1, "command" => "ATTACK","enemyIndex" => 0],[...]といった、パーティ人数分のコマンド配列
+        $selected_commands_collection = collect($request->selectedCommands);
+
+        // コマンド情報格納
+        // $battle_state_players_collection['id']と$selected_commands_collection['partyId']を紐づける。
+        // transform()で使用する $data はstdClass型のため、-> でアクセスする
+        $battle_state_players_collection->transform(function ($data) use ($selected_commands_collection) {
+            $command = $selected_commands_collection->firstWhere('partyId', $data->id);
             if ($command) {
                 $data->command = $command['command'];
                 $data->target_enemy_index = $command['enemyIndex'] ?? null;
@@ -542,58 +544,57 @@ class ApiController extends Controller
 
                 // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
                 if (! is_null($data->selected_skill_id)) {
-                    Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
-                    $selected_skill_effect_type = collect($data->skills)
-                        ->firstWhere('id', $data->selected_skill_id)
-                        ->effect_type;
+                    // Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
+                    /** @var int $selected_skill_effect_type */
+                    $selected_skill_effect_type =
+                        // firstWhereを使うため、Collectionに変換している
+                        collect($data->skills)->firstWhere('id', $data->selected_skill_id)->effect_type;
                     $data->selected_skill_effect_type = $selected_skill_effect_type;
                 } else {
                     $data->selected_skill_effect_type = null;
                 }
-
-                // todo: item。
             }
 
             return $data;
         });
 
-        Debugbar::debug('速度順に整理-------------');
-        $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-        $sorted_players_and_enemies_data = BattleState::sortByBattleExec($players_and_enemies_data);
-
-        // Debugbar::debug(get_class($sorted_players_and_enemies_data), get_class($current_enemies_data), get_class( $current_players_data), get_class($battle_logs));
+        Debugbar::debug('行動順決定処理 BattleState::sortByBattleExec() -------------');
+        $battle_state_players_and_enemies_collection =
+            $battle_state_players_collection->concat($battle_state_enemies_collection);
+        $sorted_battle_state_players_and_enemies_collection =
+            BattleState::sortByBattleExec($battle_state_players_and_enemies_collection);
 
         Debugbar::debug('戦闘実行！ BattleState::execBattleCommand()----------------');
         BattleState::execBattleCommand(
-            $sorted_players_and_enemies_data, $current_players_data, $current_enemies_data, $current_items_data, $battle_logs
+            $sorted_battle_state_players_and_enemies_collection, $battle_state_players_collection, $battle_state_enemies_collection, $battle_state_items_collection, $battle_logs_collection
         );
 
         Debugbar::debug('--------------戦闘処理完了(ステータス一覧)----------------');
         Debugbar::debug([
-            'current_players_data' => $current_players_data,
-            'current_enemies_data' => $current_enemies_data,
-            'current_items_data' => $current_items_data,
-            'battle_logs' => $battle_logs,
+            'battle_state_players_collection' => $battle_state_players_collection,
+            'battle_state_enemies_collection' => $battle_state_enemies_collection,
+            'battle_state_items_collection' => $battle_state_items_collection,
+            'battle_logs_collection' => $battle_logs_collection,
         ]);
         Debugbar::debug('----------------------------------------------------------');
 
-        Debugbar::debug('バフターン数計算処理-------------------------------');
-        $players_and_enemies_data = $current_players_data->concat($current_enemies_data);
-        BattleState::afterExecCommandCalculateBuff($players_and_enemies_data, $battle_logs);
+        Debugbar::debug('バフターン数計算処理 BattleState::afterExecCommandCalculateBuff ------------------------');
+        // $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
+        BattleState::afterExecCommandCalculateBuff($battle_state_players_and_enemies_collection, $battle_logs_collection);
 
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
-            'players_json_data' => json_encode($current_players_data),
-            'items_json_data' => json_encode($current_items_data),
-            'enemies_json_data' => json_encode($current_enemies_data),
+            'players_json_data' => json_encode($battle_state_players_collection),
+            'items_json_data' => json_encode($battle_state_items_collection),
+            'enemies_json_data' => json_encode($battle_state_enemies_collection),
         ]);
 
         // vueに渡すデータ
         $all_vue_data = collect()
-            ->push($current_players_data)
-            ->push($current_enemies_data)
-            ->push($battle_logs)
-            ->push($current_items_data);
+            ->push($battle_state_players_collection)
+            ->push($battle_state_enemies_collection)
+            ->push($battle_logs_collection)
+            ->push($battle_state_items_collection);
 
         return $all_vue_data;
     }
@@ -623,57 +624,66 @@ class ApiController extends Controller
 
         // 戦闘終了時の処理開始
         // 獲得した合計経験値・ゴールドの計算
-        $result_logs = collect();
+        $battle_logs_collection = collect();
         $exp_tables = Exp::get();
-        $enemies_collection_data = collect(json_decode($battle_state['enemies_json_data']));
-        $total_aquire_exp = 0;
-        $total_aquire_money = 0;
+        $battle_state_enemies_collection = collect(json_decode($battle_state['enemies_json_data']));
+        $total_acquire_exp = 0;
+        $total_acquire_money = 0;
 
         // money計算処理
-        $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
-        foreach ($enemies_collection_data as $enemy) {
-            $total_aquire_exp += $enemy->exp;
-            $total_aquire_money += $enemy->drop_money;
+        $battle_state_enemy_drops_collection = collect(json_decode($battle_state['enemy_drops_json_data']));
+        foreach ($battle_state_enemies_collection as $enemy) {
+            $total_acquire_exp += $enemy->exp;
+            $total_acquire_money += $enemy->drop_money;
         }
-        $enemy_drops_collection_data['money'] += $total_aquire_money;
-        Debugbar::debug("money加算完了。合計金額: {$enemy_drops_collection_data['money']}");
+        $battle_state_enemy_drops_collection['money'] += $total_acquire_money;
+        Debugbar::debug("money加算完了。合計金額: {$battle_state_enemy_drops_collection['money']}");
 
         // 戦闘不能のユーザーを除外し、振り分ける(戦闘不能のキャラクターはEXPが0)
-        $cleared_players_data = collect(json_decode($battle_state->players_json_data));
-        $cleared_no_defeated_players_data = $cleared_players_data->filter(function ($item) {
+        $cleared_players_collection = collect(json_decode($battle_state->players_json_data));
+        $cleared_no_defeated_players_collection = $cleared_players_collection->filter(function ($item) {
             return $item->is_defeated_flag === false;
         });
-        Debugbar::debug($cleared_no_defeated_players_data);
+        Debugbar::debug($cleared_no_defeated_players_collection);
 
         // 一人当たりの経験値(切り上げ)
-        $per_exp = (int) ceil($total_aquire_exp / $cleared_no_defeated_players_data->count());
-        Debugbar::debug("獲得経験値:{$total_aquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_aquire_money} ");
-        $result_logs->push("敵を倒した！{$total_aquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
+        $per_exp = (int) ceil($total_acquire_exp / $cleared_no_defeated_players_collection->count());
+        Debugbar::debug("獲得経験値:{$total_acquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_acquire_money} ");
+        $battle_logs_collection->push("敵を倒した！{$total_acquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
 
         // 戦闘後のアイテム状況
-        $cleared_items_data = collect(json_decode($battle_state['items_json_data']));
+        $cleared_items_collection = collect(json_decode($battle_state['items_json_data']));
 
         $savedata = Savedata::getLoginUserCurrentSavedata();
         try {
-            DB::transaction(function () use ($savedata, $cleared_players_data, $cleared_items_data, $enemy_drops_collection_data, $per_exp, $exp_tables, $battle_state, $result_logs) {
+            DB::transaction(function () use (
+                $savedata,
+                $cleared_players_collection,
+                $cleared_items_collection,
+                $battle_state_enemy_drops_collection,
+                $per_exp,
+                $exp_tables,
+                $battle_state,
+                $battle_logs_collection
+            ) {
                 $increase_values = [];
 
                 // レベル処理
-                Debugbar::debug("ループ対象のパーティメンバーの数: {$cleared_players_data->count()} 人");
-                foreach ($cleared_players_data as $index => $party) {
-                    Debugbar::debug("ループ処理開始: {$party->name}  ##############################");
-                    if ($party->is_defeated_flag === true) {
-                        Debugbar::debug("戦闘不能状態なので、経験値振り分けをスキップ。 {$party->name}");
+                Debugbar::debug("ループ対象のパーティメンバーの数: {$cleared_players_collection->count()} 人");
+                foreach ($cleared_players_collection as $player_data) {
+                    Debugbar::debug("ループ処理開始: {$player_data->name}  ##############################");
+                    if ($player_data->is_defeated_flag === true) {
+                        Debugbar::debug("戦闘不能状態なので、経験値振り分けをスキップ。 {$player_data->name}");
 
                         continue;
                     }
 
-                    $party->total_exp += $per_exp;
-                    $current_party_exp = $party->total_exp;
-                    $current_party_level = $party->level;
+                    $player_data->total_exp += $per_exp;
+                    $current_party_exp = $player_data->total_exp;
+                    $current_party_level = $player_data->level;
                     $new_level = null;
 
-                    DebugBar::debug("経験値:{$per_exp}を振り分けます。現在経験値: {$party->total_exp}");
+                    DebugBar::debug("経験値:{$per_exp}を振り分けます。現在経験値: {$player_data->total_exp}");
 
                     // 経験値テーブルと現在の総合獲得経験値を比較して、そのレベルにする
                     foreach ($exp_tables as $exp_table) {
@@ -685,7 +695,7 @@ class ApiController extends Controller
                     }
                     // レベルアップ時の処理
                     // やることはレベル自体の数字反映と、上がったレベルに応じてステータス上昇の処理
-                    if ($new_level && $new_level > $party->level) {
+                    if ($new_level && $new_level > $player_data->level) {
                         Debugbar::debug("レベルアップしました。{$current_party_level} -> {$new_level}");
                         // レベルが上がった分だけforで回す。
                         // 例えばlv1からlv4に上がった時、 lv2, lv3, lv4としてステータスを回したい。
@@ -697,20 +707,20 @@ class ApiController extends Controller
                         ];
                         for ($i = $current_party_level + 1; $i <= $new_level; $i++) {
                             // ステータス上昇処理
-                            $increase_values = Party::calculateGaussianGrowth($party);
+                            $increase_values = Party::calculateGaussianGrowth($player_data);
                             Debugbar::debug("HPが{$increase_values['growth_hp']}, apが{$increase_values['growth_ap']}, strが{$increase_values['growth_str']}, defが{$increase_values['growth_def']}, intが{$increase_values['growth_int']}, spdが{$increase_values['growth_spd']}, lucが{$increase_values['growth_luc']}アップ。");
 
                             // ステータス・スキルポイント付与
                             Debugbar::debug('ステータス・スキルポイントの付与開始');
                             $increase_values['growth_status_point'] = 4;
                             $increase_values['growth_skill_point'] = 0;
-                            $party->freely_status_point += $increase_values['growth_status_point'];
+                            $player_data->freely_status_point += $increase_values['growth_status_point'];
                             Debugbar::debug('ステータスポイント付与OK');
                             // Lvが３の倍数の時(3,6,9,12,15,18,21,24,27,30), スキルポイント付与
                             if ($i % 3 === 0) {
                                 Debugbar::debug('Lvが3の倍数のため、スキルポイントを付与します。');
                                 $increase_values['growth_skill_point'] = 1;
-                                $party->freely_skill_point += $increase_values['growth_skill_point'];
+                                $player_data->freely_skill_point += $increase_values['growth_skill_point'];
                             }
 
                             // レベルが飛び級した場合でも、画面のログにはまとめてステータスを出す
@@ -730,32 +740,57 @@ class ApiController extends Controller
 
                         }
                         // レベル反映
-                        $party->level = $new_level;
-                        $result_logs->push("{$party->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']} ステータスポイント+{$total_growth['status_point']}");
+                        $player_data->level = $new_level;
+                        $battle_logs_collection->push("{$player_data->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']} ステータスポイント+{$total_growth['status_point']}");
 
                         if ($increase_values['growth_skill_point'] !== 0) {
-                            $result_logs->push('スキルポイントを獲得！');
+                            $battle_logs_collection->push('スキルポイントを獲得！');
                         }
 
                         // レベルが上がった時、減っているHP/APも回復させてあげたい
                         // 選択中のキャラの現在のjsonデータの max_value_hp/ap と value_hp/ap を調整してやれば良い
-                        $party->value_hp = $party->max_value_hp;
-                        $party->value_ap = $party->max_value_ap;
+                        $player_data->value_hp = $player_data->max_value_hp;
+                        $player_data->value_ap = $player_data->max_value_ap;
 
-                        Debugbar::debug("HPとAPを全回復。HP:{$party->value_hp} AP:{$party->value_ap}");
+                        Debugbar::debug("HPとAPを全回復。HP:{$player_data->value_hp} AP:{$player_data->value_ap}");
                     }
                 }
 
-                Debugbar::debug('処理後');
-                Debugbar::debug($cleared_players_data);
-
                 $field_id = $battle_state->current_field_id;
                 $next_stage_id = $battle_state->current_stage_id + 1;
-                $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+                $next_enemies_data = BattleState::createEnemiesCollection($field_id, $next_stage_id);
+
+                // レベル処理終了後、各種ステータス調整処理
+                Debugbar::debug('レベル処理完了。続いて、ステータス調整処理(戦闘後体力回復・戦闘不能解除・バフ解除など)');
+                foreach ($cleared_players_collection as $player_data) {
+                    $buffed_hp = $player_data->value_hp;
+                    $buffed_ap = $player_data->value_ap;
+                    if ($player_data->is_defeated_flag) {
+                        Debugbar::debug('戦闘不能のため、最大HPの10%, 最大APの5%で回復させます。');
+                        $player_data->is_defeated_flag = false;
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * AfterCleared::ResurrectionHp->Multiplier());
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * AfterCleared::ResurrectionAp->Multiplier());
+                    } else {
+                        Debugbar::debug('最大HPの20%, 最大APの10%回復。');
+                        $buffed_hp += (int) ceil($player_data->max_value_hp * AfterCleared::RecoveryHp->Multiplier());
+                        $buffed_ap += (int) ceil($player_data->max_value_ap * AfterCleared::RecoveryAp->Multiplier());
+                    }
+                    // 回復によって最大体力を超えた場合は最大体力にする
+                    if ($buffed_hp > $player_data->max_value_hp) {
+                        $buffed_hp = $player_data->max_value_hp;
+                    }
+                    if ($buffed_ap > $player_data->max_value_ap) {
+                        $buffed_ap = $player_data->max_value_ap;
+                    }
+
+                    $player_data->value_hp = $buffed_hp;
+                    $player_data->value_ap = $buffed_ap;
+                    $player_data->buffs = [];
+                }
 
                 // TODO: ボス討伐時は作らなくて良い
                 $create_next_battle_state = BattleState::createBattleState(
-                    $savedata->id, $cleared_players_data, $next_enemies_data, $cleared_items_data, $enemy_drops_collection_data, $field_id, $next_stage_id
+                    $savedata->id, $cleared_players_collection, $next_enemies_data, $cleared_items_collection, $battle_state_enemy_drops_collection, $field_id, $next_stage_id
                 );
                 $battle_state->delete();
                 Debugbar::debug('現在の戦闘データを削除しました。');
@@ -771,15 +806,15 @@ class ApiController extends Controller
         }
 
         Debugbar::debug('ゴールド | 経験値獲得処理完了。');
-        Debugbar::debug($result_logs);
+        Debugbar::debug($battle_logs_collection);
 
         // ボス討伐処理。
         // 敵の中にボスが1人でもいた場合、現在のステージをクリアとする。
-        $is_beat_boss = $enemies_collection_data->contains(function ($enemy) {
+        $is_beat_boss = $battle_state_enemies_collection->contains(function ($enemy) {
             return $enemy->is_boss === true;
         });
         if ($is_beat_boss) {
-            $result_logs->push('ボスを討伐し、この周辺の地形の探索を終えた！');
+            $battle_logs_collection->push('ボスを討伐し、この周辺の地形の探索を終えた！');
             // 重複チェックし、存在しなければクリアしたフィールドを保存。
             if (! $savedata->savedata_cleared_fields()->where('field_id', $battle_state->current_field_id)->exists()) {
                 $savedata->savedata_cleared_fields()->create([
@@ -791,7 +826,7 @@ class ApiController extends Controller
 
         // vueに渡すデータ
         $vue_data = collect()
-            ->push($result_logs)
+            ->push($battle_logs_collection)
             ->push($is_beat_boss);
 
         return $vue_data;
@@ -822,23 +857,23 @@ class ApiController extends Controller
                 throw new \RuntimeException('Failed to find battle state.');
             }
             Debugbar::debug('---------- ステータス反映 ----------');
-            $current_players_data = collect(json_decode($battle_state['players_json_data']));
-            foreach ($current_players_data as $json_data) {
-                $updated_party = Party::find($json_data->id);
+            $current_battle_state_players_collection = collect(json_decode($battle_state['players_json_data']));
+            foreach ($current_battle_state_players_collection as $player_data) {
+                $updated_party = Party::find($player_data->id);
                 if (is_null($updated_party)) {
-                    throw new \RuntimeException('Failed to find party for json_data->id: '.$json_data->id);
+                    throw new \RuntimeException('Failed to find party for player_data->id: '.$player_data->id);
                 }
-                $updated_party->level = $json_data->level;
-                $updated_party->value_hp = $json_data->max_value_hp;
-                $updated_party->value_ap = $json_data->max_value_ap;
-                $updated_party->value_str = $json_data->value_str;
-                $updated_party->value_def = $json_data->value_def;
-                $updated_party->value_int = $json_data->value_int;
-                $updated_party->value_spd = $json_data->value_spd;
-                $updated_party->value_luc = $json_data->value_luc;
-                $updated_party->total_exp = $json_data->total_exp;
-                $updated_party->freely_skill_point = $json_data->freely_skill_point;
-                $updated_party->freely_status_point = $json_data->freely_status_point;
+                $updated_party->level = $player_data->level;
+                $updated_party->value_hp = $player_data->max_value_hp;
+                $updated_party->value_ap = $player_data->max_value_ap;
+                $updated_party->value_str = $player_data->value_str;
+                $updated_party->value_def = $player_data->value_def;
+                $updated_party->value_int = $player_data->value_int;
+                $updated_party->value_spd = $player_data->value_spd;
+                $updated_party->value_luc = $player_data->value_luc;
+                $updated_party->total_exp = $player_data->total_exp;
+                $updated_party->freely_skill_point = $player_data->freely_skill_point;
+                $updated_party->freely_status_point = $player_data->freely_status_point;
 
                 $updated_party->save();
 
@@ -846,16 +881,16 @@ class ApiController extends Controller
             }
 
             Debugbar::debug('---------- アイテム反映 ----------');
-            $battle_item_collections = collect(json_decode($battle_state['items_json_data']));
-            $battle_item_ids = $battle_item_collections->pluck('id')->all();
+            $battle_state_items_collection = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_ids = $battle_state_items_collection->pluck('id')->all();
             $savedata_has_items = SavedataHasItem::where('savedata_id', $savedata->id)->get();
 
             // foreachが重複しているので、できればjson側に使い終わったアイテムのIDを持たせたりして、一度のループで調整したい
             // 1. JSONに含まれているアイテム → 数量を更新
-            foreach ($battle_item_collections as $battle_item) {
-                $item = Item::find($battle_item->id);
+            foreach ($battle_state_items_collection as $item_data) {
+                $item = Item::find($item_data->id);
                 $item->savedata_has_item()->update([
-                    'possession_number' => $battle_item->possession_number,
+                    'possession_number' => $item_data->possession_number,
                 ]);
             }
             // 2. JSONに含まれていないアイテム → 所持数が0と判断して削除
@@ -867,8 +902,8 @@ class ApiController extends Controller
             }
 
             Debugbar::debug('---------- ゴールドやドロップ品(現状は未実装)の反映 ----------');
-            $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
-            $savedata->increment('money', $enemy_drops_collection_data['money']);
+            $battle_state_enemy_drops_collection = collect(json_decode($battle_state['enemy_drops_json_data']));
+            $savedata->increment('money', $battle_state_enemy_drops_collection['money']);
             Debugbar::debug("moneyをセーブデータに加算完了。 金額: {$savedata->money}");
             // TODO: アイテム
             // TODO: ドロップ品

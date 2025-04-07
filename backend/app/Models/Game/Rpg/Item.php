@@ -2,40 +2,16 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Constants\Rpg\BattleData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class Item extends Model
 {
     use HasFactory;
 
     protected $table = 'rpg_items';
-
-    const ATTACK_NO_TYPE = 0; // 分類なし
-
-    const ATTACK_PHYSICAL_TYPE = 1; // 物理
-
-    const ATTACK_MAGIC_TYPE = 2; // 魔法
-
-    const HEAL_NO_TYPE = 0; // 分類なし
-
-    const HEAL_HP_TYPE = 1; // HP回復系アイテム
-
-    const HEAL_AP_TYPE = 2; // AP回復系アイテム
-
-    const EFFECT_SPECIAL_TYPE = 0; // 特殊系アイテム
-
-    const EFFECT_DAMAGE_TYPE = 1; // 攻撃系アイテム
-
-    const EFFECT_HEAL_TYPE = 2; // 治療系アイテム
-
-    const EFFECT_BUFF_TYPE = 3; // バフ系アイテム
-
-    const TARGET_RANGE_SELF = 0; // 自身を対象
-
-    const TARGET_RANGE_SINGLE = 1; // 単体を対象
-
-    const TARGET_RANGE_ALL = 2; // 全体を対象
 
     // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
     public function savedata_has_item()
@@ -64,6 +40,11 @@ class Item extends Model
             ->get();
     }
 
+    /**
+     * players_json_dataのitemsに格納するアイテム情報を取得する
+     *
+     * @return Collection
+     */
     public static function getBattleStateItemFromSavedata(int $savedata_id)
     {
         $items_data = collect(); // $enemiesを加工してjsonに入れるために用意している配列
@@ -74,24 +55,24 @@ class Item extends Model
                 ->where('is_battle_available', true)
                 ->first();
 
+            // 戦闘中に使えないアイテムならスキップ
             if (is_null($item)) {
                 continue;
-            } // 戦闘中に使えないアイテムならスキップ
+            }
 
-            $item_data = collect([
-                'id' => $item->id,
-                'name' => $item->name,
-                'attack_type' => $item->attack_type,
-                'heal_type' => $item->heal_type,
-                'effect_type' => $item->effect_type,
-                'target_range' => $item->target_range,
-                'is_percent_based' => $item->is_percent_based,
-                'percent' => $item->percent,
-                'fixed_value' => $item->fixed_value,
-                'buff_turn' => $item->buff_turn,
-                'description' => $item->description,
-                'possession_number' => $savedata_has_item->possession_number,
-            ]);
+            $item_data = BattleData::ITEM_TEMPLATE;
+            $item_data['id'] = $item['id'];
+            $item_data['name'] = $item['name'];
+            $item_data['attack_type'] = $item['attack_type'];
+            $item_data['heal_type'] = $item['heal_type'];
+            $item_data['effect_type'] = $item['effect_type'];
+            $item_data['target_range'] = $item['target_range'];
+            $item_data['is_percent_based'] = $item['is_percent_based'];
+            $item_data['percent'] = $item['percent'];
+            $item_data['fixed_value'] = $item['fixed_value'];
+            $item_data['buff_turn'] = $item['buff_turn'];
+            $item_data['description'] = $item['description'];
+            $item_data['possession_number'] = $savedata_has_item->possession_number;
 
             $items_data->push($item_data);
         }
