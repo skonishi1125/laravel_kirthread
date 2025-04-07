@@ -43,9 +43,9 @@ class BattleState extends Model
      *
      * @return Collection
      */
-    public static function createPlayersData(int $savedata_id)
+    public static function createPlayersCollection(int $savedata_id)
     {
-        Debugbar::debug('createPlayersData(): jsonのベースとなるplayers_data 作成。----------');
+        Debugbar::debug('createPlayersCollection(): jsonのベースとなるplayers_data 作成。----------');
         $parties = Party::where('savedata_id', $savedata_id)->get();
 
         // id,name,curent_hp,current_apを配列ベースで格納するCollection
@@ -54,17 +54,17 @@ class BattleState extends Model
         $players_hp_and_ap_status = collect();
 
         Debugbar::debug('新規作成. (player_dataはCollection想定)');
-        foreach ($parties as $player_index => $player_data) {
+        foreach ($parties as $player_index => $party) {
             $status = [
-                'id' => $player_data['id'],
-                'name' => $player_data['nickname'],
-                'current_hp' => $player_data['value_hp'],
-                'current_ap' => $player_data['value_ap'],
+                'id' => $party['id'],
+                'name' => $party['nickname'],
+                'current_hp' => $party['value_hp'],
+                'current_ap' => $party['value_ap'],
             ];
             $players_hp_and_ap_status->push($status);
         }
 
-        $players_data = collect();
+        $players_collection = collect();
         Debugbar::debug('players_json_data登録開始。');
         foreach ($parties as $player_index => $party) {
             Debugbar::debug("################# {$player_index} 人目 #################");
@@ -74,6 +74,7 @@ class BattleState extends Model
 
             // vue側に渡すデータ
             $player_data = BattleData::PARTY_TEMPLATE;
+
             $player_data['id'] = $party['id'];
             $player_data['role_id'] = $party['role_id'];
             $player_data['name'] = $party['nickname']; // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
@@ -94,11 +95,11 @@ class BattleState extends Model
             $player_data['role_portrait'] = $role_portrait;
             $player_data['player_index'] = $player_index; // 味方のパーティ中での並び。
 
-            $players_data->push($player_data);
+            $players_collection->push($player_data);
             DebugBar::debug("{$player_data['name']} 登録完了。");
         }
 
-        return $players_data;
+        return $players_collection;
 
     }
 
@@ -107,10 +108,10 @@ class BattleState extends Model
      *
      * @return Collection
      */
-    public static function createEnemiesData(int $field_id, int $stage_id)
+    public static function createEnemiesCollection(int $field_id, int $stage_id)
     {
-        Debugbar::debug('createEnemiesData(): jsonのベースとなるenemies_data 作成。----------');
-        $enemies = collect();
+        Debugbar::debug('createEnemiesCollection(): jsonのベースとなるenemies_data 作成。----------');
+        $enemies_collection = collect();
         Debugbar::debug('敵のプリセットデータを読み込みます。----------');
         $preset_appearing_enemies = PresetAppearingEnemy::where('field_id', $field_id)
             ->where('stage_id', $stage_id)
@@ -119,19 +120,16 @@ class BattleState extends Model
             $preset_enemy = Enemy::find($preset['enemy_id']);
             if ($preset_enemy) {
                 for ($i = 0; $i < $preset['number']; $i++) {
-                    $enemies->push($preset_enemy);
+                    $enemies_collection->push($preset_enemy);
                 }
             }
         }
-        // Debugbar::debug([
-        //     'preset_appearing_enemies' => $preset_appearing_enemies,
-        //     'enemies' => $enemies,
-        // ]);
 
-        // $enemiesを加工して格納するためのCollection
-        $enemies_collection = collect();
-        foreach ($enemies as $enemy_index => $enemy) {
+        // $enemies_collectionを加工して格納するためのCollection
+        $adjusted_enemies_collection = collect();
+        foreach ($enemies_collection as $enemy_index => $enemy) {
             $enemy_data = BattleData::ENEMY_TEMPLATE;
+
             $enemy_data['id'] = $enemy['id'];
             $enemy_data['name'] = $enemy['name'];
             $enemy_data['max_value_hp'] = $enemy['value_hp']; // HP最大値
@@ -149,12 +147,12 @@ class BattleState extends Model
             $enemy_data['exp'] = $enemy['exp'];
             $enemy_data['drop_money'] = $enemy['drop_money'];
 
-            $enemies_collection->push($enemy_data);
+            $adjusted_enemies_collection->push($enemy_data);
         }
 
-        Debugbar::debug($enemies_collection);
+        Debugbar::debug($adjusted_enemies_collection);
 
-        return $enemies_collection;
+        return $adjusted_enemies_collection;
     }
 
     /**
@@ -164,9 +162,9 @@ class BattleState extends Model
      *
      * @return Collection
      */
-    public static function createItemsData(int $savedata_id)
+    public static function createItemsCollection(int $savedata_id)
     {
-        Debugbar::debug('createItemsData(): ------------');
+        Debugbar::debug('createItemsCollection(): ------------');
         $items_collection = Item::getBattleStateItemFromSavedata($savedata_id);
         Debugbar::debug($items_collection);
 
@@ -180,17 +178,21 @@ class BattleState extends Model
      */
     public static function createBattleState(
         int $savedata_id,
-        Collection $players_data, Collection $enemies_data, Collection $items_data, Collection $enemy_drops_data,
-        int $field_id, int $stage_id
+        Collection $players_collection,
+        Collection $enemies_collection,
+        Collection $items_collection,
+        Collection $enemy_drops_collection,
+        int $field_id,
+        int $stage_id
     ) {
         $session_id = Str::uuid()->toString();
         $created_battle_state = BattleState::create([
             'savedata_id' => $savedata_id,
             'session_id' => $session_id,
-            'players_json_data' => json_encode($players_data),
-            'items_json_data' => json_encode($items_data),
-            'enemies_json_data' => json_encode($enemies_data),
-            'enemy_drops_json_data' => json_encode($enemy_drops_data),
+            'players_json_data' => json_encode($players_collection),
+            'items_json_data' => json_encode($items_collection),
+            'enemies_json_data' => json_encode($enemies_collection),
+            'enemy_drops_json_data' => json_encode($enemy_drops_collection),
             'current_field_id' => $field_id,
             'current_stage_id' => $stage_id,
         ]);
@@ -210,38 +212,39 @@ class BattleState extends Model
     public static function sortByBattleExec(Collection $battle_state_players_and_enemies_collection)
     {
         // 敵味方が同速の場合、現状は味方が優先される
-        $sorted_data = $battle_state_players_and_enemies_collection->sort(function ($a, $b) {
+        $sorted_battle_state_players_and_enemies_collection =
+            $battle_state_players_and_enemies_collection->sort(function ($a, $b) {
 
-            // 1. 'DEFENCE'コマンド選択
-            if ($a->command === 'DEFENCE' && $b->command !== 'DEFENCE') {
-                return -1; // $aが先に行動
-            }
-            if ($b->command === 'DEFENCE' && $a->command !== 'DEFENCE') {
-                return 1;  // $bが先に行動
-            }
+                // 1. 'DEFENCE'コマンド選択
+                if ($a->command === 'DEFENCE' && $b->command !== 'DEFENCE') {
+                    return -1; // $aが先に行動
+                }
+                if ($b->command === 'DEFENCE' && $a->command !== 'DEFENCE') {
+                    return 1;  // $bが先に行動
+                }
 
-            // 2. 特殊スキル選択
-            $a_effect_type = $a->selected_skill_effect_type ?? null;
-            $b_effect_type = $b->selected_skill_effect_type ?? null;
-            if ($a_effect_type === EffectType::Special->value && $b_effect_type !== EffectType::Special->value) {
-                return -1;
-            }
-            if ($b_effect_type === EffectType::Special->value && $a_effect_type !== EffectType::Special->value) {
-                return 1;
-            }
+                // 2. 特殊スキル選択
+                $a_effect_type = $a->selected_skill_effect_type ?? null;
+                $b_effect_type = $b->selected_skill_effect_type ?? null;
+                if ($a_effect_type === EffectType::Special->value && $b_effect_type !== EffectType::Special->value) {
+                    return -1;
+                }
+                if ($b_effect_type === EffectType::Special->value && $a_effect_type !== EffectType::Special->value) {
+                    return 1;
+                }
 
-            // 3. 速度順で降順ソート
-            return $b->value_spd <=> $a->value_spd;
+                // 3. 速度順で降順ソート
+                return $b->value_spd <=> $a->value_spd;
 
-        })->values();
+            })->values();
 
         // デバッグ用
-        $action_order = $sorted_data->map(function ($item) {
+        $action_order = $sorted_battle_state_players_and_enemies_collection->map(function ($item) {
             return $item->name;
         })->implode(', ');
         Debugbar::debug("行動順決定。{$action_order}");
 
-        return $sorted_data;
+        return $sorted_battle_state_players_and_enemies_collection;
     }
 
     /**

@@ -473,9 +473,9 @@ class ApiController extends Controller
             Debugbar::debug('戦闘中のデータが存在しないため、新規戦闘として扱います。  ---------------');
 
             // -------------- jsonのベースとなるデータの取得 --------------
-            $players_collection = BattleState::createPlayersData($savedata->id);
-            $enemies_collection = BattleState::createEnemiesData($field_id, $stage_id);
-            $items_collection = BattleState::createItemsData($savedata->id);
+            $players_collection = BattleState::createPlayersCollection($savedata->id);
+            $enemies_collection = BattleState::createEnemiesCollection($field_id, $stage_id);
+            $items_collection = BattleState::createItemsCollection($savedata->id);
             $enemy_drops_collection = collect(BattleData::ENEMY_DROPS_TEMPLATE);
 
             // 各データをbattle_statesテーブルに格納
@@ -559,8 +559,10 @@ class ApiController extends Controller
         });
 
         Debugbar::debug('行動順決定処理 BattleState::sortByBattleExec() -------------');
-        $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
-        $sorted_battle_state_players_and_enemies_collection = BattleState::sortByBattleExec($battle_state_players_and_enemies_collection);
+        $battle_state_players_and_enemies_collection =
+            $battle_state_players_collection->concat($battle_state_enemies_collection);
+        $sorted_battle_state_players_and_enemies_collection =
+            BattleState::sortByBattleExec($battle_state_players_and_enemies_collection);
 
         Debugbar::debug('戦闘実行！ BattleState::execBattleCommand()----------------');
         BattleState::execBattleCommand(
@@ -756,7 +758,7 @@ class ApiController extends Controller
 
                 $field_id = $battle_state->current_field_id;
                 $next_stage_id = $battle_state->current_stage_id + 1;
-                $next_enemies_data = BattleState::createEnemiesData($field_id, $next_stage_id);
+                $next_enemies_data = BattleState::createEnemiesCollection($field_id, $next_stage_id);
 
                 // レベル処理終了後、各種ステータス調整処理
                 Debugbar::debug('レベル処理完了。続いて、ステータス調整処理(戦闘後体力回復・戦闘不能解除・バフ解除など)');
@@ -855,23 +857,23 @@ class ApiController extends Controller
                 throw new \RuntimeException('Failed to find battle state.');
             }
             Debugbar::debug('---------- ステータス反映 ----------');
-            $current_players_data = collect(json_decode($battle_state['players_json_data']));
-            foreach ($current_players_data as $json_data) {
-                $updated_party = Party::find($json_data->id);
+            $current_battle_state_players_collection = collect(json_decode($battle_state['players_json_data']));
+            foreach ($current_battle_state_players_collection as $player_data) {
+                $updated_party = Party::find($player_data->id);
                 if (is_null($updated_party)) {
-                    throw new \RuntimeException('Failed to find party for json_data->id: '.$json_data->id);
+                    throw new \RuntimeException('Failed to find party for player_data->id: '.$player_data->id);
                 }
-                $updated_party->level = $json_data->level;
-                $updated_party->value_hp = $json_data->max_value_hp;
-                $updated_party->value_ap = $json_data->max_value_ap;
-                $updated_party->value_str = $json_data->value_str;
-                $updated_party->value_def = $json_data->value_def;
-                $updated_party->value_int = $json_data->value_int;
-                $updated_party->value_spd = $json_data->value_spd;
-                $updated_party->value_luc = $json_data->value_luc;
-                $updated_party->total_exp = $json_data->total_exp;
-                $updated_party->freely_skill_point = $json_data->freely_skill_point;
-                $updated_party->freely_status_point = $json_data->freely_status_point;
+                $updated_party->level = $player_data->level;
+                $updated_party->value_hp = $player_data->max_value_hp;
+                $updated_party->value_ap = $player_data->max_value_ap;
+                $updated_party->value_str = $player_data->value_str;
+                $updated_party->value_def = $player_data->value_def;
+                $updated_party->value_int = $player_data->value_int;
+                $updated_party->value_spd = $player_data->value_spd;
+                $updated_party->value_luc = $player_data->value_luc;
+                $updated_party->total_exp = $player_data->total_exp;
+                $updated_party->freely_skill_point = $player_data->freely_skill_point;
+                $updated_party->freely_status_point = $player_data->freely_status_point;
 
                 $updated_party->save();
 
@@ -879,16 +881,16 @@ class ApiController extends Controller
             }
 
             Debugbar::debug('---------- アイテム反映 ----------');
-            $battle_item_collections = collect(json_decode($battle_state['items_json_data']));
-            $battle_item_ids = $battle_item_collections->pluck('id')->all();
+            $battle_state_items_collection = collect(json_decode($battle_state['items_json_data']));
+            $battle_item_ids = $battle_state_items_collection->pluck('id')->all();
             $savedata_has_items = SavedataHasItem::where('savedata_id', $savedata->id)->get();
 
             // foreachが重複しているので、できればjson側に使い終わったアイテムのIDを持たせたりして、一度のループで調整したい
             // 1. JSONに含まれているアイテム → 数量を更新
-            foreach ($battle_item_collections as $battle_item) {
-                $item = Item::find($battle_item->id);
+            foreach ($battle_state_items_collection as $item_data) {
+                $item = Item::find($item_data->id);
                 $item->savedata_has_item()->update([
-                    'possession_number' => $battle_item->possession_number,
+                    'possession_number' => $item_data->possession_number,
                 ]);
             }
             // 2. JSONに含まれていないアイテム → 所持数が0と判断して削除
@@ -900,8 +902,8 @@ class ApiController extends Controller
             }
 
             Debugbar::debug('---------- ゴールドやドロップ品(現状は未実装)の反映 ----------');
-            $enemy_drops_collection_data = collect(json_decode($battle_state['enemy_drops_json_data']));
-            $savedata->increment('money', $enemy_drops_collection_data['money']);
+            $battle_state_enemy_drops_collection = collect(json_decode($battle_state['enemy_drops_json_data']));
+            $savedata->increment('money', $battle_state_enemy_drops_collection['money']);
             Debugbar::debug("moneyをセーブデータに加算完了。 金額: {$savedata->money}");
             // TODO: アイテム
             // TODO: ドロップ品
