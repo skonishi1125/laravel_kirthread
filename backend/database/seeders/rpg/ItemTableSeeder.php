@@ -5,6 +5,7 @@ namespace Database\Seeders\rpg;
 use App\Enums\Rpg\AttackType;
 use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\TargetRange;
+use App\Enums\Rpg\HealType;
 use App\Models\Game\Rpg\Item;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
