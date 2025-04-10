@@ -319,7 +319,7 @@ class Skill extends Model
         $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
         switch ($selected_skill_data->id) {
-            // -------------------- 格闘家(Striker) --------------------
+            // -------------------- 格闘家 --------------------
             case 10:
                 Debugbar::debug('ミドルブロウ');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
@@ -330,7 +330,7 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
                 break;
-                // -------------------- 治療師(Paladin) --------------------
+                // -------------------- 治療師 --------------------
             case 20:
                 Debugbar::debug('ライフリカバリ');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
@@ -346,7 +346,7 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
-                // -------------------- 重騎士(Paladin) --------------------
+                // -------------------- 重騎士 --------------------
             case 30:
                 Debugbar::debug('ワイドスラスト');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
@@ -367,7 +367,7 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
                 $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-                // -------------------- 魔導士(Mage) --------------------
+                // -------------------- 魔導士 --------------------
             case 40:
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ミニヒール');
@@ -407,6 +407,19 @@ class Skill extends Model
                 $new_buff['buffed_str'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                 $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                 break;
+                // -------------------- 弓馭者 --------------------
+            case 50:
+                Debugbar::debug('ブレイクボウガン');
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い一撃を相手に放つ！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                break;
+            case 51:
+                Debugbar::debug('ファーストエイド');
+                $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
+                $heal_point = (int) ceil(25 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                break;
+                // -------------------- 理術士 --------------------
+
             default:
                 Debugbar::debug('存在しないスキルが選択されました。');
                 break;

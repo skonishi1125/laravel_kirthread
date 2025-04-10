@@ -7,7 +7,6 @@ use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\TargetRange;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Skill;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class SkillTableSeeder extends Seeder
@@ -17,13 +16,11 @@ class SkillTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $now = Carbon::now();
-
         // データベースリセット
         Skill::truncate();
 
-        $skills = [
-            // 格闘家スキル
+        $seeds = [
+            // -------------------- 格闘家 --------------------
             [
                 'id' => '10',
                 'name' => 'ミドルブロウ',
@@ -39,8 +36,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '敵単体に素早く拳を叩き込む。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '11',
@@ -57,8 +52,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => '敵全体に鋭い回転蹴り。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '12',
@@ -75,8 +68,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '13',
@@ -93,8 +84,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '14',
@@ -111,8 +100,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '15',
@@ -129,8 +116,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '16',
@@ -147,8 +132,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '17',
@@ -165,8 +148,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '18',
@@ -183,8 +164,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '19',
@@ -201,12 +180,10 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 16,
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             // トランスフォーム、タイタンブレイク
 
-            // 治療師スキル
+            // -------------------- 治療師 --------------------
             [
                 'id' => '20',
                 'name' => 'ライフリカバリ',
@@ -222,8 +199,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 7,
                 'elemental_id' => 1,
                 'description' => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '21',
@@ -240,8 +215,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
                 'description' => '回復魔力を周囲に浮かべ、全体のHPを回復する。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '22',
@@ -258,8 +231,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力を敵単体に放つ、治療師の護身用攻撃魔法。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '23',
@@ -276,8 +247,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '24',
@@ -294,8 +263,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '25',
@@ -312,8 +279,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '26',
@@ -330,8 +295,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '27',
@@ -348,8 +311,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '28',
@@ -366,8 +327,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '29',
@@ -384,11 +343,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
 
-            // 重騎士スキル
+            // -------------------- 重騎士 --------------------
             [
                 'id' => '30',
                 'name' => 'ワイドスラスト',
@@ -404,8 +361,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
                 'description' => '敵全体を力強く薙ぎ払う。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '31',
@@ -425,8 +380,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 1,
                 'elemental_id' => 1,
                 'description' => '先制発動する。使用ターンの味方全員の物理ダメージを軽減する。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '32',
@@ -443,8 +396,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 12,
                 'elemental_id' => 1,
                 'description' => '敵単体に壮烈の一撃。自分の防御力に依存したダメージを与える。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '33',
@@ -464,8 +415,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '34',
@@ -485,8 +434,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '35',
@@ -506,8 +453,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '36',
@@ -527,8 +472,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '37',
@@ -548,8 +491,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '38',
@@ -569,8 +510,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '39',
@@ -590,12 +529,10 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             // ブラッドムーン
 
-            // 魔導士スキル
+            // -------------------- 魔導士 --------------------
             [
                 'id' => '40',
                 'name' => 'ミニヒール',
@@ -611,8 +548,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 7,
                 'elemental_id' => 1,
                 'description' => '味方1人のHPを回復する呪文を唱える。初歩的な回復魔法のひとつ。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '41',
@@ -629,8 +564,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
                 'description' => '回復魔力を周囲に浮かべ、全体のHPを回復する。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '42',
@@ -647,8 +580,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
                 'description' => '小さな魔力弾を敵単体に放つ、低コストな攻撃手段。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '43',
@@ -665,8 +596,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 20,
                 'elemental_id' => 1,
                 'description' => 'マナの塊を撃ち放つ。敵単体に大ダメージ。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '44',
@@ -683,8 +612,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 60,
                 'elemental_id' => 1,
                 'description' => '巨大なマナの塊を爆発させ、敵全体に大ダメージを与える。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '45',
@@ -704,8 +631,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '46',
@@ -725,8 +650,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '47',
@@ -746,8 +669,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '48',
@@ -767,8 +688,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '49',
@@ -788,11 +707,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
 
-            // 弓馭者スキル
+            // -------------------- 弓馭者 --------------------
             [
                 'id' => '50',
                 'name' => 'ブレイクボウガン',
@@ -807,27 +724,24 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 2.0,
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
-                'description' => '敵単体に弩を打ち込み、ダメージを与えつつ物理防御力も低下させる。',
-                'created_at' => $now,
-                'updated_at' => $now,
+                // 'description' => '敵単体に弩を打ち込み、ダメージを与えつつ物理防御力も低下させる。',
+                'description' => '敵単体に弩を打ち込み、ダメージを与える。',
             ],
             [
                 'id' => '51',
-                'name' => 'スキル51',
+                'name' => 'ファーストエイド',
                 'available_role_id' => Role::ROLE_RANGER,
-                'attack_type' => AttackType::Physical->value,
-                'effect_type' => EffectType::Damage->value,
+                'attack_type' => AttackType::NoType->value,
+                'effect_type' => EffectType::Heal->value,
                 'target_range' => TargetRange::Single->value,
-                'lv1_percent' => 1.2,
-                'lv1_ap_cost' => 6,
-                'lv2_percent' => 1.4,
-                'lv2_ap_cost' => 8,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 5,
+                'lv2_percent' => 1.5,
+                'lv2_ap_cost' => 6,
                 'lv3_percent' => 2.0,
-                'lv3_ap_cost' => 10,
+                'lv3_ap_cost' => 7,
                 'elemental_id' => 1,
-                'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
+                'description' => '味方1人の救護を行い、対象のHPを回復する。',
             ],
             [
                 'id' => '52',
@@ -844,8 +758,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '53',
@@ -862,8 +774,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '54',
@@ -880,8 +790,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '55',
@@ -898,8 +806,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '56',
@@ -916,8 +822,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '57',
@@ -934,8 +838,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '58',
@@ -952,8 +854,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '59',
@@ -970,11 +870,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
                 'description' => '説明',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
 
-            // 理術士スキル
+            // -------------------- 理術士 --------------------
             [
                 'id' => '60',
                 'name' => 'ガードスペル',
@@ -993,8 +891,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '61',
@@ -1014,8 +910,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '62',
@@ -1035,8 +929,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '63',
@@ -1056,8 +948,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '64',
@@ -1077,8 +967,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '65',
@@ -1098,8 +986,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '66',
@@ -1119,8 +1005,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '67',
@@ -1140,8 +1024,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '68',
@@ -1161,8 +1043,6 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'id' => '69',
@@ -1182,16 +1062,14 @@ class SkillTableSeeder extends Seeder
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
 
             // 敵の使用するスキル 100番以降
 
         ];
 
-        foreach ($skills as $skill) {
-            Skill::create($skill);
+        foreach ($seeds as $seed) {
+            Skill::create($seed);
         }
 
     }

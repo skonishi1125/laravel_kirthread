@@ -15,7 +15,7 @@ class SkillRequirementTableSeeder extends Seeder
         // データベースリセット
         SkillRequirement::truncate();
 
-        $skill_requirements = [
+        $seeds = [
             // -------------------- 格闘家 --------------------
             // -------------------- 治療師 --------------------
             // リカバリオール ライフリカバリ Lv2以上, pLv7以上
@@ -81,8 +81,8 @@ class SkillRequirementTableSeeder extends Seeder
 
         ];
 
-        foreach ($skill_requirements as $skill_requirement) {
-            SkillRequirement::create($skill_requirement);
+        foreach ($seeds as $seed) {
+            SkillRequirement::create($seed);
         }
 
     }

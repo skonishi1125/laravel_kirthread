@@ -100,6 +100,8 @@ class BattleData
         'buffed_item_id' => null,
         'buffed_skill_name' => null,
         'buffed_item_name' => null,
+        'buffed_hp' => null,
+        'buffed_ap' => null,
         'buffed_str' => null,
         'buffed_def' => null,
         'buffed_int' => null,
