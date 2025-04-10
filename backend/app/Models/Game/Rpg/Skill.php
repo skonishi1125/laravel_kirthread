@@ -416,10 +416,29 @@ class Skill extends Model
             case 51:
                 Debugbar::debug('ファーストエイド');
                 $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
-                $heal_point = (int) ceil(25 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
                 break;
                 // -------------------- 理術士 --------------------
-
+            case 60:
+                Debugbar::debug('ガードスペル');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                break;
+            case 61:
+                Debugbar::debug('アタックスペル');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                break;
+            case 62:
+                Debugbar::debug('マジックスペル');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                break;
+            case 63:
+                Debugbar::debug('ブックスマッシュ');
+                $battle_logs_collection->push("{$actor_data->name}は手持ちの魔導書で思い切り殴りかかった！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                break;
             default:
                 Debugbar::debug('存在しないスキルが選択されました。');
                 break;
