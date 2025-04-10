@@ -411,12 +411,17 @@ class Skill extends Model
             case 50:
                 Debugbar::debug('ブレイクボウガン');
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い一撃を相手に放つ！");
-                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 10;
                 break;
             case 51:
                 Debugbar::debug('ファーストエイド');
                 $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
                 $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+            case 52:
+                Debugbar::debug('ウインドアクセル');
+                $battle_logs_collection->push("{$actor_data->name}は風の力を使役し、攻撃した！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                 break;
                 // -------------------- 理術士 --------------------
             case 60:
@@ -447,7 +452,7 @@ class Skill extends Model
         // 特殊・攻撃・回復・バフに応じて処理を分岐する
         switch ($selected_skill_data->effect_type) {
             case EffectType::Special->value:
-                BattleState::storePartySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data);
+                BattleState::storePartySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $damage, $heal_point, $new_buff, $selected_skill_data);
                 break;
             case EffectType::Damage->value:
                 BattleState::storePartyDamage(

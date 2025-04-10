@@ -1266,6 +1266,8 @@ class BattleState extends Model
         Collection $battle_state_opponents_collection,
         ?int $opponents_index,
         Collection $battle_logs_collection,
+        ?int $pure_damage,
+        ?int $heal_point,
         array $new_buff,
         object $selected_skill_data
     ) {
@@ -1279,6 +1281,35 @@ class BattleState extends Model
                     Debugbar::debug("付与対象:{$opponent_data->name}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
                 }
+                break;
+            case 52 : // ウインドアクセル
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // まずは単体に物理攻撃
+                // TODO: 絶対storePartyDamageと共通の関数にした方が良いぞ
+                $calculated_damage = self::calculatePhysicalDamage(
+                    $pure_damage,
+                    self::calculateActualStatusValue($opponent_data, 'def')
+                );
+                if ($calculated_damage > 0) {
+                    $opponent_data->value_hp -= $calculated_damage;
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                        $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                        Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                    } else {
+                        $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                        Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                    }
+                } else {
+                    // ダメージを与えられなかった場合
+                    $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+                    Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                }
+                // その後、バフをかける。
+                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
                 break;
 
             default:
