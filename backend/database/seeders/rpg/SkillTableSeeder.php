@@ -209,7 +209,7 @@ class SkillTableSeeder extends Seeder
             // 治療師スキル
             [
                 'id' => '20',
-                'name' => 'メディヒール',
+                'name' => 'ライフリカバリ',
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -221,13 +221,13 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.5,
                 'lv3_ap_cost' => 7,
                 'elemental_id' => 1,
-                'description' => '味方1人のHPを回復する呪文を唱える。初歩的な回復魔法のひとつ。',
+                'description' => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
                 'id' => '21',
-                'name' => 'メディエリアヒール',
+                'name' => 'リカバリオール',
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -245,7 +245,7 @@ class SkillTableSeeder extends Seeder
             ],
             [
                 'id' => '22',
-                'name' => 'メディブラスト',
+                'name' => 'ミニボルト',
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Damage->value,
@@ -257,7 +257,7 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.3,
                 'lv3_ap_cost' => 4,
                 'elemental_id' => 1,
-                'description' => '魔力弾を敵単体に放つ攻撃。',
+                'description' => '魔力を敵単体に放つ、治療師の護身用攻撃魔法。',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

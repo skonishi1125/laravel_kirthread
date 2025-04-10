@@ -330,6 +330,22 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
                 break;
+                // -------------------- 治療師(Paladin) --------------------
+            case 20:
+                Debugbar::debug('ライフリカバリ');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
+                break;
+            case 21:
+                Debugbar::debug('リカバリオール');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                break;
+            case 22:
+                Debugbar::debug('ミニボルト');
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                break;
                 // -------------------- 重騎士(Paladin) --------------------
             case 30:
                 Debugbar::debug('ワイドスラスト');
