@@ -240,7 +240,7 @@
                   </div>
 
                   <div v-else>
-                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range)" class="command-list-row-skills-and-items">
+                    <div @click="handleCommandSelection('SKILL', skill.id, skill.attack_type, skill.effect_type, skill.target_range, skill.is_target_enemy)" class="command-list-row-skills-and-items">
                       <div style="display: flex; justify-content: space-between;">
                         <span>{{ skill.name }}</span>
                         <span>{{ skill.ap_cost }}</span>
@@ -511,6 +511,7 @@ export default {
       switch (this.battle.status) {
         case 'encount':
           console.log('nextAction() encount: ----------------------------------');
+          console.log(this.partyData, 'aaa');
           // 味方が戦闘不能の場合は、コマンド選択対象から外してbattle.currentPartyMemberIndexをインクリメントする
           this.battleCommandSetup(); // リロードして[0,1]が戦闘不能だった場合は、インクリメントする
           break;
@@ -581,7 +582,7 @@ export default {
 
     // on_the_selected_command_id は都度変化する
     // skillを選んだならそのスキルのID, アイテムならそのアイテムのIDを格納する
-    handleCommandSelection(command, on_the_selected_command_id, attack_type, effect_type, target_range) {
+    handleCommandSelection(command, on_the_selected_command_id, attack_type, effect_type, target_range, is_target_enemy) {
       console.log('handleCommandSelection(): ----------------------------------');
       // 現在コマンド選択中のパーティデータをbattle.currentPartyMemberIndexに格納する
       let currentMember = this.partyData[this.battle.currentPartyMemberIndex];
@@ -613,10 +614,17 @@ export default {
           if (effect_type == 1) {
             console.log(`攻撃系単体スキル。enemySelectへ。`);
             this.$store.dispatch('setBattleStatus', 'enemySelect');
-          // 回復, バフスキルなら、partySelectへ
+          // 回復, バフスキルなら、より詳細に
           } else {
-            console.log(`回復・バフ系単体スキル。partySelectへ。`);
-            this.$store.dispatch('setBattleStatus', 'partySelect');
+            // 特殊系、またはデバフなど敵を選択するものなら、enemySelectへ
+            if (is_target_enemy == true) {
+              console.log(`敵対象とする、デバフや特殊系のスキル。enemySelectへ。`);
+              this.$store.dispatch('setBattleStatus', 'enemySelect');
+            } else {
+              // ヒールや単純なバフなど、仲間を選択するものなら、partySelectへ
+              console.log(`味方を対象とするヒールやバフなどのスキル。partySelectへ。`);
+              this.$store.dispatch('setBattleStatus', 'partySelect');
+            }
           }
           break;
         case ("DEFENCE") :

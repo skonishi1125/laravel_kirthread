@@ -252,6 +252,7 @@ class Skill extends Model
             $players_json_skills_data['attack_type'] = $skill['attack_type'];
             $players_json_skills_data['effect_type'] = $skill['effect_type'];
             $players_json_skills_data['target_range'] = $skill['target_range'];
+            $players_json_skills_data['is_target_enemy'] = $skill['is_target_enemy'];
             $players_json_skills_data['skill_level'] = $skill_level;
             $players_json_skills_data['ap_cost'] = $ap_cost;
             $players_json_skills_data['buff_turn'] = $buff_turn;
