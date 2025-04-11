@@ -1282,6 +1282,35 @@ class BattleState extends Model
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
                 }
                 break;
+            case 50 : // ブレイクボウガン
+              $opponent_data = $battle_state_opponents_collection[$opponents_index];
+              // まずは単体に物理攻撃
+              // TODO: 絶対storePartyDamageと共通の関数にした方が良いぞ
+              $calculated_damage = self::calculatePhysicalDamage(
+                  $pure_damage,
+                  self::calculateActualStatusValue($opponent_data, 'def')
+              );
+              if ($calculated_damage > 0) {
+                  $opponent_data->value_hp -= $calculated_damage;
+                  if ($opponent_data->value_hp <= 0) {
+                      $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                      $opponent_data->is_defeated_flag = true;
+                      self::clearBuff($opponent_data);
+                      $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                      $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                      Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                  } else {
+                      $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                      Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                  }
+              } else {
+                  // ダメージを与えられなかった場合
+                  $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+                  Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
+              }
+              // その後、デバフをかける。
+              self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true);
+              break;
             case 52 : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // まずは単体に物理攻撃
@@ -1326,12 +1355,13 @@ class BattleState extends Model
         object $opponent_data,
         array $new_buff,
         Collection $battle_logs_collection,
-        int $target_range
+        int $target_range,
+        bool $is_debuff = false,
     ) {
         Debugbar::debug("adjustBuffFromSituation() {$opponent_data->name}のバフを調整します。");
         // 戦闘不能ならスキップ
         if ($opponent_data->is_defeated_flag == true) {
-            if ($target_range === TargetRange::Single->value) {
+            if ($target_range === TargetRange::Single->value && $is_debuff === false) {
                 Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
                 $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
             }
@@ -1342,8 +1372,10 @@ class BattleState extends Model
         }
 
         // TARGET_RANGE_ALLの場合はこの関数内ではメッセージは表示せず、呼び出し後に個別で処理する
-        if ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) {
+        if (($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) && $is_debuff === false) {
             $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
+        } elseif (($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) && $is_debuff === true) {
+            $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
         }
 
         // すでに存在しているバフを重複して付与した場合は、ターン数を伸ばしてreturnする

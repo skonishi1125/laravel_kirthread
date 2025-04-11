@@ -344,7 +344,7 @@ class Skill extends Model
                 break;
             case 22:
                 Debugbar::debug('ミニボルト');
-                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！");
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
                 // -------------------- 重騎士 --------------------
@@ -411,8 +411,9 @@ class Skill extends Model
                 // -------------------- 弓馭者 --------------------
             case 50:
                 Debugbar::debug('ブレイクボウガン');
-                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い一撃を相手に放つ！");
-                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 10;
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！相手の甲殻を打ち砕く、鋭い一撃！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                $new_buff['buffed_def'] = (int) ( - ($actor_data->value_def) * ($selected_skill_data->skill_percent * 0.5)); // マイナスの値にして、相手にデバフとして付与する
                 break;
             case 51:
                 Debugbar::debug('ファーストエイド');
