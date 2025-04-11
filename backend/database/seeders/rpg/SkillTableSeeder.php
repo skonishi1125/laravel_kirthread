@@ -373,6 +373,7 @@ class SkillTableSeeder extends Seeder
                 'effect_type' => EffectType::Special->value,
                 'target_range' => TargetRange::All->value,
                 'is_target_enemy' => false,
+                'is_first' => true,
                 'lv1_percent' => 0.3,
                 'lv1_ap_cost' => 3,
                 'lv1_buff_turn' => 1,

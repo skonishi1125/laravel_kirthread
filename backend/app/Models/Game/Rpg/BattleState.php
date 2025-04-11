@@ -224,12 +224,12 @@ class BattleState extends Model
                 }
 
                 // 2. 特殊スキル選択
-                $a_effect_type = $a->selected_skill_effect_type ?? null;
-                $b_effect_type = $b->selected_skill_effect_type ?? null;
-                if ($a_effect_type === EffectType::Special->value && $b_effect_type !== EffectType::Special->value) {
+                $a_is_first = $a->selected_skill_is_first ?? null;
+                $b_is_first = $b->selected_skill_is_first ?? null;
+                if ($a_is_first === true && $b_is_first !== true) {
                     return -1;
                 }
-                if ($b_effect_type === EffectType::Special->value && $a_effect_type !== EffectType::Special->value) {
+                if ($b_is_first === true && $a_is_first !== true) {
                     return 1;
                 }
 

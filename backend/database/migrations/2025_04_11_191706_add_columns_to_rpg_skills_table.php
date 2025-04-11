@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('rpg_skills', function (Blueprint $table) {
             $table->boolean('is_target_enemy')->after('target_range')->default(true)->comment('敵を対象とするスキルかどうかを判定する。');
+            $table->boolean('is_first')->after('is_target_enemy')->default(false)->comment('先制行動するスキルであるかどうかを判定する。');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('rpg_skills', function (Blueprint $table) {
             $table->dropColumn('is_target_enemy');
+            $table->dropColumn('is_first');
         });
     }
 };
