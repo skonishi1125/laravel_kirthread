@@ -1283,67 +1283,58 @@ class BattleState extends Model
                 }
                 break;
             case 50 : // ブレイクボウガン
-              $opponent_data = $battle_state_opponents_collection[$opponents_index];
-              // まずは単体に物理攻撃
-              // TODO: 絶対storePartyDamageと共通の関数にした方が良いぞ
-              $calculated_damage = self::calculatePhysicalDamage(
-                  $pure_damage,
-                  self::calculateActualStatusValue($opponent_data, 'def')
-              );
-              if ($calculated_damage > 0) {
-                  $opponent_data->value_hp -= $calculated_damage;
-                  if ($opponent_data->value_hp <= 0) {
-                      $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
-                      $opponent_data->is_defeated_flag = true;
-                      self::clearBuff($opponent_data);
-                      $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                      $battle_logs_collection->push("{$opponent_data->name}を倒した！");
-                      Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                  } else {
-                      $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                      Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                  }
-              } else {
-                  // ダメージを与えられなかった場合
-                  $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
-                  Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-              }
-              // その後、デバフをかける。
-              self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true);
-              break;
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 単体に物理攻撃し、その後デバフをかける。
+                self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true);
+                break;
             case 52 : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
-                // まずは単体に物理攻撃
-                // TODO: 絶対storePartyDamageと共通の関数にした方が良いぞ
-                $calculated_damage = self::calculatePhysicalDamage(
-                    $pure_damage,
-                    self::calculateActualStatusValue($opponent_data, 'def')
-                );
-                if ($calculated_damage > 0) {
-                    $opponent_data->value_hp -= $calculated_damage;
-                    if ($opponent_data->value_hp <= 0) {
-                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
-                        $opponent_data->is_defeated_flag = true;
-                        self::clearBuff($opponent_data);
-                        $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                        $battle_logs_collection->push("{$opponent_data->name}を倒した！");
-                        Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                    } else {
-                        $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                        Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                    }
-                } else {
-                    // ダメージを与えられなかった場合
-                    $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
-                    Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                }
-                // その後、バフをかける。
+                // 単体に物理攻撃し、その後自分にバフをかける。
+                self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
                 self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
                 break;
 
             default:
                 break;
         }
+    }
+
+    /**
+     * storePartySpecialSkill()の、攻撃ログ格納処理
+     *
+     * 現状物理攻撃だけなので、魔法も使いたかったらcalculated_damageをmdefに調整しよう
+     */
+    private static function applyPhysicalAttackAndLog(
+        object $actor_data,
+        object $opponent_data,
+        int $pure_damage,
+        Collection $battle_logs_collection
+    ) {
+        $calculated_damage = self::calculatePhysicalDamage(
+            $pure_damage,
+            self::calculateActualStatusValue($opponent_data, 'def')
+        );
+
+        if ($calculated_damage > 0) {
+            $opponent_data->value_hp -= $calculated_damage;
+            if ($opponent_data->value_hp <= 0) {
+                $opponent_data->value_hp = 0;
+                $opponent_data->is_defeated_flag = true;
+                self::clearBuff($opponent_data);
+                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
+            } else {
+                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+            }
+        } else {
+            $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+            Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+        }
+
+        Debugbar::debug('applyPhysicalAttackAndLog終わり。');
     }
 
     /**
@@ -1372,9 +1363,9 @@ class BattleState extends Model
         }
 
         // TARGET_RANGE_ALLの場合はこの関数内ではメッセージは表示せず、呼び出し後に個別で処理する
-        if (($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) && $is_debuff === false) {
+        if ($is_debuff === false && ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value)) {
             $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
-        } elseif (($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value) && $is_debuff === true) {
+        } elseif ($is_debuff === true && ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value)) {
             $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
         }
 

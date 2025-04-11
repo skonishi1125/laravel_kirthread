@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('rpg_skills', function (Blueprint $table) {
-              $table->dropColumn('is_target_enemy');
+            $table->dropColumn('is_target_enemy');
         });
     }
 };
