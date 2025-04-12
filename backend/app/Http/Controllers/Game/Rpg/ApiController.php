@@ -545,13 +545,13 @@ class ApiController extends Controller
                 // スキルを選んでいたなら、そのeffect_typeを取得しておく(行動順決定で使う)
                 if (! is_null($data->selected_skill_id)) {
                     // Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
-                    /** @var int $selected_skill_effect_type */
-                    $selected_skill_effect_type =
+                    /** @var bool $selected_skill_is_first */
+                    $selected_skill_is_first =
                         // firstWhereを使うため、Collectionに変換している
-                        collect($data->skills)->firstWhere('id', $data->selected_skill_id)->effect_type;
-                    $data->selected_skill_effect_type = $selected_skill_effect_type;
+                        collect($data->skills)->firstWhere('id', $data->selected_skill_id)->is_first;
+                    $data->selected_skill_is_first = $selected_skill_is_first;
                 } else {
-                    $data->selected_skill_effect_type = null;
+                    $data->selected_skill_is_first = null;
                 }
             }
 
