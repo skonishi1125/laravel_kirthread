@@ -223,7 +223,7 @@ class BattleState extends Model
                     return 1;  // $bが先に行動
                 }
 
-                // 2. 特殊スキル選択
+                // 2. 先制発動するスキルを選択したかどうか
                 $a_is_first = $a->selected_skill_is_first ?? null;
                 $b_is_first = $b->selected_skill_is_first ?? null;
                 if ($a_is_first === true && $b_is_first !== true) {
@@ -234,7 +234,10 @@ class BattleState extends Model
                 }
 
                 // 3. 速度順で降順ソート
-                return $b->value_spd <=> $a->value_spd;
+                $a_spd = self::calculateActualStatusValue($a, 'spd');
+                $b_spd = self::calculateActualStatusValue($b, 'spd');
+
+                return $b_spd <=> $a_spd;
 
             })->values();
 

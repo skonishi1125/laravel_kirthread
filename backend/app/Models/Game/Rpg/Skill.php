@@ -420,6 +420,7 @@ class Skill extends Model
                 Debugbar::debug('ファーストエイド');
                 $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
                 $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                break;
             case 52:
                 Debugbar::debug('ウインドアクセル');
                 $battle_logs_collection->push("{$actor_data->name}は風の力を使役し、攻撃した！");
