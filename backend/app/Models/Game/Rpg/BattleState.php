@@ -224,8 +224,8 @@ class BattleState extends Model
                 }
 
                 // 2. 先制発動するスキルを選択したかどうか
-                $a_is_first = $a->selected_skill_is_first ?? null;
-                $b_is_first = $b->selected_skill_is_first ?? null;
+                $a_is_first = (bool) ($a->selected_skill_is_first ?? false);
+                $b_is_first = (bool) ($b->selected_skill_is_first ?? false);
                 if ($a_is_first === true && $b_is_first !== true) {
                     return -1;
                 }
@@ -328,12 +328,16 @@ class BattleState extends Model
                             $opponents_index = null;
                             Debugbar::debug('target_player_indexが格納されていないため、それ以外のスキルが選択されました。');
 
-                            switch ($actor_data->selected_skill_effect_type) {
+                            /** @var \stdClass $selected_skill_data BattleData::SKILL_TEMPLATE に各データが格納されたオブジェクト。 */
+                            $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
+
+                            switch ($selected_skill_data->effect_type) {
                                 case EffectType::Special->value:
-                                    // ----------------- 特殊系スキル(分岐が難しいので、個別に対象処理をする) -----------------
+                                    // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
                                     Debugbar::debug('特殊系スキル。');
-                                    if ($actor_data->selected_skill_id == 31) {
-                                        Debugbar::debug("ワイドガード: 味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    if ($selected_skill_data->is_target_enemy) {
+                                        $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                    } else {
                                         $battle_state_opponents_collection = $battle_state_players_collection;
                                     }
                                     break;
