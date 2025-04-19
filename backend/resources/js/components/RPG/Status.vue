@@ -173,10 +173,12 @@
                   <div class="col-8">
                     <p style="font-size: 14px">
                       <b>※ステータスについて</b><br>
+                      <small><b>HP</b></small>: 生命力であり、0になると戦闘不能となります。<br>
+                      <small><b>AP</b></small>: 使用することで強力なスキルが使用できます。<br>
                       <small><b>STR</b></small>: 物理攻撃力に影響します。<br>
                       <small><b>DEF</b></small>: 物理防御力及び、魔法防御力に影響します。<br>
                       <small><b>INT</b></small>: 魔法攻撃力及び、魔法防御力に影響します。<br>
-                      <small><b>SPD</b></small>: 行動速度に影響します。<br>
+                      <small><b>SPD</b></small>: 行動速度及び、戦闘からの逃走率に影響します。<br>
                       <small><b>LUC</b></small>: いいことが沢山起こりやすくなります。<br>
                     </p>
                   </div>
