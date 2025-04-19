@@ -153,7 +153,7 @@ class ApiController extends Controller
     {
         Debugbar::debug('createParties():------------------------');
         $selected_info = $request->selected_info;
-        // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導士", "partyName" => "メイ" というArrayが3つ
+        // 送られるデータ: "roleId" => 4, "roleClassJapanese" => "魔導師", "partyName" => "メイ" というArrayが3つ
         // Debugbar::debug($selected_info, gettype($selected_info));
         $savedata = Savedata::getLoginUserCurrentSavedata();
         Debugbar::debug([

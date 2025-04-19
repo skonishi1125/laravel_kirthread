@@ -76,7 +76,7 @@ class RoleTableSeeder extends Seeder
             [
                 'id' => Role::ROLE_MAGE,
                 'class' => Role::ROLE_MAGE_CLASS_NAME,
-                'class_japanese' => '魔導士',
+                'class_japanese' => '魔導師',
                 'default_name' => 'メイ',
                 'growth_hp' => 2,
                 'growth_ap' => 5,

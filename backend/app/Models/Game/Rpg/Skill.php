@@ -369,7 +369,7 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
                 $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-                // -------------------- 魔導士 --------------------
+                // -------------------- 魔導師 --------------------
             case 40:
                 // 回復量 = (INT * ダメージ%)
                 Debugbar::debug('ミニヒール');
