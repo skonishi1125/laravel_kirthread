@@ -54,7 +54,7 @@
         <div class="col-12">
           <ul class="nav nav-tabs">
             <a class="nav-link active">買う</a>
-            <a class="nav-link ">売る</a>
+            <!-- <a class="nav-link ">売る</a> -->
           </ul>
         </div>
         <div class="col-12" style="height: 100%;">

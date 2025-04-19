@@ -26,7 +26,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 7,
             ],
             // -------------------- 重騎士 --------------------
-            // -------------------- 魔導士 --------------------
+            // -------------------- 魔導師 --------------------
             // ポップヒール プチヒールLv2, pLv10以上
             [
                 'acquired_skill_id' => 41,

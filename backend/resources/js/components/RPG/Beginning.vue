@@ -86,8 +86,9 @@
           ...あなたも今まさに冒険者として旅立つ意志を強く持っています。同じ志を持つ仲間を募り、冒険へ向かいましょう。<br>
         </p>
       </div>
-      <div class="col-12" style="text-align:right;">
-        <button class="btn btn-secondary" @click="switchSetCharacter">→進む</button>
+      <br>
+      <div class="col-12" style="text-align:right; margin-top: 30px;">
+        <button class="btn btn-info" @click="switchSetCharacter">→進む</button>
       </div>
     </div>
   </div>
@@ -127,20 +128,21 @@
                 <div class="input-group">
                   <input type="text" class="form-control" maxlength="6" v-model="partyName">
                   <span class="input-group-btn">
-                    <button class="btn btn-success" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">選択</button>
+                    <button class="btn btn-info" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">決定</button>
                   </span>
 
                 </div>
-                <a href=""><small>ステータスについて</small></a>
+                <div style="margin-top: 10px;">
+                  <span @click="displayStatusDetailModal()" style="border-bottom: 1px solid black; cursor: pointer">
+                    <small>ステータスについて</small>
+                  </span>
+                </div>
               </div>
             </div>
-            <span class="input-group-btn" style="margin-left: 10px;">
-              <button class="btn btn-info" type="button" @click="resetData">最初からやり直す</button>
-            </span>
           </form>
         </div>
       </div>
- 
+
       <div class="col-6" style="min-width: 440px; min-height: 682px;">
         <div>
           <div class="role-picture" :style="backgroundImageStyle"></div>
@@ -148,8 +150,9 @@
       </div>
 
       <!-- beginning.currentDisplayRoleIndexを調整するボタン -->
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRole('increment')">→</button>
-      <button class="btn btn-primary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRole('decrement')">←</button>
+      <button class="btn btn-secondary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRole('increment')">→</button>
+      <button class="btn btn-secondary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRole('decrement')">←</button>
+      <button class="btn btn-danger" style="position: absolute; bottom: 3%; right: 3%; z-index: 10;;" @click="resetData">選択をやり直す</button>
     </div>
     
     <!-- パラメータ -->
@@ -213,7 +216,7 @@
             </div>
 
             <div class="modal-footer">
-            <button type="button" class="btn btn-info" data-dismiss="modal" @click="resetData">最初からやり直す</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" @click="resetData">選択をやり直す</button>
             <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
             </div>
 
@@ -229,25 +232,52 @@
           <hr>
           {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
           <br>
-          これから幾多の危険が彼らの前に立ちはだかることだろう。<br>
-          凶暴な魔物は彼らの力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>
-          見通せぬ暗闇には、想像を絶する困難が隠れているかもしれない。<br>
+          これから幾多の危険が彼らの前に立ちはだかることとなる。<br>
+          凶暴な魔物は我々の力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>
+          見通しの困難な樹海には、想像を絶する困難が隠れているかもしれない。<br>
           <br>
-          君たちはまだ経験に乏しく、思わぬ苦境に立たされることもあるだろう。<br>
-          しかし、冒険者として最も必要な素養である強き意志はとうの昔から持ち合わせている。<br>
+          経験に乏しく、思わぬ苦境に立たされることもあるだろう。<br>
+          しかしながら、冒険者として最も必要な素養はとうの昔から持ち合わせている。<br>
           <br>
-          さあ、意志を強く持ちその先に進みたまえ！<br>
+          さあ、強き意志を持ち、この世界の謎に立ち向かいたまえ！<br>
           <hr>
           <br>
           ...あなた達の冒険はたった今から始まります。<br>
           まずは冒険者達が拠点とする街に向かい、旅の支度を整えましょう。<br>
         </p>
       </div>
-      <div class="col-12" style="text-align:right;">
+      <div class="col-12" style="text-align:right; margin-top: 10px;">
         <button class="btn btn-success" @click="switchMenuScreen">→街へ向かう</button>
       </div>
     </div>
   </div>
+
+  <!-- ステータス詳細モーダル -->
+  <teleport to="body">
+    <div class="modal fade" id="modal-status-detail" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title"><b>ステータスについて</b></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <p style="font-size: 14px">
+                <small><b>HP</b></small>: 生命力であり、0になると戦闘不能となります。<br>
+                <small><b>AP</b></small>: 使用することで強力なスキルが使用できます。<br>
+                <small><b>STR</b></small>: 物理攻撃力に影響します。<br>
+                <small><b>DEF</b></small>: 物理防御力及び、魔法防御力に影響します。<br>
+                <small><b>INT</b></small>: 魔法攻撃力及び、魔法防御力に影響します。<br>
+                <small><b>SPD</b></small>: 行動速度及び、戦闘からの逃走率に影響します。<br>
+                <small><b>LUC</b></small>: いいことが沢山起こりやすくなります。<br>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
 
 </template>
 
@@ -365,6 +395,11 @@
         // このメンバーでいいですか？というダイアログを出す。 OKならpostPlayerData()を実行する。
         console.log(`displayConfirmModal(): -----------------`);
         $('#modal-confirm').modal('show');
+      },
+      displayStatusDetailModal() {
+        // このメンバーでいいですか？というダイアログを出す。 OKならpostPlayerData()を実行する。
+        console.log(`displayStatusDetailModal(): -----------------`);
+        $('#modal-status-detail').modal('show');
       },
       postPlayerData() {
         console.log(`postPlayerData(): -----------------`);
