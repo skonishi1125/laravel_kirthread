@@ -38,7 +38,10 @@
         <div class="row sub-sucreen-text-space">
           <div class="col-12">
             <div>
-            <p>街に辿り着いた。どうしようか？</p>
+            <p>
+              街に辿り着いた。どうしようか？<br>
+              <span style="color: gray">(左メニューから行動を選択してください。)</span style="color: gray">
+            </p>
             </div>
           </div>
         </div>

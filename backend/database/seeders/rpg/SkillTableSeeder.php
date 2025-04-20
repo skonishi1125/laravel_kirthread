@@ -39,7 +39,7 @@ class SkillTableSeeder extends Seeder
             ],
             [
                 'id' => '11',
-                'name' => '旋武脚',
+                'name' => 'スピンキック',
                 'available_role_id' => Role::ROLE_STRIKER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,

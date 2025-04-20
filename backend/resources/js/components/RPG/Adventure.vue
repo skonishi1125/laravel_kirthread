@@ -95,7 +95,15 @@
                   <!-- Date -->
                   <div class="form-group">
                     <label class="control-label">
-                        {{ confirmModalFIeld.name }}に向かいます。
+                        {{ confirmModalFIeld.name }}に向かいます。<br>
+                        <br>
+                        <small>
+                          <b>
+                            ※戦闘画面に遷移します。<br>
+                            準備ができている場合、「出発する」を選択してください。
+                          </b>
+                        </small>
+                        
                     </label>
                   </div>
               </form>
