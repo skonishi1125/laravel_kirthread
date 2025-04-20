@@ -16,13 +16,15 @@ class PresetAppearingEnemyTableSeeder extends Seeder
         PresetAppearingEnemy::truncate();
 
         $seeds = [
-            // field 1
+            // --------- field 1 ---------
+            // 1-1 
             [
                 'field_id' => 1,
                 'stage_id' => 1,
                 'enemy_id' => 1,
-                'number' => 3,
+                'number' => 2,
             ],
+            // 1-2
             [
                 'field_id' => 1,
                 'stage_id' => 2,
@@ -33,14 +35,22 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => 1,
                 'stage_id' => 2,
                 'enemy_id' => 2,
-                'number' => 2,
+                'number' => 1,
             ],
+            [
+                'field_id' => 1,
+                'stage_id' => 2,
+                'enemy_id' => 1,
+                'number' => 1,
+            ],
+            // 1-3
             [
                 'field_id' => 1,
                 'stage_id' => 3,
                 'enemy_id' => 3,
                 'number' => 2,
             ],
+            // 1-4
             [
                 'field_id' => 1,
                 'stage_id' => 4,

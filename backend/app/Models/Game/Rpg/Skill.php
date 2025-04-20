@@ -324,7 +324,7 @@ class Skill extends Model
             // -------------------- 格闘家 --------------------
             case 10:
                 Debugbar::debug('ミドルブロウ');
-                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！強力な正拳突きが敵を撃ち抜く！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 10);
                 break;
             case 11:
@@ -392,7 +392,7 @@ class Skill extends Model
                 // 威力 = (INT * ダメージ%) + 基礎ダメージ50
                 Debugbar::debug('クラッシュボルト');
                 // レベルごとに文章を変えられたら熱い
-                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが爆発する！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                 break;
             case 44:
