@@ -87,7 +87,7 @@ class RoleTableSeeder extends Seeder
                 'growth_luc' => 2,
                 'portrait_image_path' => 'portrait_mage.png',
                 'cutscene_image_path' => 'cutscene.png',
-                'description' => 'APを使用した高火力魔法攻撃が得意。不得意だが回復魔法も。',
+                'description' => 'APを使用した高火力魔法攻撃を得意とする。',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
