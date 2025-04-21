@@ -17,7 +17,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
         $seeds = [
             // --------- field 1 ---------
-            // 1-1 
+            // 1-1
             [
                 'field_id' => 1,
                 'stage_id' => 1,

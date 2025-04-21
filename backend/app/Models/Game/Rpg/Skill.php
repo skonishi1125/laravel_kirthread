@@ -261,7 +261,10 @@ class Skill extends Model
             $players_json_skills_data['skill_percent'] = $skill_percent;
 
             return $players_json_skills_data;
-        });
+        })
+        // スキルID順にし、キーが連番でなくなっているのでvaluesで0からの連番キー配列に整形しておく
+            ->sortBy('id')
+            ->values();
 
         Debugbar::debug($learned_skills);
 

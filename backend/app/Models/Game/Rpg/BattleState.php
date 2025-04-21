@@ -342,16 +342,16 @@ class BattleState extends Model
                                     }
                                     break;
                                 case EffectType::Damage->value:
-                                    Debugbar::debug("攻撃系スキルのため敵情報をopponents_dataに格納");
+                                    Debugbar::debug('攻撃系スキルのため敵情報をopponents_dataに格納');
                                     $battle_state_opponents_collection = $battle_state_enemies_collection;
                                     break;
                                 case EffectType::Heal->value:
-                                    Debugbar::debug("回復系スキルのため味方情報をopponents_dataに格納");
+                                    Debugbar::debug('回復系スキルのため味方情報をopponents_dataに格納');
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                                 case EffectType::Buff->value:
                                     // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
-                                    Debugbar::debug("バフ系スキルのため味方情報をopponents_dataに格納");
+                                    Debugbar::debug('バフ系スキルのため味方情報をopponents_dataに格納');
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                             }
@@ -637,7 +637,6 @@ class BattleState extends Model
         // firstWhereを使用するため、collectionとして一時的にキャスト
         /** @var \stdClass $selected_skill_data BattleData::SKILL_TEMPLATE に各データが格納されたオブジェクト。 */
         $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
-        // Debugbar::debug($selected_skill_data);
         // APがなければ、ログに入れて処理を終了する
         if ($actor_data->value_ap < $selected_skill_data->ap_cost) {
             $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}の発動を試みたがAPが足りなかった！");
@@ -646,6 +645,28 @@ class BattleState extends Model
         }
 
         if ($is_enemy == false) {
+            // 戦闘不能かつ, それが敵である場合は別の相手を指定する
+            // 攻撃: 敵が常に対象となるので、別の相手を指定する。
+            // 回復: 味方が対象となるケースの場合は対象を変えない（失敗させる）
+            // バフ: 味方が対象となるケースの場合は対象を変えない（失敗させる）。敵にデバフをかけた場合は対象を変える。
+            // 特殊: 敵対象とする場合は特殊攻撃系スキルなので変える。味方対象とする場合は失敗させる。
+            if (
+                $battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true &&
+                $battle_state_opponents_collection[$opponents_index]->is_enemy == true
+            ) {
+                $new_target_index = $battle_state_opponents_collection->search(function ($enemy) {
+                    return $enemy->is_defeated_flag == false;
+                });
+                if ($new_target_index !== false) {
+                    $opponents_index = $new_target_index;
+                    Debugbar::debug("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$battle_state_opponents_collection[$opponents_index]->name}");
+                } else {
+                    Debugbar::debug("すべての敵が討伐済みになったので、SKILLを終了します。敵数: {$battle_state_opponents_collection->count()}");
+
+                    return;
+                }
+            }
+
             // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
             Skill::decideExecSkill($actor_data->role_id, $selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
         } else {

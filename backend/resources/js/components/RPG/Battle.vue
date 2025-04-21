@@ -342,7 +342,13 @@
            <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div> -->
-          <p class="log-item" v-if="battle.status == 'encount'">敵が現れた！</p>
+           <div v-if="battle.status == 'encount'">
+            <p class="log-item">
+              敵が現れた！<br>
+              <span style="color: red" v-if="isBoss == true">この地帯を統治するフィールドのボスのようだ。</span>
+            </p>
+            
+          </div>
           <p v-if="battle.status == 'command'">
             {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
@@ -487,6 +493,7 @@ export default {
       // 初期値をnullとしているが、戦闘クリア後のメッセージの分岐時にnullのパラメータを使ってボタンを出さないようにしている
       // ボスでない戦闘を終えた場合は false 「次の戦闘へ進む」ボスを倒した場合は true 「探索を終え、街に戻る」
       isFieldCleared: null, 
+      isBoss: false // enemyの中に、ボスがいるかどうかをチェックするフラグ
     }
   },
   computed: {
@@ -562,6 +569,11 @@ export default {
         this.itemData = data[3] || [];
         // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
         console.log('Battle.vue', this.battle.status, this.battle.battleSessionId); 
+
+        // ボスが存在している場合は、警告文を表示するためのフラグを有効化する。
+        // some: 配列内に1つでも条件を満たす要素があればtrueを返す
+        this.isBoss = this.enemyData.some(enemy => enemy.is_boss == true);
+
         // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
         this.$store.dispatch('setBattleStatus', 'encount');
       })
