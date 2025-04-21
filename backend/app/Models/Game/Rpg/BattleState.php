@@ -342,16 +342,16 @@ class BattleState extends Model
                                     }
                                     break;
                                 case EffectType::Damage->value:
-                                    Debugbar::debug("攻撃系スキルのため敵情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    Debugbar::debug("攻撃系スキルのため敵情報をopponents_dataに格納");
                                     $battle_state_opponents_collection = $battle_state_enemies_collection;
                                     break;
                                 case EffectType::Heal->value:
-                                    Debugbar::debug("回復系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    Debugbar::debug("回復系スキルのため味方情報をopponents_dataに格納");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                                 case EffectType::Buff->value:
                                     // TODO: デバフを採用するならさらに分岐して、敵データを入れる。
-                                    Debugbar::debug("バフ系スキルのため味方情報をopponents_dataに格納。effect_type: {$actor_data->selected_skill_effect_type}");
+                                    Debugbar::debug("バフ系スキルのため味方情報をopponents_dataに格納");
                                     $battle_state_opponents_collection = $battle_state_players_collection;
                                     break;
                             }
