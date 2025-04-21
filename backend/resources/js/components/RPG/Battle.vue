@@ -196,6 +196,59 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.preview_button {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-size: 16px;
+  padding: 15px 35px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  transition: all 0.15s ease;
+}
+
+.preview_button:hover {
+  background-color: #fdf6e3;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+}
+
+.preview_button:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.resultWin_returnButton {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-size: 16px;
+  padding: 15px 35px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  transition: all 0.15s ease;
+}
+
+.resultWin_returnButton:hover {
+  background-color: #fdf6e3;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+}
+
+.resultWin_returnButton:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 </style>
 
 <template>
@@ -289,17 +342,25 @@
            <!-- <div style="position: absolute; right: 0%; bottom: 0%;">
             【バトルログ】
            </div> -->
-          <p class="log-item" v-if="battle.status == 'encount'">敵が現れた！</p>
+           <div v-if="battle.status == 'encount'">
+            <p class="log-item">
+              敵が現れた！<br>
+              <span style="color: red" v-if="isBoss == true">この地帯を統治するフィールドのボスのようだ。</span>
+            </p>
+            
+          </div>
           <p v-if="battle.status == 'command'">
             {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
-              <span v-if="hoveredDescription != null">
-                <hr>
-              </span>
+              <hr>
               <span v-html="hoveredDescription"></span>
             </div>
           </p>
-          <p v-if="battle.status == 'enemySelect'">対象の <span style="color:red;">敵</span> を選択してください。</p>
+          <div v-if="battle.status == 'enemySelect'">
+            <p>対象の <span style="color:red;">敵</span> を選択してください。</p>
+            <hr>
+            <span v-if="hoveredEnemy" style="font-weight: bold;">{{ hoveredEnemy.name }}</span>
+          </div>
           <p v-if="battle.status == 'partySelect'">対象の <span style="color:green;">味方</span> を選択してください</p>
           <p v-if="battle.status == 'exec'">戦闘開始します。</p>
           <div v-if="battle.status == 'outputLog'" class="log-container">
@@ -325,12 +386,21 @@
               </div>
             </div>
             <div 
-            @click="selectEnemy(enemy.enemy_index)" 
-            :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
-            :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
+              @click="selectEnemy(enemy.enemy_index)"
+              @mouseenter="hoveredEnemy = enemy"
+              @mouseleave="hoveredEnemy = null"
+              :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
+              :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
+          </div>
+        </div>
+
+        <!-- コマンドを間違えて選択肢、対象選択の画面になった際に1つ戻るボタン -->
+        <div v-if="battle.status == 'enemySelect' || battle.status == 'partySelect'">
+          <div class="preview_button" @click="returnToSituationCommands">
+              <a>やめる</a>
           </div>
         </div>
 
@@ -342,9 +412,12 @@
                 </div>
             </div>
             <div v-else-if="isFieldCleared === false">
-                <div class="nextScene_button" @click="nextBattle">
-                    <a>次の戦闘へ進む</a>
-                </div>
+              <div class="nextScene_button" @click="nextBattle">
+                <a>次の戦闘へ進む</a>
+              </div>
+              <div class="resultWin_returnButton" @click="finishBattle">
+                  <a>探索を切り上げ、街に戻る</a>
+              </div>
             </div>
 
           </div>
@@ -411,6 +484,7 @@ export default {
       partyData: {},
       itemData: {},
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
+      hoveredEnemy: null,
       enemyData: {},
       battleLog: {}, // リアルタイムの戦闘結果
       battleLogHistory: [], // これまでの戦闘結果を配列として履歴に残す。最大100件を考えている
@@ -419,6 +493,7 @@ export default {
       // 初期値をnullとしているが、戦闘クリア後のメッセージの分岐時にnullのパラメータを使ってボタンを出さないようにしている
       // ボスでない戦闘を終えた場合は false 「次の戦闘へ進む」ボスを倒した場合は true 「探索を終え、街に戻る」
       isFieldCleared: null, 
+      isBoss: false // enemyの中に、ボスがいるかどうかをチェックするフラグ
     }
   },
   computed: {
@@ -494,6 +569,11 @@ export default {
         this.itemData = data[3] || [];
         // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
         console.log('Battle.vue', this.battle.status, this.battle.battleSessionId); 
+
+        // ボスが存在している場合は、警告文を表示するためのフラグを有効化する。
+        // some: 配列内に1つでも条件を満たす要素があればtrueを返す
+        this.isBoss = this.enemyData.some(enemy => enemy.is_boss == true);
+
         // getで呼び出せた後にencountにすることで、呼び出す前に画面をクリックした時のエラーを防ぐ
         this.$store.dispatch('setBattleStatus', 'encount');
       })
@@ -764,6 +844,12 @@ export default {
                 this.$store.dispatch('setScreen', 'menu');
                 this.$router.push('/game/rpg/menu');
             });
+    },
+
+    // 間違えてコマンドを選んだ時などに呼び出す。コマンド選択状態を1つ戻す。
+    returnToSituationCommands() {
+      this.$store.dispatch('returnToSituationCommands');
+      this.$store.dispatch('setBattleStatus', 'command');
     },
 
     nextBattle() {

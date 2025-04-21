@@ -193,8 +193,8 @@
 
           <div class="row">
             <div class="col-12">
-              <p style="font-size: 0.9rem; font-weight: bold;">
-                ステータスポイント:【
+              <p style="font-size: 0.85rem; font-weight: bold;">
+                未振り分けのステータスポイント:【
                   <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
                     {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
                   </span>
@@ -441,8 +441,8 @@
 
           <div class="row">
             <div class="col-12">
-              <p style="font-size: 0.9rem; font-weight: bold;">
-                ステータスポイント:【
+              <p style="font-size: 0.85rem; font-weight: bold;">
+                未振り分けのステータスポイント:【
                   <span :class="{ 'freely-point-red': partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point > 0 }">
                     {{ partiesInformation[status.currentSelectedPartyMemberIndex].freely_status_point }}
                   </span>

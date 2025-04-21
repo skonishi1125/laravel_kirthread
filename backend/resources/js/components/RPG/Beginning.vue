@@ -102,7 +102,7 @@
     <div class="row">
       <div class="col-12" style="margin-bottom: 10px; border-bottom: 1px solid gray;">
         <div>
-          <p>冒険へと旅立つパーティメンバーを決定しましょう。 ({{ displayCurrentDecidedMemberNumber }}/3)</p>
+          <p>冒険へと旅立つパーティメンバーを<b>3人</b>決定しましょう。 ({{ displayCurrentDecidedMemberNumber }}/3)</p>
           <p>選択中メンバー:
             <span v-for="member in beginning.selectedRoleInformations">
               <span>{{ member['partyName'] }}【{{ member['roleClassJapanese'] }}】</span>

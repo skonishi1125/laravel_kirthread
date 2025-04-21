@@ -4,6 +4,7 @@ namespace App\Models\Game\Rpg;
 
 use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\EffectType;
+use App\Enums\Rpg\SkillDefinition;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -261,7 +262,10 @@ class Skill extends Model
             $players_json_skills_data['skill_percent'] = $skill_percent;
 
             return $players_json_skills_data;
-        });
+        })
+        // スキルID順にし、キーが連番でなくなっているのでvaluesで0からの連番キー配列に整形しておく
+            ->sortBy('id')
+            ->values();
 
         Debugbar::debug($learned_skills);
 
@@ -320,131 +324,131 @@ class Skill extends Model
         $new_buff['buffed_skill_name'] = $selected_skill_data->name;
         $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
-        switch ($selected_skill_data->id) {
+        switch (SkillDefinition::from($selected_skill_data->id)) {
             // -------------------- 格闘家 --------------------
-            case 10:
-                Debugbar::debug('ミドルブロウ');
-                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+            case SkillDefinition::MiddleBlow :
+                Debugbar::debug(SkillDefinition::MiddleBlow->label());
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！強力な正拳突きが敵を撃ち抜く！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 10);
                 break;
-            case 11:
-                Debugbar::debug('スピンキック');
+            case SkillDefinition::SpinKick :
+                Debugbar::debug(SkillDefinition::SpinKick->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
                 break;
                 // -------------------- 治療師 --------------------
-            case 20:
-                Debugbar::debug('ライフリカバリ');
+            case SkillDefinition::Healing :
+                Debugbar::debug(SkillDefinition::Healing->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                 break;
-            case 21:
-                Debugbar::debug('リカバリオール');
+            case SkillDefinition::AllHealing :
+                Debugbar::debug(SkillDefinition::AllHealing->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
-            case 22:
-                Debugbar::debug('ミニボルト');
+            case SkillDefinition::MiniBolt :
+                Debugbar::debug(SkillDefinition::MiniBolt->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                 break;
                 // -------------------- 重騎士 --------------------
-            case 30:
-                Debugbar::debug('ワイドスラスト');
+            case SkillDefinition::WideThrust :
+                Debugbar::debug(SkillDefinition::WideThrust->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                 break;
-            case 31:
-                Debugbar::debug('ワイドガード');
+            case SkillDefinition::WideGuard :
+                Debugbar::debug(SkillDefinition::WideGuard->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
                 $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-            case 32:
-                Debugbar::debug('ブレイヴスラッシュ');
+            case SkillDefinition::BraveSlash :
+                Debugbar::debug(SkillDefinition::BraveSlash->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！天地を揺らす一撃！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + BattleState::calculateActualStatusValue($actor_data, 'def');
                 break;
-            case 33:
-                Debugbar::debug('ガードアップ');
+            case SkillDefinition::GuardUp :
+                Debugbar::debug(SkillDefinition::GuardUp->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
                 $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
                 // -------------------- 魔導師 --------------------
-            case 40:
+            case SkillDefinition::MiniHeal :
                 // 回復量 = (INT * ダメージ%)
-                Debugbar::debug('ミニヒール');
+                Debugbar::debug(SkillDefinition::MiniHeal->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
-            case 41:
+            case SkillDefinition::PopHeal :
                 // 回復量 = (INT * ダメージ%)
-                Debugbar::debug('ポップヒール');
+                Debugbar::debug(SkillDefinition::PopHeal->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの霧が味方を包む！");
                 $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
-            case 42:
+            case SkillDefinition::PetitBlast :
                 // 威力 = (INT * ダメージ%)
-                Debugbar::debug('プチブラスト');
+                Debugbar::debug(SkillDefinition::PetitBlast->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力の粒が相手を襲う！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                 break;
-            case 43:
+            case SkillDefinition::CrashBolt :
                 // 威力 = (INT * ダメージ%) + 基礎ダメージ50
-                Debugbar::debug('クラッシュボルト');
+                Debugbar::debug(SkillDefinition::CrashBolt->label());
                 // レベルごとに文章を変えられたら熱い
-                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが爆発する！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                 break;
-            case 44:
+            case SkillDefinition::ManaExplosion :
                 // 威力 = (INT * ダメージ%) + 基礎ダメージ30
-                Debugbar::debug('マナエクスプロージョン');
+                Debugbar::debug(SkillDefinition::ManaExplosion->label());
                 // (独り言)レベルごとに文章を変えられたら熱いけど
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解き放ったマナの塊が大爆発を起こす！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                 break;
-            case 45:
-                Debugbar::debug('バトルメイジ');
+            case SkillDefinition::BattleMage :
+                Debugbar::debug(SkillDefinition::BattleMage->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！数々の冒険で修めてきた全ての智力が{$actor_data->name}の力と代わる...");
                 // buffed_str = (value_int * ダメージ%) とし、 intを0とする
                 $new_buff['buffed_str'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                 $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                 break;
                 // -------------------- 弓馭者 --------------------
-            case 50:
-                Debugbar::debug('ブレイクボウガン');
+            case SkillDefinition::BreakBowGun :
+                Debugbar::debug(SkillDefinition::BreakBowGun->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！相手の甲殻を打ち砕く、鋭い一撃！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                 $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent * 0.5)); // マイナスの値にして、相手にデバフとして付与する
                 break;
-            case 51:
-                Debugbar::debug('ファーストエイド');
+            case SkillDefinition::FirstAid :
+                Debugbar::debug(SkillDefinition::FirstAid->label());
                 $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
                 $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
                 break;
-            case 52:
-                Debugbar::debug('ウインドアクセル');
+            case SkillDefinition::WindAccel :
+                Debugbar::debug(SkillDefinition::WindAccel->label());
                 $battle_logs_collection->push("{$actor_data->name}は風の力を使役し、攻撃した！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                 $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                 break;
-                // -------------------- 理術士 --------------------
-            case 60:
-                Debugbar::debug('ガードスペル');
+                // -------------------- 理術師 --------------------
+            case SkillDefinition::GuardSpell :
+                Debugbar::debug(SkillDefinition::GuardSpell->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-            case 61:
-                Debugbar::debug('アタックスペル');
+            case SkillDefinition::AttackSpell :
+                Debugbar::debug(SkillDefinition::AttackSpell->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-            case 62:
-                Debugbar::debug('マジックスペル');
+            case SkillDefinition::MagicSpell :
+                Debugbar::debug(SkillDefinition::MagicSpell->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                 break;
-            case 63:
-                Debugbar::debug('ブックスマッシュ');
+            case SkillDefinition::BookSmash :
+                Debugbar::debug(SkillDefinition::BookSmash->label());
                 $battle_logs_collection->push("{$actor_data->name}は手持ちの魔導書で思い切り殴りかかった！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                 break;
