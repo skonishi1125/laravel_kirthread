@@ -6,6 +6,7 @@ use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AttackType;
 use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\HealType;
+use App\Enums\Rpg\SkillDefinition;
 use App\Enums\Rpg\TargetRange;
 use App\Helpers\DataHelper;
 use Barryvdh\Debugbar\Facades\Debugbar;
@@ -1303,20 +1304,20 @@ class BattleState extends Model
         Debugbar::debug("【特殊スキル】使用者: {$actor_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
 
         // スキル別に個別の処理を回す。
-        switch ($selected_skill_data->id) {
-            case 31 : // ワイドガード
+        switch (SkillDefinition::from($selected_skill_data->id)) {
+            case SkillDefinition::WideGuard : // ワイドガード
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
                 }
                 break;
-            case 50 : // ブレイクボウガン
+            case SkillDefinition::BreakBowGun : // ブレイクボウガン
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後デバフをかける。
                 self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
                 self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true);
                 break;
-            case 52 : // ウインドアクセル
+            case SkillDefinition::WindAccel : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後自分にバフをかける。
                 self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
