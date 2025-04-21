@@ -30,7 +30,7 @@ class EnemyTableSeeder extends Seeder
                 'value_int' => 0,
                 'value_spd' => 10,
                 'value_luc' => 0,
-                'exp' => 10,
+                'exp' => 15,
                 'drop_money' => 10,
                 'portrait_image_path' => 'srara.png',
                 'description' => '冒険者の前に立ちはだかる最初の敵。油断禁物！',

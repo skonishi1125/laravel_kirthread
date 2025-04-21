@@ -77,8 +77,8 @@ enum SkillDefinition: int
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
 
-            self::Healing => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
-            self::AllHealing => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
+            self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',
+            self::AllHealing => '癒しの力を広範囲に広げ、味方全体のHPを回復する。',
             self::MiniBolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
 
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
