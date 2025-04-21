@@ -430,7 +430,7 @@ class Skill extends Model
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                 $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                 break;
-                // -------------------- 理術士 --------------------
+                // -------------------- 理術師 --------------------
             case 60:
                 Debugbar::debug('ガードスペル');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");

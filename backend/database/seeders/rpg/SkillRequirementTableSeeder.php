@@ -55,29 +55,30 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
+            // --------- テストスキルたち ---------
             // スキル47 スキル46 Lv1以上, pLv2以上
-            [
-                'acquired_skill_id' => 47,
-                'requirement_skill_id' => 46,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 2,
-            ],
-            // スキル48 スキル46 Lv2以上, pLv2以上
-            [
-                'acquired_skill_id' => 48,
-                'requirement_skill_id' => 46,
-                'requirement_skill_level' => 2,
-                'requirement_party_level' => 2,
-            ],
-            // スキル49 スキル46 Lv3以上, pLv2以上
-            [
-                'acquired_skill_id' => 49,
-                'requirement_skill_id' => 46,
-                'requirement_skill_level' => 3,
-                'requirement_party_level' => 2,
-            ],
+            // [
+            //     'acquired_skill_id' => 47,
+            //     'requirement_skill_id' => 46,
+            //     'requirement_skill_level' => 1,
+            //     'requirement_party_level' => 2,
+            // ],
+            // // スキル48 スキル46 Lv2以上, pLv2以上
+            // [
+            //     'acquired_skill_id' => 48,
+            //     'requirement_skill_id' => 46,
+            //     'requirement_skill_level' => 2,
+            //     'requirement_party_level' => 2,
+            // ],
+            // // スキル49 スキル46 Lv3以上, pLv2以上
+            // [
+            //     'acquired_skill_id' => 49,
+            //     'requirement_skill_id' => 46,
+            //     'requirement_skill_level' => 3,
+            //     'requirement_party_level' => 2,
+            // ],
             // -------------------- 弓馭者 --------------------
-            // -------------------- 理術士 --------------------
+            // -------------------- 理術師 --------------------
 
         ];
 

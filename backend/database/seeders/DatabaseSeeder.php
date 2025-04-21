@@ -18,12 +18,17 @@ class DatabaseSeeder extends Seeder
         // RPG関連
         $this->call(\Database\Seeders\rpg\SkillTableSeeder::class);
         $this->call(\Database\Seeders\rpg\RoleTableSeeder::class);
-        // $this->call(\Database\Seeders\rpg\PartyLearnedSkillTableSeeder::class);
         $this->call(\Database\Seeders\rpg\ItemTableSeeder::class);
-        $this->call(\Database\Seeders\rpg\SavedataHasItemTableSeeder::class);
         $this->call(\Database\Seeders\rpg\SkillRequirementTableSeeder::class);
         $this->call(\Database\Seeders\rpg\EnemyTableSeeder::class);
         $this->call(\Database\Seeders\rpg\PresetAppearingEnemyTableSeeder::class);
         $this->call(\Database\Seeders\rpg\FieldTableSeeder::class);
+        $this->call(\Database\Seeders\rpg\ExpTableSeeder::class);
+
+        // local以外で実行すると、本番のスキルデータやアイテムデータも書き変わるので注意。
+        if (config('app.env') === 'local') {
+            // $this->call(\Database\Seeders\rpg\PartyLearnedSkillTableSeeder::class);
+            // $this->call(\Database\Seeders\rpg\SavedataHasItemTableSeeder::class);
+        }
     }
 }
