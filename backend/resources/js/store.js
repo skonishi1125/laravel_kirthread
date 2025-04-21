@@ -166,6 +166,12 @@ export default createStore({
       state.battle.currentPartyMemberIndex += 1;
     },
 
+    // 間違えてコマンドを選んだ時などに呼び出す。選択履歴を1つ戻す
+    returnToSituationCommands(state) {
+      // 最後の配列を1つ抜き出す
+      state.battle.selectedCommands.pop();
+    },
+
     // コマンドが2週目以降続く場合、選択履歴をリセット
     resetBattleStatus(state) {
       state.battle.currentPartyMemberIndex = 0;
@@ -273,6 +279,9 @@ export default createStore({
       commit('incrementPartyMemberIndex')
     },
 
+    returnToSituationCommands({ commit }) {
+      commit('returnToSituationCommands');
+    },
     resetBattleStatus({ commit }) {
       commit('resetBattleStatus');
     },

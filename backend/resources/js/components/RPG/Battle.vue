@@ -196,6 +196,33 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.preview_button {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-size: 16px;
+  padding: 15px 35px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  transition: all 0.15s ease;
+}
+
+.preview_button:hover {
+  background-color: #fdf6e3;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+}
+
+.preview_button:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 </style>
 
 <template>
@@ -299,7 +326,11 @@
               <span v-html="hoveredDescription"></span>
             </div>
           </p>
-          <p v-if="battle.status == 'enemySelect'">対象の <span style="color:red;">敵</span> を選択してください。</p>
+          <div v-if="battle.status == 'enemySelect'">
+            <p>対象の <span style="color:red;">敵</span> を選択してください。</p>
+            <hr>
+            <span v-if="hoveredEnemy" style="font-weight: bold;">{{ hoveredEnemy.name }}</span>
+          </div>
           <p v-if="battle.status == 'partySelect'">対象の <span style="color:green;">味方</span> を選択してください</p>
           <p v-if="battle.status == 'exec'">戦闘開始します。</p>
           <div v-if="battle.status == 'outputLog'" class="log-container">
@@ -325,12 +356,21 @@
               </div>
             </div>
             <div 
-            @click="selectEnemy(enemy.enemy_index)" 
-            :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
-            :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
+              @click="selectEnemy(enemy.enemy_index)"
+              @mouseenter="hoveredEnemy = enemy"
+              @mouseleave="hoveredEnemy = null"
+              :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
+              :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
+          </div>
+        </div>
+
+        <!-- コマンドを間違えて選択肢、対象選択の画面になった際に1つ戻るボタン -->
+        <div v-if="battle.status == 'enemySelect' || battle.status == 'partySelect'">
+          <div class="preview_button" @click="returnToSituationCommands">
+              <a>やめる</a>
           </div>
         </div>
 
@@ -411,6 +451,7 @@ export default {
       partyData: {},
       itemData: {},
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
+      hoveredEnemy: null,
       enemyData: {},
       battleLog: {}, // リアルタイムの戦闘結果
       battleLogHistory: [], // これまでの戦闘結果を配列として履歴に残す。最大100件を考えている
@@ -764,6 +805,12 @@ export default {
                 this.$store.dispatch('setScreen', 'menu');
                 this.$router.push('/game/rpg/menu');
             });
+    },
+
+    // 間違えてコマンドを選んだ時などに呼び出す。コマンド選択状態を1つ戻す。
+    returnToSituationCommands() {
+      this.$store.dispatch('returnToSituationCommands');
+      this.$store.dispatch('setBattleStatus', 'command');
     },
 
     nextBattle() {
