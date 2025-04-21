@@ -2,6 +2,8 @@
 
 namespace Database\Seeders\rpg;
 
+use App\Enums\Rpg\SkillDefinition;
+use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\SkillRequirement;
 use Illuminate\Database\Seeder;
 
@@ -18,39 +20,39 @@ class SkillRequirementTableSeeder extends Seeder
         $seeds = [
             // -------------------- 格闘家 --------------------
             // -------------------- 治療師 --------------------
-            // リカバリオール ライフリカバリ Lv2以上, pLv7以上
+            // オールヒーリング ヒーリング Lv2以上, pLv7以上
             [
-                'acquired_skill_id' => 21,
-                'requirement_skill_id' => 20,
+                'acquired_skill_id' => SkillDefinition::AllHealing->value,
+                'requirement_skill_id' => SkillDefinition::Healing->value,
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 7,
             ],
             // -------------------- 重騎士 --------------------
             // -------------------- 魔導師 --------------------
-            // ポップヒール プチヒールLv2, pLv10以上
+            // ポップヒール ミニヒールLv2, pLv12以上
             [
-                'acquired_skill_id' => 41,
-                'requirement_skill_id' => 40,
+                'acquired_skill_id' => SkillDefinition::PopHeal->value,
+                'requirement_skill_id' => SkillDefinition::MiniHeal->value,
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 10,
             ],
             // クラッシュボルト プチブラストLv1, pLv1以上
             [
-                'acquired_skill_id' => 43,
-                'requirement_skill_id' => 42,
+                'acquired_skill_id' => SkillDefinition::CrashBolt->value,
+                'requirement_skill_id' => SkillDefinition::PetitBlast->value,
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 1,
             ],
             // マナエクスプロージョン プチブラストLv1, pLv12以上
             [
-                'acquired_skill_id' => 44,
-                'requirement_skill_id' => 42,
+                'acquired_skill_id' => SkillDefinition::ManaExplosion->value,
+                'requirement_skill_id' => SkillDefinition::PetitBlast->value,
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 12,
             ],
             // バトルメイジ 該当スキルなし, pLv15以上
             [
-                'acquired_skill_id' => 45,
+                'acquired_skill_id' => SkillDefinition::BattleMage->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
