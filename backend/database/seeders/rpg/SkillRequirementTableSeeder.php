@@ -41,12 +41,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 1,
             ],
-            // マナエクスプロージョン プチブラストLv1, pLv10以上
+            // マナエクスプロージョン プチブラストLv1, pLv12以上
             [
                 'acquired_skill_id' => 44,
                 'requirement_skill_id' => 42,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 12,
             ],
             // バトルメイジ 該当スキルなし, pLv15以上
             [

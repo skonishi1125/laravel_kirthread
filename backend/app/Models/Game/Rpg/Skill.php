@@ -337,7 +337,7 @@ class Skill extends Model
                 break;
                 // -------------------- 治療師 --------------------
             case 20:
-                Debugbar::debug('ライフリカバリ');
+                Debugbar::debug('ヒーリング');
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                 break;

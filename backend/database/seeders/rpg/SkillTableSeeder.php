@@ -4,6 +4,7 @@ namespace Database\Seeders\rpg;
 
 use App\Enums\Rpg\AttackType;
 use App\Enums\Rpg\EffectType;
+use App\Enums\Rpg\SkillDefinition;
 use App\Enums\Rpg\TargetRange;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Skill;
@@ -22,8 +23,8 @@ class SkillTableSeeder extends Seeder
         $seeds = [
             // -------------------- 格闘家 --------------------
             [
-                'id' => '10',
-                'name' => 'ミドルブロウ',
+                'id' => SkillDefinition::MiddleBlow->value,
+                'name' => SkillDefinition::MiddleBlow->label(),
                 'available_role_id' => Role::ROLE_STRIKER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,
@@ -35,11 +36,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 2.0,
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
-                'description' => '素早いフットワークと共に、敵単体に拳を叩き込む。',
+                'description' => SkillDefinition::MiddleBlow->description(),
             ],
             [
-                'id' => '11',
-                'name' => 'スピンキック',
+                'id' => SkillDefinition::SpinKick->value,
+                'name' => SkillDefinition::SpinKick->label(),
                 'available_role_id' => Role::ROLE_STRIKER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,
@@ -51,8 +52,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.5,
                 'lv3_ap_cost' => 14,
                 'elemental_id' => 1,
-                'description' => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
+                'description' => SkillDefinition::SpinKick->description(),
             ],
+            /*
             [
                 'id' => '12',
                 'name' => 'スキル12',
@@ -181,12 +183,13 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => 'テストスキル',
             ],
+            */
             // トランスフォーム、タイタンブレイク
 
             // -------------------- 治療師 --------------------
             [
-                'id' => '20',
-                'name' => 'ヒーリング',
+                'id' => SkillDefinition::Healing->value,
+                'name' => SkillDefinition::Healing->label(),
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -199,11 +202,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.5,
                 'lv3_ap_cost' => 8,
                 'elemental_id' => 1,
-                'description' => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
+                'description' => SkillDefinition::Healing->description(),
             ],
             [
-                'id' => '21',
-                'name' => 'オールヒーリング',
+                'id' => SkillDefinition::AllHealing->value,
+                'name' => SkillDefinition::AllHealing->label(),
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -216,11 +219,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.0,
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
-                'description' => '回復魔力を周囲に浮かべ、全体のHPを回復する。',
+                'description' => SkillDefinition::AllHealing->description(),
             ],
             [
-                'id' => '22',
-                'name' => 'ミニボルト',
+                'id' => SkillDefinition::MiniBolt->value,
+                'name' => SkillDefinition::MiniBolt->label(),
                 'available_role_id' => Role::ROLE_MEDIC,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Damage->value,
@@ -232,8 +235,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.2,
                 'lv3_ap_cost' => 8,
                 'elemental_id' => 1,
-                'description' => '魔力を敵単体に放つ、治療師の護身用攻撃魔法。',
+                'description' => SkillDefinition::MiniBolt->description(),
             ],
+            /*
             [
                 'id' => '23',
                 'name' => 'スキル23',
@@ -346,12 +350,13 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => '魔力弾を敵単体に放つ攻撃。',
             ],
+            */
             // ヘブンレイとかオマージュしたい
 
             // -------------------- 重騎士 --------------------
             [
-                'id' => '30',
-                'name' => 'ワイドスラスト',
+                'id' => SkillDefinition::WideThrust->value,
+                'name' => SkillDefinition::WideThrust->label(),
                 'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,
@@ -363,11 +368,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.3,
                 'lv3_ap_cost' => 12,
                 'elemental_id' => 1,
-                'description' => '敵全体を力強く薙ぎ払う。',
+                'description' => SkillDefinition::WideThrust->description(),
             ],
             [
-                'id' => '31',
-                'name' => 'ワイドガード',
+                'id' => SkillDefinition::WideGuard->value,
+                'name' => SkillDefinition::WideGuard->label(),
                 'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Special->value,
@@ -384,11 +389,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 9,
                 'lv3_buff_turn' => 1,
                 'elemental_id' => 1,
-                'description' => '先制発動する。使用ターンの味方全員の物理ダメージを軽減する。',
+                'description' => SkillDefinition::WideGuard->description(),
             ],
             [
-                'id' => '32',
-                'name' => 'ブレイヴスラッシュ',
+                'id' => SkillDefinition::BraveSlash->value,
+                'name' => SkillDefinition::BraveSlash->label(),
                 'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,
@@ -400,11 +405,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 2.0,
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
-                'description' => '敵単体に自分の防御力に依存した物理ダメージを与える。',
+                'description' => SkillDefinition::BraveSlash->description(),
             ],
             [
-                'id' => '33',
-                'name' => 'ガードアップ',
+                'id' => SkillDefinition::GuardUp->value,
+                'name' => SkillDefinition::GuardUp->label(),
                 'available_role_id' => Role::ROLE_PALADIN,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Buff->value,
@@ -420,8 +425,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'lv3_buff_turn' => 3,
                 'elemental_id' => 1,
-                'description' => '味方1人の守備力をアップさせる。',
+                'description' => SkillDefinition::GuardUp->description(),
             ],
+            /*
             [
                 'id' => '34',
                 'name' => 'スキル34',
@@ -536,12 +542,13 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
             ],
+            */
             // ブラッドムーン
 
             // -------------------- 魔導師 --------------------
             [
-                'id' => '40',
-                'name' => 'ミニヒール',
+                'id' => SkillDefinition::MiniHeal->value,
+                'name' => SkillDefinition::MiniHeal->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -554,11 +561,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.0,
                 'lv3_ap_cost' => 20,
                 'elemental_id' => 1,
-                'description' => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
+                'description' => SkillDefinition::MiniHeal->description(),
             ],
             [
-                'id' => '41',
-                'name' => 'ポップヒール',
+                'id' => SkillDefinition::PopHeal->value,
+                'name' => SkillDefinition::PopHeal->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Heal->value,
@@ -571,11 +578,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.0,
                 'lv3_ap_cost' => 40,
                 'elemental_id' => 1,
-                'description' => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
+                'description' => SkillDefinition::PopHeal->description(),
             ],
             [
-                'id' => '42',
-                'name' => 'プチブラスト',
+                'id' => SkillDefinition::PetitBlast->value,
+                'name' => SkillDefinition::PetitBlast->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Damage->value,
@@ -587,11 +594,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 1.5,
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
-                'description' => '小さな魔力弾を敵単体に放つ、低コストな攻撃手段。',
+                'description' => SkillDefinition::PetitBlast->description(),
             ],
             [
-                'id' => '43',
-                'name' => 'クラッシュボルト',
+                'id' => SkillDefinition::CrashBolt->value,
+                'name' => SkillDefinition::CrashBolt->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Damage->value,
@@ -603,11 +610,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 3.0,
                 'lv3_ap_cost' => 25,
                 'elemental_id' => 1,
-                'description' => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
+                'description' => SkillDefinition::CrashBolt->description(),
             ],
             [
-                'id' => '44',
-                'name' => 'マナエクスプロージョン',
+                'id' => SkillDefinition::ManaExplosion->value,
+                'name' => SkillDefinition::ManaExplosion->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Damage->value,
@@ -619,11 +626,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 3.0,
                 'lv3_ap_cost' => 50,
                 'elemental_id' => 1,
-                'description' => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
+                'description' => SkillDefinition::ManaExplosion->description(),
             ],
             [
-                'id' => '45',
-                'name' => 'バトルメイジ',
+                'id' => SkillDefinition::BattleMage->value,
+                'name' => SkillDefinition::BattleMage->label(),
                 'available_role_id' => Role::ROLE_MAGE,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Buff->value,
@@ -639,8 +646,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 50,
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
-                'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
+                'description' => SkillDefinition::ManaExplosion->description(),
             ],
+            /*
             [
                 'id' => '46',
                 'name' => 'スキル46',
@@ -717,11 +725,12 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
             ],
+            */
 
             // -------------------- 弓馭者 --------------------
             [
-                'id' => '50',
-                'name' => 'ブレイクボウガン',
+                'id' => SkillDefinition::BreakBowGun->value,
+                'name' => SkillDefinition::BreakBowGun->label(),
                 'available_role_id' => Role::ROLE_RANGER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Special->value,
@@ -736,11 +745,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'lv3_buff_turn' => 2,
                 'elemental_id' => 1,
-                'description' => '敵単体に弩を打ち込みダメージを与え、防御力も低下させる。',
+                'description' => SkillDefinition::BreakBowGun->description(),
             ],
             [
-                'id' => '51',
-                'name' => 'ファーストエイド',
+                'id' => SkillDefinition::FirstAid->value,
+                'name' => SkillDefinition::FirstAid->label(),
                 'available_role_id' => Role::ROLE_RANGER,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Heal->value,
@@ -753,11 +762,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 3.0,
                 'lv3_ap_cost' => 10,
                 'elemental_id' => 1,
-                'description' => '味方1人の救護を行い、対象のHPを回復する。',
+                'description' => SkillDefinition::FirstAid->description(),
             ],
             [
-                'id' => '52',
-                'name' => 'ウインドアクセル',
+                'id' => SkillDefinition::WindAccel->value,
+                'name' => SkillDefinition::WindAccel->label(),
                 'available_role_id' => Role::ROLE_RANGER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Special->value,
@@ -772,8 +781,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 8,
                 'lv3_buff_turn' => 2,
                 'elemental_id' => 1,
-                'description' => '敵単体を攻撃しつつ、次のターンの素早さを上げる。',
+                'description' => SkillDefinition::WindAccel->description(),
             ],
+            /*
             [
                 'id' => '53',
                 'name' => 'スキル53',
@@ -886,11 +896,12 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => '説明',
             ],
+            */
 
             // -------------------- 理術師 --------------------
             [
-                'id' => '60',
-                'name' => 'ガードスペル',
+                'id' => SkillDefinition::GuardSpell->value,
+                'name' => SkillDefinition::GuardSpell->label(),
                 'available_role_id' => Role::ROLE_BUFFER,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Buff->value,
@@ -906,11 +917,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
-                'description' => '味方1人の守備力をアップさせる。',
+                'description' => SkillDefinition::GuardSpell->description(),
             ],
             [
-                'id' => '61',
-                'name' => 'アタックスペル',
+                'id' => SkillDefinition::AttackSpell->value,
+                'name' => SkillDefinition::AttackSpell->label(),
                 'available_role_id' => Role::ROLE_BUFFER,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Buff->value,
@@ -926,11 +937,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
-                'description' => '味方1人の攻撃力をアップさせる。',
+                'description' => SkillDefinition::AttackSpell->description(),
             ],
             [
-                'id' => '62',
-                'name' => 'マジックスペル',
+                'id' => SkillDefinition::MagicSpell->value,
+                'name' => SkillDefinition::MagicSpell->label(),
                 'available_role_id' => Role::ROLE_BUFFER,
                 'attack_type' => AttackType::NoType->value,
                 'effect_type' => EffectType::Buff->value,
@@ -946,11 +957,11 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 10,
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
-                'description' => '味方1人の魔力をアップさせる。',
+                'description' => SkillDefinition::MagicSpell->description(),
             ],
             [
-                'id' => '63',
-                'name' => 'ブックスマッシュ',
+                'id' => SkillDefinition::BookSmash->value,
+                'name' => SkillDefinition::BookSmash->label(),
                 'available_role_id' => Role::ROLE_BUFFER,
                 'attack_type' => AttackType::Physical->value,
                 'effect_type' => EffectType::Damage->value,
@@ -962,8 +973,9 @@ class SkillTableSeeder extends Seeder
                 'lv3_percent' => 2.0,
                 'lv3_ap_cost' => 8,
                 'elemental_id' => 1,
-                'description' => '手持ちの魔導書を用いて、敵単体を全力でぶん殴る。',
+                'description' => SkillDefinition::BookSmash->description(),
             ],
+            /*
             [
                 'id' => '64',
                 'name' => 'スキル64',
@@ -1078,6 +1090,7 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => '味方単体の守備力をアップさせる。',
             ],
+            */
 
             // 敵の使用するスキル 100番以降
 
