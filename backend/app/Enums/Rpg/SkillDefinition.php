@@ -82,7 +82,7 @@ enum SkillDefinition: int
             self::MiniBolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
 
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
-            self::WideGuard => '先制発動する。使用ターンの味方全員の物理ダメージを軽減する。',
+            self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
             self::BraveSlash => '敵単体に自分の防御力に依存した物理ダメージを与える。',
             self::GuardUp => '味方1人の守備力をアップさせる。',
 

@@ -143,7 +143,12 @@ class Party extends Model
         foreach ($growth_array as $stat => $growth_value) {
             // ガウス分布計算 最低上昇値が1以上になるようにしておく
             $increase_value = max(1, ceil($growth_value + $z * $variance));
-            $increase_values[$stat] = (int) $increase_value;
+            // HPのみ、上昇幅は倍
+            if ($stat === 'growth_hp') {
+              $increase_values[$stat] = (int) ($increase_value * 2);
+            } else {
+              $increase_values[$stat] = (int) $increase_value;
+            }
         }
 
         Debugbar::debug($increase_values);
