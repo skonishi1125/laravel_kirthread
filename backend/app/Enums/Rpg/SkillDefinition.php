@@ -14,29 +14,29 @@ enum SkillDefinition: int
     case MiniBolt = 22;
 
     // -------------------- 重騎士 --------------------
-    case WideThrust = 30;
-    case WideGuard = 31;
+    case WideGuard = 30;
+    case WideThrust = 31;
     case BraveSlash = 32;
     case GuardUp = 33;
 
     // -------------------- 魔導師 --------------------
-    case MiniHeal = 40;
-    case PopHeal = 41;
-    case PetitBlast = 42;
-    case CrashBolt = 43;
-    case ManaExplosion = 44;
+    case PetitBlast = 40;
+    case CrashBolt = 41;
+    case ManaExplosion = 42;
+    case MiniHeal = 43;
+    case PopHeal = 44;
     case BattleMage = 45;
 
     // -------------------- 弓馭者 --------------------
-    case BreakBowGun = 50;
-    case FirstAid = 51;
+    case FirstAid = 50;
+    case BreakBowGun = 51;
     case WindAccel = 52;
 
     // -------------------- 理術師 --------------------
-    case GuardSpell = 60;
-    case AttackSpell = 61;
-    case MagicSpell = 62;
-    case BookSmash = 63;
+    case BookSmash = 60;
+    case GuardSpell = 61;
+    case AttackSpell = 62;
+    case MagicSpell = 63;
 
     public function label(): string
     {
@@ -79,7 +79,7 @@ enum SkillDefinition: int
 
             self::Healing => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
             self::AllHealing => '治療師の基本的な回復魔法。味方1人のHPを回復する呪文を唱える。',
-            self::MiniBolt => '魔力を敵単体に放つ、治療師の護身用攻撃魔法。',
+            self::MiniBolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
 
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
             self::WideGuard => '先制発動する。使用ターンの味方全員の物理ダメージを軽減する。',

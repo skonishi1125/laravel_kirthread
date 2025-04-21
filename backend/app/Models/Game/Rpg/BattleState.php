@@ -652,6 +652,7 @@ class BattleState extends Model
             // バフ: 味方が対象となるケースの場合は対象を変えない（失敗させる）。敵にデバフをかけた場合は対象を変える。
             // 特殊: 敵対象とする場合は特殊攻撃系スキルなので変える。味方対象とする場合は失敗させる。
             if (
+                ! is_null($opponents_index) && // 先にnullチェックして、これ以降の条件式で undefined array keyエラーとなるのを防ぐ
                 $battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true &&
                 $battle_state_opponents_collection[$opponents_index]->is_enemy == true
             ) {

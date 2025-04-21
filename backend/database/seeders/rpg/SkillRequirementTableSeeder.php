@@ -28,20 +28,27 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 7,
             ],
             // -------------------- 重騎士 --------------------
+            // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::BraveSlash->value,
+                'requirement_skill_id' => SkillDefinition::WideThrust->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 12,
+            ],
             // -------------------- 魔導師 --------------------
             // ポップヒール ミニヒールLv2, pLv12以上
             [
                 'acquired_skill_id' => SkillDefinition::PopHeal->value,
                 'requirement_skill_id' => SkillDefinition::MiniHeal->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 12,
             ],
             // クラッシュボルト プチブラストLv1, pLv1以上
             [
                 'acquired_skill_id' => SkillDefinition::CrashBolt->value,
                 'requirement_skill_id' => SkillDefinition::PetitBlast->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 1,
+                'requirement_party_level' => 5,
             ],
             // マナエクスプロージョン プチブラストLv1, pLv12以上
             [
