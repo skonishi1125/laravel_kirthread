@@ -222,6 +222,32 @@
   transform: translateX(-50%) scale(0.97);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
+.resultWin_returnButton {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  font-size: 16px;
+  padding: 15px 35px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+
+  transition: all 0.15s ease;
+}
+
+.resultWin_returnButton:hover {
+  background-color: #fdf6e3;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+}
+
+.resultWin_returnButton:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
 
 </style>
 
@@ -320,9 +346,7 @@
           <p v-if="battle.status == 'command'">
             {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
             <div>
-              <span v-if="hoveredDescription != null">
-                <hr>
-              </span>
+              <hr>
               <span v-html="hoveredDescription"></span>
             </div>
           </p>
@@ -382,9 +406,12 @@
                 </div>
             </div>
             <div v-else-if="isFieldCleared === false">
-                <div class="nextScene_button" @click="nextBattle">
-                    <a>次の戦闘へ進む</a>
-                </div>
+              <div class="nextScene_button" @click="nextBattle">
+                <a>次の戦闘へ進む</a>
+              </div>
+              <div class="resultWin_returnButton" @click="finishBattle">
+                  <a>探索を切り上げ、街に戻る</a>
+              </div>
             </div>
 
           </div>
