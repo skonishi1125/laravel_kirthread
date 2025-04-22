@@ -29,8 +29,9 @@ enum SkillDefinition: int
 
     // -------------------- 弓馭者 --------------------
     case FirstAid = 50;
-    case BreakBowGun = 51;
-    case WindAccel = 52;
+    case FairyFog = 51;
+    case BreakBowGun = 52;
+    case WindAccel = 53;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
@@ -61,8 +62,9 @@ enum SkillDefinition: int
             self::ManaExplosion => 'マナエクスプロージョン',
             self::BattleMage => 'バトルメイジ',
 
-            self::BreakBowGun => 'ブレイクボウガン',
             self::FirstAid => 'ファーストエイド',
+            self::FairyFog => 'フェアリーフォグ',
+            self::BreakBowGun => 'ブレイクボウガン',
             self::WindAccel => 'ウインドアクセル',
 
             self::BookSmash => 'ブックスマッシュ',
@@ -95,8 +97,9 @@ enum SkillDefinition: int
             self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
             self::BattleMage => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
 
-            self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
             self::FirstAid => '味方1人の救護を行い、対象のHPを回復する。',
+            self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
+            self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
             self::WindAccel => '敵単体を攻撃しつつ、風の力を纏うことで次のターンのSPDを上げる。',
 
             self::GuardSpell => '味方1人の守備力をアップさせる。',

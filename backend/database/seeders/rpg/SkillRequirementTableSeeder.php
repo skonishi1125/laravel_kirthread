@@ -87,6 +87,13 @@ class SkillRequirementTableSeeder extends Seeder
             //     'requirement_party_level' => 2,
             // ],
             // -------------------- 弓馭者 --------------------
+            // フェアリーフォグ ファーストエイドLv2, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::FairyFog->value,
+                'requirement_skill_id' => SkillDefinition::FirstAid->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 12,
+            ],
             // -------------------- 理術師 --------------------
 
         ];

@@ -414,16 +414,21 @@ class Skill extends Model
                 $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                 break;
                 // -------------------- 弓馭者 --------------------
+            case SkillDefinition::FirstAid :
+                Debugbar::debug(SkillDefinition::FirstAid->label());
+                $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
+                $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                break;
+            case SkillDefinition::FairyFog :
+                Debugbar::debug(SkillDefinition::FairyFog->label());
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精たちの力を借りて味方の傷を包み込む...");
+                $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
+                break;
             case SkillDefinition::BreakBowGun :
                 Debugbar::debug(SkillDefinition::BreakBowGun->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！相手の甲殻を打ち砕く、鋭い一撃！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                 $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent * 0.5)); // マイナスの値にして、相手にデバフとして付与する
-                break;
-            case SkillDefinition::FirstAid :
-                Debugbar::debug(SkillDefinition::FirstAid->label());
-                $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
-                $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
                 break;
             case SkillDefinition::WindAccel :
                 Debugbar::debug(SkillDefinition::WindAccel->label());
