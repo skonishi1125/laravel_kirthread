@@ -20,11 +20,12 @@ class ExpTableSeeder extends Seeder
             ['level' => 3, 'total_exp' => 80],
             ['level' => 4, 'total_exp' => 200],
             ['level' => 5, 'total_exp' => 500],
-            ['level' => 6, 'total_exp' => 1200],
-            ['level' => 7, 'total_exp' => 2400],
-            ['level' => 8, 'total_exp' => 4000],
-            ['level' => 9, 'total_exp' => 6500],
-            ['level' => 10, 'total_exp' => 9000],
+            ['level' => 6, 'total_exp' => 900],
+            ['level' => 7, 'total_exp' => 1400],
+            // 一旦体験版に向けて、ある程度レベルを上がりやすくしとく
+            ['level' => 8, 'total_exp' => 1900],
+            ['level' => 9, 'total_exp' => 2400],
+            ['level' => 10, 'total_exp' => 3000],
         ];
 
         foreach ($seeds as $seed) {

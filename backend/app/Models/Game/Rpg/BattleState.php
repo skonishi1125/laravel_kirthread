@@ -37,7 +37,7 @@ class BattleState extends Model
         return $this->belongsTo(Savedata::class);
     }
 
-    private const BASE_ESCAPE_CHANCE = 0.1; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
+    private const BASE_ESCAPE_CHANCE = 0.2; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
     /**
      * 戦闘初回時のplayers_json_dataに格納する値を作成して返す。
@@ -473,7 +473,7 @@ class BattleState extends Model
                          */
                         $spd_diff = $actor_data->value_spd - $average_enemy_spd;
                         $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
-                        $escape_chance = max(0.1, min(0.9, $escape_chance));
+                        $escape_chance = max(0.2, min(0.9, $escape_chance));
 
                         $random_int = random_int(0, 100);
                         Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');

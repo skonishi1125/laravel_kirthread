@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row" style="margin-top: 100px; text-align: center;">
       <div class="col-sm-12">
-        <p class="mb-5">Title.vue(タイトル)</p>
+        <p class="mb-5">Title.vue(ゲーム_仮称)</p>
         <span v-if="status == 'ready'">
           <div>
             <button class="btn btn-success" @click="switchMenuScreen">街に戻る</button>

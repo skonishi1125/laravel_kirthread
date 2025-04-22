@@ -43,7 +43,7 @@
 }
 
 .role-description-wrapper {
-  border: 1px dotted black;
+  border-right: 1px dotted black;
 }
 
 .role-description-message {
@@ -57,14 +57,17 @@
   <div v-if="beginning.status == 'start'">
     <div class="row">
       <div class="col-12">
-        <p>beginning.vue, start</p>
+        <p>読み込み中...</p>
+      </div>
+      <br>
+      <div class="col-12" style="text-align:right; margin-top: 30px;">
       </div>
     </div>
   </div>
 
   <div v-if="beginning.status == 'prologue'">
     <div class="row">
-      <div class="col-12" style="border: 1px solid black">
+      <div class="col-12">
         <p>
           <hr>
           かつて栄華を誇った王国があった。<br>
@@ -227,7 +230,7 @@
 
   <div v-if="beginning.status == 'monologue'">
     <div class="row">
-      <div class="col-12" style="border: 1px solid black">
+      <div class="col-12">
         <p>
           <hr>
           {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
@@ -239,7 +242,7 @@
           経験に乏しく、思わぬ苦境に立たされることもあるだろう。<br>
           しかしながら、冒険者として最も必要な素養はとうの昔から持ち合わせている。<br>
           <br>
-          さあ、強き意志を持ち、この世界の謎に立ち向かいたまえ！<br>
+          彼らは強き意志を掲げ、命を賭してこの世界の伝承を解き明かすこととした。<br>
           <hr>
           <br>
           ...あなた達の冒険はたった今から始まります。<br>

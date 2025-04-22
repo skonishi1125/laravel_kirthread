@@ -62,7 +62,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => 1,
                 'stage_id' => 5,
                 'enemy_id' => 3,
-                'number' => 2,
+                'number' => 1,
             ],
             [
                 'field_id' => 1,
@@ -74,7 +74,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => 1,
                 'stage_id' => 5,
                 'enemy_id' => 3,
-                'number' => 2,
+                'number' => 1,
             ],
         ];
 

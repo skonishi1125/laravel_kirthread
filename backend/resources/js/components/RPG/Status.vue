@@ -815,11 +815,11 @@
             skill_id: skill.skill_id,
             skill_name: skill.skill_name,
             current_skill_level: skill.skill_level,
-            current_skill_percent: skill[`lv${skill.skill_level}_percent`] * 100 ?? null,
+            current_skill_percent: Math.round(skill[`lv${skill.skill_level}_percent`] * 100) ?? null,
             current_skill_ap_cost: skill[`lv${skill.skill_level}_ap_cost`] ?? null,
             current_skill_buff_turn: skill[`lv${skill.skill_level}_buff_turn`] ?? null,
             next_skill_level: skill.skill_level + 1,
-            next_skill_percent: skill[`lv${skill.skill_level + 1}_percent`] * 100 ?? null,
+            next_skill_percent: Math.round(skill[`lv${skill.skill_level + 1}_percent`] * 100) ?? null,
             next_skill_ap_cost: skill[`lv${skill.skill_level + 1}_ap_cost`] ?? null,
             next_skill_buff_turn: skill[`lv${skill.skill_level + 1}_buff_turn`] ?? null,
           };
