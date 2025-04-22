@@ -19,6 +19,20 @@ class SkillRequirementTableSeeder extends Seeder
 
         $seeds = [
             // -------------------- 格闘家 --------------------
+            // ヘビーナックル ミドルブロウ Lv1以上, pLv7以上
+            [
+                'acquired_skill_id' => SkillDefinition::HeavyKnuckle->value,
+                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 7,
+            ],
+            // トランスフォーム pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::Transform->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
             // -------------------- 治療師 --------------------
             // オールヒーリング ヒーリング Lv2以上, pLv7以上
             [
@@ -26,6 +40,21 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_id' => SkillDefinition::Healing->value,
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 7,
+            ],
+            // ホーリーアロー ミニボルト Lv2以上, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::HolyAllow->value,
+                'requirement_skill_id' => SkillDefinition::MiniVolt->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 10,
+            ],
+            // ヘヴンレイ ミニボルト Lv3以上, pLv15以上
+            // さらに入れ子にすることはできないので、ミニボルトを前提条件にする。
+            [
+                'acquired_skill_id' => SkillDefinition::HeavenRay->value,
+                'requirement_skill_id' => SkillDefinition::MiniVolt->value,
+                'requirement_skill_level' => 3,
+                'requirement_party_level' => 15,
             ],
             // -------------------- 重騎士 --------------------
             // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
@@ -87,6 +116,13 @@ class SkillRequirementTableSeeder extends Seeder
             //     'requirement_party_level' => 2,
             // ],
             // -------------------- 弓馭者 --------------------
+            // フェアリーフォグ ファーストエイドLv2, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::FairyFog->value,
+                'requirement_skill_id' => SkillDefinition::FirstAid->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 12,
+            ],
             // -------------------- 理術師 --------------------
 
         ];

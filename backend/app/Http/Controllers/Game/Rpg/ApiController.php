@@ -133,7 +133,7 @@ class ApiController extends Controller
         if (is_null($savedata)) {
             $savedata = Savedata::create([
                 'user_id' => Auth::id(),
-                'money' => '300',
+                'money' => Savedata::DEFAULT_MONEY,
             ]);
         }
         // セーブデータを作っただけのユーザーがいるかのチェック。紐づくメンバーがいる場合trueにする。

@@ -29,6 +29,7 @@
       <div><button class="btn btn-info btn-menu" disabled>中心広場</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
+      <div><button class="btn btn-secondary btn-menu" @click="$router.push('/game/rpg/menu/other')">マニュアル</button></div>
       <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
     </div>
 

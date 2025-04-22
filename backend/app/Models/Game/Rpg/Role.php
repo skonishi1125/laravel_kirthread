@@ -38,6 +38,7 @@ class Role extends Model
     const ROLE_BUFFER_CLASS_NAME = 'Buffer';
 
     // 職業別 Lv.1時点でのステータス
+    // TODO: Enumでgrowth * 10 とか、 growth * 5とかにすれば自動化できそう。
     public const STRIKER_DEFAULT_STATUS = [
         'value_hp' => 40,
         'value_ap' => 10,
@@ -60,10 +61,10 @@ class Role extends Model
 
     public const PALADIN_DEFAULT_STATUS = [
         'value_hp' => 50,
-        'value_ap' => 15,
+        'value_ap' => 10,
         'value_str' => 15,
         'value_def' => 25,
-        'value_int' => 5,
+        'value_int' => 10,
         'value_spd' => 5,
         'value_luc' => 10,
     ];
@@ -79,11 +80,11 @@ class Role extends Model
     ];
 
     public const RANGER_DEFAULT_STATUS = [
-        'value_hp' => 40,
+        'value_hp' => 30,
         'value_ap' => 15,
         'value_str' => 15,
         'value_def' => 10,
-        'value_int' => 10,
+        'value_int' => 15,
         'value_spd' => 20,
         'value_luc' => 10,
     ];
@@ -91,10 +92,10 @@ class Role extends Model
     public const BUFFER_DEFAULT_STATUS = [
         'value_hp' => 30,
         'value_ap' => 20,
-        'value_str' => 5,
-        'value_def' => 15,
+        'value_str' => 15,
+        'value_def' => 10,
         'value_int' => 15,
-        'value_spd' => 20,
+        'value_spd' => 15,
         'value_luc' => 10,
     ];
 

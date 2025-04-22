@@ -13,6 +13,9 @@ class Savedata extends Model
 {
     use HasFactory;
 
+    // データ作成時のデフォルトの所持金 どうせ貯まるので、多めに持たせてやろう
+    public const DEFAULT_MONEY = 400;
+
     protected $table = 'rpg_savedatas';
 
     protected $guarded = [

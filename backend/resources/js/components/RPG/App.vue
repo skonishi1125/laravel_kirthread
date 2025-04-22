@@ -43,10 +43,10 @@
         <div class="container" style="background-color: whitesmoke; border: 1px solid black; min-width: 1280px">
             <div class="row">
                 <div class="col-12" style="text-align: center;">
+                    <!-- メニュー: ステータス画面デバッグ  -->
                     <h4>
                     App.vue
-                    <!-- メニュー: ステータス画面デバッグ -->
-                        <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small>
+                      <!-- <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small> -->
                     </h4>
                 </div>
             </div>

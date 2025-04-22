@@ -1,4 +1,8 @@
 <style scoped>
+.sub-sucreen-text-space {
+    padding: 10px 0px;
+}
+
 .character-nav-tab {
   cursor: pointer;
 }
@@ -205,12 +209,11 @@
                   </span>
                 】
                 ※スキルツリーはスクロール可能。
-              </p>
-              <div v-if="successStatusMessage !== null">
-                <small style="color:red">
+                <br>
+                <p v-if="successStatusMessage !== null" style="color:red; margin-top: 8px">
                   {{ successStatusMessage }}
-                </small>
-              </div>
+                </p>
+              </p>
             </div>
           </div>
         </div>
@@ -310,7 +313,7 @@
           </div>
           <hr>
           <div v-if="Object.keys(skillInformation).length > 0">
-            <div>
+            <div style="font-size: 0.9rem;">
               <p>
                 <b>{{ skillInformation.skill_name }}</b>
                 <span v-if="skillInformation.skill_level == 0">【<small><b>未習得</b></small>】</span>
@@ -453,12 +456,12 @@
                   </span>
                 】
                 ※スキルツリーはスクロール可能。
-              </p>
-              <div v-if="successSkillMessage !== null">
-                <small style="color:red">
+                <br>
+                <p v-if="successSkillMessage !== null" style="color:red; margin-top: 8px">
                   {{ successSkillMessage }}
-                </small>
-              </div>
+                </p>
+              </p>
+
             </div>
           </div>
         </div>
@@ -812,11 +815,11 @@
             skill_id: skill.skill_id,
             skill_name: skill.skill_name,
             current_skill_level: skill.skill_level,
-            current_skill_percent: skill[`lv${skill.skill_level}_percent`] * 100 ?? null,
+            current_skill_percent: Math.round(skill[`lv${skill.skill_level}_percent`] * 100) ?? null,
             current_skill_ap_cost: skill[`lv${skill.skill_level}_ap_cost`] ?? null,
             current_skill_buff_turn: skill[`lv${skill.skill_level}_buff_turn`] ?? null,
             next_skill_level: skill.skill_level + 1,
-            next_skill_percent: skill[`lv${skill.skill_level + 1}_percent`] * 100 ?? null,
+            next_skill_percent: Math.round(skill[`lv${skill.skill_level + 1}_percent`] * 100) ?? null,
             next_skill_ap_cost: skill[`lv${skill.skill_level + 1}_ap_cost`] ?? null,
             next_skill_buff_turn: skill[`lv${skill.skill_level + 1}_buff_turn`] ?? null,
           };

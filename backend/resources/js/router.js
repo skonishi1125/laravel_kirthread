@@ -11,6 +11,7 @@ import Adventure from './components/RPG/Adventure.vue';
 import Shop from './components/RPG/Shop.vue';
 import Status from './components/RPG/Status.vue';
 import Battle from './components/RPG/Battle.vue';
+import Other from './components/RPG/Other.vue';
 const routes = [
   { 
       path: '/game/rpg',
@@ -37,6 +38,10 @@ const routes = [
         {
           path: 'status',
           component: Status
+        },
+        {
+          path: 'other',
+          component: Other
         }
       ]
   },
