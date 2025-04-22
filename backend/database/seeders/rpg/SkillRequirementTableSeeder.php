@@ -41,12 +41,20 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 7,
             ],
-            // ヘヴンレイ ミニボルト Lv2以上, pLv12以上
+            // ホーリーアロー ミニボルト Lv2以上, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::HolyAllow->value,
+                'requirement_skill_id' => SkillDefinition::MiniVolt->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 10,
+            ],
+            // ヘヴンレイ ミニボルト Lv3以上, pLv15以上
+            // さらに入れ子にすることはできないので、ミニボルトを前提条件にする。
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
-                'requirement_skill_id' => SkillDefinition::MiniBolt->value,
-                'requirement_skill_level' => 2,
-                'requirement_party_level' => 12,
+                'requirement_skill_id' => SkillDefinition::MiniVolt->value,
+                'requirement_skill_level' => 3,
+                'requirement_party_level' => 15,
             ],
             // -------------------- 重騎士 --------------------
             // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
