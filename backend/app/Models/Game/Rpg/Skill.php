@@ -432,6 +432,16 @@ class Skill extends Model
                 $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                 break;
                 // -------------------- 理術師 --------------------
+            case SkillDefinition::BookSmash :
+                Debugbar::debug(SkillDefinition::BookSmash->label());
+                $battle_logs_collection->push("{$actor_data->name}は手持ちの魔導書で思い切り殴りかかった！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                break;
+            case SkillDefinition::MagicMissile :
+                Debugbar::debug(SkillDefinition::MagicMissile->label());
+                $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                break;
             case SkillDefinition::GuardSpell :
                 Debugbar::debug(SkillDefinition::GuardSpell->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
@@ -446,11 +456,6 @@ class Skill extends Model
                 Debugbar::debug(SkillDefinition::MagicSpell->label());
                 $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                 $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
-                break;
-            case SkillDefinition::BookSmash :
-                Debugbar::debug(SkillDefinition::BookSmash->label());
-                $battle_logs_collection->push("{$actor_data->name}は手持ちの魔導書で思い切り殴りかかった！");
-                $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                 break;
             default:
                 Debugbar::debug('存在しないスキルが選択されました。');

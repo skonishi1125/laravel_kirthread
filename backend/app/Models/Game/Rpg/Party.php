@@ -145,9 +145,9 @@ class Party extends Model
             $increase_value = max(1, ceil($growth_value + $z * $variance));
             // HPのみ、上昇幅は倍
             if ($stat === 'growth_hp') {
-              $increase_values[$stat] = (int) ($increase_value * 2);
+                $increase_values[$stat] = (int) ($increase_value * 2);
             } else {
-              $increase_values[$stat] = (int) $increase_value;
+                $increase_values[$stat] = (int) $increase_value;
             }
         }
 

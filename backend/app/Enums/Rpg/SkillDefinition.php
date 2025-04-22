@@ -34,9 +34,10 @@ enum SkillDefinition: int
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
-    case GuardSpell = 61;
-    case AttackSpell = 62;
-    case MagicSpell = 63;
+    case MagicMissile = 61;
+    case GuardSpell = 62;
+    case AttackSpell = 63;
+    case MagicSpell = 64;
 
     public function label(): string
     {
@@ -64,10 +65,11 @@ enum SkillDefinition: int
             self::FirstAid => 'ファーストエイド',
             self::WindAccel => 'ウインドアクセル',
 
+            self::BookSmash => 'ブックスマッシュ',
+            self::MagicMissile => 'マジックミサイル',
             self::GuardSpell => 'ガードスペル',
             self::AttackSpell => 'アタックスペル',
             self::MagicSpell => 'マジックスペル',
-            self::BookSmash => 'ブックスマッシュ',
         };
     }
 
@@ -100,7 +102,8 @@ enum SkillDefinition: int
             self::GuardSpell => '味方1人の守備力をアップさせる。',
             self::AttackSpell => '味方1人の攻撃力をアップさせる。',
             self::MagicSpell => '味方1人の魔力をアップさせる。',
-            self::BookSmash => '手持ちの魔導書を用いて、敵単体を全力でぶん殴る。'
+            self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
+            self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
         };
     }
 }
