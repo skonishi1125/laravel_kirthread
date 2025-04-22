@@ -6,7 +6,9 @@ enum SkillDefinition: int
 {
     // -------------------- 格闘家 --------------------
     case MiddleBlow = 10;
-    case SpinKick = 11;
+    case HeavyKnuckle = 11;
+    case SpinKick = 12;
+    case Transform = 14;
 
     // -------------------- 治療師 --------------------
     case Healing = 20;
@@ -45,6 +47,8 @@ enum SkillDefinition: int
         return match ($this) {
             self::MiddleBlow => 'ミドルブロウ',
             self::SpinKick => 'スピンキック',
+            self::HeavyKnuckle => 'ヘビーナックル',
+            self::Transform => 'トランスフォーム',
 
             self::Healing => 'ヒーリング',
             self::AllHealing => 'オールヒーリング',
@@ -80,6 +84,8 @@ enum SkillDefinition: int
         return match ($this) {
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
+            self::HeavyKnuckle => '敵単体に強烈な一撃を撃ち込み、対象の相手に固定ダメージを与える。',
+            self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。',
 
             self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',
             self::AllHealing => '癒しの力を広範囲に広げ、味方全体のHPを回復する。',

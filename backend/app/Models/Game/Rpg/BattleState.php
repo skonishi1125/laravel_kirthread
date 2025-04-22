@@ -1306,6 +1306,22 @@ class BattleState extends Model
 
         // スキル別に個別の処理を回す。
         switch (SkillDefinition::from($selected_skill_data->id)) {
+            case SkillDefinition::HeavyKnuckle : // ヘビーナックル
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 敵の防御を無視して、固定のダメージを与える
+                $opponent_data->value_hp -= $pure_damage;
+                if ($opponent_data->value_hp <= 0) {
+                    $opponent_data->value_hp = 0;
+                    $opponent_data->is_defeated_flag = true;
+                    self::clearBuff($opponent_data);
+                    $battle_logs_collection->push("{$opponent_data->name}に{$pure_damage}のダメージ。");
+                    $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                    Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}に{$pure_damage}のダメージ。");
+                    Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+                }
+                break;
             case SkillDefinition::WideGuard : // ワイドガード
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");

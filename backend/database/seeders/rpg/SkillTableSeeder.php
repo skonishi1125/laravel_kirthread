@@ -39,6 +39,22 @@ class SkillTableSeeder extends Seeder
                 'description' => SkillDefinition::MiddleBlow->description(),
             ],
             [
+                'id' => SkillDefinition::HeavyKnuckle->value,
+                'name' => SkillDefinition::HeavyKnuckle->label(),
+                'available_role_id' => Role::ROLE_STRIKER,
+                'attack_type' => AttackType::Physical->value,
+                'effect_type' => EffectType::Special->value,
+                'target_range' => TargetRange::Single->value,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 8,
+                'lv2_percent' => 2.0,
+                'lv2_ap_cost' => 12,
+                'lv3_percent' => 3.5,
+                'lv3_ap_cost' => 16,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::HeavyKnuckle->description(),
+            ],
+            [
                 'id' => SkillDefinition::SpinKick->value,
                 'name' => SkillDefinition::SpinKick->label(),
                 'available_role_id' => Role::ROLE_STRIKER,
@@ -53,6 +69,26 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 15,
                 'elemental_id' => 1,
                 'description' => SkillDefinition::SpinKick->description(),
+            ],
+            [
+                'id' => SkillDefinition::Transform->value,
+                'name' => SkillDefinition::Transform->label(),
+                'available_role_id' => Role::ROLE_STRIKER,
+                'attack_type' => AttackType::NoType->value,
+                'effect_type' => EffectType::Buff->value,
+                'target_range' => TargetRange::Self->value,
+                'is_target_enemy' => false,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 30,
+                'lv1_buff_turn' => 6,
+                'lv2_percent' => 1.5,
+                'lv2_ap_cost' => 40,
+                'lv2_buff_turn' => 6,
+                'lv3_percent' => 2.0,
+                'lv3_ap_cost' => 50,
+                'lv3_buff_turn' => 6,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::Transform->description(),
             ],
             /*
             [
@@ -184,7 +220,8 @@ class SkillTableSeeder extends Seeder
                 'description' => 'テストスキル',
             ],
             */
-            // トランスフォーム、タイタンブレイク
+            // タイタンブレイク
+            // 必ず後攻になるが、そのぶんすごいダメージみたいな感じで欲しい
 
             // -------------------- 治療師 --------------------
             [
@@ -646,7 +683,7 @@ class SkillTableSeeder extends Seeder
                 'lv3_ap_cost' => 50,
                 'lv3_buff_turn' => 6,
                 'elemental_id' => 1,
-                'description' => SkillDefinition::ManaExplosion->description(),
+                'description' => SkillDefinition::BattleMage->description(),
             ],
             /*
             [

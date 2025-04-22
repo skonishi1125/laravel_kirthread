@@ -331,10 +331,25 @@ class Skill extends Model
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！強力な正拳突きが敵を撃ち抜く！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 10);
                 break;
+            case SkillDefinition::HeavyKnuckle :
+                Debugbar::debug(SkillDefinition::HeavyKnuckle->label());
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！重い拳が敵の装甲を貫通する！");
+                $damage = (int) ceil(100 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                break;
             case SkillDefinition::SpinKick :
                 Debugbar::debug(SkillDefinition::SpinKick->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
+                break;
+            case SkillDefinition::Transform :
+                Debugbar::debug(SkillDefinition::Transform->label());
+                $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！守りを捨て、全ての力を解放する！");
+                // buffed_str = (value_def * ダメージ%) |  buffed_spd = (value_int * ダメージ%)
+                // また、DEFとINTを0にする
+                $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                $new_buff['buffed_spd'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                $new_buff['buffed_def'] = (int) ceil(-$actor_data->value_def);
+                $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                 break;
                 // -------------------- 治療師 --------------------
             case SkillDefinition::Healing :
