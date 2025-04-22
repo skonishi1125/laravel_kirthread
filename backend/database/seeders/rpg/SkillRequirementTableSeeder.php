@@ -41,6 +41,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 7,
             ],
+            // ヘヴンレイ ミニボルト Lv2以上, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::HeavenRay->value,
+                'requirement_skill_id' => SkillDefinition::MiniBolt->value,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 12,
+            ],
             // -------------------- 重騎士 --------------------
             // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
             [

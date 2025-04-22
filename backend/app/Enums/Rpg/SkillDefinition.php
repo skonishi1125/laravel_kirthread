@@ -14,6 +14,7 @@ enum SkillDefinition: int
     case Healing = 20;
     case AllHealing = 21;
     case MiniBolt = 22;
+    case HeavenRay = 23;
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 30;
@@ -53,6 +54,7 @@ enum SkillDefinition: int
             self::Healing => 'ヒーリング',
             self::AllHealing => 'オールヒーリング',
             self::MiniBolt => 'ミニボルト',
+            self::HeavenRay => 'ヘヴンレイ',
 
             self::WideThrust => 'ワイドスラスト',
             self::WideGuard => 'ワイドガード',
@@ -90,6 +92,8 @@ enum SkillDefinition: int
             self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',
             self::AllHealing => '癒しの力を広範囲に広げ、味方全体のHPを回復する。',
             self::MiniBolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
+            // ホーリーアローとかそういうのを使って、それを取得条件にしてもいいかもしれない
+            self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体にダメージを与える。',
 
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',

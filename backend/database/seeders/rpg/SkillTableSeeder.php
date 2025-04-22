@@ -274,6 +274,22 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::MiniBolt->description(),
             ],
+            [
+                'id' => SkillDefinition::HeavenRay->value,
+                'name' => SkillDefinition::HeavenRay->label(),
+                'available_role_id' => Role::ROLE_MEDIC,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Damage->value,
+                'target_range' => TargetRange::All->value,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 30,
+                'lv2_percent' => 1.5,
+                'lv2_ap_cost' => 40,
+                'lv3_percent' => 2.0,
+                'lv3_ap_cost' => 50,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::HeavenRay->description(),
+            ],
             /*
             [
                 'id' => '23',
