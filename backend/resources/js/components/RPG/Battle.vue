@@ -249,6 +249,31 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.status_modalButton {
+  position: absolute;
+  bottom: 136px;
+  left: 16.7%;
+  transform: translateX(-50%);
+  font-size: 15px;
+  padding: 10px 114px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s ease;
+}
+
+.status_modalButton:hover {
+  background-color: #fdf6e3;
+  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+}
+
+.status_modalButton:active {
+  transform: translateX(-50%) scale(0.97);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 </style>
 
 <template>
@@ -397,6 +422,70 @@
           </div>
         </div>
 
+        <!-- バフ状況などをチェックするボタン -->
+        <div v-if="battle.status == 'command'">
+          <div class="status_modalButton" @click="displayStatusModal()">
+              <a>バフの確認</a>
+          </div>
+
+          <!-- バフ詳細モーダル -->
+          <teleport to="body">
+            <div class="modal fade" id="modal-status-detail" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content shadow-sm">
+                  <div class="modal-header bg-light">
+                    <h6 class="modal-title font-weight-bold">バフ効果</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <div class="row">
+                      <!-- 味方 -->
+                      <div class="col-md-6">
+                        <h6 class="text-success">味方</h6>
+                        <div v-for="member in partyBuffs" :key="member.id" class="card mb-3">
+                          <div class="card-header p-2">
+                            <strong>{{ member.name }}</strong>
+                          </div>
+                          <ul class="list-group list-group-flush">
+                            <li v-for="(buff, index) in member.buffs" :key="index" class="list-group-item py-1 px-2">
+                              {{ buff.buffed_skill_name }}（残り{{ buff.remaining_turn }}ターン）
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <!-- 敵 -->
+                      <div class="col-md-6">
+                        <h6 class="text-danger">敵</h6>
+                        <div v-for="enemy in enemyBuffs" :key="enemy.id" class="card mb-3">
+                          <div class="card-header p-2 bg-light">
+                            <strong>{{ enemy.name }}</strong>
+                          </div>
+                          <ul class="list-group list-group-flush">
+                            <li v-for="(buff, index) in enemy.buffs" :key="index" class="list-group-item py-1 px-2">
+                              {{ buff.buffed_skill_name }}（残り{{ buff.remaining_turn }}ターン）
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                      閉じる
+                    </button>
+                  </div> -->
+                </div>
+              </div>
+            </div>
+          </teleport>
+
+        </div>
+
         <!-- コマンドを間違えて選択肢、対象選択の画面になった際に1つ戻るボタン -->
         <div v-if="battle.status == 'enemySelect' || battle.status == 'partySelect'">
           <div class="preview_button" @click="returnToSituationCommands">
@@ -474,6 +563,7 @@
 </template>
 
 <script>
+import $ from 'jquery';
 import { mapState } from 'vuex';
 import axios from 'axios';
 export default {
@@ -493,7 +583,10 @@ export default {
       // 初期値をnullとしているが、戦闘クリア後のメッセージの分岐時にnullのパラメータを使ってボタンを出さないようにしている
       // ボスでない戦闘を終えた場合は false 「次の戦闘へ進む」ボスを倒した場合は true 「探索を終え、街に戻る」
       isFieldCleared: null, 
-      isBoss: false // enemyの中に、ボスがいるかどうかをチェックするフラグ
+      isBoss: false, // enemyの中に、ボスがいるかどうかをチェックするフラグ
+      // モーダルに現在のバフ状況を表示するためのデータ
+      partyBuffs: [],
+      enemyBuffs: [],
     }
   },
   computed: {
@@ -567,6 +660,29 @@ export default {
         this.enemyData = data[1] || [];
         this.$store.dispatch('setBattleSessionId', data[2] || []);
         this.itemData = data[3] || [];
+
+        console.log('encount | buff格納');
+        // バフ配列
+        // 味方バフ一覧
+        this.partyBuffs = this.partyData
+          .filter(member => member.buffs.length > 0)
+          .map(member => ({
+            id: member.id,
+            name: member.name,
+            buffs: member.buffs
+          }));
+
+        // 敵バフ一覧
+        this.enemyBuffs = this.enemyData
+          .filter(enemy => enemy.buffs.length > 0)
+          .map(enemy => ({
+            id: enemy.id,
+            name: enemy.name,
+            buffs: enemy.buffs
+          }));
+
+        console.log(this.partyBuffs, this.enemyBuffs);
+
         // 実行タイミングによって正しく格納された値が表示されない場合があるが、一応入っている
         console.log('Battle.vue', this.battle.status, this.battle.battleSessionId); 
 
@@ -794,12 +910,39 @@ export default {
           this.enemyData = data[1] || [];
           this.battleLog = data[2] || []; //戦闘結果を取得する
           this.itemData  = data[3] || [];
+
+          console.log('execBattleCommand | buff格納');
+          // 味方バフ一覧
+          this.partyBuffs = this.partyData
+            .filter(member => member.buffs.length > 0)
+            .map(member => ({
+              id: member.id,
+              name: member.name,
+              buffs: member.buffs
+            }));
+
+          // 敵バフ一覧
+          this.enemyBuffs = this.enemyData
+            .filter(enemy => enemy.buffs.length > 0)
+            .map(enemy => ({
+              id: enemy.id,
+              name: enemy.name,
+              buffs: enemy.buffs
+            }));
+
+          console.log(this.partyBuffs, this.enemyBuffs);
+
           this.pushBattleLogHistory(this.battleLog);
           this.$store.dispatch('setBattleStatus', 'outputLog');
           // stateのリセット
           this.$store.dispatch('resetBattleStatus');
         }
       );
+    },
+
+    displayStatusModal() {
+        console.log(`displayStatusModal(): -----------------`);
+        $('#modal-status-detail').modal('show');
     },
 
     resultWin() {
