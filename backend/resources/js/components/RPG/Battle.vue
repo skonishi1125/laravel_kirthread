@@ -91,6 +91,11 @@
   margin-top: 20px;
 }
 
+.enemy-hp {
+  border: 3px solid #e9ecef;
+  border-radius: 5px;
+}
+
 /* battle.status === 'enemySelect'の場合のみ割り当てる */
 .enemy-hover-active {
   cursor: pointer;
@@ -406,7 +411,7 @@
         <div style="display: flex; justify-content: space-evenly; min-height: 300px; margin-bottom: 50px;">
           <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
             <div class="progress">
-              <div class="progress-bar bg-danger" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
+              <div class="progress-bar bg-danger enemy-hp" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
                 <!-- HP: {{ enemy.value_hp }} / {{ enemy.max_value_hp }} -->
               </div>
             </div>
