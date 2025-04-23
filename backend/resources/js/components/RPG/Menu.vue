@@ -54,7 +54,7 @@
 
     <div class="col-10" v-if="isMenuRoute">
 
-      <div class="container">
+      <div class="sub-screen-wrapper">
         <div class="row sub-sucreen-text-space">
           <div class="col-12">
             <div>
