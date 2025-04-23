@@ -10,11 +10,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  {{-- ゲームページ用metaタグ --}}
+  @if(Request::Is('game/rpg*'))
+    <meta property="og:title" content="{{ config('app.game_name') }} - {{ config('app.name') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('image/ogp/game.png') }}">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
+
+    {{-- 本格的な画像を用意するまでは、コメントアウトでもいいかも。
+      <meta name="twitter:card" content="summary_large_image">
+      <meta name="twitter:title" content="{{ config('app.game_name') }} - {{ config('app.name') }}">
+      <meta name="twitter:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
+      <meta name="twitter:image" content="{{ asset('image/ogp/game.png') }}"> 
+    --}}
+  @else
+    <meta property="og:title" content="{{ config('app.name') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ asset('image/ogp/default.png') }}">
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:description" content="かあスレッドはシンプルな掲示板サイトです。">
+  @endif
   <title>
-    @if (config('app.env') !== 'production')
-      {{ config('app.env') }}
-    @endif
-    {{ config('app.name', 'Laravel') }}
+    @if (config('app.env') !== 'production') {{ config('app.env') }} @endif {{ config('app.name') }}
   </title>
 
   {{-- css/jsをviteで読み込む --}}
@@ -33,8 +53,8 @@
     <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
       <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
-          {{ config('app.name', 'Laravel') }}
-          <small style="background: linear-gradient(to right,#e60000,#f39800,#fff100,#009944,#0068b7,#1d2088,#920783); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">v2.0</small>
+          {{ config('app.name') }}
+          <small style="background: linear-gradient(to right,#e60000,#f39800,#fff100,#009944,#0068b7,#1d2088,#920783); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">v2.1</small>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
