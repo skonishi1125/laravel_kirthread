@@ -453,7 +453,10 @@ class Skill extends Model
                 Debugbar::debug(SkillDefinition::BreakBowGun->label());
                 $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！相手の甲殻を打ち砕く、鋭い一撃！");
                 $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
-                $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent)); // マイナスの値にして、相手にデバフとして付与する
+                // マイナスの値にして、相手にデバフとして付与する
+                //  例: 自身のDEFが100 SLv1の場合、-(100) * 1.0 = -100
+                $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
+                \Debugbar::debug($new_buff['buffed_def']);
                 break;
             case SkillDefinition::WindAccel :
                 Debugbar::debug(SkillDefinition::WindAccel->label());
