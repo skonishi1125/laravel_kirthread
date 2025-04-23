@@ -19,7 +19,7 @@
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
 
-    {{-- 本格的な画像を用意するまでは、コメントアウトでもいいかも。
+    {{-- 結構大きく乗るので、本格的な画像を用意するまではコメントアウトでもいいかも。
       <meta name="twitter:card" content="summary_large_image">
       <meta name="twitter:title" content="{{ config('app.game_name') }} - {{ config('app.name') }}">
       <meta name="twitter:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">

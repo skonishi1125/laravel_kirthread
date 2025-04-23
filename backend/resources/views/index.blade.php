@@ -1,9 +1,23 @@
 @extends('layouts.app')
 
 @section('content')
+{{-- 宣伝 --}}
+<div style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+  <a href="{{ route('game_rpg_index') }}" class="btn btn-warning btn-sm shadow">
+    🧙 RPG風ゲームの体験版を公開中です！
+  </a>
+</div>
+
 <div class="container">
   <div class="row">
     <div class="col-md-12">
+      {{-- RPG告知枠 --}}
+      {{-- <div class="text-center mb-3">
+        <small class="text-muted">
+          🧙 RPGゲームの体験版を公開しました！
+          <a href="{{ route('game_rpg_index') }}">▶ 遊ぶ</a>
+        </small>
+      </div> --}}
       <div class="card">
         <div class="card-header">
           <h5>みんなの投稿</h5>
