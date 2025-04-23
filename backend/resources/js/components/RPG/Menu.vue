@@ -27,6 +27,7 @@
 .modal-backdrop {
   /* スマホ版でモーダルを開いた時、黒背景が途中までしか生成されない挙動を防ぐ */
   width: 100% !important;
+  height: 100% !important;
 }
 .modal-dialog {
   max-width: 720px;
