@@ -1,8 +1,4 @@
 <style scoped>
-.sub-sucreen-text-space {
-    padding: 10px 0px;
-}
-
 .weight-bold {
     font-weight: bold;
     font-size: 0.9rem;
@@ -23,7 +19,7 @@
 
 <!-- 冒険、ショップ、スキル振りなどの一覧ページ。すべてこのページのレイアウトがベースになる -->
 <template>
-  <div class="container">
+  <div class="sub-screen-wrapper">
     <div class="row sub-sucreen-text-space">
       <div class="col-12">
         <div>
@@ -54,16 +50,11 @@
 
   <teleport to="body">
     <div class="modal fade" id="manual-modal" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h6 class="modal-title"><b>{{ modalItem?.title }}</b></h6>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

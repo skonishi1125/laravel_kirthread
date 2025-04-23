@@ -1,8 +1,4 @@
 <style scoped>
-.sub-sucreen-text-space {
-    padding: 10px 0px;
-}
-
 .character-nav-tab {
   cursor: pointer;
 }
@@ -48,7 +44,7 @@
 </style>
 
 <template>
-  <div class="container">
+  <div class="sub-screen-wrapper">
     <div v-if="status.status == 'start'">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
