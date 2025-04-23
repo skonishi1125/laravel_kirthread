@@ -100,7 +100,7 @@ enum SkillDefinition: int
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
             self::BraveSlash => '敵単体に自分の防御力に依存した物理ダメージを与える。',
-            self::GuardUp => '味方1人の守備力をアップさせる。',
+            self::GuardUp => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
@@ -114,9 +114,9 @@ enum SkillDefinition: int
             self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
             self::WindAccel => '敵単体を攻撃しつつ、風の力を纏うことで次のターンのSPDを上げる。',
 
-            self::GuardSpell => '味方1人の守備力をアップさせる。',
-            self::AttackSpell => '味方1人の攻撃力をアップさせる。',
-            self::MagicSpell => '味方1人の魔力をアップさせる。',
+            self::GuardSpell => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
+            self::AttackSpell => '味方1人の攻撃力をアップさせる。上昇率は自身のステータスに依存する。',
+            self::MagicSpell => '味方1人の魔力をアップさせる。上昇率は自身のステータスに依存する。',
             self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
             self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
         };
