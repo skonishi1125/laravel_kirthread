@@ -2,9 +2,6 @@
 .action-link {
     cursor: pointer;
 }
-.sub-sucreen-text-space {
-    padding: 10px 0px;
-}
 
 .weight-bold {
     font-weight: bold;
@@ -26,7 +23,7 @@
 </style>
 
 <template>
-  <div class="container">
+  <div class="sub-screen-wrapper">
 
     <div v-if="status == 'start'">
       <div class="row sub-sucreen-text-space">

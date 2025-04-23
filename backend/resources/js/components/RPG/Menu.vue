@@ -1,4 +1,11 @@
-<style scoped>
+<style>
+.sub-screen-wrapper {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
 .sub-sucreen-text-space {
     padding: 10px 0px;
 }
@@ -14,6 +21,17 @@
 
 .btn-menu {
   width: 100%;
+}
+
+/* モーダル関連。スマホ版で開いた時の挙動を調整する */
+.modal-backdrop {
+  /* スマホ版でモーダルを開いた時、黒背景が途中までしか生成されない挙動を防ぐ */
+  width: 100% !important;
+}
+.modal-dialog {
+  max-width: 720px;
+  width: 100%;
+  margin: 1.75rem auto;
 }
 
 

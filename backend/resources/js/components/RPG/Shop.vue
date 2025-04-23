@@ -1,7 +1,4 @@
 <style scoped>
-.sub-sucreen-text-space {
-    padding: 10px 0px;
-}
 .action-link {
     cursor: pointer;
 }
@@ -22,7 +19,7 @@
 <!-- v-if系はtemplateの内部に書く。 -->
 <template>
 
-  <div class="container">
+  <div class="sub-screen-wrapper">
     <div v-if="status == 'start'">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
