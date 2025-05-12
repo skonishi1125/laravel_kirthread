@@ -790,6 +790,11 @@ export default {
       switch (command) {
         case ("ATTACK") :
           console.log('ATTACK選択。');
+          // 現時点でis_defeated_flagの立っている敵が1体だけなら、その敵をこちらで選択してしまい、次の処理に向かわせる
+          if (this.tryAutoSelectSingleEnemy(currentMember.id, command)) {
+            return;
+          }
+
           this.$store.dispatch('setSelectedCommand', { partyId: currentMember.id, command });
           this.$store.dispatch('setBattleStatus', 'enemySelect');
           break;
@@ -876,6 +881,29 @@ export default {
           break;
       }
 
+    },
+
+    /**
+     * is_defeated_flagの立っている敵が1体だけなら、その敵のインデックスをこちらで選択処理する
+     */
+    tryAutoSelectSingleEnemy(currentMemberId, command) {
+      console.log('tryAutoSelectSingleEnemy(): ----------------------------------');
+      const aliveEnemies = 
+        this.enemyData.map((enemy, index) => ({ enemy, index })).filter(({ enemy }) => enemy.is_defeated_flag === false);
+      console.log(aliveEnemies);
+        if (aliveEnemies.length === 1) {
+          const selectedIndex = aliveEnemies[0].index;
+          // コマンドも入れるようにしてるけど、ATTACK以外で現在まだ未対応
+          console.log(`敵が1体だけなので、こちらで選択。コマンド: ${command} インデックス: ${selectedIndex}`);
+          this.$store.dispatch('setSelectedCommand', { partyId: currentMemberId, command });
+          this.$store.dispatch('setSelectedEnemy', { partyId: currentMemberId, enemyIndex: selectedIndex });
+          this.$store.dispatch('incrementPartyMemberIndex');
+          this.battleCommandSetup();
+          return true;
+        }
+
+        // 敵が1体だけでなければ、falseを返して何もしない
+        return false;
     },
 
     // 選択した敵の順番を格納する(3人いたら, 左端0, 1, 右端2の順。)
