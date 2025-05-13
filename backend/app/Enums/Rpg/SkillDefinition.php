@@ -109,7 +109,7 @@ enum SkillDefinition: int
             self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
             self::BattleMage => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
 
-            self::FirstAid => '味方1人の救護を行い、対象のHPを回復する。',
+            self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
             self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
             self::WindAccel => '敵単体を攻撃しつつ、風の力を纏うことで次のターンのSPDを上げる。',

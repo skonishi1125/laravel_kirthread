@@ -818,13 +818,21 @@ export default {
 
           // 攻撃スキルなら、enemySelectへ
           if (effect_type == 1) {
-            console.log(`攻撃系単体スキル。enemySelectへ。`);
+            console.log(`攻撃系単体スキル。`);
+            // is_defeated_flagの立っている敵が1体だけなら、その敵のインデックスをこちらで選択処理する
+            if (this.tryAutoSelectSingleEnemy(currentMember.id, command)) {
+              return;
+            }
             this.$store.dispatch('setBattleStatus', 'enemySelect');
           // 回復, バフスキルなら、より詳細に
           } else {
             // 特殊系、またはデバフなど敵を選択するものなら、enemySelectへ
             if (is_target_enemy == true) {
-              console.log(`敵対象とする、デバフや特殊系のスキル。enemySelectへ。`);
+              console.log(`敵対象とする、デバフや特殊系のスキル`);
+              // is_defeated_flagの立っている敵が1体だけなら、その敵のインデックスをこちらで選択処理する
+              if (this.tryAutoSelectSingleEnemy(currentMember.id, command)) {
+                return;
+              }
               this.$store.dispatch('setBattleStatus', 'enemySelect');
             } else {
               // ヒールや単純なバフなど、仲間を選択するものなら、partySelectへ
@@ -858,7 +866,11 @@ export default {
           }
           // 攻撃系のアイテムなら、enemySelectへ
           if (effect_type == 1) {
-            console.log(`攻撃系単体アイテム。enemySelectへ。`);
+            console.log(`攻撃系単体アイテム。`);
+            // is_defeated_flagの立っている敵が1体だけなら、その敵のインデックスをこちらで選択処理する
+            if (this.tryAutoSelectSingleEnemy(currentMember.id, command)) {
+              return;
+            }
             this.$store.dispatch('setBattleStatus', 'enemySelect');
           // 回復, バフアイテムなら、partySelectへ
           } else {
@@ -895,8 +907,22 @@ export default {
           const selectedIndex = aliveEnemies[0].index;
           // コマンドも入れるようにしてるけど、ATTACK以外で現在まだ未対応
           console.log(`敵が1体だけなので、こちらで選択。コマンド: ${command} インデックス: ${selectedIndex}`);
-          this.$store.dispatch('setSelectedCommand', { partyId: currentMemberId, command });
-          this.$store.dispatch('setSelectedEnemy', { partyId: currentMemberId, enemyIndex: selectedIndex });
+          switch (command) {
+            case "ATTACK":
+                this.$store.dispatch('setSelectedCommand', { partyId: currentMemberId, command });
+                this.$store.dispatch('setSelectedEnemy', { partyId: currentMemberId, enemyIndex: selectedIndex });
+              break;
+            case "SKILL":
+              this.$store.dispatch('setSelectedEnemy', { partyId: currentMemberId, enemyIndex: selectedIndex });
+              break;
+            case "ITEM":
+              this.$store.dispatch('setSelectedEnemy', { partyId: currentMemberId, enemyIndex: selectedIndex });
+              break;
+            default:
+              console.log(`ATTACK以外のコマンドは未対応。`);
+              break;
+          }
+
           this.$store.dispatch('incrementPartyMemberIndex');
           this.battleCommandSetup();
           return true;

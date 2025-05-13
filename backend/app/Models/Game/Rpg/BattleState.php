@@ -699,6 +699,29 @@ class BattleState extends Model
         // ※ただし、アイテムを使えるのは現状味方だけの想定であるが。
         if ($is_enemy == false) {
 
+            // 戦闘不能かつ, それが敵である場合は別の相手を指定する
+            // 攻撃: 敵が常に対象となるので、別の相手を指定する。
+            // 回復: 味方が対象となるケースの場合は対象を変えない（失敗させる）
+            // バフ: 味方が対象となるケースの場合は対象を変えない（失敗させる）
+            // TODO: デバフアイテムは現状考慮していないので、増やすなら実装が必要
+            if (
+                ! is_null($opponents_index) && // 先にnullチェックして、これ以降の条件式で undefined array keyエラーとなるのを防ぐ
+                $battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true &&
+                $battle_state_opponents_collection[$opponents_index]->is_enemy == true
+            ) {
+                $new_target_index = $battle_state_opponents_collection->search(function ($enemy) {
+                    return $enemy->is_defeated_flag == false;
+                });
+                if ($new_target_index !== false) {
+                    $opponents_index = $new_target_index;
+                    Debugbar::debug("攻撃対象がすでに討伐済みのため、対象を変更。改めて攻撃対象: {$battle_state_opponents_collection[$opponents_index]->name}");
+                } else {
+                    Debugbar::debug("すべての敵が討伐済みのため、ITEMを終了します。敵数: {$battle_state_opponents_collection->count()}");
+
+                    return;
+                }
+            }
+
             // 使用するアイテムに応じて、ダメージ・回復量・付与されるバフを設定。
             $damage = null;
             $heal_point = null;
