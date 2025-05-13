@@ -235,7 +235,7 @@
                       </p>
                       <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                          <span class="input-group-text" id="inputGroup-sizing-sm">振り分けるポイント数: </span>
+                          <span class="input-group-text" id="inputGroup-sizing-sm">ステータスポイント </span>
                         </div>
                         <input type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
                           v-model.number="inputFreelyStatusPoints"
@@ -244,6 +244,7 @@
                           min="0"
                           placeholder="振り分けるポイントを入力"
                         >
+                        <button class="btn btn-sm btn-outline-primary" @click="allocateAllStatusPoint">全て振り分ける</button>
                       </div>
                     </div>
 
@@ -667,6 +668,10 @@
         this.modalStatusBaseValue = status_value;
         this.inputFreelyStatusPoints = 0;
         $('#modal-status-confirm').modal('show');
+      },
+      allocateAllStatusPoint() {
+        console.log(`allocateAllStatusPoint: ${this.partiesInformation[this.status.currentSelectedPartyMemberIndex].freely_status_point}`);
+        this.inputFreelyStatusPoints = this.partiesInformation[this.status.currentSelectedPartyMemberIndex].freely_status_point;
       },
       validateStatusInput(event) {
         const value = Number(event.target.value);
