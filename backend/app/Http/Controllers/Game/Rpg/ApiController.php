@@ -299,7 +299,11 @@ class ApiController extends Controller
         }
     }
 
-    // ステータス及びスキルの確認
+    /**
+     * ステータス・スキル画面で確認できるステータス、スキルツリーの取得
+     *
+     * 初回時、また振り分け後の更新時に叩かれる。
+     */
     public function getPartiesInfo()
     {
         // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
@@ -321,13 +325,13 @@ class ApiController extends Controller
                 'next_level_up_exp' => $party->getNextLevelUpExp(), // 次のレベルアップまでの経験値
                 'status' => [
                     'level' => $party->level,
-                    'value_hp' => $party->value_hp,
-                    'value_ap' => $party->value_ap,
-                    'value_str' => $party->value_str,
-                    'value_def' => $party->value_def,
-                    'value_int' => $party->value_int,
-                    'value_spd' => $party->value_spd,
-                    'value_luc' => $party->value_luc,
+                    'value_hp' => $party->value_hp + $party->allocated_hp,
+                    'value_ap' => $party->value_ap + $party->allocated_ap,
+                    'value_str' => $party->value_str + $party->allocated_str,
+                    'value_def' => $party->value_def + $party->allocated_def,
+                    'value_int' => $party->value_int + $party->allocated_int,
+                    'value_spd' => $party->value_spd + $party->allocated_spd,
+                    'value_luc' => $party->value_luc + $party->allocated_luc,
                 ],
                 'skill_tree' => Skill::acquireSkillTreeCollection($party),
             ]
@@ -340,6 +344,9 @@ class ApiController extends Controller
 
     }
 
+    /**
+     * Status.vueから渡されたリクエストを参照し、ステータスポイントの割り振りを行う
+     */
     public function incrementStatus(Request $request)
     {
         $party_id = $request->party_id;
@@ -864,13 +871,18 @@ class ApiController extends Controller
                     throw new \RuntimeException('Failed to find party for player_data->id: '.$player_data->id);
                 }
                 $updated_party->level = $player_data->level;
-                $updated_party->value_hp = $player_data->max_value_hp;
-                $updated_party->value_ap = $player_data->max_value_ap;
-                $updated_party->value_str = $player_data->value_str;
-                $updated_party->value_def = $player_data->value_def;
-                $updated_party->value_int = $player_data->value_int;
-                $updated_party->value_spd = $player_data->value_spd;
-                $updated_party->value_luc = $player_data->value_luc;
+                // valueの値 = valueとallocatedが既に足されているjsonの値 - allocatedで割り振った値
+                // 例えば、HPのjsonの値が value 100 allocated 20 で、合計120だったとする
+                // その場合、120の値をそのまま反映してはいけないので、 120 - 20 = 100として反映
+                // レベルアップで+5された場合は、jsonの値が125になるので、125 - 20 = 105 という上昇分を反映できる
+                $updated_party->value_hp = $player_data->max_value_hp - $updated_party->allocated_hp;
+                $updated_party->value_ap = $player_data->max_value_ap - $updated_party->allocated_ap;
+                $updated_party->value_str = $player_data->value_str - $updated_party->allocated_str;
+                $updated_party->value_def = $player_data->value_def - $updated_party->allocated_def;
+                $updated_party->value_int = $player_data->value_int - $updated_party->allocated_int;
+                $updated_party->value_spd = $player_data->value_spd - $updated_party->allocated_spd;
+                $updated_party->value_luc = $player_data->value_luc - $updated_party->allocated_luc;
+
                 $updated_party->total_exp = $player_data->total_exp;
                 $updated_party->freely_skill_point = $player_data->freely_skill_point;
                 $updated_party->freely_status_point = $player_data->freely_status_point;
