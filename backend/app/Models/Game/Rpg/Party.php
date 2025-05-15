@@ -80,6 +80,12 @@ class Party extends Model
         }
     }
 
+    /**
+     * パーティメンバーに対して、引数に応じたステータスポイントの振り分けを行う
+     *
+     * @param  int  $input_point  振り分けるステータスポイント
+     * @param  string  $status_type  'HP','STR'など振り分けるステータスの種類
+     */
     public function allocateStatusPoint(int $input_point, string $status_type)
     {
         Debugbar::debug("Party::incrementeStatus({$input_point}, {$status_type}) ------------------------");
@@ -94,31 +100,66 @@ class Party extends Model
         switch ($status_type) {
             case 'HP':
                 // HPだけ伸び幅を倍にする
-                $this->update(['value_hp' => $this->value_hp + ($input_point * 2)]);
+                $this->update(['allocated_hp' => $this->allocated_hp + ($input_point * 2)]);
                 break;
             case 'AP':
-                $this->update(['value_ap' => $this->value_ap + $input_point]);
+                $this->update(['allocated_ap' => $this->allocated_ap + $input_point]);
                 break;
             case 'STR':
-                $this->update(['value_str' => $this->value_str + $input_point]);
+                $this->update(['allocated_str' => $this->allocated_str + $input_point]);
                 break;
             case 'DEF':
-                $this->update(['value_def' => $this->value_def + $input_point]);
+                $this->update(['allocated_def' => $this->allocated_def + $input_point]);
                 break;
             case 'INT':
-                $this->update(['value_int' => $this->value_int + $input_point]);
+                $this->update(['allocated_int' => $this->allocated_int + $input_point]);
                 break;
             case 'SPD':
-                $this->update(['value_spd' => $this->value_spd + $input_point]);
+                $this->update(['allocated_spd' => $this->allocated_spd + $input_point]);
                 break;
             case 'LUC':
-                $this->update(['value_luc' => $this->value_luc + $input_point]);
+                $this->update(['allocated_luc' => $this->allocated_luc + $input_point]);
                 break;
         }
 
         // 振分けた分の自由ステータスポイントを減らす
         $this->update(['freely_status_point' => $this->freely_status_point - $input_point]);
 
+    }
+
+    /**
+     * パーティメンバーに振り分けたステータス・スキルポイントを全てリセットする
+     */
+    public function resetStautsAndSkillPoint()
+    {
+        Debugbar::debug('resetStautsAndSkillPoint() ------------------------');
+        // ステータスポイント
+        // HPは倍上がる仕様のため、振り分けた分を2で割っておく
+        $all_status_allocated_points =
+            ($this->allocated_hp / 2) + $this->allocated_ap
+            + $this->allocated_str + $this->allocated_def + $this->allocated_int
+            + $this->allocated_spd + $this->allocated_luc;
+
+        // スキルポイント処理
+        // 習得しているスキルのレベル数を合計する
+        $all_skill_allocated_points = $this->party_learned_skills()->sum('skill_level');
+
+        // ステータス・スキルポイントの反映
+        self::update([
+            'allocated_hp' => 0,
+            'allocated_ap' => 0,
+            'allocated_str' => 0,
+            'allocated_def' => 0,
+            'allocated_int' => 0,
+            'allocated_spd' => 0,
+            'allocated_luc' => 0,
+            'freely_status_point' => $this->freely_status_point + $all_status_allocated_points,
+            'freely_skill_point' => $this->freely_skill_point + $all_skill_allocated_points,
+        ]);
+
+        // 修得スキルのリセット
+        $this->party_learned_skills()->delete();
+        Debugbar::debug('resetStautsAndSkillPoint() ------------------------正常終了。');
     }
 
     // $party: 戦闘終了後のrpg_battle_state.players_json_dataの一人分のデータ

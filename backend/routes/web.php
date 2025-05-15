@@ -36,10 +36,13 @@ Route::get('/api/game/rpg/title/check_situation', 'Game\Rpg\ApiController@checkS
 Route::post('/api/game/rpg/title/create_rpg_user', 'Game\Rpg\ApiController@createRpgUser')->name('api_game_rpg_beginning_title_create_rpg_user');
 Route::get('/api/game/rpg/title/check_savedata_info', 'Game\Rpg\ApiController@checkSavedataInfo')->name('api_game_rpg_beginning_title_check_savedata_info');
 Route::post('/api/game/rpg/title/delete_savedata', 'Game\Rpg\ApiController@deleteSavedata')->name('api_game_rpg_beginning_title_delete_savedata');
+
 Route::get('/api/game/rpg/beginning/prepare_beginning', 'Game\Rpg\ApiController@prepareBeginning')->name('api_game_rpg_beginning_prepare_beginning');
 Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createParties')->name('api_game_rpg_beginning_create');
+
 Route::post('/api/game/rpg/status/increment', 'Game\Rpg\ApiController@incrementStatus')->name('api_game_rpg_status_increment');
 Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
+Route::post('/api/game/rpg/status/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
 
 Route::get('/api/game/rpg/shop/information', 'Game\Rpg\ApiController@getItemInfo')->name('api_game_rpg_shop_information');
 Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
