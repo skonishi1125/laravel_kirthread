@@ -123,14 +123,17 @@
 
             <div class="col-10 my-5" style="max-height: 300px; overflow-y: scroll;">
               <div class="col-12" style="border-bottom: 1px solid black;">
-                <h6>
-                  {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
-                  <small>
-                    【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
-                    <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
-                    / Next: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> Exp
-                    / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Exp
-                  </small>
+                <h6 style="display: flex; align-items: center;">
+                  <span>
+                    {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
+                    <small>
+                      【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
+                      <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
+                      / Next: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> Exp
+                      / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Exp
+                    </small>
+                  </span>
+                  <button class="btn btn-sm btn-outline-info" style="font-size: 0.7em; margin-left: auto;" @click="displayReAllocatedConfirmModal">振り分け直す</button>
                 </h6>
               </div>
 
@@ -206,7 +209,7 @@
                 】
                 ※スキルツリーはスクロール可能。
                 <br>
-                <p v-if="successStatusMessage !== null" style="color:red; margin-top: 8px">
+                <p v-if="successStatusMessage !== null" style="color:red; margin-top: 8px;">
                   {{ successStatusMessage }}
                 </p>
               </p>
@@ -295,6 +298,32 @@
             </div>
           </div>
         </div> <!-- modal -->
+      </teleport>
+
+      <!-- reAllocatedConfirmモーダル -->
+      <teleport to="body">
+        <div class="modal fade" id="modal-reallocated-confirm" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title"><b>ステータス・スキルポイントの振り直し</b></h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  {{ partiesInformation[status.currentSelectedPartyMemberIndex].nickname }}
+                      【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
+                      に振り分けたステータス・スキルポイントを振り直しますか？
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-info" data-dismiss="modal" @click="postResetStatusAndSkillPoint">確定</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </teleport>
 
     </div>
@@ -661,6 +690,10 @@
       toggleStatusStatus(state) {
         this.$store.dispatch('setMenuStatusStatus', state);
       },
+      displayReAllocatedConfirmModal() {
+        console.log(`displayReAllocatedConfirmModal: -------`);
+        $('#modal-reallocated-confirm').modal('show');
+      },
       displayStatusConfirmModal(status_name, status_value) {
         console.log(`displayStatusConfirmModal: ${status_name} ${status_value} -------`);
         this.successStatusMessage = null;
@@ -725,6 +758,34 @@
           this.modalErrorMessage = 'ステータスポイントが不足しています。';
         }
 
+      },
+      postResetStatusAndSkillPoint() {
+        console.log(`postResetStatusAndSkillPoint(): -----------------`);
+        // axios.postで登録
+        axios.post(`/api/game/rpg/status/reset_status_and_skill_point`,{
+          party_id: this.partiesInformation[this.status.currentSelectedPartyMemberIndex].party_id,
+        })
+        .then(response => {
+          console.log(`通信OK`);
+          console.log(response.data.message);
+
+          // 振り分け後のデータ再取得
+          this.updatePartiesInformation();
+
+          // stateを'status'に戻し、modalを閉じる
+          this.$store.dispatch('setMenuStatusStatus', 'status');
+          $('#modal-reallocated-confirm').modal('hide');
+          this.successStatusMessage = 'ステータス・スキルポイントの振り直しが完了しました！';
+        })
+        .catch(error => {
+          console.log(`通信失敗。`);
+          if (error.response && error.response.data) {
+            this.modalErrorMessage = error.response.data.message;
+          } else {
+            this.modalErrorMessage = "予期しないエラーが発生しました。画面リロードをお試しください。"
+          }
+          console.log(this.modalErrorMessage);
+        });
       },
       showSkillInformation(skill) {
         // console.log(`showSkillInformation: ${skill.skill_name} -------`);

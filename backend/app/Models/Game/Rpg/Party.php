@@ -127,6 +127,41 @@ class Party extends Model
 
     }
 
+    /**
+     * パーティメンバーに振り分けたステータス・スキルポイントを全てリセットする
+     */
+    public function resetStautsAndSkillPoint()
+    {
+        Debugbar::debug('resetStautsAndSkillPoint() ------------------------');
+        // ステータスポイント
+        // HPは倍上がる仕様のため、振り分けた分を2で割っておく
+        $all_status_allocated_points =
+            ($this->allocated_hp / 2) + $this->allocated_ap
+            + $this->allocated_str + $this->allocated_def + $this->allocated_int
+            + $this->allocated_spd + $this->allocated_luc;
+
+        // スキルポイント処理
+        // 習得しているスキルのレベル数を合計する
+        $all_skill_allocated_points = $this->party_learned_skills()->sum('skill_level');
+
+        // ステータス・スキルポイントの反映
+        self::update([
+            'allocated_hp' => 0,
+            'allocated_ap' => 0,
+            'allocated_str' => 0,
+            'allocated_def' => 0,
+            'allocated_int' => 0,
+            'allocated_spd' => 0,
+            'allocated_luc' => 0,
+            'freely_status_point' => $this->freely_status_point + $all_status_allocated_points,
+            'freely_skill_point' => $this->freely_skill_point + $all_skill_allocated_points,
+        ]);
+
+        // 修得スキルのリセット
+        $this->party_learned_skills()->delete();
+        Debugbar::debug('resetStautsAndSkillPoint() ------------------------正常終了。');
+    }
+
     // $party: 戦闘終了後のrpg_battle_state.players_json_dataの一人分のデータ
     // Partyに配置せず、BattleStateの方に置き直してもいい。(というか、そうするべき)
     public static function calculateGaussianGrowth(&$party)

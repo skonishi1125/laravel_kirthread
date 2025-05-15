@@ -406,6 +406,35 @@ class ApiController extends Controller
         ]);
     }
 
+    /**
+     * ステータス・スキルポイントの振り分けをリセットする
+     */
+    public function resetStatusAndSkillPoint(Request $request)
+    {
+        $party_id = $request->party_id;
+        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
+        $party = Party::find($party_id);
+
+        try {
+            DB::transaction(function () use ($party) {
+                if (is_null($party)) {
+                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+                }
+                $party->resetStautsAndSkillPoint();
+            });
+        } catch (\Exception $e) {
+            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'パーティメンバーのステータス・スキルポイントをリセットしました。',
+        ]);
+    }
+
     // ログインユーザーの現在のステータス
     public function loginUserCurrentSavedata()
     {
