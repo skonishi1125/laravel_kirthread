@@ -59,8 +59,8 @@ class BattleState extends Model
             $status = [
                 'id' => $party['id'],
                 'name' => $party['nickname'],
-                'current_hp' => $party['value_hp'],
-                'current_ap' => $party['value_ap'],
+                'current_hp' => $party['value_hp'] + $party['allocated_hp'],
+                'current_ap' => $party['value_ap'] + $party['allocated_ap'],
             ];
             $players_hp_and_ap_status->push($status);
         }
@@ -79,15 +79,15 @@ class BattleState extends Model
             $player_data['id'] = $party['id'];
             $player_data['role_id'] = $party['role_id'];
             $player_data['name'] = $party['nickname']; // nicknameにすると敵との表記揺れが面倒。 (foreachで行動を回してる部分とかで。)
-            $player_data['max_value_hp'] = $party['value_hp']; // HP最大値
-            $player_data['max_value_ap'] = $party['value_ap']; // AP最大値
+            $player_data['max_value_hp'] = $party['value_hp'] + $party['allocated_hp']; // HP最大値
+            $player_data['max_value_ap'] = $party['value_ap'] + $party['allocated_ap']; // AP最大値
             $player_data['value_hp'] = $players_hp_and_ap_status[$player_index]['current_hp'];
             $player_data['value_ap'] = $players_hp_and_ap_status[$player_index]['current_ap'];
-            $player_data['value_str'] = $party['value_str'];
-            $player_data['value_def'] = $party['value_def'];
-            $player_data['value_int'] = $party['value_int'];
-            $player_data['value_spd'] = $party['value_spd'];
-            $player_data['value_luc'] = $party['value_luc'];
+            $player_data['value_str'] = $party['value_str'] + $party['allocated_str'];
+            $player_data['value_def'] = $party['value_def'] + $party['allocated_def'];
+            $player_data['value_int'] = $party['value_int'] + $party['allocated_int'];
+            $player_data['value_spd'] = $party['value_spd'] + $party['allocated_spd'];
+            $player_data['value_luc'] = $party['value_luc'] + $party['allocated_luc'];
             $player_data['level'] = $party['level'];
             $player_data['total_exp'] = $party['total_exp'];
             $player_data['freely_status_point'] = $party['freely_status_point'];
