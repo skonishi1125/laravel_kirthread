@@ -24,8 +24,6 @@ class Role extends Model
 
     const ROLE_BUFFER = 6;
 
-    const ROLE_NONE = 99; // 敵
-
     // 職業名
     const ROLE_STRIKER_CLASS_NAME = 'Striker';
 
@@ -38,8 +36,6 @@ class Role extends Model
     const ROLE_RANGER_CLASS_NAME = 'Ranger';
 
     const ROLE_BUFFER_CLASS_NAME = 'Buffer';
-
-    const ROLE_NONE_CLASS_NAME = 'Enemy';
 
     // 職業別 Lv.1時点でのステータス
     // TODO: Enumでgrowth * 10 とか、 growth * 5とかにすれば自動化できそう。
