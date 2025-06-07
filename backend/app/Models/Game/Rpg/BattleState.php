@@ -69,8 +69,10 @@ class BattleState extends Model
         Debugbar::debug('players_json_data登録開始。');
         foreach ($parties as $player_index => $party) {
             Debugbar::debug("################# {$player_index} 人目 #################");
-            // 会得スキルの取得 (Collection想定)
-            $learned_skills = Skill::getLearnedSkill($party);
+
+            // 会得済スキルデータの取得 Collectionで返ってくる想定
+            $learned_skills = Skill::generateSkillCollection($party);
+
             $role_portrait = Role::where('id', $party['role_id'])->value('portrait_image_path');
 
             // vue側に渡すデータ
@@ -131,6 +133,9 @@ class BattleState extends Model
         foreach ($enemies_collection as $enemy_index => $enemy) {
             $enemy_data = BattleData::ENEMY_TEMPLATE;
 
+            // 会得済スキルデータの取得 Collectionで返ってくる想定
+            $learned_skills = Skill::generateSkillCollection($enemy);
+
             $enemy_data['id'] = $enemy['id'];
             $enemy_data['name'] = $enemy['name'];
             $enemy_data['max_value_hp'] = $enemy['value_hp']; // HP最大値
@@ -144,6 +149,7 @@ class BattleState extends Model
             $enemy_data['value_luc'] = $enemy['value_luc'];
             $enemy_data['portrait'] = $enemy['portrait_image_path'];
             $enemy_data['enemy_index'] = $enemy_index; // 敵の並び。
+            $enemy_data['skills'] = $learned_skills;
             $enemy_data['is_boss'] = $enemy['is_boss'];
             $enemy_data['exp'] = $enemy['exp'];
             $enemy_data['drop_money'] = $enemy['drop_money'];
@@ -515,18 +521,27 @@ class BattleState extends Model
                 }
 
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
-                // コマンド対象となる相手をランダムに指定
-                $index = rand(0, $battle_state_players_collection->count() - 1);
 
                 // TODO: 敵の行動コマンド ATTACK以外の選択肢を揃える
                 // TODO: ボスの場合だけ、この辺りは個別に調整できるようにしておく(固定行動にしたい。)
-                $actor_data->command = 'ATTACK';
+                self::determineEnemyCommand($actor_data);
+                Debugbar::warning([
+                    'message' => '設定後:',
+                    'command' => $actor_data->command,
+                    'skill_id' => $actor_data->selected_skill_id,
+                ]);
+
                 switch ($actor_data->command) {
                     case 'ATTACK':
                         Debugbar::warning("【ATTACK】{$actor_data->name} ");
+                        // コマンド対象となる相手をランダムに指定
+                        $index = rand(0, $battle_state_players_collection->count() - 1);
                         self::execCommandAttack($actor_data, $battle_state_players_collection, true, $index, $battle_logs_collection);
                         break;
                     case 'SKILL':
+                        // コマンド対象となる相手をランダムに指定
+                        // TODO: 範囲が全体のものなら、それ用に調整する必要がある
+                        $index = rand(0, $battle_state_players_collection->count() - 1);
                         Debugbar::warning("【SKILL】{$actor_data->name} ");
                         break;
                     case 'ITEM':
@@ -548,6 +563,57 @@ class BattleState extends Model
 
             }
         }
+    }
+
+    /**
+     * 敵のAP状況などを考慮した上でコマンドを設定する。
+     */
+    private static function determineEnemyCommand(object $enemy_data): void
+    {
+
+        // TODO: ボスの場合だけこの関数の引数にターン数を渡し、そのターン別の行動を入れたりしたらうまく固定行動が実現できそう
+
+        Debugbar::warning([
+            'message' => 'determineEnemyCommand:',
+            'enemy_data' => $enemy_data,
+        ]);
+
+        // スキルを持っているかチェックし、持っていなければATTACKで固定する
+        if (count($enemy_data->skills) === 0) {
+            Debugbar::warning([
+                'message' => 'スキル未保持。ATTACKを選択:',
+                'enemy_data' => $enemy_data,
+            ]);
+            $enemy_data->command = 'ATTACK';
+        }
+
+        $current_ap = $enemy_data->value_ap;
+
+        // APで使えるスキルだけ抽出する。0なら攻撃を設定する
+        $available_skills = array_filter($enemy_data->skills, function ($skill) use ($current_ap) {
+            Debugbar::warning(gettype($skill)); // object
+
+            return isset($skill->ap_cost) && $skill->ap_cost <= $current_ap;
+        });
+
+        Debugbar::warning(gettype($available_skills)); // array
+
+        if (count($available_skills) === 0) {
+            Debugbar::warning('APが足りなくスキルが使えないので、ATTACKを選択:');
+            $enemy_data->command = 'ATTACK';
+        }
+
+        // 使えるスキルからランダムに1つ選ぶ
+        $selected_skill = $available_skills[array_rand($available_skills)];
+
+        // スキル一覧を持ってきて、攻撃かどのスキルを使うかを選択
+        $enemy_data->command = 'SKILL';
+        // $selected_skill は object
+        $enemy_data->selected_skill_id = $selected_skill->id;
+        Debugbar::warning([
+            'message' => 'SKILLを選択:',
+            'selected_skill' => $selected_skill,
+        ]);
     }
 
     /**

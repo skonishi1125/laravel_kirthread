@@ -215,14 +215,15 @@ class Skill extends Model
     }
 
     /**
-     * players_json_dataのskillsに格納するスキル情報を取得する
+     * 戦闘開始時のプレイヤー or 敵配列のskillsへ格納するスキル情報を生成して返す
      *
+     * @param  $party_or_enemy_collection  プレイヤー or 敵単体のModel
      * @return Collection
      */
-    public static function getLearnedSkill($party)
+    public static function generateSkillCollection($party_or_enemy_model)
     {
-        Debugbar::debug('getLearnedSkill(): --------------------');
-        $learned_skills = $party->skills->map(function ($skill) {
+        Debugbar::debug('generateSkillCollection(): --------------------');
+        $learned_skills = $party_or_enemy_model->skills->map(function ($skill) {
 
             $skill_level = $skill->pivot->skill_level;
             // レベルに応じた消費APのコスト計算 スキルの数だけ回すので、これはループの生成する必要がある
@@ -245,23 +246,23 @@ class Skill extends Model
                 $buff_turn = $skill_attributes[$buff_turn_property];
             }
 
-            $players_json_skills_data = BattleData::SKILL_TEMPLATE;
+            $skill_template = BattleData::SKILL_TEMPLATE;
 
-            $players_json_skills_data['id'] = $skill['id'];
-            $players_json_skills_data['name'] = $skill['name'];
-            $players_json_skills_data['description'] = $skill['description'];
-            $players_json_skills_data['attack_type'] = $skill['attack_type'];
-            $players_json_skills_data['effect_type'] = $skill['effect_type'];
-            $players_json_skills_data['target_range'] = $skill['target_range'];
-            $players_json_skills_data['is_target_enemy'] = $skill['is_target_enemy'];
-            $players_json_skills_data['is_first'] = $skill['is_first'];
-            $players_json_skills_data['skill_level'] = $skill_level;
-            $players_json_skills_data['ap_cost'] = $ap_cost;
-            $players_json_skills_data['buff_turn'] = $buff_turn;
-            $players_json_skills_data['elemental_id'] = $skill['elemental_id'];
-            $players_json_skills_data['skill_percent'] = $skill_percent;
+            $skill_template['id'] = $skill['id'];
+            $skill_template['name'] = $skill['name'];
+            $skill_template['description'] = $skill['description'];
+            $skill_template['attack_type'] = $skill['attack_type'];
+            $skill_template['effect_type'] = $skill['effect_type'];
+            $skill_template['target_range'] = $skill['target_range'];
+            $skill_template['is_target_enemy'] = $skill['is_target_enemy'];
+            $skill_template['is_first'] = $skill['is_first'];
+            $skill_template['skill_level'] = $skill_level;
+            $skill_template['ap_cost'] = $ap_cost;
+            $skill_template['buff_turn'] = $buff_turn;
+            $skill_template['elemental_id'] = $skill['elemental_id'];
+            $skill_template['skill_percent'] = $skill_percent;
 
-            return $players_json_skills_data;
+            return $skill_template;
         })
         // スキルID順にし、キーが連番でなくなっているのでvaluesで0からの連番キー配列に整形しておく
             ->sortBy('id')

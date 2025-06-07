@@ -31,7 +31,7 @@ class BattleData
         'total_exp' => 0,
         'freely_status_point' => 0,
         'freely_skill_point' => 0,
-        'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::getLearnedSkill($party);みたいな感じでそのまま上書きされる
+        'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::generateSkillCollection($party);みたいな感じでそのまま上書きされる
         'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
         'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
         'role_portrait' => null,
@@ -47,7 +47,7 @@ class BattleData
      * jsonとして使う時もあれば、collectionで使う時もある
      */
     public const ENEMY_TEMPLATE = [
-        'id' => null,
+        'id' => null, // enemy_id
         'name' => null,
         'command' => null, // exec時に格納する
         'target_player_index' => null, // exec時に格納する, 敵の攻撃対象とする味方のindex。
@@ -61,6 +61,8 @@ class BattleData
         'value_spd' => 0,
         'value_luc' => 0,
         'portrait' => null,
+        'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::generateSkillCollection($enemy);みたいな感じでそのまま上書きされる
+        'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
         'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく
         'is_defeated_flag' => false,
         'is_escaped' => false,

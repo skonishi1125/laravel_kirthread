@@ -15,7 +15,6 @@ class EnemyLearnedSkill extends Model
         'id',
     ];
 
-    // $s->party
     public function party()
     {
         return $this->belongsTo(Enemy::class);
