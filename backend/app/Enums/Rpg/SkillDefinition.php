@@ -44,9 +44,6 @@ enum SkillDefinition: int
     case AttackSpell = 63;
     case MagicSpell = 64;
 
-    // -------------------- 敵 --------------------
-    case Bite = 100;
-
     public function label(): string
     {
         return match ($this) {
@@ -83,8 +80,6 @@ enum SkillDefinition: int
             self::GuardSpell => 'ガードスペル',
             self::AttackSpell => 'アタックスペル',
             self::MagicSpell => 'マジックスペル',
-
-            self::Bite => 'かみつく',
         };
     }
 
@@ -124,8 +119,6 @@ enum SkillDefinition: int
             self::MagicSpell => '味方1人の魔力をアップさせる。上昇率は自身のステータスに依存する。',
             self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
             self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
-
-            self::Bite => '単体に噛みつき攻撃する。',
         };
     }
 }

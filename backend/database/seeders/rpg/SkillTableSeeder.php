@@ -1195,22 +1195,6 @@ class SkillTableSeeder extends Seeder
             */
 
             // 敵の使用するスキル 100番以降
-            [
-                'id' => SkillDefinition::Bite->value,
-                'name' => SkillDefinition::Bite->label(),
-                'available_role_id' => Role::ROLE_NONE,
-                'attack_type' => AttackType::Physical->value,
-                'effect_type' => EffectType::Damage->value,
-                'target_range' => TargetRange::Single->value,
-                'lv1_percent' => 1.2,
-                'lv1_ap_cost' => 5,
-                'lv2_percent' => 1.4,
-                'lv2_ap_cost' => 5,
-                'lv3_percent' => 1.5,
-                'lv3_ap_cost' => 5,
-                'elemental_id' => 1,
-                'description' => SkillDefinition::Bite->description(),
-            ],
 
         ];
 
