@@ -535,14 +535,49 @@ class BattleState extends Model
                     case 'ATTACK':
                         Debugbar::warning("【ATTACK】{$actor_data->name} ");
                         // コマンド対象となる相手をランダムに指定
-                        $index = rand(0, $battle_state_players_collection->count() - 1);
-                        self::execCommandAttack($actor_data, $battle_state_players_collection, true, $index, $battle_logs_collection);
+                        $opponents_index = rand(0, $battle_state_players_collection->count() - 1);
+                        self::execCommandAttack($actor_data, $battle_state_players_collection, true, $opponents_index, $battle_logs_collection);
                         break;
                     case 'SKILL':
-                        // コマンド対象となる相手をランダムに指定
-                        // TODO: 範囲が全体のものなら、それ用に調整する必要がある
-                        $index = rand(0, $battle_state_players_collection->count() - 1);
                         Debugbar::warning("【SKILL】{$actor_data->name} ");
+                        $battle_state_opponents_collection = collect();
+                        // コマンド対象となる相手をランダムに指定
+                        // TODO: 範囲が全体 or 自身のものなら、それ用に調整する必要がある
+                        $opponents_index = rand(0, $battle_state_players_collection->count() - 1);
+
+                        // TODO: スキルの実行処理作る
+                        /** @var \stdClass $selected_skill_data BattleData::SKILL_TEMPLATE に各データが格納されたオブジェクト。 */
+                        $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
+                        Debugbar::warning($selected_skill_data);
+
+                        switch ($selected_skill_data->effect_type) {
+                            case EffectType::Special->value:
+                                // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
+                                Debugbar::warning('特殊系スキル。');
+                                // TODO: 下記はプレイヤー側のコピペなので敵用に調整対応する必要がある
+                                // if ($selected_skill_data->is_target_enemy) {
+                                //     $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                // } else {
+                                //     $battle_state_opponents_collection = $battle_state_players_collection;
+                                // }
+                                break;
+                            case EffectType::Damage->value:
+                                Debugbar::warning('攻撃系スキルのためプレイヤー情報をopponents_dataに格納');
+                                $battle_state_opponents_collection = $battle_state_players_collection;
+                                break;
+                            case EffectType::Heal->value:
+                                // Debugbar::warning('回復系スキルのため敵（味方）情報をopponents_dataに格納');
+                                // $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                break;
+                            case EffectType::Buff->value:
+                                // TODO: デバフを採用するならさらに分岐して、味方データを入れる。
+                                // Debugbar::warning('バフ系スキルのため敵（味方）情報をopponents_dataに格納');
+                                // $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                break;
+                        }
+
+                        self::execCommandSkill($actor_data, $battle_state_opponents_collection, true, $opponents_index, $battle_logs_collection);
+
                         break;
                     case 'ITEM':
                         // 実装予定はないが、使う想定をしておく
@@ -674,9 +709,9 @@ class BattleState extends Model
             $pure_damage = self::calculateActualStatusValue($actor_data, 'str');
             Debugbar::debug("【味方】STRの実数値。（ATTACKの場合、これが純粋なダメージ量となる。） : {$pure_damage}");
 
-            // 画面に表示するログの記録
+            // 単体・物理攻撃として扱う
             self::storeEnemyDamage(
-                'ATTACK', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $pure_damage
+                'ATTACK', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $pure_damage, TargetRange::Single->value, AttackType::Physical->value
             );
         }
         // execBattleCommandに戻る
@@ -700,7 +735,6 @@ class BattleState extends Model
         ?int $opponents_index,
         Collection $battle_logs_collection
     ) {
-        Debugbar::debug('execCommandSkill(): ----------------------');
         // firstWhereを使用するため、collectionとして一時的にキャスト
         /** @var \stdClass $selected_skill_data BattleData::SKILL_TEMPLATE に各データが格納されたオブジェクト。 */
         $selected_skill_data = collect($actor_data->skills)->firstWhere('id', $actor_data->selected_skill_id);
@@ -711,7 +745,8 @@ class BattleState extends Model
             return;
         }
 
-        if ($is_enemy == false) {
+        if (! $is_enemy) {
+            Debugbar::debug('【味方】execCommandSkill(): ----------------------');
             // 戦闘不能かつ, それが敵である場合は別の相手を指定する
             // 攻撃: 敵が常に対象となるので、別の相手を指定する。
             // 回復: 味方が対象となるケースの場合は対象を変えない（失敗させる）
@@ -736,9 +771,16 @@ class BattleState extends Model
             }
 
             // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
-            Skill::decideExecSkill($actor_data->role_id, $selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
+            Skill::decideExecSkill($selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
         } else {
-            // TODO: 敵もこの処理で技を使えるようにする
+            Debugbar::warning('【敵】execCommandSkill(): ----------------------');
+            Debugbar::warning($selected_skill_data);
+
+            // TODO: 上の条件をスキルに応じて調整する(一旦単体攻撃スキルだけ実装してみる)
+
+            // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
+            Skill::decideExecSkill($selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
+
         }
         // execBattleCommandに戻る
     }
@@ -1137,42 +1179,110 @@ class BattleState extends Model
         }
     }
 
-    // opponents_dataは攻撃されるプレイヤーのデータが入る
+    /**
+     * 敵のダメージ計算処理 併せて、画面に表示させるログも未記入する
+     *
+     * @param  object  $actor_data  この関数の場合は、攻撃をする敵自身
+     * @param  Collection  $battle_state_opponents_collection  この関数の場合は、味方パーティ全体のcollection
+     * @param  ?int  $pure_damage  敵の守備力などを考慮しない、純粋なダメージ量 %依存の攻撃などを考慮してnullableとする
+     * @param  int  $target_range  コマンド対象範囲 TARGET_RANGE_SINGLE 等
+     * @param  int  $attack_type  コマンド攻撃タイプ AttackType::Physical->valueや、AttackType::Physical->value 等
+     */
     public static function storeEnemyDamage(
-        string $command, object $self_data, Collection $opponents_data,
-        int $opponents_index, Collection $logs, int $damage
+        string $command,
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        int $opponents_index,
+        Collection $battle_logs_collection,
+        ?int $pure_damage,
+        int $target_range,
+        int $attack_type
     ) {
+        $calculated_damage = 0;
         switch ($command) {
             case 'ATTACK':
-                Debugbar::warning('storeEnemyDamage(): ATTACK');
+                // 攻撃対象となるopponents_collectionを、1つの変数に格納して呼びやすくしておく
+                // CollectionはObjectの参照を保持するため、この変数の内容が変わると、元のCollectionも変わる
+                // (こういった仕様があるので、純粋にコピーして使いたい場合は copy という文法がある)
 
-                // ダメージ計算
+                /** @var \stdClass $opponent_data */
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                Debugbar::warning("storeEnemyDamage(): ATTACK {$actor_data->name} → {$opponent_data->name}");
+
+                // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
                 $calculated_damage = self::calculatePhysicalDamage(
-                    $damage,
-                    self::calculateActualStatusValue($opponents_data[$opponents_index], 'def')
+                    $pure_damage,
+                    self::calculateActualStatusValue($opponent_data, 'def')
                 );
 
                 if ($calculated_damage > 0) {
-                    Debugbar::warning("ダメージが1以上なので攻撃。味方の現在の体力: {$opponents_data[$opponents_index]->value_hp}");
-                    $opponents_data[$opponents_index]->value_hp -= $calculated_damage;
-                    Debugbar::warning("攻撃された。味方の残り体力: {$opponents_data[$opponents_index]->value_hp}");
-                    if ($opponents_data[$opponents_index]->value_hp <= 0) {
-                        $opponents_data[$opponents_index]->value_hp = 0;
-                        $opponents_data[$opponents_index]->is_defeated_flag = true;
-                        self::clearBuff($opponents_data[$opponents_index]);
-                        $logs->push("{$self_data->name}の攻撃！{$opponents_data[$opponents_index]->name}は{$calculated_damage}のダメージを受けた！");
-                        $logs->push("{$opponents_data[$opponents_index]->name}はやられてしまった！");
-                        Debugbar::warning("{$opponents_data[$opponents_index]->name}がやられた。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+                    Debugbar::warning("【ATTACK】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
+                    $opponent_data->value_hp -= $calculated_damage;
+                    Debugbar::warning("攻撃された。味方の残り体力: {$opponent_data->value_hp}");
+                    // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                        Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                     } else {
-                        $logs->push("{$self_data->name}の攻撃！{$opponents_data[$opponents_index]->name}は{$calculated_damage}のダメージを受けた！");
-                        Debugbar::warning("{$opponents_data[$opponents_index]->name}はまだ生存している。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        Debugbar::warning("{$opponent_data->name}はまだ生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                     }
                 } else {
-                    $logs->push("{$self_data->name}の攻撃！しかし{$opponents_data[$opponents_index]->name}は攻撃を防いだ！");
-                    Debugbar::warning("攻撃が通らなかった。{$opponents_data[$opponents_index]->name}は当然生存している。味方の残り体力: {$opponents_data[$opponents_index]->value_hp} 味方やられフラグ: {$opponents_data[$opponents_index]->is_defeated_flag} ");
+                    $battle_logs_collection->push("{$actor_data->name}の攻撃！しかし{$opponent_data->name}は攻撃を防いだ！");
+                    Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は当然生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                 }
                 break;
             case 'SKILL':
+                Debugbar::warning('storeEnemyDamage(): SKILL');
+                // 単体攻撃の場合
+                if ($target_range === TargetRange::Single->value) {
+                    Debugbar::warning('単体攻撃。');
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
+
+                    // ダメージ計算 物理か魔法攻撃かで変える
+                    if ($attack_type === AttackType::Physical->value) {
+                        Debugbar::warning('物理。');
+                        $calculated_damage = self::calculatePhysicalDamage(
+                            $pure_damage,
+                            self::calculateActualStatusValue($opponent_data, 'def')
+                        );
+                    } elseif ($attack_type === AttackType::Magic->value) {
+                        Debugbar::warning('魔法。');
+                        $opponent_mdef = self::calculateMagicDEFENCEValue(
+                            self::calculateActualStatusValue($opponent_data, 'def'),
+                            self::calculateActualStatusValue($opponent_data, 'int')
+                        );
+                        $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
+                    }
+
+                    if ($calculated_damage > 0) {
+                        Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
+                        $opponent_data->value_hp -= $calculated_damage;
+                        Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+                        // 味方がやられた場合
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                            $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                            Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            Debugbar::warning("{$opponent_data->name}は生存中。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                        }
+                    } else {
+                        // ダメージを与えられなかった場合
+                        Debugbar::warning('ダメージを与えられない。');
+                        $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
+                        Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                    }
+                }
+                // 全体攻撃の場合...
                 break;
             default:
                 break;
