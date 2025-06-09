@@ -1211,6 +1211,22 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::Bite->description(),
             ],
+            [
+                'id' => SkillDefinition::Rampage->value,
+                'name' => SkillDefinition::Rampage->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Physical->value,
+                'effect_type' => EffectType::Damage->value,
+                'target_range' => TargetRange::All->value,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 5,
+                'lv2_percent' => 1.2,
+                'lv2_ap_cost' => 5,
+                'lv3_percent' => 1.5,
+                'lv3_ap_cost' => 5,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::Rampage->description(),
+            ],
 
         ];
 

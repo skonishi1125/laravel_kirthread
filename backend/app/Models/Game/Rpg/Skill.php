@@ -290,6 +290,9 @@ class Skill extends Model
         Collection $battle_logs_collection
     ) {
         if (! $is_enemy) {
+            /**
+             * パーティのスキル処理
+             */
             Debugbar::debug('decideExecSkill(): --------------------');
             // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
             if ($selected_skill_data->effect_type === EffectType::Damage->value && ! is_null($opponents_index)) {
@@ -518,8 +521,10 @@ class Skill extends Model
                     );
                     break;
             }
-            // 敵のスキル処理
         } else {
+            /**
+             * 敵のスキル処理
+             */
             Debugbar::warning('decideExecSkill(): --------------------');
             // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
             if ($selected_skill_data->effect_type === EffectType::Damage->value && ! is_null($opponents_index)) {
@@ -556,10 +561,14 @@ class Skill extends Model
             $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
             switch (SkillDefinition::from($selected_skill_data->id)) {
-                // -------------------- かみつく --------------------
                 case SkillDefinition::Bite :
-                    Debugbar::warning(SkillDefinition::MiddleBlow->label());
+                    Debugbar::warning(SkillDefinition::Bite->label());
                     $battle_logs_collection->push("{$actor_data->name}は思いっきり噛みついてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Rampage :
+                    Debugbar::warning(SkillDefinition::Rampage->label());
+                    $battle_logs_collection->push("{$actor_data->name}は力任せに暴れ回った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 default:

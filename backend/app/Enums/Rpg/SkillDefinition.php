@@ -46,6 +46,7 @@ enum SkillDefinition: int
 
     // -------------------- 敵 --------------------
     case Bite = 100;
+    case Rampage = 101;
 
     public function label(): string
     {
@@ -85,6 +86,7 @@ enum SkillDefinition: int
             self::MagicSpell => 'マジックスペル',
 
             self::Bite => 'かみつく',
+            self::Rampage => 'あばれる',
         };
     }
 
@@ -125,7 +127,8 @@ enum SkillDefinition: int
             self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
             self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
 
-            self::Bite => '単体に噛みつき攻撃する。',
+            self::Bite => '相手単体に噛みつき物理攻撃する。',
+            self::Rampage => '大暴れして、相手全体に物理攻撃。',
         };
     }
 }

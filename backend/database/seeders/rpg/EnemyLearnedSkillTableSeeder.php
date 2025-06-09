@@ -17,6 +17,7 @@ class EnemyLearnedSkillTableSeeder extends Seeder
         $seeds = [
             // オヤダマワニ かみつく
             ['enemy_id' => 5, 'skill_id' => 100, 'skill_level' => 1],
+            ['enemy_id' => 5, 'skill_id' => 101, 'skill_level' => 1],
         ];
 
         foreach ($seeds as $seed) {
