@@ -439,11 +439,14 @@ class BattleState extends Model
                             ->filter();
                         break;
                     case 'DEFENCE':
-                        // "防御"バフを 1ターン、def * 0.5の補正として付与する。
-                        // 例: value_defが60の場合、バフは30となり合計DEFは90となる
+                        // "防御"バフを付与する
+                        //  1ターン、def * 0.5 と int * 0.5 の補正として付与する。
+                        // 魔法攻撃も緩和できようにintも補正をかける。
+                        // 例: value_defが60の場合、バフは30となり合計DEFは90となる intも同様。
                         Debugbar::debug("【防御】使用者: {$actor_data->name} ");
                         $new_buff = BattleData::BUFF_TEMPLATE;
                         $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * 0.5);
+                        $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * 0.5);
                         $new_buff['remaining_turn'] = 1;
                         $new_buff['buffed_from'] = 'DEFENCE';
 
@@ -643,19 +646,20 @@ class BattleState extends Model
         if (count($available_skills) === 0) {
             Debugbar::warning('APが足りなくスキルが使えないので、ATTACKを選択:');
             $enemy_data->command = 'ATTACK';
+        } else {
+            // 使えるスキルからランダムに1つ選ぶ
+            $selected_skill = $available_skills[array_rand($available_skills)];
+
+            // スキル一覧を持ってきて、攻撃かどのスキルを使うかを選択
+            $enemy_data->command = 'SKILL';
+            // $selected_skill は object
+            $enemy_data->selected_skill_id = $selected_skill->id;
+            Debugbar::warning([
+                'message' => 'SKILLを選択:',
+                'selected_skill' => $selected_skill,
+            ]);
         }
 
-        // 使えるスキルからランダムに1つ選ぶ
-        $selected_skill = $available_skills[array_rand($available_skills)];
-
-        // スキル一覧を持ってきて、攻撃かどのスキルを使うかを選択
-        $enemy_data->command = 'SKILL';
-        // $selected_skill は object
-        $enemy_data->selected_skill_id = $selected_skill->id;
-        Debugbar::warning([
-            'message' => 'SKILLを選択:',
-            'selected_skill' => $selected_skill,
-        ]);
     }
 
     /**
@@ -971,7 +975,7 @@ class BattleState extends Model
                         );
                     } elseif ($attack_type === AttackType::Magic->value) {
                         Debugbar::debug('魔法。');
-                        $opponent_mdef = self::calculateMagicDEFENCEValue(
+                        $opponent_mdef = self::calculateMagicDefenceValue(
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($opponent_data, 'int')
                         );
@@ -1024,7 +1028,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDEFENCEValue(
+                            $opponent_mdef = self::calculateMagicDefenceValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -1082,7 +1086,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDEFENCEValue(
+                            $opponent_mdef = self::calculateMagicDefenceValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -1143,7 +1147,7 @@ class BattleState extends Model
                                 );
                             } elseif ($attack_type === AttackType::Magic->value) {
                                 Debugbar::debug('魔法。');
-                                $opponent_mdef = self::calculateMagicDEFENCEValue(
+                                $opponent_mdef = self::calculateMagicDefenceValue(
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($opponent_data, 'int')
                                 );
@@ -1259,7 +1263,7 @@ class BattleState extends Model
                         );
                     } elseif ($attack_type === AttackType::Magic->value) {
                         Debugbar::warning('魔法。');
-                        $opponent_mdef = self::calculateMagicDEFENCEValue(
+                        $opponent_mdef = self::calculateMagicDefenceValue(
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($opponent_data, 'int')
                         );
@@ -1312,7 +1316,7 @@ class BattleState extends Model
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
-                            $opponent_mdef = self::calculateMagicDEFENCEValue(
+                            $opponent_mdef = self::calculateMagicDefenceValue(
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
@@ -1336,13 +1340,13 @@ class BattleState extends Model
                                 Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                             } else {
                                 $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::warning("{$opponent_data->name}は生存中。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                                Debugbar::warning("{$opponent_data->name}は生存中。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                             }
                         } else {
                             // 防御などが高く、ダメージを受けなかった場合
                             Debugbar::warning('ダメージを受けなかった。');
                             $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
-                        Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                            Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                         }
                     }
                     Debugbar::warning('全体攻撃ループ完了。#########');
@@ -1857,10 +1861,10 @@ class BattleState extends Model
     /**
      * 魔法防御力の計算
      */
-    public static function calculateMagicDEFENCEValue(int $opponent_def, int $opponent_int): int
+    public static function calculateMagicDefenceValue(int $opponent_def, int $opponent_int): int
     {
-        $mdef = ceil(($opponent_def * 0.25) + ($opponent_int * 0.75));
-        Debugbar::debug("calculateMagicDEFENCEValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
+        $mdef = ceil(($opponent_def * 0.1) + ($opponent_int * 0.9));
+        Debugbar::debug("calculateMagicDefenceValue(): --- 魔法防御計算。DEF: {$opponent_def} INT: {$opponent_int} MDEF: {$mdef}");
 
         // cast float to int
         return (int) $mdef;

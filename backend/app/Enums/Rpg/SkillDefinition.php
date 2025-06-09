@@ -47,6 +47,8 @@ enum SkillDefinition: int
     // -------------------- 敵 --------------------
     case Bite = 100;
     case Rampage = 101;
+    case Biribiri = 102;
+    case Discharge = 103;
 
     public function label(): string
     {
@@ -85,8 +87,10 @@ enum SkillDefinition: int
             self::AttackSpell => 'アタックスペル',
             self::MagicSpell => 'マジックスペル',
 
-            self::Bite => 'かみつく',
-            self::Rampage => 'あばれる',
+            self::Bite => 'かみつく', // 攻撃 物理 単体
+            self::Rampage => 'あばれる', // 攻撃 物理 全体
+            self::Biribiri => 'ビリビリ', // 攻撃 魔法 単体
+            self::Discharge => '放電', // 攻撃 魔法 全体
         };
     }
 
@@ -129,6 +133,8 @@ enum SkillDefinition: int
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',
+            self::Biribiri => '相手単体に雷の力で魔法攻撃。',
+            self::Discharge => '電気の力を解き放ち、相手全体に魔法攻撃に雷の力で魔法攻撃。',
         };
     }
 }

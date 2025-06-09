@@ -15,7 +15,11 @@ class EnemyLearnedSkillTableSeeder extends Seeder
         EnemyLearnedSkill::truncate();
 
         $seeds = [
-            // オヤダマワニ かみつく
+            // イッカク
+            ['enemy_id' => 4, 'skill_id' => 102, 'skill_level' => 1],
+            ['enemy_id' => 4, 'skill_id' => 103, 'skill_level' => 1],
+
+            // オヤダマワニ
             ['enemy_id' => 5, 'skill_id' => 100, 'skill_level' => 1],
             ['enemy_id' => 5, 'skill_id' => 101, 'skill_level' => 1],
         ];

@@ -571,6 +571,16 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は力任せに暴れ回った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::Biribiri :
+                    Debugbar::warning(SkillDefinition::Biribiri->label());
+                    $battle_logs_collection->push("{$actor_data->name}は自慢のツノで雷を呼び寄せた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Discharge :
+                    Debugbar::warning(SkillDefinition::Discharge->label());
+                    $battle_logs_collection->push("{$actor_data->name}は身体にまとっていたエネルギーで放電した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
