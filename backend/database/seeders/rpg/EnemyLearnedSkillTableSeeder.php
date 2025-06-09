@@ -22,6 +22,12 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // オヤダマワニ
             ['enemy_id' => 5, 'skill_id' => 100, 'skill_level' => 1],
             ['enemy_id' => 5, 'skill_id' => 101, 'skill_level' => 1],
+
+            // ハイスララ
+            ['enemy_id' => 6, 'skill_id' => 104, 'skill_level' => 1],
+            ['enemy_id' => 6, 'skill_id' => 105, 'skill_level' => 1],
+            ['enemy_id' => 6, 'skill_id' => 106, 'skill_level' => 1],
+
         ];
 
         foreach ($seeds as $seed) {

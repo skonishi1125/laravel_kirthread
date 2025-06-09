@@ -566,6 +566,8 @@ class BattleState extends Model
                             case EffectType::Damage->value:
                                 Debugbar::warning('攻撃系スキルのためプレイヤー情報をopponents_dataに格納');
                                 $battle_state_opponents_collection = $battle_state_players_collection;
+                                // スキルの範囲に応じて、$opponent_index を指定する
+                                // 対象が戦闘不能だった場合などは、storeEnemyXxx...で処理して分岐する
                                 if ($selected_skill_data->target_range === TargetRange::Single->value) {
                                     Debugbar::warning(TargetRange::Single->label());
                                     $opponents_index = rand(0, $battle_state_players_collection->count() - 1);
@@ -574,8 +576,17 @@ class BattleState extends Model
                                 }
                                 break;
                             case EffectType::Heal->value:
-                                // Debugbar::warning('回復系スキルのため敵（味方）情報をopponents_dataに格納');
-                                // $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                Debugbar::warning('回復系スキルのため敵（味方）情報をopponents_dataに格納');
+                                $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                // スキルの範囲に応じて、$opponent_index を指定する
+                                // 対象が戦闘不能だった場合などは、storeEnemyXxx...で処理して分岐する
+                                if ($selected_skill_data->target_range === TargetRange::Single->value) {
+                                    Debugbar::warning(TargetRange::Single->label());
+                                    // 単体スキルはランダムに指定
+                                    $opponents_index = rand(0, $battle_state_enemies_collection->count() - 1);
+                                } else {
+                                    Debugbar::warning(TargetRange::All->label());
+                                }
                                 break;
                             case EffectType::Buff->value:
                                 // TODO: デバフを採用するならさらに分岐して、味方データを入れる。
@@ -1492,6 +1503,73 @@ class BattleState extends Model
                     }
                 }
                 break;
+        }
+    }
+
+    /**
+     * 敵用の回復処理 併せて、画面に表示させるログも記入する
+     *
+     * スキルを使用しての回復処理に使う
+     */
+    public static function storeEnemyHeal(
+        string $command,
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        ?int $heal_point,
+        int $target_range,
+        int|float|null $percent,
+        // ?int $heal_type AP系の回復を実装するならこちらで実装する
+    ) {
+        switch ($command) {
+            case 'SKILL':
+                Debugbar::warning('storeEnemyHeal(): SKILL ------------------------------');
+                if ($target_range === TargetRange::Single->value) {
+                    // 単体
+                    /** @var \stdClass $opponent_data */
+                    $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                    Debugbar::warning("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
+                    // 戦闘不能ならスキップ
+                    if ($opponent_data->is_defeated_flag == true) {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+                    } else {
+                        $opponent_data->value_hp += $heal_point;
+                        if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                            $opponent_data->value_hp = $opponent_data->max_value_hp;
+                        }
+                        $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復！");
+                    }
+                } elseif ($target_range == TargetRange::All->value) {
+                    // 全体
+                    // $battle_state_opponents_collectionに対象が全て入っているはずなので、それで回復を回すと良い
+                    Debugbar::warning("【全体回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
+                        // 戦闘不能ならスキップ
+                        if ($opponent_data->is_defeated_flag == true) {
+                            Debugbar::warning("{$opponent_data->name}は戦闘不能のため回復対象としません。");
+                        } else {
+                            $opponent_data->value_hp += $heal_point;
+                            if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                                $opponent_data->value_hp = $opponent_data->max_value_hp;
+                            }
+                            Debugbar::warning("{$opponent_data->name}回復。");
+                        }
+                    }
+
+                    $battle_logs_collection->push("全員のHPを{$heal_point}ポイント回復！");
+                } elseif ($target_range === TargetRange::Self->value) {
+                    // 自身
+                    Debugbar::warning("【自身回復】回復量: {$heal_point} 使用者: {$actor_data->name}");
+                    $actor_data->value_hp += $heal_point;
+                    if ($actor_data->value_hp > $actor_data->max_value_hp) {
+                        $actor_data->value_hp = $actor_data->max_value_hp;
+                    }
+                    $battle_logs_collection->push("{$actor_data->name}のHPが{$heal_point}ポイント回復！");
+                    Debugbar::warning("{$actor_data->name}回復。");
+                }
+                break;
+
         }
     }
 

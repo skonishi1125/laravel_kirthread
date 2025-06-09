@@ -49,6 +49,9 @@ enum SkillDefinition: int
     case Rampage = 101;
     case Biribiri = 102;
     case Discharge = 103;
+    case EnemyHealing = 104;
+    case EnemyAllHealing = 105;
+    case Regeneration = 106;
 
     public function label(): string
     {
@@ -91,6 +94,9 @@ enum SkillDefinition: int
             self::Rampage => 'あばれる', // 攻撃 物理 全体
             self::Biribiri => 'ビリビリ', // 攻撃 魔法 単体
             self::Discharge => '放電', // 攻撃 魔法 全体
+            self::EnemyHealing => 'エネミーヒーリング',
+            self::EnemyAllHealing => 'エネミーオールヒーリング',
+            self::Regeneration => '再生',
         };
     }
 
@@ -135,6 +141,9 @@ enum SkillDefinition: int
             self::Rampage => '大暴れして、相手全体に物理攻撃。',
             self::Biribiri => '相手単体に雷の力で魔法攻撃。',
             self::Discharge => '電気の力を解き放ち、相手全体に魔法攻撃に雷の力で魔法攻撃。',
+            self::EnemyHealing => '敵専用の回復魔法。単体のHPを回復。',
+            self::EnemyAllHealing => '敵専用の回復魔法。全体のHPを回復。',
+            self::Regeneration => '細胞分裂することで自信のHPを回復する。',
         };
     }
 }

@@ -581,6 +581,16 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は身体にまとっていたエネルギーで放電した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::EnemyHealing :
+                    Debugbar::debug(SkillDefinition::EnemyHealing->label());
+                    $battle_logs_collection->push("{$actor_data->name}はヒーリングを唱えた！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Regeneration :
+                    Debugbar::debug(SkillDefinition::Regeneration->label());
+                    $battle_logs_collection->push("{$actor_data->name}は自身の細胞を分裂させ、再生した！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 200;
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
@@ -593,15 +603,18 @@ class Skill extends Model
                 //     break;
                 case EffectType::Damage->value:
                     BattleState::storeEnemyDamage(
-                        'SKILL', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $damage, $selected_skill_data->target_range, $selected_skill_data->attack_type
+                        'SKILL', $actor_data, $battle_state_opponents_collection,
+                        $opponents_index, $battle_logs_collection, $damage,
+                        $selected_skill_data->target_range, $selected_skill_data->attack_type
                     );
                     break;
-                    // case EffectType::Heal->value:
-                    //     BattleState::storePartyHeal(
-                    //         'SKILL', $actor_data, $battle_state_opponents_collection,
-                    //         $opponents_index, $battle_logs_collection, $heal_point, $selected_skill_data->target_range, null, null
-                    //     );
-                    //     break;
+                case EffectType::Heal->value:
+                    BattleState::storeEnemyHeal(
+                        'SKILL', $actor_data, $battle_state_opponents_collection,
+                        $opponents_index, $battle_logs_collection, $heal_point,
+                        $selected_skill_data->target_range, null
+                    );
+                    break;
                     // case EffectType::Buff->value:
                     //     BattleState::storePartyBuff(
                     //         'SKILL', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data->target_range
