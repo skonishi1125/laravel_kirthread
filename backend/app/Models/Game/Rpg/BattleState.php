@@ -557,11 +557,13 @@ class BattleState extends Model
                                 // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
                                 Debugbar::warning('特殊系スキル。');
                                 // TODO: 下記はプレイヤー側のコピペなので敵用に調整対応する必要がある
+                                // ------------------------
                                 // if ($selected_skill_data->is_target_enemy) {
                                 //     $battle_state_opponents_collection = $battle_state_enemies_collection;
                                 // } else {
                                 //     $battle_state_opponents_collection = $battle_state_players_collection;
                                 // }
+                                // ------------------------ ここまで
                                 break;
                             case EffectType::Damage->value:
                                 Debugbar::warning('攻撃系スキルのためプレイヤー情報をopponents_dataに格納');
@@ -576,10 +578,10 @@ class BattleState extends Model
                                 }
                                 break;
                             case EffectType::Heal->value:
-                                Debugbar::warning('回復系スキルのため敵（味方）情報をopponents_dataに格納');
+                                Debugbar::warning('回復系スキルのためモンスター情報をopponents_dataに格納');
                                 $battle_state_opponents_collection = $battle_state_enemies_collection;
                                 // スキルの範囲に応じて、$opponent_index を指定する
-                                // 対象が戦闘不能だった場合などは、storeEnemyXxx...で処理して分岐する
+                                // 対象が戦闘不能だった場合などは、storeEnemyHeal...で処理して分岐する
                                 if ($selected_skill_data->target_range === TargetRange::Single->value) {
                                     Debugbar::warning(TargetRange::Single->label());
                                     // 単体スキルはランダムに指定
@@ -589,9 +591,18 @@ class BattleState extends Model
                                 }
                                 break;
                             case EffectType::Buff->value:
-                                // TODO: デバフを採用するならさらに分岐して、味方データを入れる。
-                                // Debugbar::warning('バフ系スキルのため敵（味方）情報をopponents_dataに格納');
-                                // $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                // TODO: デバフを採用するなら(targer_enemy_indexとかで)さらに分岐して、敵(味方)データを入れる。
+                                Debugbar::warning('バフ系スキルのためモンスター情報をopponents_dataに格納');
+                                $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                // 単体スキルはランダムに指定
+                                // 対象が戦闘不能だった場合、バフ系はadjustBuffFromSituationで処理してくれる
+                                if ($selected_skill_data->target_range === TargetRange::Single->value) {
+                                    Debugbar::warning(TargetRange::Single->label());
+                                    // 単体スキルはランダムに指定
+                                    $opponents_index = rand(0, $battle_state_enemies_collection->count() - 1);
+                                } else {
+                                    Debugbar::warning(TargetRange::All->label());
+                                }
                                 break;
                         }
 
@@ -599,15 +610,15 @@ class BattleState extends Model
 
                         break;
                     case 'ITEM':
-                        // 実装予定はないが、使う想定をしておく
+                        // 実装予定はないため、分岐の用意だけ
                         Debugbar::warning("【ITEM】{$actor_data->name} ");
                         break;
                     case 'DEFENCE':
-                        // 実装予定はないが、使う想定をしておく
+                        // 実装予定はないため、分岐の用意だけ
                         Debugbar::warning("【DEFENCE】{$actor_data->name} ");
                         break;
                     case 'ESCAPE':
-                        // 実装予定はないが、使う想定をしておく
+                        // 実装予定はないため、分岐の用意だけ
                         Debugbar::warning("【ESCAPE】{$actor_data->name} ");
                         break;
                     default:
@@ -797,8 +808,6 @@ class BattleState extends Model
         } else {
             Debugbar::warning('【敵】execCommandSkill(): ----------------------');
             Debugbar::warning($selected_skill_data);
-
-            // TODO: 上の条件をスキルに応じて調整する(一旦単体攻撃スキルだけ実装してみる)
 
             // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
             Skill::decideExecSkill($selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
@@ -1532,7 +1541,7 @@ class BattleState extends Model
                     Debugbar::warning("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
                     // 戦闘不能ならスキップ
                     if ($opponent_data->is_defeated_flag == true) {
-                        $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+                        $battle_logs_collection->push("しかしうまくいかなかった！");
                     } else {
                         $opponent_data->value_hp += $heal_point;
                         if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
@@ -1628,6 +1637,38 @@ class BattleState extends Model
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * 敵スキルに関するバフ付与処理
+     * 
+     * 対象者が戦闘不能だった場合は、adjustBuffFromSituationで分岐して処理してくれる。
+     */
+    public static function storeEnemyBuff(
+        string $command,
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        array $new_buff,
+        int $target_range
+    ) {
+        Debugbar::warning('storeEnemyBuff(): SKILL ------------------------------');
+        if ($target_range === TargetRange::Single->value) {
+            /** @var \stdClass $opponent_data */
+            $opponent_data = $battle_state_opponents_collection[$opponents_index];
+            Debugbar::debug("【単体バフ】使用者: {$actor_data->name} 対象者: {$opponent_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+            self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
+        } elseif ($target_range === TargetRange::All->value) {
+            Debugbar::debug("【全体バフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+            foreach ($battle_state_opponents_collection as $opponent_data) {
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $target_range);
+            }
+            $battle_logs_collection->push('全員のステータスが向上した！');
+        } elseif ($target_range === TargetRange::Self->value) {
+            Debugbar::debug("【自分自身へのバフ】使用者: {$actor_data->name} 使用スキルID: {$new_buff['buffed_skill_id']}");
+            self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $target_range);
         }
     }
 

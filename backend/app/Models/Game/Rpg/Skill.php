@@ -591,6 +591,21 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は自身の細胞を分裂させ、再生した！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 200;
                     break;
+                case SkillDefinition::EnemyGuardSpell :
+                    Debugbar::debug(SkillDefinition::EnemyGuardSpell->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemyAllGuardSpell :
+                    Debugbar::debug(SkillDefinition::EnemyAllGuardSpell->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Roar :
+                    Debugbar::debug(SkillDefinition::Roar->label());
+                    $battle_logs_collection->push("{$actor_data->name}は咆哮し、自分自身を奮い立たせた！");
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
@@ -615,11 +630,11 @@ class Skill extends Model
                         $selected_skill_data->target_range, null
                     );
                     break;
-                    // case EffectType::Buff->value:
-                    //     BattleState::storePartyBuff(
-                    //         'SKILL', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data->target_range
-                    //     );
-                    //     break;
+                case EffectType::Buff->value:
+                    BattleState::storeEnemyBuff(
+                        'SKILL', $actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $new_buff, $selected_skill_data->target_range
+                    );
+                    break;
             }
 
         }

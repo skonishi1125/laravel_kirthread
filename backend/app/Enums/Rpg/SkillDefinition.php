@@ -52,6 +52,9 @@ enum SkillDefinition: int
     case EnemyHealing = 104;
     case EnemyAllHealing = 105;
     case Regeneration = 106;
+    case EnemyGuardSpell = 107;
+    case EnemyAllGuardSpell = 108;
+    case Roar = 109;
 
     public function label(): string
     {
@@ -94,9 +97,12 @@ enum SkillDefinition: int
             self::Rampage => 'あばれる', // 攻撃 物理 全体
             self::Biribiri => 'ビリビリ', // 攻撃 魔法 単体
             self::Discharge => '放電', // 攻撃 魔法 全体
-            self::EnemyHealing => 'エネミーヒーリング',
-            self::EnemyAllHealing => 'エネミーオールヒーリング',
-            self::Regeneration => '再生',
+            self::EnemyHealing => 'エネミーヒーリング',// 回復 単体
+            self::EnemyAllHealing => 'エネミーオールヒーリング', // 回復 全体
+            self::Regeneration => '再生', // 回復 自身
+            self::EnemyGuardSpell => 'エネミーガードスペル', // バフ 単体
+            self::EnemyAllGuardSpell => 'エネミーオールガードスペル', // バフ 全体
+            self::Roar => '咆哮', // バフ 自身
         };
     }
 
@@ -144,6 +150,9 @@ enum SkillDefinition: int
             self::EnemyHealing => '敵専用の回復魔法。単体のHPを回復。',
             self::EnemyAllHealing => '敵専用の回復魔法。全体のHPを回復。',
             self::Regeneration => '細胞分裂することで自信のHPを回復する。',
+            self::EnemyGuardSpell => '敵専用のバフ魔法。単体の防御力を上げる。',
+            self::EnemyAllGuardSpell => '敵専用のバフ魔法。全体の防御力を上げる。',
+            self::Roar => '雄叫びを上げ、自身の攻撃力を上げる。',
         };
     }
 }
