@@ -556,14 +556,22 @@ class BattleState extends Model
                             case EffectType::Special->value:
                                 // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
                                 Debugbar::warning('特殊系スキル。');
-                                // TODO: 下記はプレイヤー側のコピペなので敵用に調整対応する必要がある
-                                // ------------------------
-                                // if ($selected_skill_data->is_target_enemy) {
-                                //     $battle_state_opponents_collection = $battle_state_enemies_collection;
-                                // } else {
-                                //     $battle_state_opponents_collection = $battle_state_players_collection;
-                                // }
-                                // ------------------------ ここまで
+                                // 対象グループ自体はis_target_enemyで指定
+                                if ($selected_skill_data->is_target_enemy) {
+                                    Debugbar::warning('対象グループをプレイヤー側に指定。');
+                                    $battle_state_opponents_collection = $battle_state_players_collection;
+                                } else {
+                                    Debugbar::warning('対象グループをエネミー側に指定。');
+                                    $battle_state_opponents_collection = $battle_state_enemies_collection;
+                                }
+                                // スキルの範囲に応じて、$opponent_index を指定
+                                if ($selected_skill_data->target_range === TargetRange::Single->value) {
+                                    Debugbar::warning(TargetRange::Single->label());
+                                    // 対象グループのindexをランダムに取得しておく
+                                    $opponents_index = rand(0, $battle_state_opponents_collection->count() - 1);
+                                } else {
+                                    Debugbar::warning(TargetRange::All->label());
+                                }
                                 break;
                             case EffectType::Damage->value:
                                 Debugbar::warning('攻撃系スキルのためプレイヤー情報をopponents_dataに格納');
@@ -1541,7 +1549,7 @@ class BattleState extends Model
                     Debugbar::warning("【単体回復】回復量: {$heal_point} 使用者: {$actor_data->name} 対象者: {$opponent_data->name}");
                     // 戦闘不能ならスキップ
                     if ($opponent_data->is_defeated_flag == true) {
-                        $battle_logs_collection->push("しかしうまくいかなかった！");
+                        $battle_logs_collection->push('しかしうまくいかなかった！');
                     } else {
                         $opponent_data->value_hp += $heal_point;
                         if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
@@ -1642,7 +1650,7 @@ class BattleState extends Model
 
     /**
      * 敵スキルに関するバフ付与処理
-     * 
+     *
      * 対象者が戦闘不能だった場合は、adjustBuffFromSituationで分岐して処理してくれる。
      */
     public static function storeEnemyBuff(
@@ -1690,11 +1698,14 @@ class BattleState extends Model
 
         Debugbar::debug("【特殊スキル】使用者: {$actor_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
 
+        $is_enemy = false;
+
         // スキル別に個別の処理を回す。
         switch (SkillDefinition::from($selected_skill_data->id)) {
             case SkillDefinition::HeavyKnuckle : // ヘビーナックル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 敵の防御を無視して、固定のダメージを与える
+                // applyAttackAndLogが使えないので、ログなども含めて書く
                 $opponent_data->value_hp -= $pure_damage;
                 if ($opponent_data->value_hp <= 0) {
                     $opponent_data->value_hp = 0;
@@ -1711,20 +1722,20 @@ class BattleState extends Model
             case SkillDefinition::WideGuard : // ワイドガード
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
-                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
                 break;
             case SkillDefinition::BreakBowGun : // ブレイクボウガン
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後デバフをかける。
-                self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
-                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true);
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
                 break;
             case SkillDefinition::WindAccel : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後自分にバフをかける。
-                self::applyPhysicalAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection);
-                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range);
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 break;
 
             default:
@@ -1733,40 +1744,112 @@ class BattleState extends Model
     }
 
     /**
-     * storePartySpecialSkill()の、攻撃ログ格納処理
+     * storePartySpecialSkill()の、物理 / 魔法攻撃のログ格納処理
      *
-     * 現状物理攻撃だけなので、魔法も使いたかったらcalculated_damageをmdefに調整しよう
+     * 固定ダメージなどは対応していない(ヘビーナックルなど)ので、その場合は特殊スキル側で対応してやる。
      */
-    private static function applyPhysicalAttackAndLog(
+    private static function applyAttackAndLog(
         object $actor_data,
         object $opponent_data,
         int $pure_damage,
-        Collection $battle_logs_collection
+        Collection $battle_logs_collection,
+        int $attack_type,
+        bool $is_enemy
     ) {
-        $calculated_damage = self::calculatePhysicalDamage(
-            $pure_damage,
-            self::calculateActualStatusValue($opponent_data, 'def')
-        );
 
-        if ($calculated_damage > 0) {
-            $opponent_data->value_hp -= $calculated_damage;
-            if ($opponent_data->value_hp <= 0) {
-                $opponent_data->value_hp = 0;
-                $opponent_data->is_defeated_flag = true;
-                self::clearBuff($opponent_data);
-                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                $battle_logs_collection->push("{$opponent_data->name}を倒した！");
-                Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
-            } else {
-                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
-            }
-        } else {
-            $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
-            Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+        $calculated_damage = 0;
+
+        // ダメージ計算 物理か魔法攻撃かで変える
+        if ($attack_type === AttackType::Physical->value) {
+            Debugbar::debug('applyAttackAndLog():: 物理。');
+            $calculated_damage = self::calculatePhysicalDamage(
+                $pure_damage,
+                self::calculateActualStatusValue($opponent_data, 'def')
+            );
+        } elseif ($attack_type === AttackType::Magic->value) {
+            Debugbar::debug('applyAttackAndLog():: 魔法。');
+            $opponent_mdef = self::calculateMagicDefenceValue(
+                self::calculateActualStatusValue($opponent_data, 'def'),
+                self::calculateActualStatusValue($opponent_data, 'int')
+            );
+            $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
         }
 
-        Debugbar::debug('applyPhysicalAttackAndLog終わり。');
+        if (! $is_enemy) {
+            // パーティの場合のログ
+            if ($calculated_damage > 0) {
+                $opponent_data->value_hp -= $calculated_damage;
+                if ($opponent_data->value_hp <= 0) {
+                    $opponent_data->value_hp = 0;
+                    $opponent_data->is_defeated_flag = true;
+                    self::clearBuff($opponent_data);
+                    $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                    $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                    Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                    Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+                }
+            } else {
+                $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+                Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+            }
+
+            Debugbar::debug('applyAttackAndLog終わり。');
+        } else {
+            // 敵の場合のログ
+            if ($calculated_damage > 0) {
+                $opponent_data->value_hp -= $calculated_damage;
+                if ($opponent_data->value_hp <= 0) {
+                    $opponent_data->value_hp = 0;
+                    $opponent_data->is_defeated_flag = true;
+                    self::clearBuff($opponent_data);
+                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                    Debugbar::warning("{$opponent_data->name}がやられた。残HP: {$opponent_data->value_hp}");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！！");
+                    Debugbar::warning("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+                }
+            } else {
+                $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
+                Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+            }
+            Debugbar::warning('applyAttackAndLog終わり。');
+        }
+    }
+
+    /**
+     * 敵スキル 特殊系スキルの処理メソッド。
+     *
+     * ハイスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応す流。
+     */
+    public static function storeEnemySpecialSkill(
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        ?int $opponents_index,
+        Collection $battle_logs_collection,
+        ?int $pure_damage,
+        ?int $heal_point,
+        array $new_buff,
+        object $selected_skill_data
+    ) {
+        Debugbar::warning("【特殊スキル】使用者: {$actor_data->name} 使用スキル: 【{$new_buff['buffed_skill_id']}】{$new_buff['buffed_skill_name']} ");
+
+        $is_enemy = true;
+
+        // スキル別に個別の処理を回す。
+        switch (SkillDefinition::from($selected_skill_data->id)) {
+            case SkillDefinition::DigestiveFluid : // 消化液
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                $is_debuff = true;
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, $is_debuff, $is_enemy);
+                break;
+            default:
+                break;
+        }
+
     }
 
     /**
@@ -1780,13 +1863,18 @@ class BattleState extends Model
         Collection $battle_logs_collection,
         int $target_range,
         bool $is_debuff = false,
+        bool $is_enemy = false
     ) {
         Debugbar::debug("adjustBuffFromSituation() {$opponent_data->name}のバフを調整します。");
         // 戦闘不能ならスキップ
         if ($opponent_data->is_defeated_flag == true) {
             if ($target_range === TargetRange::Single->value && $is_debuff === false) {
                 Debugbar::debug("{$opponent_data->name}は戦闘不能のため付与対象としません。");
-                $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+                if (! $is_enemy) {
+                    $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+                } else {
+                    $battle_logs_collection->push('しかしうまくいかなかった！');
+                }
             }
             // 全体バフの場合は、バフがつかなかったということをbattle_collection_logsには記載しない
             Debugbar::debug("{$opponent_data->name} は戦闘不能のため不発。(ただしAPは減衰する) 処理終了");
@@ -1798,7 +1886,11 @@ class BattleState extends Model
         if ($is_debuff === false && ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value)) {
             $battle_logs_collection->push("{$opponent_data->name}のステータスが向上！");
         } elseif ($is_debuff === true && ($target_range === TargetRange::Single->value || $target_range === TargetRange::Self->value)) {
-            $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
+            if (! $is_enemy) {
+                $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
+            } else {
+                $battle_logs_collection->push("{$opponent_data->name}のステータスが下がった！");
+            }
         }
 
         // すでに存在しているバフを重複して付与した場合は、ターン数を伸ばしてreturnする

@@ -55,6 +55,7 @@ enum SkillDefinition: int
     case EnemyGuardSpell = 107;
     case EnemyAllGuardSpell = 108;
     case Roar = 109;
+    case DigestiveFluid = 110;
 
     public function label(): string
     {
@@ -103,6 +104,7 @@ enum SkillDefinition: int
             self::EnemyGuardSpell => 'エネミーガードスペル', // バフ 単体
             self::EnemyAllGuardSpell => 'エネミーオールガードスペル', // バフ 全体
             self::Roar => '咆哮', // バフ 自身
+            self::DigestiveFluid => '消化液', // 特殊 攻撃 + 防御デバフ
         };
     }
 
@@ -153,6 +155,7 @@ enum SkillDefinition: int
             self::EnemyGuardSpell => '敵専用のバフ魔法。単体の防御力を上げる。',
             self::EnemyAllGuardSpell => '敵専用のバフ魔法。全体の防御力を上げる。',
             self::Roar => '雄叫びを上げ、自身の攻撃力を上げる。',
+            self::DigestiveFluid => '消化液を吐き出す。相手単体にダメージを与え、DEFを低下させる。',
         };
     }
 }

@@ -526,7 +526,9 @@ class Skill extends Model
              * 敵のスキル処理
              */
             Debugbar::warning('decideExecSkill(): --------------------');
-            // 攻撃系スキル && 単体対象スキル($opponents_indexがnullでない)
+            // 攻撃系スキル(特殊も含む) && 単体対象スキル($opponents_indexがnullでない)
+            // 上記ケースの場合、ここで対象戦闘不能時のindex切り替えをする
+            // TODO: 攻撃・回復・バフでタイミングを合わせてもいい。ただバフがちょっと大変かも
             if ($selected_skill_data->effect_type === EffectType::Damage->value && ! is_null($opponents_index)) {
                 // スキル発動前に敵が討伐済みの場合、敵の選択を変更
                 if ($battle_state_opponents_collection[$opponents_index]->is_defeated_flag == true) {
@@ -606,6 +608,14 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は咆哮し、自分自身を奮い立たせた！");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::DigestiveFluid :
+                    Debugbar::debug(SkillDefinition::DigestiveFluid->label());
+                    $battle_logs_collection->push("{$actor_data->name}は消化液を吐き出した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    // マイナスの値にして、相手にデバフとして付与する
+                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
+                    \Debugbar::debug($new_buff['buffed_def']);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
@@ -613,9 +623,9 @@ class Skill extends Model
 
             // 特殊・攻撃・回復・バフに応じて処理を分岐する
             switch ($selected_skill_data->effect_type) {
-                // case EffectType::Special->value:
-                //     BattleState::storePartySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $damage, $heal_point, $new_buff, $selected_skill_data);
-                //     break;
+                case EffectType::Special->value:
+                    BattleState::storeEnemySpecialSkill($actor_data, $battle_state_opponents_collection, $opponents_index, $battle_logs_collection, $damage, $heal_point, $new_buff, $selected_skill_data);
+                    break;
                 case EffectType::Damage->value:
                     BattleState::storeEnemyDamage(
                         'SKILL', $actor_data, $battle_state_opponents_collection,

@@ -1370,6 +1370,26 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::Roar->description(),
             ],
+            [
+                'id' => SkillDefinition::DigestiveFluid->value,
+                'name' => SkillDefinition::DigestiveFluid->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Physical->value,
+                'effect_type' => EffectType::Special->value,
+                'target_range' => TargetRange::Single->value,
+                'is_target_enemy' => true,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 6,
+                'lv1_buff_turn' => 3,
+                'lv2_percent' => 1.2,
+                'lv2_ap_cost' => 6,
+                'lv2_buff_turn' => 3,
+                'lv3_percent' => 1.5,
+                'lv3_ap_cost' => 6,
+                'lv3_buff_turn' => 3,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::DigestiveFluid->description(),
+            ],
 
         ];
 
