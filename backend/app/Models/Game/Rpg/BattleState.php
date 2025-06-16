@@ -478,11 +478,11 @@ class BattleState extends Model
                         /**
                          * 逃走成功確率の計算
                          * (基礎成功率 + (spdの差 * 2) ) * 100
-                         * なお最低値10%, 最大値90%
+                         * なお最低値10%, 最大値100%
                          */
                         $spd_diff = $actor_data->value_spd - $average_enemy_spd;
                         $escape_chance = self::BASE_ESCAPE_CHANCE + ($spd_diff * 0.02);
-                        $escape_chance = max(0.2, min(0.9, $escape_chance));
+                        $escape_chance = max(0.2, min(1.0, $escape_chance));
 
                         $random_int = random_int(0, 100);
                         Debugbar::debug("逃走判定: SPD差 = {$spd_diff}、逃走確率 = ".($escape_chance * 100).'%');
@@ -525,8 +525,7 @@ class BattleState extends Model
 
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
 
-                // TODO: 敵の行動コマンド ATTACK以外の選択肢を揃える
-                // TODO: ボスの場合だけ、この辺りは個別に調整できるようにしておく(固定行動にしたい。)
+                // 敵コマンドの決定
                 self::determineEnemyCommand($actor_data);
                 Debugbar::warning([
                     'message' => '設定後:',
@@ -639,7 +638,9 @@ class BattleState extends Model
     }
 
     /**
-     * 敵のAP状況などを考慮した上でコマンドを設定する。
+     * 敵のコマンドを決定する。
+     *
+     * 'ATTACK'や'SKILL'など。スキルの場合はAPやバフの状況等を考慮した上で決定する。
      */
     private static function determineEnemyCommand(object $enemy_data): void
     {
@@ -647,49 +648,69 @@ class BattleState extends Model
         // TODO: ボスの場合だけこの関数の引数にターン数を渡し、
         // そのターン別の行動やスキルIDを入れたりしたらうまく固定行動が実現できそう
         // スキルIDはターン別行動テーブルを作って、そこに指定しておいたりしたら良さそう
-
-        Debugbar::warning([
-            'message' => 'determineEnemyCommand:',
-            'enemy_data' => $enemy_data,
-        ]);
-
-        // スキルを持っているかチェックし、持っていなければATTACKで固定する
-        if (count($enemy_data->skills) === 0) {
-            Debugbar::warning([
-                'message' => 'スキル未保持。ATTACKを選択:',
-                'enemy_data' => $enemy_data,
-            ]);
-            $enemy_data->command = 'ATTACK';
-        }
-
+        Debugbar::warning('determineEnemyCommand(): ------------------------');
+        Debugbar::warning($enemy_data->value_ap);
         $current_ap = $enemy_data->value_ap;
 
-        // APで使えるスキルだけ抽出する。0なら攻撃を設定する
+        // ① 使用可能スキル一覧を抽出し、該当のない場合は'ATTACK'を指定する
         $available_skills = array_filter($enemy_data->skills, function ($skill) use ($current_ap) {
-            Debugbar::warning(gettype($skill)); // object
-
+            // Debugbar::warning(gettype($skill)); // object
             return isset($skill->ap_cost) && $skill->ap_cost <= $current_ap;
         });
-
-        Debugbar::warning(gettype($available_skills)); // array
-
+        // Debugbar::warning(gettype($available_skills)); // array
         if (count($available_skills) === 0) {
-            Debugbar::warning('APが足りなくスキルが使えないので、ATTACKを選択:');
+            Debugbar::warning('スキル未修得または、APが足りなくスキルが使えないためATTACKコマンドを指定');
             $enemy_data->command = 'ATTACK';
-        } else {
-            // 使えるスキルからランダムに1つ選ぶ
-            $selected_skill = $available_skills[array_rand($available_skills)];
 
-            // スキル一覧を持ってきて、攻撃かどのスキルを使うかを選択
-            $enemy_data->command = 'SKILL';
-            // $selected_skill は object
-            $enemy_data->selected_skill_id = $selected_skill->id;
-            Debugbar::warning([
-                'message' => 'SKILLを選択:',
-                'selected_skill' => $selected_skill,
-            ]);
+            return;
         }
 
+        // ② 'ATTACK' or 'SKILL'の選択。 20%で'ATTACK'  80%で'SKILL'を選択するようにする
+        if (random_int(1, 100) <= 20) {
+            Debugbar::warning('20%の確率で、ATTACKコマンドが指定されました。');
+            $enemy_data->command = 'ATTACK';
+
+            return;
+        }
+
+        // ③ バフ重複を除いたスキルリストを作成
+        $filtered_skills = array_filter($available_skills, function ($skill) use ($enemy_data) {
+            $is_buff = ($skill->effect_type ?? null) === EffectType::Buff->value;
+            if (! $is_buff) {
+                return true;
+            }
+            // buffsに同じskill_idがあれば重複とみなす
+            foreach ($enemy_data->buffs ?? [] as $buff) {
+                if (($buff->buffed_skill_id ?? null) === $skill->id) {
+                    Debugbar::warning("使用可能なスキルの中で、すでに付与されているバフスキルがあるので今回は選択肢から除きます。名称: {$skill->name}");
+
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // ヒールスキルについても、同じように重複チェックで弾くことができる (例えば8割切らないとfalseにするとか。)
+        // if ($skill->effect_type === EffectType::Heal->value && $enemy_data->value_hp >= $enemy_data->max_value_hp * 0.8) {
+        //     return false;
+        // }
+
+        // ④ 候補が0件なら ATTACK
+        if (count($filtered_skills) === 0) {
+            Debugbar::warning('バフスキルが使用可能だったが、重複掛けを避けるためATTACKを選択。');
+            $enemy_data->command = 'ATTACK';
+
+            return;
+        }
+
+        // ③ スキルをランダムに1つ選択
+        $selected_skill = $filtered_skills[array_rand($filtered_skills)];
+        // Debugbar::warning($selected_skill);
+        // Debugbar::warning($enemy_data);
+        $enemy_data->command = 'SKILL';
+        $enemy_data->selected_skill_id = $selected_skill->id; // $selected_skill は object
+        Debugbar::warning("SKILLを選択。 {$selected_skill->name}");
     }
 
     /**
