@@ -44,6 +44,19 @@ enum SkillDefinition: int
     case AttackSpell = 63;
     case MagicSpell = 64;
 
+    // -------------------- 敵 --------------------
+    case Bite = 100;
+    case Rampage = 101;
+    case Biribiri = 102;
+    case Discharge = 103;
+    case EnemyHealing = 104;
+    case EnemyAllHealing = 105;
+    case Regeneration = 106;
+    case EnemyGuardSpell = 107;
+    case EnemyAllGuardSpell = 108;
+    case Roar = 109;
+    case DigestiveFluid = 110;
+
     public function label(): string
     {
         return match ($this) {
@@ -80,6 +93,18 @@ enum SkillDefinition: int
             self::GuardSpell => 'ガードスペル',
             self::AttackSpell => 'アタックスペル',
             self::MagicSpell => 'マジックスペル',
+
+            self::Bite => 'かみつく', // 攻撃 物理 単体
+            self::Rampage => 'あばれる', // 攻撃 物理 全体
+            self::Biribiri => 'ビリビリ', // 攻撃 魔法 単体
+            self::Discharge => '放電', // 攻撃 魔法 全体
+            self::EnemyHealing => 'エネミーヒーリング',// 回復 単体
+            self::EnemyAllHealing => 'エネミーオールヒーリング', // 回復 全体
+            self::Regeneration => '再生', // 回復 自身
+            self::EnemyGuardSpell => 'エネミーガードスペル', // バフ 単体
+            self::EnemyAllGuardSpell => 'エネミーオールガードスペル', // バフ 全体
+            self::Roar => '咆哮', // バフ 自身
+            self::DigestiveFluid => '消化液', // 特殊 攻撃 + 防御デバフ
         };
     }
 
@@ -119,6 +144,18 @@ enum SkillDefinition: int
             self::MagicSpell => '味方1人の魔力をアップさせる。上昇率は自身のステータスに依存する。',
             self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
             self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
+
+            self::Bite => '相手単体に噛みつき物理攻撃する。',
+            self::Rampage => '大暴れして、相手全体に物理攻撃。',
+            self::Biribiri => '相手単体に雷の力で魔法攻撃。',
+            self::Discharge => '電気の力を解き放ち、相手全体に魔法攻撃に雷の力で魔法攻撃。',
+            self::EnemyHealing => '敵専用の回復魔法。単体のHPを回復。',
+            self::EnemyAllHealing => '敵専用の回復魔法。全体のHPを回復。',
+            self::Regeneration => '細胞分裂することで自信のHPを回復する。',
+            self::EnemyGuardSpell => '敵専用のバフ魔法。単体の防御力を上げる。',
+            self::EnemyAllGuardSpell => '敵専用のバフ魔法。全体の防御力を上げる。',
+            self::Roar => '雄叫びを上げ、自身の攻撃力を上げる。',
+            self::DigestiveFluid => '消化液を吐き出す。相手単体にダメージを与え、DEFを低下させる。',
         };
     }
 }
