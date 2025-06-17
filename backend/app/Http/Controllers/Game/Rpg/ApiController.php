@@ -477,6 +477,8 @@ class ApiController extends Controller
         Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
         $savedata = Savedata::getLoginUserCurrentSavedata();
 
+        $current_turn = 1;
+
         // 戦闘中かどうかの判定
         $is_user_battle = BattleState::where('savedata_id', $savedata->id)->exists();
 
@@ -537,15 +539,19 @@ class ApiController extends Controller
             $enemies_collection = collect(json_decode($battle_state->enemies_json_data));
             $items_collection = collect(json_decode($battle_state->items_json_data));
 
+            // current_turnを戦闘履歴から取得して格納
+            $current_turn = $battle_state->current_turn;
+
         }
 
         // vueに渡すデータ
-        // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム
+        // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム [4]ターン数
         $all_data = collect()
             ->push($players_collection)
             ->push($enemies_collection)
             ->push($battle_state->session_id)
-            ->push($items_collection);
+            ->push($items_collection)
+            ->push($current_turn);
 
         return $all_data;
     }
@@ -618,11 +624,15 @@ class ApiController extends Controller
         // $battle_state_players_and_enemies_collection = $battle_state_players_collection->concat($battle_state_enemies_collection);
         BattleState::afterExecCommandCalculateBuff($battle_state_players_and_enemies_collection, $battle_logs_collection);
 
+        // ターン数更新
+        $next_turn = $battle_state->current_turn + 1;
+
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
             'players_json_data' => json_encode($battle_state_players_collection),
             'items_json_data' => json_encode($battle_state_items_collection),
             'enemies_json_data' => json_encode($battle_state_enemies_collection),
+            'current_turn' => $next_turn,
         ]);
 
         // vueに渡すデータ
@@ -630,7 +640,8 @@ class ApiController extends Controller
             ->push($battle_state_players_collection)
             ->push($battle_state_enemies_collection)
             ->push($battle_logs_collection)
-            ->push($battle_state_items_collection);
+            ->push($battle_state_items_collection)
+            ->push($next_turn);
 
         return $all_vue_data;
     }

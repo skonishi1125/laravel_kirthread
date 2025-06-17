@@ -200,6 +200,7 @@ class BattleState extends Model
             'items_json_data' => json_encode($items_collection),
             'enemies_json_data' => json_encode($enemies_collection),
             'enemy_drops_json_data' => json_encode($enemy_drops_collection),
+            'current_turn' => 1,
             'current_field_id' => $field_id,
             'current_stage_id' => $stage_id,
         ]);
