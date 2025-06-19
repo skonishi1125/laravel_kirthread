@@ -14,6 +14,7 @@ class Enemy extends Model
 
     protected $casts = [
         'is_boss' => 'boolean',
+        'has_pattern' => 'boolean',
     ];
 
     // $e->enemy_learned_skills

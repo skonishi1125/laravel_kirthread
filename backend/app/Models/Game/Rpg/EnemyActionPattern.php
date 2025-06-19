@@ -11,6 +11,10 @@ class EnemyActionPattern extends Model
 
     protected $table = 'rpg_enemy_action_patterns';
 
+    protected $casts = [
+        'is_use_skill' => 'boolean',
+    ];
+
     protected $guarded = [
         'id',
     ];

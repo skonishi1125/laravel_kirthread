@@ -151,6 +151,7 @@ class BattleState extends Model
             $enemy_data['enemy_index'] = $enemy_index; // 敵の並び。
             $enemy_data['skills'] = $learned_skills;
             $enemy_data['is_boss'] = $enemy['is_boss'];
+            $enemy_data['has_pattern'] = $enemy['has_pattern'];
             $enemy_data['exp'] = $enemy['exp'];
             $enemy_data['drop_money'] = $enemy['drop_money'];
 
@@ -274,7 +275,8 @@ class BattleState extends Model
         Collection $battle_state_players_collection,
         Collection $battle_state_enemies_collection,
         Collection &$battle_state_items_collection,
-        Collection $battle_logs_collection
+        Collection $battle_logs_collection,
+        int $current_turn
     ) {
         // $actor_dataはstdClass Object型となるため、"->"で参照する。
         /** @var \stdClass $actor_data */
@@ -527,12 +529,8 @@ class BattleState extends Model
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
 
                 // 敵コマンドの決定
-                self::determineEnemyCommand($actor_data);
-                Debugbar::warning([
-                    'message' => '設定後:',
-                    'command' => $actor_data->command,
-                    'skill_id' => $actor_data->selected_skill_id,
-                ]);
+                self::determineEnemyCommand($actor_data, $current_turn);
+                Debugbar::warning("determineEnemyCommand()決定。設定後: {$actor_data->command} スキルID: {$actor_data->selected_skill_id}");
 
                 switch ($actor_data->command) {
                     case 'ATTACK':
@@ -643,15 +641,70 @@ class BattleState extends Model
      *
      * 'ATTACK'や'SKILL'など。スキルの場合はAPやバフの状況等を考慮した上で決定する。
      */
-    private static function determineEnemyCommand(object $enemy_data): void
+    private static function determineEnemyCommand(object $enemy_data, int $current_turn): void
     {
 
-        // TODO: ボスの場合だけこの関数の引数にターン数を渡し、
-        // そのターン別の行動やスキルIDを入れたりしたらうまく固定行動が実現できそう
-        // スキルIDはターン別行動テーブルを作って、そこに指定しておいたりしたら良さそう
         Debugbar::warning('determineEnemyCommand(): ------------------------');
         Debugbar::warning($enemy_data->value_ap);
         $current_ap = $enemy_data->value_ap;
+
+        // 固定パターンを持つ敵かどうかをチェック
+        // 持つ場合は、固定行動に沿った情報を渡してreturnする
+        if ($enemy_data->has_pattern === true) {
+            // 敵に設定されている最大パターンのターン数を取得。 そちらで剰余を求め、行動パターンのループをさせる
+            // 例: 6パターン設定されていたなら、7ターン目 = (7-1) % 6 + 1 = turn_countが1の行動として動く
+            // TODO: 戦闘のたびクエリを発行しているのでもっと処理を最適化できると思うが、
+            // プレイユーザーもそんなにいないと思うのでまずは全体の完成を優先させる。余裕があれば直そう。
+            $max_turn_count = EnemyActionPattern::where('enemy_id', $enemy_data->id)->max('turn_count');
+            $turn_count = ($current_turn - 1) % $max_turn_count + 1;
+
+            Debugbar::warning("固定パターンを持つ敵データです。ターンカウント: {$turn_count}");
+            $action_pattern = EnemyActionPattern::where('enemy_id', $enemy_data->id)
+                ->where('turn_count', $turn_count)
+                ->first();
+
+            // 本来nullになることはないはずだが、そうなった場合はATTACKとしてreturnする
+            if (is_null($action_pattern)) {
+                Debugbar::warning('action_patternが見当たりませんでした。ATTACKを格納しますが、管理者側で確認が必要です。');
+                $enemy_data->command = 'ATTACK';
+
+                return;
+            }
+
+            if ($action_pattern->is_use_skill === true) {
+                Debugbar::warning('固定パターン: SKILL');
+                $skill_id = $action_pattern->skill_id;
+                $selected_skill = collect($enemy_data->skills)->first(function ($skill) use ($skill_id) {
+                    return $skill->id === $skill_id;
+                });
+
+                if (is_null($selected_skill)) {
+                    Debugbar::warning('指定されたスキルID {$skill_id} が敵のスキル一覧に存在しません。ATTACKを格納しますが、管理者側で確認が必要です。');
+                    $enemy_data->command = 'ATTACK';
+
+                    return;
+                }
+
+                if ($selected_skill->ap_cost > $current_ap) {
+                    Debugbar::warning("指定されたスキルID {$skill_id} はAP不足だったため、ATTACKを格納します。");
+                    $enemy_data->command = 'ATTACK';
+
+                    return;
+                }
+
+                // バフチェックはしない。(patternに従う。)
+                // 通過したのでSKILLコマンドとして採用
+                $enemy_data->command = 'SKILL';
+                $enemy_data->selected_skill_id = $selected_skill->id;
+            } else {
+                $enemy_data->command = 'ATTACK';
+                Debugbar::warning('固定パターン: ATTACK');
+            }
+
+            return;
+        }
+
+        Debugbar::warning('固定パターンを持たないため、①〜④のフローで処理します。');
 
         // ① 使用可能スキル一覧を抽出し、該当のない場合は'ATTACK'を指定する
         $available_skills = array_filter($enemy_data->skills, function ($skill) use ($current_ap) {

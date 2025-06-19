@@ -568,6 +568,7 @@ class ApiController extends Controller
         $battle_state_players_collection = collect(json_decode($battle_state['players_json_data']));
         $battle_state_enemies_collection = collect(json_decode($battle_state['enemies_json_data']));
         $battle_state_items_collection = collect(json_decode($battle_state['items_json_data']));
+        $current_turn = $battle_state['current_turn'];
 
         // ["partyId" => 1, "command" => "ATTACK","enemyIndex" => 0],[...]といった、パーティ人数分のコマンド配列
         $selected_commands_collection = collect($request->selectedCommands);
@@ -608,7 +609,8 @@ class ApiController extends Controller
 
         Debugbar::debug('戦闘実行！ BattleState::execBattleCommand()----------------');
         BattleState::execBattleCommand(
-            $sorted_battle_state_players_and_enemies_collection, $battle_state_players_collection, $battle_state_enemies_collection, $battle_state_items_collection, $battle_logs_collection
+            $sorted_battle_state_players_and_enemies_collection, $battle_state_players_collection, $battle_state_enemies_collection, $battle_state_items_collection, $battle_logs_collection,
+            $current_turn
         );
 
         Debugbar::debug('--------------戦闘処理完了(ステータス一覧)----------------');
