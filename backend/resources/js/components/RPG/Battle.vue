@@ -380,7 +380,8 @@
             
           </div>
           <p v-if="battle.status == 'command'">
-            {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？<br>
+            <span>【ターン数: {{ currentTurn }}】</span>
+            {{ partyData[battle.currentPartyMemberIndex].name }}はどうしようか？
             <div>
               <hr>
               <span v-html="hoveredDescription"></span>
@@ -578,6 +579,7 @@ export default {
       stageId: this.$route.params.stageId,
       partyData: {},
       itemData: {},
+      currentTurn: 1,
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       hoveredEnemy: null,
       enemyData: {},
@@ -665,6 +667,7 @@ export default {
         this.enemyData = data[1] || [];
         this.$store.dispatch('setBattleSessionId', data[2] || []);
         this.itemData = data[3] || [];
+        this.currentTurn = data[4] || 1;
 
         console.log('encount | buff格納');
         // バフ配列
@@ -969,6 +972,7 @@ export default {
           this.enemyData = data[1] || [];
           this.battleLog = data[2] || []; //戦闘結果を取得する
           this.itemData  = data[3] || [];
+          this.currentTurn  = data[4] || 1;
 
           console.log('execBattleCommand | buff格納');
           // 味方バフ一覧

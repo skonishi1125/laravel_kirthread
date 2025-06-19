@@ -107,6 +107,7 @@ class EnemyTableSeeder extends Seeder
                 'portrait_image_path' => 'oyadamawani.png',
                 'description' => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない。',
                 'is_boss' => true,
+                'has_pattern' => true,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],

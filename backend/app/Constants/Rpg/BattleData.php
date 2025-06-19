@@ -69,6 +69,7 @@ class BattleData
         'enemy_index' => null, // 敵の並び。
         'is_enemy' => true, // 味方と敵で同じデータ構造をベースとしているので、判別するためのフラグ
         'is_boss' => false,
+        'has_pattern' => false,
         'exp' => 0,
         'drop_money' => 0,
     ];
