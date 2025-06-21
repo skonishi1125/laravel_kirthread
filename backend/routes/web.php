@@ -24,39 +24,41 @@ Route::get('/game', 'PageController@game')->name('game');
 Route::get('/game/panel', 'PageController@panel')->name('game_panel');
 
 if (config('app.env') === 'local') {
-// RPG関連のルーティング
-// rpg/* のパスにアクセスした場合、トップページに飛ばす
-// (その後はvue-router側で操作される)
-Route::get('/game/rpg/{any?}', 'Game\Rpg\IndexController@index')
-    ->where('any', '.*')
-    ->name('game_rpg_index');
+    // RPG関連のルーティング
+    // rpg/* のパスにアクセスした場合、トップページに飛ばす
+    // (その後はvue-router側で操作される)
+    Route::get('/game/rpg/{any?}', 'Game\Rpg\IndexController@index')
+        ->where('any', '.*')
+        ->name('game_rpg_index');
 
-// RPG API関連
-Route::get('/api/game/rpg/title/check_situation', 'Game\Rpg\ApiController@checkSituation')->name('api_game_rpg_beginning_title_check_situation');
-Route::post('/api/game/rpg/title/create_rpg_user', 'Game\Rpg\ApiController@createRpgUser')->name('api_game_rpg_beginning_title_create_rpg_user');
-Route::get('/api/game/rpg/title/check_savedata_info', 'Game\Rpg\ApiController@checkSavedataInfo')->name('api_game_rpg_beginning_title_check_savedata_info');
-Route::post('/api/game/rpg/title/delete_savedata', 'Game\Rpg\ApiController@deleteSavedata')->name('api_game_rpg_beginning_title_delete_savedata');
+    // RPG API関連
+    Route::get('/api/game/rpg/title/check_situation', 'Game\Rpg\ApiController@checkSituation')->name('api_game_rpg_beginning_title_check_situation');
+    Route::post('/api/game/rpg/title/create_rpg_user', 'Game\Rpg\ApiController@createRpgUser')->name('api_game_rpg_beginning_title_create_rpg_user');
+    Route::get('/api/game/rpg/title/check_savedata_info', 'Game\Rpg\ApiController@checkSavedataInfo')->name('api_game_rpg_beginning_title_check_savedata_info');
+    Route::post('/api/game/rpg/title/delete_savedata', 'Game\Rpg\ApiController@deleteSavedata')->name('api_game_rpg_beginning_title_delete_savedata');
 
-Route::get('/api/game/rpg/beginning/prepare_beginning', 'Game\Rpg\ApiController@prepareBeginning')->name('api_game_rpg_beginning_prepare_beginning');
-Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createParties')->name('api_game_rpg_beginning_create');
+    Route::get('/api/game/rpg/beginning/prepare_beginning', 'Game\Rpg\ApiController@prepareBeginning')->name('api_game_rpg_beginning_prepare_beginning');
+    Route::post('/api/game/rpg/beginning/create', 'Game\Rpg\ApiController@createParties')->name('api_game_rpg_beginning_create');
 
-Route::post('/api/game/rpg/status/increment', 'Game\Rpg\ApiController@incrementStatus')->name('api_game_rpg_status_increment');
-Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
-Route::post('/api/game/rpg/status/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
+    Route::post('/api/game/rpg/status/increment', 'Game\Rpg\ApiController@incrementStatus')->name('api_game_rpg_status_increment');
+    Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
+    Route::post('/api/game/rpg/status/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
 
-Route::get('/api/game/rpg/shop/information', 'Game\Rpg\ApiController@getItemInfo')->name('api_game_rpg_shop_information');
-Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
-Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
-Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
-Route::post('/api/game/rpg/battle/finish', 'Game\Rpg\ApiController@finishBattle')->name('api_game_rpg_battle_finish');
-Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
-Route::post('/api/game/rpg/battle/refresh', 'Game\Rpg\ApiController@refreshBattleState')->name('api_game_rpg_battle_refresh_battle_state');
+    Route::get('/api/game/rpg/shop/information', 'Game\Rpg\ApiController@getItemInfo')->name('api_game_rpg_shop_information');
+    Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
+    Route::post('/api/game/rpg/battle/encount', 'Game\Rpg\ApiController@setEncountElement')->name('api_game_rpg_battle_encount');
+    Route::post('/api/game/rpg/battle/exec', 'Game\Rpg\ApiController@execBattleCommand')->name('api_game_rpg_battle_exec');
+    Route::post('/api/game/rpg/battle/finish', 'Game\Rpg\ApiController@finishBattle')->name('api_game_rpg_battle_finish');
+    Route::post('/api/game/rpg/battle/result_win', 'Game\Rpg\ApiController@resultWinBattle')->name('api_game_rpg_battle_result_win');
+    Route::post('/api/game/rpg/battle/refresh', 'Game\Rpg\ApiController@refreshBattleState')->name('api_game_rpg_battle_refresh_battle_state');
 
-Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
-Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');
-Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
+    Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
+    Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');
+    Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
 
-Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
+    // 中央広場関連
+    Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
+    Route::get('/api/game/rpg/menu/plaza/library/fetch_book', 'Game\Rpg\ApiController@fetchLibraryBook')->name('api_game_rpg_menu_plaza_library_fetch_book');
 
 }
 

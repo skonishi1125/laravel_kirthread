@@ -21,6 +21,9 @@ export default createStore({
       // 中央広場
       plaza: {
         status: 'start',  // 'start', 'loaded', 'moved'
+        library: {
+          status: 'start', // 'start', 'loaded'
+        },
       },
       // ショップ画面
       shop: {
@@ -89,9 +92,18 @@ export default createStore({
     },
 
     // ------------- 中央広場 -------------
+    // メイン
     setMenuPlazaStatus(state, status) {
       state.menu.plaza.status = status;
     },
+    // 図書館
+    setMenuPlazaLibraryStatus(state, status) {
+      state.menu.plaza.library.status = status;
+    },
+
+
+
+    // ------------- 中央広場 -------------
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus(state, status) {
@@ -235,9 +247,15 @@ export default createStore({
     },
 
     // ------------- 中央広場 -------------
+    // メイン
     setMenuPlazaStatus({ commit }, status) {
       commit('setMenuPlazaStatus', status);
     },
+    // 図書館
+    setMenuPlazaLibraryStatus({ commit }, status) {
+      commit('setMenuPlazaLibraryStatus', status);
+    },
+    
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus({ commit }, status) {

@@ -10,10 +10,25 @@
 
 .clickable-marker {
   position: absolute;
-  color: rgb(34, 132, 218);
-  font-size: 32px;
+  background-color: rgba(22, 159, 177, 0.9); /* 半透明青 */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 36px;
   cursor: pointer;
   transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(22, 159, 177, 0.7);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.clickable-marker:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 0 12px rgba(22, 159, 177, 1);
 }
 
 </style>
@@ -50,15 +65,15 @@
       <div class="row mt-3 sub-sucreen-main-space sub-screen-back-img">
         <div class="col-12">
           <!-- 図書館 -->
-          <div class="clickable-marker" style="top: 5%; left: 50%;" @click="selectDestination('Library')">⚫︎</div>
+          <div class="clickable-marker" style="top: 5%; left: 50%;" @click="selectDestination('Library')"></div>
           <!-- 中央掲示板 -->
-          <div class="clickable-marker" style="top: 30%; left: 50%;" @click="selectDestination('Bbs')">⚫︎</div>
+          <div class="clickable-marker" style="top: 30%; left: 50%;" @click="selectDestination('Bbs')"></div>
           <!-- リフレッシュ場 -->
-          <div class="clickable-marker" style="top: 24%; left: 83%;" @click="selectDestination('Refresh')">⚫︎</div>
+          <div class="clickable-marker" style="top: 24%; left: 83%;" @click="selectDestination('Refresh')"></div>
           <!-- バイト -->
-          <div class="clickable-marker" style="top: 22%; left: 18%;" @click="selectDestination('Job')">⚫︎</div>
+          <div class="clickable-marker" style="top: 22%; left: 18%;" @click="selectDestination('Job')"></div>
           <!-- 冒険 -->
-          <div class="clickable-marker" style="top: 90%; left: 50%;" @click="selectDestination('Adventure')">⚫︎</div>
+          <div class="clickable-marker" style="top: 90%; left: 50%;" @click="selectDestination('Adventure')"></div>
 
         </div>
       </div>
@@ -101,7 +116,7 @@
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
       checkPlazaStatus() {
         console.log(`checkPlazaStatus(): --------`);
-        axios.get('/api/game/rpg/parties/information')
+        axios.get('/api/game/rpg/menu/plaza/check_status')
           .then(response => {
             console.log(`response`);
             this.$store.dispatch('setMenuPlazaStatus', 'loaded');
