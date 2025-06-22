@@ -24,6 +24,10 @@ export default createStore({
         library: {
           status: 'start', // 'start', 'loaded'
         },
+        // アルバイト 状態管理なし
+        bbs: {
+          status: 'start', // 'start', 'loaded'
+        },
       },
       // ショップ画面
       shop: {
@@ -100,7 +104,11 @@ export default createStore({
     setMenuPlazaLibraryStatus(state, status) {
       state.menu.plaza.library.status = status;
     },
-
+    // アルバイト 状態管理なし
+    // 冒険者掲示板
+    setMenuPlazaBbsStatus(state, status) {
+      state.menu.plaza.bbs.status = status;
+    },
 
 
     // ------------- 中央広場 -------------
@@ -254,6 +262,11 @@ export default createStore({
     // 図書館
     setMenuPlazaLibraryStatus({ commit }, status) {
       commit('setMenuPlazaLibraryStatus', status);
+    },
+    // アルバイト 状態管理なし
+    // 冒険者掲示板
+    setMenuPlazaBbsStatus({ commit }, status) {
+      commit('setMenuPlazaBbsStatus', status);
     },
     
 

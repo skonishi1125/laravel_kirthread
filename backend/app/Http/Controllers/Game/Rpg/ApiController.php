@@ -1021,4 +1021,13 @@ class ApiController extends Controller
     {
         return true;
     }
+
+    /**
+     * 冒険者掲示板で表示する投稿の情報を取得する。
+     */
+    public function fetchBbsPost()
+    {
+        return true;
+    }
+
 }

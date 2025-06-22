@@ -59,6 +59,7 @@ if (config('app.env') === 'local') {
     // 中央広場関連
     Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
     Route::get('/api/game/rpg/menu/plaza/library/fetch_book', 'Game\Rpg\ApiController@fetchLibraryBook')->name('api_game_rpg_menu_plaza_library_fetch_book');
+    Route::get('/api/game/rpg/menu/plaza/bbs/fetch_post', 'Game\Rpg\ApiController@fetchBbsPost')->name('api_game_rpg_menu_plaza_bbs_fetch_post');
 
 }
 

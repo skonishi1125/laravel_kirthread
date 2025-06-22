@@ -48,7 +48,7 @@
       <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_shop'})">ショップ</button></div>
       <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_status'})">ステータス</button></div>
       <div><button class="btn btn-secondary btn-menu" @click="$router.push({ name: 'menu_other'})">マニュアル</button></div>
-      <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
+      <div><button class="btn btn-outline-success btn-menu" @click="endGame">タイトルに戻る</button></div>
     </div>
 
     <div class="col-10" v-if="isMenuRoute">
