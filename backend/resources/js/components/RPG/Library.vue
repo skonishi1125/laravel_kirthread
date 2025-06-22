@@ -89,7 +89,7 @@
                 <div><button class="btn btn-sm btn-outline-info active">戦術学論</button></div> <!-- デフォルト -->
                 <div><button class="btn btn-sm btn-outline-info">魔物図譜</button></div>
                 <div><button class="btn btn-sm btn-outline-info">歴史神話学</button></div>
-                <div><button class="btn btn-sm btn-success" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button></div>
+                <div><button class="btn btn-sm btn-outline-success my-5" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button></div>
               </div>
             </div>
 
