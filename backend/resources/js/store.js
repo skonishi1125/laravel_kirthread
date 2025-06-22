@@ -28,6 +28,9 @@ export default createStore({
         bbs: {
           status: 'start', // 'start', 'loaded'
         },
+        refresh: {
+          status: 'start', // 'start', 'loaded'
+        },
       },
       // ショップ画面
       shop: {
@@ -108,6 +111,10 @@ export default createStore({
     // 冒険者掲示板
     setMenuPlazaBbsStatus(state, status) {
       state.menu.plaza.bbs.status = status;
+    },
+    // リフレッシュ
+    setMenuPlazaRefreshStatus(state, status) {
+      state.menu.plaza.refresh.status = status;
     },
 
 
@@ -267,6 +274,11 @@ export default createStore({
     // 冒険者掲示板
     setMenuPlazaBbsStatus({ commit }, status) {
       commit('setMenuPlazaBbsStatus', status);
+    },
+    
+    // リフレッシュ
+    setMenuPlazaRefreshStatus({ commit }, status) {
+      commit('setMenuPlazaRefreshStatus', status);
     },
     
 
