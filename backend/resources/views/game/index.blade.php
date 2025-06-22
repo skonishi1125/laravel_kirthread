@@ -16,7 +16,8 @@
 
             <ul style="list-style-type: none">
               <li><a href="{{ route('game_panel') }}">2色パネル</a></li>
-              <li><a href="{{ route('game_rpg_index') }}">{{ config('app.game_name') }}</a>(体験版公開中)</li>
+              {{-- <li><a href="{{ route('game_rpg_index') }}">{{ config('app.game_name') }}</a>(体験版公開中)</li> --}}
+              <li><p>{{ config('app.game_name') }}</a>(工事中)</li>
             </ul>
 
             <a href="{{ route('/') }}">もどる</a>
