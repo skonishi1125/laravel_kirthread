@@ -6,13 +6,15 @@
   <div class="row">
     <div class="col-md-12">
       {{-- 未ログインのユーザーにだけ宣伝する --}}
+      {{-- 
       @if (! Auth::check())
-      <div class="text-center mb-3">
-        <small class="text-muted">
-          <a href="{{ route('game_rpg_index') }}">🧙 RPGゲームの体験版を公開しています！</a>
-        </small>
-      </div>
-      @endif
+        <div class="text-center mb-3">
+          <small class="text-muted">
+            <a href="{{ route('game_rpg_index') }}">🧙 RPGゲームの体験版を公開しています！</a>
+          </small>
+        </div>
+      @endif 
+      --}}
       <div class="card">
         <div class="card-header">
           <h5>みんなの投稿</h5>
