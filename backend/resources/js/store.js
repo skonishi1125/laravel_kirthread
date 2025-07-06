@@ -18,7 +18,7 @@ export default createStore({
       adventure: {
         status: 'start',  // 'start', 'selectable'
       },
-      // 中央広場
+      // 中心広場
       plaza: {
         status: 'start',  // 'start', 'loaded', 'moved'
         library: {
@@ -98,7 +98,7 @@ export default createStore({
       state.menu.adventure.status = status;
     },
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
     // メイン
     setMenuPlazaStatus(state, status) {
       state.menu.plaza.status = status;
@@ -118,7 +118,7 @@ export default createStore({
     },
 
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus(state, status) {
@@ -261,7 +261,7 @@ export default createStore({
       commit('setMenuAdventureStatus', status);
     },
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
     // メイン
     setMenuPlazaStatus({ commit }, status) {
       commit('setMenuPlazaStatus', status);
