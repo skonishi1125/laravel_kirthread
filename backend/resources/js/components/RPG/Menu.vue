@@ -43,13 +43,12 @@
 
   <div class="row my-5 h-100">
     <div class="col-2 menu-bar">
-      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/adventure')">冒険に出る</button></div>
-      <!-- <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/skill')">中心広場</button></div> -->
-      <div><button class="btn btn-info btn-menu" disabled>中心広場</button></div>
-      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/shop')">ショップ</button></div>
-      <div><button class="btn btn-info btn-menu" @click="$router.push('/game/rpg/menu/status')">ステータス</button></div>
-      <div><button class="btn btn-secondary btn-menu" @click="$router.push('/game/rpg/menu/other')">マニュアル</button></div>
-      <div><button class="btn btn-success btn-menu" @click="endGame">タイトルに戻る</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_adventure'})">冒険に出る</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_plaza'})">中心広場</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_shop'})">ショップ</button></div>
+      <div><button class="btn btn-info btn-menu" @click="$router.push({ name: 'menu_status'})">ステータス</button></div>
+      <div><button class="btn btn-secondary btn-menu" @click="$router.push({ name: 'menu_other'})">マニュアル</button></div>
+      <div><button class="btn btn-outline-success btn-menu" @click="endGame">タイトルに戻る</button></div>
     </div>
 
     <div class="col-10" v-if="isMenuRoute">

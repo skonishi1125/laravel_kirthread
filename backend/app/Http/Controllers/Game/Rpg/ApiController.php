@@ -1002,4 +1002,32 @@ class ApiController extends Controller
 
         Debugbar::debug('敗北または戦闘エラー処理対応。戦闘セッションをデータとして保存せず削除しました。');
     }
+
+    /**
+     * 中央広場 アクセス時のチェック処理
+     *
+     * リフレッシュ場など、クリアステージによって解放される施設がある
+     * そちらをチェックするアクション
+     */
+    public function checkPlazaStatus()
+    {
+        return true;
+    }
+
+    /**
+     * 図書館で表示する本の情報を取得 進行度に応じて増減する。
+     */
+    public function fetchLibraryBook()
+    {
+        return true;
+    }
+
+    /**
+     * 冒険者掲示板で表示する投稿の情報を取得する。
+     */
+    public function fetchBbsPost()
+    {
+        return true;
+    }
+
 }

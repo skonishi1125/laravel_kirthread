@@ -12,6 +12,15 @@ import Shop from './components/RPG/Shop.vue';
 import Status from './components/RPG/Status.vue';
 import Battle from './components/RPG/Battle.vue';
 import Other from './components/RPG/Other.vue';
+
+// 中央広場
+import Plaza from './components/RPG/Plaza.vue';
+import Library from './components/RPG/Library.vue';
+import Bbs from './components/RPG/Bbs.vue';
+import Refresh from './components/RPG/Refresh.vue';
+import Job from './components/RPG/Job.vue';
+
+
 const routes = [
   { 
       path: '/game/rpg',
@@ -29,18 +38,49 @@ const routes = [
       children: [
         {
           path: 'adventure',
+          name: 'menu_adventure',
           component: Adventure
         },
+        // ----------------- 中央広場 -----------------
+          {
+            path: 'plaza',
+            name: 'menu_plaza',
+            component: Plaza,
+          },
+          {
+            path: 'library',
+            name: 'menu_plaza_library',
+            component: Library
+          },
+          {
+            path: 'bbs',
+            name: 'menu_plaza_bbs',
+            component: Bbs
+          },
+          {
+            path: 'refresh',
+            name: 'menu_plaza_refresh',
+            component: Refresh
+          },
+          {
+            path: 'job',
+            name: 'menu_plaza_job',
+            component: Job
+          },
+        // ----------------- 中央広場 -----------------
         {
           path: 'shop',
+          name: 'menu_shop',
           component: Shop
         },
         {
           path: 'status',
+          name: 'menu_status',
           component: Status
         },
         {
           path: 'other',
+          name: 'menu_other',
           component: Other
         }
       ]

@@ -18,6 +18,20 @@ export default createStore({
       adventure: {
         status: 'start',  // 'start', 'selectable'
       },
+      // 中央広場
+      plaza: {
+        status: 'start',  // 'start', 'loaded', 'moved'
+        library: {
+          status: 'start', // 'start', 'loaded'
+        },
+        // アルバイト 状態管理なし
+        bbs: {
+          status: 'start', // 'start', 'loaded'
+        },
+        refresh: {
+          status: 'start', // 'start', 'loaded'
+        },
+      },
       // ショップ画面
       shop: {
         status: 'start',  // 'start' 'buy' 'sell'とかかな。
@@ -83,6 +97,28 @@ export default createStore({
     setMenuAdventureStatus(state, status) {
       state.menu.adventure.status = status;
     },
+
+    // ------------- 中央広場 -------------
+    // メイン
+    setMenuPlazaStatus(state, status) {
+      state.menu.plaza.status = status;
+    },
+    // 図書館
+    setMenuPlazaLibraryStatus(state, status) {
+      state.menu.plaza.library.status = status;
+    },
+    // アルバイト 状態管理なし
+    // 冒険者掲示板
+    setMenuPlazaBbsStatus(state, status) {
+      state.menu.plaza.bbs.status = status;
+    },
+    // リフレッシュ
+    setMenuPlazaRefreshStatus(state, status) {
+      state.menu.plaza.refresh.status = status;
+    },
+
+
+    // ------------- 中央広場 -------------
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus(state, status) {
@@ -220,10 +256,31 @@ export default createStore({
     },
 
     // menu
-    // ------------- ショップ画面 -------------
+    // ------------- 冒険画面 -------------
     setMenuAdventureStatus({ commit }, status) {
       commit('setMenuAdventureStatus', status);
     },
+
+    // ------------- 中央広場 -------------
+    // メイン
+    setMenuPlazaStatus({ commit }, status) {
+      commit('setMenuPlazaStatus', status);
+    },
+    // 図書館
+    setMenuPlazaLibraryStatus({ commit }, status) {
+      commit('setMenuPlazaLibraryStatus', status);
+    },
+    // アルバイト 状態管理なし
+    // 冒険者掲示板
+    setMenuPlazaBbsStatus({ commit }, status) {
+      commit('setMenuPlazaBbsStatus', status);
+    },
+    
+    // リフレッシュ
+    setMenuPlazaRefreshStatus({ commit }, status) {
+      commit('setMenuPlazaRefreshStatus', status);
+    },
+    
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus({ commit }, status) {
