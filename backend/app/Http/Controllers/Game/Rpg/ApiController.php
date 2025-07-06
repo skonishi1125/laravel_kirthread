@@ -9,6 +9,7 @@ use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Exp;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
+use App\Models\Game\Rpg\Library;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
@@ -1019,7 +1020,25 @@ class ApiController extends Controller
      */
     public function fetchLibraryBook()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $readable_adventure_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ADVENTURE);
+        $readable_enemy_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ENEMY);
+        $readable_history_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_HISTORY);
+
+        // vueに渡すデータ
+        // [0]戦術学論 [1]魔物図譜 [2]歴史神話学
+        $all_data = collect()
+            ->push($readable_adventure_libraries)
+            ->push($readable_enemy_libraries)
+            ->push($readable_history_libraries);
+
+        return $all_data;
     }
 
     /**
@@ -1029,5 +1048,4 @@ class ApiController extends Controller
     {
         return true;
     }
-
 }

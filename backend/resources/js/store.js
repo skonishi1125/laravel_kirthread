@@ -22,7 +22,7 @@ export default createStore({
       plaza: {
         status: 'start',  // 'start', 'loaded', 'moved'
         library: {
-          status: 'start', // 'start', 'loaded'
+          status: 'start', // 'start', 'adventure', 'enemy', 'history'
         },
         // アルバイト 状態管理なし
         bbs: {

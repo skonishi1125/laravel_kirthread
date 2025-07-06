@@ -56,7 +56,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>どこに向かおうか？</small></p>
+            <p><small>色々な施設がある。用事があるのはどこだったっけ？</small></p>
           </div>
           <hr>
           <div style="font-size: 0.9em;">
