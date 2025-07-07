@@ -60,6 +60,8 @@ if (config('app.env') === 'local') {
     Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
     Route::get('/api/game/rpg/menu/plaza/library/fetch_book', 'Game\Rpg\ApiController@fetchLibraryBook')->name('api_game_rpg_menu_plaza_library_fetch_book');
     Route::get('/api/game/rpg/menu/plaza/bbs/fetch_post', 'Game\Rpg\ApiController@fetchBbsPost')->name('api_game_rpg_menu_plaza_bbs_fetch_post');
+    Route::post('/api/game/rpg/menu/plaza/bbs/store', 'Game\Rpg\ApiController@storeBbsPost')->name('api_game_rpg_menu_plaza_bbs_store');
+    Route::post('/api/game/rpg/menu/plaza/bbs/delete', 'Game\Rpg\ApiController@deleteBbsPost')->name('api_game_rpg_menu_plaza_bbs_delete');
 
 }
 

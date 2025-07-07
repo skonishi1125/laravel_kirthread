@@ -6,6 +6,7 @@ use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AfterCleared;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
+use App\Models\Game\Rpg\Board;
 use App\Models\Game\Rpg\Exp;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
@@ -1046,6 +1047,82 @@ class ApiController extends Controller
      */
     public function fetchBbsPost()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $posts = Board::fetchPostWithBanPolicy($savedata, Board::BBS_POST_NUM);
+        $formatted_posts = $posts->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'savedata_id' => $post->savedata_id,
+                'message' => $post->message,
+                'is_spoiled' => $post->is_spoiled,
+                'is_banned' => $post->is_banned,
+                'created_at' => optional($post->created_at)->format('Y-m-d H:i:s'), // 2025-07-07T12:23:02.000000Z という表記になるのを防ぐ
+            ];
+        });
+
+        $all_data = collect()
+            ->push($savedata->id)
+            ->push($formatted_posts);
+
+        return $all_data;
+    }
+
+    /**
+     * 掲示板新規投稿格納処理
+     *
+     * 投稿は1日1回まで。AM 7:00 リセット。
+     */
+    public function storeBbsPost(Request $request)
+    {
+        $board_content = [
+            'savedata_id' => $request->get('savedata_id'),
+            'message' => $request->get('message'),
+            'is_spoiled' => $request->get('is_spoiled'),
+        ];
+
+        // 1日1回の書き込みチェック
+        $is_already_writtened = Board::checkIsAlreadyWrittenDay($board_content['savedata_id']);
+        if ($is_already_writtened === true) {
+            return response()->json([
+                'errorMessage' => '冒険者掲示板への書き込みは1日1回までです。毎朝7時にリセットされます。',
+            ], 429);
+        }
+
+        // Vue側でもチェックしているが、改めてバリデーションする
+        if (mb_strlen($board_content['message']) > 20) {
+            return response()->json([
+                'errorMessage' => '投稿が20文字以上です。',
+            ], 500);
+        }
+
+        // こちらで失敗した場合でもaxiosでは500エラーが発生する
+        $created_board = Board::create($board_content);
+
+        return response()->json([
+            'successMessage' => '投稿が完了しました！',
+        ], 200);
+    }
+
+    public function deleteBbsPost(Request $request)
+    {
+        $board_id = $request->get('id');
+
+        if (is_null($board_id)) {
+            return response()->json([
+                'errorMessage' => '削除対象のidが渡されていません。',
+            ], 500);
+        }
+
+        $deleted_board = Board::find($board_id)->delete();
+
+        return response()->json([
+            'successMessage' => "書き込み:[{$board_id}]の削除処理が正常に完了しました。",
+        ], 200);
     }
 }
