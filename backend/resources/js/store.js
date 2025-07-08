@@ -25,6 +25,9 @@ export default createStore({
           status: 'start', // 'start', 'adventure', 'enemy', 'history'
         },
         // アルバイト 状態管理なし
+        job: {
+          status: 'start', // 'start', 'loaded', 'result'
+        },
         bbs: {
           status: 'start', // 'start', 'loaded'
         },
@@ -107,7 +110,10 @@ export default createStore({
     setMenuPlazaLibraryStatus(state, status) {
       state.menu.plaza.library.status = status;
     },
-    // アルバイト 状態管理なし
+    // アルバイト
+    setMenuPlazaJobStatus(state, status) {
+      state.menu.plaza.job.status = status;
+    },
     // 冒険者掲示板
     setMenuPlazaBbsStatus(state, status) {
       state.menu.plaza.bbs.status = status;
@@ -270,7 +276,10 @@ export default createStore({
     setMenuPlazaLibraryStatus({ commit }, status) {
       commit('setMenuPlazaLibraryStatus', status);
     },
-    // アルバイト 状態管理なし
+    // アルバイト
+    setMenuPlazaJobStatus({ commit }, status) {
+      commit('setMenuPlazaJobStatus', status);
+    },
     // 冒険者掲示板
     setMenuPlazaBbsStatus({ commit }, status) {
       commit('setMenuPlazaBbsStatus', status);

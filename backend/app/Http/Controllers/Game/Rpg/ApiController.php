@@ -1125,4 +1125,9 @@ class ApiController extends Controller
             'successMessage' => "書き込み:[{$board_id}]の削除処理が正常に完了しました。",
         ], 200);
     }
+
+    public function fetchJobStatus()
+    {
+        return true;
+    }
 }

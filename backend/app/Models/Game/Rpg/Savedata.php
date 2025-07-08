@@ -26,6 +26,13 @@ class Savedata extends Model
     {
         parent::boot();
 
+        // 作成する時に関連テーブルも作成
+        // creatingだとまだデータが作成できていないので、->idが参照できない
+        // createdならデータINSERT後に発火するので対応できる
+        static::created(function ($savedata) {
+            $savedata->job()->create();
+        });
+
         // 削除した時、セーブデータに紐づく情報もすべて削除する
         static::deleting(function ($savedata) {
             // $savedata->parties()->delete();
@@ -36,6 +43,7 @@ class Savedata extends Model
             $savedata->battle_state()->delete();
             $savedata->savedata_has_item()->delete();
             $savedata->savedata_cleared_Fields()->delete();
+            $savedata->job()->delete();
         });
     }
 
@@ -97,6 +105,11 @@ class Savedata extends Model
     public function battle_state()
     {
         return $this->hasOne(BattleState::class, 'savedata_id');
+    }
+
+    public function job()
+    {
+        return $this->hasOne(Job::class, 'savedata_id');
     }
 
     public static function getLoginUserCurrentSavedata()
