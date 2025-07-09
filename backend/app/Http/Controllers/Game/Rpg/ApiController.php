@@ -10,6 +10,7 @@ use App\Models\Game\Rpg\Board;
 use App\Models\Game\Rpg\Exp;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
+use App\Models\Game\Rpg\Job;
 use App\Models\Game\Rpg\Library;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
@@ -1128,6 +1129,62 @@ class ApiController extends Controller
 
     public function fetchJobStatus()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // ログイン中ユーザーのJobに関するデータをまとめる
+        $job = $savedata->job;
+        $vue_data = collect(
+            [
+                'grade' => $job->grade,
+                'grade_label' => Job::GRADE_LABELS[$job->grade],
+                'payment_rate' => Job::PAYMENT_RATES[$job->grade],
+            ]
+        );
+
+        return $vue_data;
+    }
+
+    // Job クリック数に応じた決済と、ユーザーランキングを返す
+    public function calculateJobResult(Request $request)
+    {
+        $push_count = $request->get('push_count');
+        $earned_money = $request->get('earned_money');
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // 金額加算処理
+        $savedata->update([
+            'money' => $savedata->money + $earned_money,
+        ]);
+
+        // トータルクリック回数、及びgradeのアップグレード
+        $job = $savedata->job;
+        $total_count = $job->total_count + $push_count;
+        $new_grade = Job::calculateGradeByCount($total_count);
+        $job->update(
+            [
+                'grade' => $new_grade,
+                'total_count' => $job->total_count + $push_count,
+            ]
+        );
+
+        // TOP10のランキング取得
+        $job_ranking = Job::orderBy('total_count', 'DESC')->limit(10)->get();
+
+        $vue_data = collect()
+            ->push($job)
+            ->push($job_ranking);
+
+        return $vue_data;
     }
 }

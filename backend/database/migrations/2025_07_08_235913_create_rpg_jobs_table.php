@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('savedata_id')->unsigned();
             $table->bigInteger('total_count')->unsigned()->default(0);
-            $table->integer('grade')->unsigned()->default(1);
+            $table->integer('grade')->unsigned()->default(0);
             $table->timestamps();
         });
     }
