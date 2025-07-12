@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(\Database\Seeders\rpg\ExpTableSeeder::class);
         $this->call(\Database\Seeders\rpg\EnemyLearnedSkillTableSeeder::class);
         $this->call(\Database\Seeders\rpg\EnemyActionPatternTableSeeder::class);
+        $this->call(\Database\Seeders\rpg\LibraryTableSeeder::class);
 
         // local以外で実行すると、本番のスキルデータやアイテムデータも書き変わるので注意。
         if (config('app.env') === 'local') {
