@@ -68,7 +68,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>lib 読み込み中...</small></p>
+            <p><small>読み込み中...</small></p>
           </div>
           <hr>
         </div>
