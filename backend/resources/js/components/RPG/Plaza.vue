@@ -190,7 +190,7 @@
           case 'Refresh':
             this.facilityInfo.name = '癒しの館';
             // this.facilityInfo.description = '改装中のようです。冒険を進めたら再度訪れてみましょう。';
-            this.facilityInfo.description = '心身をリフレッシュし、振り分けたポイントのリセットができます。';
+            this.facilityInfo.description = '心身をリフレッシュし、スッキリ爽快できます。';
             break;
           case 'Job':
             this.facilityInfo.name = '日雇いギルド';

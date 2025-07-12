@@ -33,6 +33,7 @@ export default createStore({
         },
         refresh: {
           status: 'start', // 'start', 'loaded'
+          currentSelectedPartyMemberIndex: 0, // 味方画面の配列のインデックス 0, 1, 2
         },
       },
       // ショップ画面
@@ -121,6 +122,9 @@ export default createStore({
     // リフレッシュ
     setMenuPlazaRefreshStatus(state, status) {
       state.menu.plaza.refresh.status = status;
+    },
+    setMenuPlazaRefreshCurrentSelectedPartyMemberIndex(state, number) {
+      state.menu.plaza.refresh.currentSelectedPartyMemberIndex = number;
     },
 
 
@@ -288,6 +292,9 @@ export default createStore({
     // リフレッシュ
     setMenuPlazaRefreshStatus({ commit }, status) {
       commit('setMenuPlazaRefreshStatus', status);
+    },
+    setMenuPlazaRefreshCurrentSelectedPartyMemberIndex({ commit }, number) {
+      commit('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', number);
     },
     
 

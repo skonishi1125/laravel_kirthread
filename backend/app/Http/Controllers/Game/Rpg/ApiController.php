@@ -27,7 +27,9 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // TODO: constructなどでログインしているユーザーがアクセスできる前提とする
+    // TODO:
+    // * constructなどでログインしているユーザーがアクセスできる前提とする
+    // * 肥大化しているので余力があればControllerを分割する
 
     /**
      * タイトル画面。ユーザーの状態に応じてパターンを分ける。
@@ -406,35 +408,6 @@ class ApiController extends Controller
 
         return response()->json([
             'message' => '習得処理を正常に完了しました。',
-        ]);
-    }
-
-    /**
-     * ステータス・スキルポイントの振り分けをリセットする
-     */
-    public function resetStatusAndSkillPoint(Request $request)
-    {
-        $party_id = $request->party_id;
-        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
-        $party = Party::find($party_id);
-
-        try {
-            DB::transaction(function () use ($party) {
-                if (is_null($party)) {
-                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
-                }
-                $party->resetStautsAndSkillPoint();
-            });
-        } catch (\Exception $e) {
-            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
-
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        }
-
-        return response()->json([
-            'message' => 'パーティメンバーのステータス・スキルポイントをリセットしました。',
         ]);
     }
 
@@ -1186,5 +1159,83 @@ class ApiController extends Controller
             ->push($job_ranking);
 
         return $vue_data;
+    }
+
+    /**
+     * 癒しの館で使用する情報の取得
+     */
+    public function fetchRefreshPartiesInfo()
+    {
+        // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $money = $savedata->money;
+        $parties = $savedata->parties; // collectionとして取得
+        $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
+
+        foreach ($parties as $party) {
+            $party_data_collection = collect([
+                'party_id' => $party->id,
+                'level' => $party->level,
+                'nickname' => $party->nickname,
+                'status' => [
+                    'value_hp' => $party->value_hp,
+                    'allocated_hp' => $party->allocated_hp,
+                    'value_ap' => $party->value_ap,
+                    'allocated_ap' => $party->allocated_ap,
+                    'value_str' => $party->value_str,
+                    'allocated_str' => $party->allocated_str,
+                    'value_def' => $party->value_def,
+                    'allocated_def' => $party->allocated_def,
+                    'value_int' => $party->value_int,
+                    'allocated_int' => $party->allocated_int,
+                    'value_spd' => $party->value_spd,
+                    'allocated_spd' => $party->allocated_spd,
+                    'value_luc' => $party->value_luc,
+                    'allocated_luc' => $party->allocated_luc,
+                ],
+                'skills' => Skill::generateSkillCollection($party),
+            ]);
+
+            $parties_data_collection->push($party_data_collection);
+        }
+
+        $vue_data = collect()
+            ->push($parties_data_collection)
+            ->push($money);
+
+        return response()->json($vue_data);
+    }
+
+    /**
+     * ステータス・スキルポイントの振り分けをリセットする
+     */
+    public function resetStatusAndSkillPoint(Request $request)
+    {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $payment_money = $request->payment_money;
+        $party_id = $request->party_id;
+        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
+        $party = Party::find($party_id);
+
+        try {
+            DB::transaction(function () use ($party, $savedata, $payment_money) {
+                if (is_null($party)) {
+                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+                }
+                $party->resetStautsAndSkillPoint();
+                $savedata->money = $savedata->money - $payment_money;
+                $savedata->save();
+            });
+        } catch (\Exception $e) {
+            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'パーティメンバーのステータス・スキルポイントをリセットしました。',
+        ]);
     }
 }

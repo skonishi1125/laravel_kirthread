@@ -42,7 +42,6 @@ if (config('app.env') === 'local') {
 
     Route::post('/api/game/rpg/status/increment', 'Game\Rpg\ApiController@incrementStatus')->name('api_game_rpg_status_increment');
     Route::post('/api/game/rpg/status/skill/learn', 'Game\Rpg\ApiController@learnSkill')->name('api_game_rpg_status_skill_learn');
-    Route::post('/api/game/rpg/status/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
 
     Route::get('/api/game/rpg/shop/information', 'Game\Rpg\ApiController@getItemInfo')->name('api_game_rpg_shop_information');
     Route::get('/api/game/rpg/field/list', 'Game\Rpg\ApiController@fieldList')->name('api_game_rpg_field_list');
@@ -64,6 +63,8 @@ if (config('app.env') === 'local') {
     Route::post('/api/game/rpg/menu/plaza/bbs/delete', 'Game\Rpg\ApiController@deleteBbsPost')->name('api_game_rpg_menu_plaza_bbs_delete');
     Route::get('/api/game/rpg/menu/plaza/job/fetch_status', 'Game\Rpg\ApiController@fetchJobStatus')->name('api_game_rpg_menu_plaza_job_fetch_status');
     Route::post('/api/game/rpg/menu/plaza/job/calculate', 'Game\Rpg\ApiController@calculateJobResult')->name('api_game_rpg_menu_plaza_job_calculate');
+    Route::get('/api/game/rpg/menu/plaza/refresh/fetch_parties_info', 'Game\Rpg\ApiController@fetchRefreshPartiesInfo')->name('api_game_rpg_menu_plaza_refresh_fetch_parties_info');
+    Route::post('/api/game/rpg/menu/plaza/refresh/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
 
 }
 
