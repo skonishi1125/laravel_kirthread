@@ -17,13 +17,25 @@
 }
 
 .book-modal-content {
-  background: #fdf6e3; /* クリームがかった背景 */
+  /* background: #fdf6e3; */
   /* font-family: "Georgia", "游明朝", serif; */
   max-height: 700px;
   border-radius: 6px;
   padding: 24px;
   line-height: 1.8;
   box-shadow: 0 0 20px rgba(0,0,0,0.15);
+}
+
+.book-modal-color-adventure {
+  background: #e3ebfd;
+}
+
+.book-modal-color-enemy {
+  background: #dedede;
+}
+
+.book-modal-color-history {
+  background: #fdf6e3;
 }
 
 .book-modal-title {
@@ -56,7 +68,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>lib 読み込み中...</small></p>
+            <p><small>読み込み中...</small></p>
           </div>
           <hr>
         </div>
@@ -68,7 +80,7 @@
     </div>
   </div>
 
-  <div v-if="status.status == 'loaded'">
+  <div v-else>
     <div class="sub-screen-wrapper">
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
@@ -86,10 +98,29 @@
             <!-- 左バー -->
             <div class="col-2 my-2">
               <div style="min-height: 480px;  display: flex; flex-flow: column; justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
-                <div><button class="btn btn-sm btn-outline-info active">戦術学論</button></div> <!-- デフォルト -->
-                <div><button class="btn btn-sm btn-outline-info">魔物図譜</button></div>
-                <div><button class="btn btn-sm btn-outline-info">歴史神話学</button></div>
-                <div><button class="btn btn-sm btn-outline-success my-5" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button></div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                  :class="{'active': status.status === 'adventure'}"
+                  @click="changeCurrentBookCategory('adventure')">
+                  戦術学論</button>
+                </div> <!-- デフォルト -->
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                  :class="{'active': status.status === 'enemy'}"
+                  @click="changeCurrentBookCategory('enemy')">
+                  魔物図譜</button>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
+                  :class="{'active': status.status === 'history'}"
+                  @click="changeCurrentBookCategory('history')">
+                  歴史神話学</button>
+                </div>
+
+                <div>
+                  <button class="btn btn-sm btn-outline-success my-5" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button>
+                </div>
+
               </div>
             </div>
 
@@ -99,15 +130,13 @@
                 <table class="table table-borderless table-hoverable">
                   <thead>
                     <tr style="border-bottom: 1px dotted;">
-                      <th>書籍一覧</th>
+                      <th v-if="status.status === 'adventure'">戦術学論 書籍一覧</th>
+                      <th v-if="status.status === 'enemy'">魔物図譜 書籍一覧</th>
+                      <th v-if="status.status === 'history'">歴史神話学 書籍一覧</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr class="weight-bold" @click="openBookModal"><td>戦術論I: 治療師の観点から捉える補助職業の優位性</td></tr>
-                    <tr class="weight-bold" @click="openBookModal"><td>魔導工学I: 魔導師使用学術の推論</td></tr>
-                    <tr class="weight-bold" @click="openBookModal"><td>0からわかる！戦闘のススメ</td></tr>
-                    <tr class="weight-bold" @click="openBookModal"><td>魔導工学I: 魔導師使用学術の推論</td></tr>
-                    <tr class="weight-bold" @click="openBookModal"><td>Ranger's skill: Learn By Reading</td></tr>
+                  <tbody v-for="currentBook in currentBooks">
+                    <tr class="weight-bold" @click="openBookModal(currentBook)"><td>{{ currentBook.name }}</td></tr>
                   </tbody>
 
                 </table>
@@ -126,31 +155,20 @@
   <teleport to="body">
     <div class="modal fade" id="book-modal" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
-        <div class="modal-content book-modal-content">
-          
+        <div class="modal-content book-modal-content"
+          :class="{'book-modal-color-adventure': status.status === 'adventure'},
+            {'book-modal-color-enemy': status.status === 'enemy'},
+            {'book-modal-color-history': status.status === 'history'}"
+          >
           <div class="modal-header">
-            <h6 class="modal-title book-modal-title"><b>戦術論I: 治療師の観点から捉える補助職業の優位性</b></h6>
+            <h6 class="modal-title book-modal-title"><b>{{ modalBook.name }}</b></h6>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
 
           <div class="modal-body book-modal-body">
-            <p>コンテンツ</p>
-            <p>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              あああああああああああああああああああああああああああああああああああああああああああああああああああ<br>
-              <br>
-              <br>
-              <br>
-              テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。
-              テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。
-              テストです。テストです。テストです。テストです。テストです。テストです。テストです。テストです。
-            </p>
+            <div v-html="modalBook.content"></div>
             <p>【終】</p>
           </div>
 
@@ -171,6 +189,11 @@
   export default {
     data() { // script内で使用する変数を定義する。
       return {
+        adventureBooks: {},
+        enemyBooks: {},
+        historyBooks: {},
+        currentBooks: {}, // 現在の状態で表示する本の配列をそのまま入れる
+        modalBook: {}
       }
     },
     // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -192,12 +215,40 @@
         console.log(`fetchBook(): --------`);
         axios.get('/api/game/rpg/menu/plaza/library/fetch_book')
           .then(response => {
-            console.log(`response`);
-            this.$store.dispatch('setMenuPlazaLibraryStatus', 'loaded');
+            console.log(`fetchBook: OK`);
+            this.adventureBooks = response.data[0] || [];
+            this.enemyBooks = response.data[1] || [];
+            this.historyBooks = response.data[2] || [];
+
+            // 画面にそれぞれ表示させられるよう、項目を入れる
+            this.currentBooks = this.adventureBooks;
+
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'adventure');
+            console.log(this.adventureBooks);
           });
       },
-      openBookModal() {
+
+      // モーダル用の変数に現在の書籍情報を格納する
+      openBookModal(book) {
+        this.modalBook = book;
         $('#book-modal').modal('show');
+      },
+
+      changeCurrentBookCategory(category) {
+        switch (category) {
+          case 'adventure':
+            this.currentBooks = this.adventureBooks;
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'adventure');
+            break;
+          case 'enemy':
+            this.currentBooks = this.enemyBooks;
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'enemy');
+            break;
+          case 'history':
+            this.currentBooks = this.historyBooks;
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'history');
+            break;
+        }
       }
     }
   }

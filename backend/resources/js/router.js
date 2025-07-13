@@ -13,7 +13,7 @@ import Status from './components/RPG/Status.vue';
 import Battle from './components/RPG/Battle.vue';
 import Other from './components/RPG/Other.vue';
 
-// 中央広場
+// 中心広場
 import Plaza from './components/RPG/Plaza.vue';
 import Library from './components/RPG/Library.vue';
 import Bbs from './components/RPG/Bbs.vue';
@@ -41,7 +41,7 @@ const routes = [
           name: 'menu_adventure',
           component: Adventure
         },
-        // ----------------- 中央広場 -----------------
+        // ----------------- 中心広場 -----------------
           {
             path: 'plaza',
             name: 'menu_plaza',
@@ -67,7 +67,7 @@ const routes = [
             name: 'menu_plaza_job',
             component: Job
           },
-        // ----------------- 中央広場 -----------------
+        // ----------------- 中心広場 -----------------
         {
           path: 'shop',
           name: 'menu_shop',
