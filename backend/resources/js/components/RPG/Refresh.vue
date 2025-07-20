@@ -328,7 +328,9 @@
             this.$store.dispatch('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', 0);
             this.$store.dispatch('setMenuPlazaRefreshStatus', 'loaded');
           }
-        );
+        ).catch(error => {
+            this.$router.push({ name: 'menu_plaza'});
+        });
       },
 
       paymentRefresh(){

@@ -27,6 +27,9 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
+    // 3つ以上クリアすることが条件
+    public const PLAZA_ENABLE_CLEAR_FIELD = 3;
+
     // TODO:
     // * constructなどでログインしているユーザーがアクセスできる前提とする
     // * 肥大化しているので余力があればControllerを分割する
@@ -982,12 +985,27 @@ class ApiController extends Controller
     /**
      * 中心広場 アクセス時のチェック処理
      *
-     * リフレッシュ場など、クリアステージによって解放される施設がある
-     * そちらをチェックするアクション
+     * 癒しの館など、クリアステージによって解放される施設のフラグを返す
      */
     public function checkPlazaStatus()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $is_enabled = false;
+        $cleared_count = $savedata->savedata_cleared_fields()->count();
+        if ($cleared_count >= self::PLAZA_ENABLE_CLEAR_FIELD) {
+            $is_enabled = true;
+        }
+
+        $vue_data = collect()->push($is_enabled);
+
+        return $vue_data;
+
     }
 
     /**
@@ -1168,6 +1186,18 @@ class ApiController extends Controller
     {
         // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
         $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // URLをベタ打ちして遷移していないか。
+        $cleared_count = $savedata->savedata_cleared_fields()->count();
+        if ($cleared_count < self::PLAZA_ENABLE_CLEAR_FIELD) {
+            return response()->json(['403: Forbidden'], 403); // 403: Forbidden などでOK
+        }
+
         $money = $savedata->money;
         $parties = $savedata->parties; // collectionとして取得
         $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
