@@ -77,21 +77,21 @@
             @click="selectDestination('Library')"
             @mouseover="showFacilityInfo('Library')"
           ></div>
-          <!-- 中央掲示板 -->
+          <!-- 冒険者掲示板 -->
           <div class="clickable-marker" 
-            style="top: 30%; left: 50%;" 
+            style="top: 40%; left: 50%;" 
             @click="selectDestination('Bbs')"
             @mouseover="showFacilityInfo('Bbs')"
           ></div>
-          <!-- リフレッシュ場 -->
+          <!-- 癒しの館 -->
           <div class="clickable-marker" 
-            style="top: 24%; left: 83%;" 
+            style="top: 30%; left: 76%;" 
             @click="selectDestination('Refresh')"
             @mouseover="showFacilityInfo('Refresh')"
           ></div>
-          <!-- バイト -->
+          <!-- 日雇いギルド -->
           <div class="clickable-marker"
-            style="top: 22%; left: 18%;" 
+            style="top: 22%; left: 20%;" 
             @click="selectDestination('Job')"
             @mouseover="showFacilityInfo('Job')"
           ></div>
