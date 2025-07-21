@@ -78,9 +78,9 @@ class Savedata extends Model
         return $this->hasMany(Party::class, 'savedata_id');
     }
 
-    public function savedata_has_item()
+    public function savedata_has_items()
     {
-        return $this->hasOne(SavedataHasItem::class, 'savedata_id');
+        return $this->hasMany(SavedataHasItem::class, 'savedata_id');
     }
 
     public function savedata_cleared_fields(): HasMany

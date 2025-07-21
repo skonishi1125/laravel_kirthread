@@ -217,7 +217,9 @@ class ApiController extends Controller
     public function getItemInfo()
     {
         $savedata = Savedata::getLoginUserCurrentSavedata();
+        $current_possession = $savedata->savedata_has_items->sum('possession_number');
         $return_list = [
+            'current_possession' => $current_possession,
             'money' => 0,
             'buyItemList' => [],
             'sellItemList' => [],

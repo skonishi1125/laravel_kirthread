@@ -41,10 +41,13 @@
         <div class="col-12">
           <p><small>何を買おうかな？(所持金: <b>{{ money }}</b> G)</small></p>
           <hr>
+          <p>
+            <span v-if="after_purchase_array.after_purchase_flag" style="color: red">
+              <small>・{{ after_purchase_array.name }}を{{ after_purchase_array.number }}個購入しました！</small>
+            </span>
+          </p>
         </div>
-          <div class="col-12" style="color: red" v-if="after_purchase_array.after_purchase_flag">
-            <p><small>{{ after_purchase_array.name }} x {{ after_purchase_array.number }} を購入しました!</small></p>
-          </div>
+
       </div>
 
       <div class="row mt-3 sub-sucreen-main-space">
@@ -61,7 +64,7 @@
                   <th>名前</th>
                   <th>価格</th>
                   <th>説明</th>
-                  <th>所持</th>
+                  <th>所持数</th>
                 </tr>
             </thead>
             <tbody>
@@ -106,21 +109,25 @@
                     <input type="text" style="display: none;">
                     <input id="purchase-number" min="0" type="number" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm"
                         v-model.number="inputPurchaseItemNumber"
-                        :max="purchaseForm.max_possession_number - purchaseForm.possession_number"
+                        :max="maxPurchaseLimit"
                         @input="validatePurchaseItem"
                     >
                   </div>
                   <hr>
                   <div>
-                    所持数: {{ purchaseForm.possession_number }} <br>
-                    ※最大所持可能数: <span style="color:red">{{ purchaseForm.max_possession_number }}</span>
+                    <small> 現在所持数: <b>{{ purchaseForm.possession_number }}</b> 個</small>
+                    <br>
+                    <small>
+                      ※{{ purchaseForm.name }}の最大所持可能数: <b style="color:red">{{ purchaseForm.max_possession_number }}</b> 個
+                    </small>
                   </div>
                   <div style="text-align: right;">
-                      合計: {{ purchaseForm.price * inputPurchaseItemNumber }} G
+                    <p>合計: {{ purchaseForm.price * inputPurchaseItemNumber }} G</p>
                   </div>
-                  <div v-if="modalErrorMessage != null">
-                    <p style="font-size: 13px; color:red">{{ modalErrorMessage }}</p>
-                  </div>
+                  <small style="color:red">
+                    アイテムは合計10個まで所持することができます。現在の合計所持数: <b>{{ currentPossession }}</b> 個
+                  </small>
+                  <small v-if="modalErrorMessage != null">{{ modalErrorMessage }}</small>
                 </div>
               </form>
               </div>
@@ -130,7 +137,7 @@
                 <!-- 購入しないときは、押せなくする -->
                 <button type="button" class="btn btn-info" 
                   @click="paymentItem"
-                  :disabled="inputPurchaseItemNumber < 1 || purchaseForm.max_possession_number - purchaseForm.possession_number < 1"
+                  :disabled="inputPurchaseItemNumber < 1 || purchaseForm.max_possession_number - purchaseForm.possession_number < 1 || currentPossession >= 10"
                 >
                   購入する
               </button>
@@ -163,6 +170,8 @@
           name: '',
           price: '',
         },
+        currentPossession: 0,
+        maxPossession: 10,
         money: 0,
         price: 0,
         after_purchase_array: {
@@ -183,6 +192,14 @@
       ...mapState({
         status: state => state.menu.shop.status,
       }),
+
+      // 使用している値に変化があるたびに、計算し直すようcomputedに書く
+      maxPurchaseLimit() {
+        console.log('maxPurchaseLimit');
+          const remainingOverall = this.maxPossession - this.currentPossession; // 全体であと何個持てるか
+          const remainingThisItem = this.purchaseForm.max_possession_number - this.purchaseForm.possession_number; // このアイテムであと何個持てるか
+          return Math.max(Math.min(remainingOverall, remainingThisItem), 0);
+      },
     },
     mounted() {
       console.log(this.status); // state.menu.shop.status
@@ -196,6 +213,7 @@
         console.log("getShopInfo(): -----------------------------------------");
         axios.get('/api/game/rpg/shop/information')
           .then(response => {
+              this.currentPossession = response.data.current_possession;
               this.money = response.data.money;
               this.buyItemList = response.data.buyItemList;
               this.sellItemList = response.data.sellItemList;
