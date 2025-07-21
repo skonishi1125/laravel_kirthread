@@ -217,7 +217,9 @@ class ApiController extends Controller
     public function getItemInfo()
     {
         $savedata = Savedata::getLoginUserCurrentSavedata();
+        $current_possession = $savedata->savedata_has_items->sum('possession_number');
         $return_list = [
+            'current_possession' => $current_possession,
             'money' => 0,
             'buyItemList' => [],
             'sellItemList' => [],
@@ -246,11 +248,14 @@ class ApiController extends Controller
             return [
                 'id' => $item->id,
                 'name' => $item->name,
-                'price' => $item->price,
+                'price' => round($item->price / 2), // 半額
                 'description' => $item->description,
                 'possession_number' => $item->pivot->possession_number,
+                'max_possession_number' => $item->max_possession_number,
             ];
-        });
+        })
+            ->sortBy('id')
+            ->values();
 
         $return_list['sellItemList'] = $sellable_items;
 
@@ -303,8 +308,49 @@ class ApiController extends Controller
             }
 
         } catch (Exception $e) {
-            return response()->json(['error' => 'エラーが発生しました。何度も遭遇する場合、お手数ですが連絡をお願いします。'], 500);
+            return response()
+                ->json(['error' => 'エラーが発生しました。時間を置く、もしくは再ログインをお試しください。'], 500);
         }
+    }
+
+    /**
+     * アイテム売却処理
+     */
+    public function sellOffItem(Request $request)
+    {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $money = $savedata->money;
+
+        $item_id = $request->item_id;
+        $item_price = $request->price;
+        $number = (int) $request->number;
+
+        $total_price = $item_price * $number;
+        $after_sell_off_money = $money + $total_price;
+
+        try {
+            // 金額反映処理
+            $savedata->update([
+                'money' => $after_sell_off_money,
+            ]);
+
+            // アイテム反映処理
+            // 0個になった場合、deleteする
+            $savedata_has_item = SavedataHasItem::where('savedata_id', $savedata->id)
+                ->where('item_id', $item_id)
+                ->first();
+            if ($savedata_has_item->possession_number - $number < 1) {
+                Debugbar::debug('全て売却されたため、deleteします。');
+                $savedata_has_item->delete();
+            } else {
+                Debugbar::debug('一部の売却のため、decrementします。');
+                $savedata_has_item->decrement('possession_number', $number);
+            }
+        } catch (Exception $e) {
+            return response()
+                ->json(['error' => 'エラーが発生しました。時間を置く、もしくは再ログインをお試しください。'], 500);
+        }
+
     }
 
     /**

@@ -52,6 +52,7 @@ if (config('app.env') === 'local') {
     Route::post('/api/game/rpg/battle/refresh', 'Game\Rpg\ApiController@refreshBattleState')->name('api_game_rpg_battle_refresh_battle_state');
 
     Route::post('/api/game/rpg/shop/payment', 'Game\Rpg\ApiController@paymentItem')->name('api_game_rpg_shop_payment');
+    Route::post('/api/game/rpg/shop/sell_off', 'Game\Rpg\ApiController@sellOffItem')->name('api_game_rpg_shop_sell_off');
     Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');
     Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
 

@@ -38,7 +38,7 @@ export default createStore({
       },
       // ショップ画面
       shop: {
-        status: 'start',  // 'start' 'buy' 'sell'とかかな。
+        status: 'start',  // 'start' 'buyable' 'sellable'
       },
       // スキル|ステ振り画面
       status: {
