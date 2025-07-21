@@ -18,18 +18,22 @@ export default createStore({
       adventure: {
         status: 'start',  // 'start', 'selectable'
       },
-      // 中央広場
+      // 中心広場
       plaza: {
         status: 'start',  // 'start', 'loaded', 'moved'
         library: {
-          status: 'start', // 'start', 'loaded'
+          status: 'start', // 'start', 'adventure', 'enemy', 'history'
         },
         // アルバイト 状態管理なし
+        job: {
+          status: 'start', // 'start', 'loaded', 'result'
+        },
         bbs: {
           status: 'start', // 'start', 'loaded'
         },
         refresh: {
           status: 'start', // 'start', 'loaded'
+          currentSelectedPartyMemberIndex: 0, // 味方画面の配列のインデックス 0, 1, 2
         },
       },
       // ショップ画面
@@ -98,7 +102,7 @@ export default createStore({
       state.menu.adventure.status = status;
     },
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
     // メイン
     setMenuPlazaStatus(state, status) {
       state.menu.plaza.status = status;
@@ -107,7 +111,10 @@ export default createStore({
     setMenuPlazaLibraryStatus(state, status) {
       state.menu.plaza.library.status = status;
     },
-    // アルバイト 状態管理なし
+    // アルバイト
+    setMenuPlazaJobStatus(state, status) {
+      state.menu.plaza.job.status = status;
+    },
     // 冒険者掲示板
     setMenuPlazaBbsStatus(state, status) {
       state.menu.plaza.bbs.status = status;
@@ -116,9 +123,12 @@ export default createStore({
     setMenuPlazaRefreshStatus(state, status) {
       state.menu.plaza.refresh.status = status;
     },
+    setMenuPlazaRefreshCurrentSelectedPartyMemberIndex(state, number) {
+      state.menu.plaza.refresh.currentSelectedPartyMemberIndex = number;
+    },
 
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
 
     // ------------- ショップ画面 -------------
     setMenuShopStatus(state, status) {
@@ -261,7 +271,7 @@ export default createStore({
       commit('setMenuAdventureStatus', status);
     },
 
-    // ------------- 中央広場 -------------
+    // ------------- 中心広場 -------------
     // メイン
     setMenuPlazaStatus({ commit }, status) {
       commit('setMenuPlazaStatus', status);
@@ -270,7 +280,10 @@ export default createStore({
     setMenuPlazaLibraryStatus({ commit }, status) {
       commit('setMenuPlazaLibraryStatus', status);
     },
-    // アルバイト 状態管理なし
+    // アルバイト
+    setMenuPlazaJobStatus({ commit }, status) {
+      commit('setMenuPlazaJobStatus', status);
+    },
     // 冒険者掲示板
     setMenuPlazaBbsStatus({ commit }, status) {
       commit('setMenuPlazaBbsStatus', status);
@@ -279,6 +292,9 @@ export default createStore({
     // リフレッシュ
     setMenuPlazaRefreshStatus({ commit }, status) {
       commit('setMenuPlazaRefreshStatus', status);
+    },
+    setMenuPlazaRefreshCurrentSelectedPartyMemberIndex({ commit }, number) {
+      commit('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', number);
     },
     
 

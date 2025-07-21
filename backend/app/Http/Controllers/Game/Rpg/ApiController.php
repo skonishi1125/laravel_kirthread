@@ -6,9 +6,12 @@ use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AfterCleared;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
+use App\Models\Game\Rpg\Board;
 use App\Models\Game\Rpg\Exp;
 use App\Models\Game\Rpg\Field;
 use App\Models\Game\Rpg\Item;
+use App\Models\Game\Rpg\Job;
+use App\Models\Game\Rpg\Library;
 use App\Models\Game\Rpg\Party;
 use App\Models\Game\Rpg\Role;
 use App\Models\Game\Rpg\Savedata;
@@ -24,7 +27,12 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // TODO: constructなどでログインしているユーザーがアクセスできる前提とする
+    // 3つ以上クリアすることが条件
+    public const PLAZA_ENABLE_CLEAR_FIELD = 3;
+
+    // TODO:
+    // * constructなどでログインしているユーザーがアクセスできる前提とする
+    // * 肥大化しているので余力があればControllerを分割する
 
     /**
      * タイトル画面。ユーザーの状態に応じてパターンを分ける。
@@ -403,35 +411,6 @@ class ApiController extends Controller
 
         return response()->json([
             'message' => '習得処理を正常に完了しました。',
-        ]);
-    }
-
-    /**
-     * ステータス・スキルポイントの振り分けをリセットする
-     */
-    public function resetStatusAndSkillPoint(Request $request)
-    {
-        $party_id = $request->party_id;
-        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
-        $party = Party::find($party_id);
-
-        try {
-            DB::transaction(function () use ($party) {
-                if (is_null($party)) {
-                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
-                }
-                $party->resetStautsAndSkillPoint();
-            });
-        } catch (\Exception $e) {
-            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
-
-            return response()->json([
-                'message' => $e->getMessage(),
-            ], 422);
-        }
-
-        return response()->json([
-            'message' => 'パーティメンバーのステータス・スキルポイントをリセットしました。',
         ]);
     }
 
@@ -1004,14 +983,29 @@ class ApiController extends Controller
     }
 
     /**
-     * 中央広場 アクセス時のチェック処理
+     * 中心広場 アクセス時のチェック処理
      *
-     * リフレッシュ場など、クリアステージによって解放される施設がある
-     * そちらをチェックするアクション
+     * 癒しの館など、クリアステージによって解放される施設のフラグを返す
      */
     public function checkPlazaStatus()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $is_enabled = false;
+        $cleared_count = $savedata->savedata_cleared_fields()->count();
+        if ($cleared_count >= self::PLAZA_ENABLE_CLEAR_FIELD) {
+            $is_enabled = true;
+        }
+
+        $vue_data = collect()->push($is_enabled);
+
+        return $vue_data;
+
     }
 
     /**
@@ -1019,7 +1013,25 @@ class ApiController extends Controller
      */
     public function fetchLibraryBook()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $readable_adventure_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ADVENTURE);
+        $readable_enemy_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ENEMY);
+        $readable_history_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_HISTORY);
+
+        // vueに渡すデータ
+        // [0]戦術学論 [1]魔物図譜 [2]歴史神話学
+        $all_data = collect()
+            ->push($readable_adventure_libraries)
+            ->push($readable_enemy_libraries)
+            ->push($readable_history_libraries);
+
+        return $all_data;
     }
 
     /**
@@ -1027,7 +1039,233 @@ class ApiController extends Controller
      */
     public function fetchBbsPost()
     {
-        return true;
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $posts = Board::fetchPostWithBanPolicy($savedata, Board::BBS_POST_NUM);
+        $formatted_posts = $posts->map(function ($post) {
+            return [
+                'id' => $post->id,
+                'savedata_id' => $post->savedata_id,
+                'message' => $post->message,
+                'is_spoiled' => $post->is_spoiled,
+                'is_banned' => $post->is_banned,
+                'created_at' => optional($post->created_at)->format('Y-m-d H:i:s'), // 2025-07-07T12:23:02.000000Z という表記になるのを防ぐ
+            ];
+        });
+
+        $all_data = collect()
+            ->push($savedata->id)
+            ->push($formatted_posts);
+
+        return $all_data;
     }
 
+    /**
+     * 掲示板新規投稿格納処理
+     *
+     * 投稿は1日1回まで。AM 7:00 リセット。
+     */
+    public function storeBbsPost(Request $request)
+    {
+        $board_content = [
+            'savedata_id' => $request->get('savedata_id'),
+            'message' => $request->get('message'),
+            'is_spoiled' => $request->get('is_spoiled'),
+        ];
+
+        // 1日1回の書き込みチェック
+        $is_already_writtened = Board::checkIsAlreadyWrittenDay($board_content['savedata_id']);
+        if ($is_already_writtened === true) {
+            return response()->json([
+                'errorMessage' => '冒険者掲示板への書き込みは1日1回までです。毎朝7時にリセットされます。',
+            ], 429);
+        }
+
+        // Vue側でもチェックしているが、改めてバリデーションする
+        if (mb_strlen($board_content['message']) > 20) {
+            return response()->json([
+                'errorMessage' => '投稿が20文字以上です。',
+            ], 500);
+        }
+
+        // こちらで失敗した場合でもaxiosでは500エラーが発生する
+        $created_board = Board::create($board_content);
+
+        return response()->json([
+            'successMessage' => '投稿が完了しました！',
+        ], 200);
+    }
+
+    public function deleteBbsPost(Request $request)
+    {
+        $board_id = $request->get('id');
+
+        if (is_null($board_id)) {
+            return response()->json([
+                'errorMessage' => '削除対象のidが渡されていません。',
+            ], 500);
+        }
+
+        $deleted_board = Board::find($board_id)->delete();
+
+        return response()->json([
+            'successMessage' => "書き込み:[{$board_id}]の削除処理が正常に完了しました。",
+        ], 200);
+    }
+
+    public function fetchJobStatus()
+    {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // ログイン中ユーザーのJobに関するデータをまとめる
+        $job = $savedata->job;
+        $vue_data = collect(
+            [
+                'grade' => $job->grade,
+                'grade_label' => Job::GRADE_LABELS[$job->grade],
+                'payment_rate' => Job::PAYMENT_RATES[$job->grade],
+            ]
+        );
+
+        return $vue_data;
+    }
+
+    // Job クリック数に応じた決済と、ユーザーランキングを返す
+    public function calculateJobResult(Request $request)
+    {
+        $push_count = $request->get('push_count');
+        $earned_money = $request->get('earned_money');
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // 金額加算処理
+        $savedata->update([
+            'money' => $savedata->money + $earned_money,
+        ]);
+
+        // トータルクリック回数、及びgradeのアップグレード
+        $job = $savedata->job;
+        $total_count = $job->total_count + $push_count;
+        $new_grade = Job::calculateGradeByCount($total_count);
+        $job->update(
+            [
+                'grade' => $new_grade,
+                'total_count' => $job->total_count + $push_count,
+            ]
+        );
+
+        // TOP10のランキング取得
+        $job_ranking = Job::orderBy('total_count', 'DESC')->limit(10)->get();
+
+        $vue_data = collect()
+            ->push($job)
+            ->push($job_ranking);
+
+        return $vue_data;
+    }
+
+    /**
+     * 癒しの館で使用する情報の取得
+     */
+    public function fetchRefreshPartiesInfo()
+    {
+        // Savedataからパーティを取得し、パーティに合ったスキルツリー情報の取得を行う
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // URLをベタ打ちして遷移していないか。
+        $cleared_count = $savedata->savedata_cleared_fields()->count();
+        if ($cleared_count < self::PLAZA_ENABLE_CLEAR_FIELD) {
+            return response()->json(['403: Forbidden'], 403); // 403: Forbidden などでOK
+        }
+
+        $money = $savedata->money;
+        $parties = $savedata->parties; // collectionとして取得
+        $parties_data_collection = collect(); // パーティについてのスキル情報を格納していく
+
+        foreach ($parties as $party) {
+            $party_data_collection = collect([
+                'party_id' => $party->id,
+                'level' => $party->level,
+                'nickname' => $party->nickname,
+                'status' => [
+                    'value_hp' => $party->value_hp,
+                    'allocated_hp' => $party->allocated_hp,
+                    'value_ap' => $party->value_ap,
+                    'allocated_ap' => $party->allocated_ap,
+                    'value_str' => $party->value_str,
+                    'allocated_str' => $party->allocated_str,
+                    'value_def' => $party->value_def,
+                    'allocated_def' => $party->allocated_def,
+                    'value_int' => $party->value_int,
+                    'allocated_int' => $party->allocated_int,
+                    'value_spd' => $party->value_spd,
+                    'allocated_spd' => $party->allocated_spd,
+                    'value_luc' => $party->value_luc,
+                    'allocated_luc' => $party->allocated_luc,
+                ],
+                'skills' => Skill::generateSkillCollection($party),
+            ]);
+
+            $parties_data_collection->push($party_data_collection);
+        }
+
+        $vue_data = collect()
+            ->push($parties_data_collection)
+            ->push($money);
+
+        return response()->json($vue_data);
+    }
+
+    /**
+     * ステータス・スキルポイントの振り分けをリセットする
+     */
+    public function resetStatusAndSkillPoint(Request $request)
+    {
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        $payment_money = $request->payment_money;
+        $party_id = $request->party_id;
+        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
+        $party = Party::find($party_id);
+
+        try {
+            DB::transaction(function () use ($party, $savedata, $payment_money) {
+                if (is_null($party)) {
+                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+                }
+                $party->resetStautsAndSkillPoint();
+                $savedata->money = $savedata->money - $payment_money;
+                $savedata->save();
+            });
+        } catch (\Exception $e) {
+            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
+
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'message' => 'パーティメンバーのステータス・スキルポイントをリセットしました。',
+        ]);
+    }
 }

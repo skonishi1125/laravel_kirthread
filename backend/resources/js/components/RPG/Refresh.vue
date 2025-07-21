@@ -1,4 +1,8 @@
 <style scoped>
+.character-nav-tab {
+  cursor: pointer;
+}
+
 .status-and-skills-title {
   font-weight: bold;
   border-bottom: 1px dotted black;
@@ -45,7 +49,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>Refresh 読み込み中...</small></p>
+            <p><small>読み込み中...</small></p>
           </div>
           <hr>
         </div>
@@ -62,9 +66,10 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>パーティメンバーを休息させ、割り振ったステータス、スキルポイントをリセットすることができます。</small></p>
+            <p><small>「こんにちは〜。ゆっくりしていってね。...あ、お代はちょうだいね。」</small></p>
           </div>
           <hr>
+          <p><small style="color:gray">※パーティメンバーを休息させ、割り振ったステータス、スキルポイントをリセットすることができます。</small></p>
         </div>
       </div>
   
@@ -84,75 +89,142 @@
               <div class="col-12">
                 <!-- クリックした時そのキャラの情報を取得するようにして、activeクラスを張り替える -->
                 <ul class="nav nav-tabs">
-                  <a class="nav-link character-nav-tab active">カア</a>
-                  <a class="nav-link character-nav-tab">パラ</a>
-                  <a class="nav-link character-nav-tab">シュウ</a>
+                  <a class="nav-link character-nav-tab"
+                  :class="{'active': status.currentSelectedPartyMemberIndex === 0}"
+                  @click="$store.dispatch('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', 0)"
+                  >
+                    {{ partiesInformation[0].nickname }}
+                  </a>
+                    <a class="nav-link character-nav-tab"
+                    :class="{'active': status.currentSelectedPartyMemberIndex === 1}" 
+                    @click="$store.dispatch('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', 1)"
+                  >
+                    {{ partiesInformation[1].nickname }}
+                  </a>
+                  <a class="nav-link character-nav-tab"
+                    :class="{'active': status.currentSelectedPartyMemberIndex === 2}" 
+                    @click="$store.dispatch('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', 2)"
+                  >
+                    {{ partiesInformation[2].nickname }}
+                  </a>
                 </ul>
 
                 <div class="row">
-                  <div class="col-4 mt-3">
+                  <div class="col-6 mt-3">
                     <h6 class="status-and-skills-title">現在のステータス</h6>
                     <div class="status-line">
-                      <span class="label">HP</span>
-                      <span class="value">100</span>
-                      <span class="value">(<small><b>+0</b></small>)</span>
+                      <span class="label">HP:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_hp + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_hp }}</span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_hp }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_hp }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">AP</span>
-                      <span class="value">10</span>
-                      <span class="value">(<small><b>+15</b></small>)</span>
+                      <span class="label">AP:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_ap + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_ap }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_ap }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_ap }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">STR</span>
-                      <span class="value">112</span>
-                      <span class="value">(<small><b>+100</b></small>)</span>
+                      <span class="label">STR:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_str + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_str }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_str }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_str }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">DEF</span>
-                      <span class="value">9</span>
-                      <span class="value">(<small><b>+28</b></small>)</span>
+                      <span class="label">DEF:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_def + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_def }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_def }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_def }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">INT</span>
-                      <span class="value">21</span>
-                      <span class="value">(<small><b>+28</b></small>)</span>
+                      <span class="label">INT:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_int + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_int }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_int }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_int }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">SPD</span>
-                      <span class="value">91</span>
-                      <span class="value">(<small><b>+28</b></small>)</span>
+                      <span class="label">SPD:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_spd + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_spd }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_spd }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_spd }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                     <div class="status-line">
-                      <span class="label">LUC</span>
-                      <span class="value">15</span>
-                      <span class="value">(<small><b>+8</b></small>)</span>
+                      <span class="label">LUC:</span>
+                      <span class="value">
+                        {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_luc + partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_luc }}
+                      </span>
+                      <span class="value">
+                        (
+                          <small>
+                            {{ partiesInformation[status.currentSelectedPartyMemberIndex].status.value_luc }}
+                            <b>+{{ partiesInformation[status.currentSelectedPartyMemberIndex].status.allocated_luc }}</b>
+                          </small>
+                        )
+                      </span>
                     </div>
                   </div>
-                  <div class="col-4 mt-3">
+                  <div class="col-6 mt-3">
                     <h6 class="status-and-skills-title">修得済みのスキル</h6>
-                    <div class="skill-line">
-                      <span class="label">プチブラスト</span>
-                      <span class="value"><small>(SLv.<b>1</b>)</small></span>
+                    <div v-for="skill in partiesInformation[status.currentSelectedPartyMemberIndex].skills">
+                      <div class="skill-line">
+                        <span class="label">{{ skill.name }}</span>
+                        <span class="value"><small>(SLv.<b>{{ skill.skill_level }}</b>)</small></span>
+                      </div>
                     </div>
-                    <div class="skill-line">
-                      <span class="label">クラッシュボルト</span>
-                      <span class="value"><small>(SLv.<b>1</b>)</small></span>
-                    </div>
-                    <div class="skill-line">
-                      <span class="label">プチヒール</span>
-                      <span class="value"><small>(SLv.<b>1</b>)</small></span>
-                    </div>
-                    <div class="skill-line">
-                      <span class="label">ポップヒール</span>
-                      <span class="value"><small>(SLv.<b>1</b>)</small></span>
-                    </div>
-
                   </div>
                 </div>
 
                 <div class="row">
-                  <div class="col-12 text-right mt-5">
-                    <button class="btn btn-info btn-sm">ポイントを振り直す</button>
+                  <div class="col-12 text-right mt-5 d-flex justify-content-between">
+                    <span style="color: red"><small>{{ refreshSuccessMessage }}</small></span>
+                    <button class="btn btn-outline-info btn-sm" @click="openPaymentModal(partiesInformation[status.currentSelectedPartyMemberIndex])">休息する</button>
                   </div>
                 </div>
 
@@ -167,6 +239,45 @@
     </div>
   </div>
 
+  <teleport to="body">
+    <div class="modal fade" id="payment-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title book-modal-title"><b>確認画面</b></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <p>
+              {{ modalPartyInformation.nickname }}に割り振ったポイントをリセットします。(所持金: <b>{{ currentMoney }}</b> G)<br>
+            </p>
+            <div style="text-align: right;">
+              <span>必要代金: {{ modalPartyInformation.level * 100 }} G <small>(※ Lv x 100 G)</small></span>
+            </div>
+            <div style="min-height: 50px;">
+              <span style="color:red" v-if="currentMoney < modalPartyInformation.level * 100">
+                所持金が不足しています。
+              </span>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-info btn-sm"
+            :disabled="currentMoney < modalPartyInformation.level * 100"
+            @click="paymentRefresh"
+            >
+              リセットする
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
+
+
 </template>
 
 <script>
@@ -176,7 +287,11 @@
   export default {
     data() { // script内で使用する変数を定義する。
       return {
-        partiesInformation: []
+        partiesInformation: [],
+        currentMoney: 0,
+        modalPartyInformation: {},
+        modalErrorMessage: null,
+        refreshSuccessMessage: null,
       }
     },
     // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -189,26 +304,54 @@
       }),
     },
     created() { // DOMに依存しない処理を書く(state処理など。)
-      this.getPartiesInformation();
+      this.fetchPartiesInfo();
+      this.$store.dispatch('setMenuPlazaRefreshStatus', 'start');
     },
     mounted() { // DOMがレンダリングされた後に必要な処理を書く(element取得など。)
       console.log(`Refresh.vue ${this.status.status}`);
     },
     methods: { // メソッド定義できる。結果を再利用しないメソッドなどを書く。
-      // TODO: Status.vueで使用したgetPartiesInfo()がそのまま使えるかも。
-      getPartiesInformation() {
-        console.log(`fetchPart`);
-        axios.get('/api/game/rpg/parties/information')
+      // モーダルに表示中パーティメンバーの情報を出す
+      openPaymentModal(partyInformation) {
+        this.modalPartyInformation = partyInformation;
+        // this.earnedMoney = Math.round(this.pushCounter * this.paymentRate);
+        $('#payment-modal').modal('show');
+      },
+      fetchPartiesInfo() {
+        console.log(`fetchPartiesInfo`);
+        axios.get('/api/game/rpg/menu/plaza/refresh/fetch_parties_info')
           .then(response => {
             console.log(`response.data: ${response.data}`);
-            this.partiesInformation = response.data;
+            this.partiesInformation = response.data[0];
+            this.currentMoney = response.data[1];
             console.log(this.partiesInformation[0],this.partiesInformation[0]['status'], this.partiesInformation[1]);
+            this.$store.dispatch('setMenuPlazaRefreshCurrentSelectedPartyMemberIndex', 0);
+            this.$store.dispatch('setMenuPlazaRefreshStatus', 'loaded');
           }
-        );
+        ).catch(error => {
+            this.$router.push({ name: 'menu_plaza'});
+        });
+      },
 
-        this.$store.dispatch('setMenuPlazaRefreshStatus', 'loaded');
+      paymentRefresh(){
+        console.log(`paymentRefresh`);
+        if (this.currentMoney < this.modalPartyInformation.level * 100) {
+          this.modalErrorMessage = '所持金が不足しています。'
+          return;
+        }
 
-      }
+        axios.post('/api/game/rpg/menu/plaza/refresh/reset_status_and_skill_point', {
+          party_id: this.modalPartyInformation.party_id,
+          payment_money: this.modalPartyInformation.level * 100
+        })
+        .then(response => {
+          this.fetchPartiesInfo();
+          this.refreshSuccessMessage = 'ステータス、スキルポイントの振り直しが完了しました！';
+          $('#payment-modal').modal('hide');
+        });
+      },
+
+
     }
   }
 </script>

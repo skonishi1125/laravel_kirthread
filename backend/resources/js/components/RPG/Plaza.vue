@@ -31,6 +31,29 @@
   box-shadow: 0 0 12px rgba(22, 159, 177, 1);
 }
 
+.clickable-disable-marker {
+  position: absolute;
+  background-color: rgba(177, 22, 22, 0.9); /* 半透明青 */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  line-height: 36px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(22, 159, 177, 0.7);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.clickable-disable-marker:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  box-shadow: 0 0 12px rgba(22, 159, 177, 1);
+}
+
 </style>
 
 <template>
@@ -56,24 +79,60 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>中央広場では、街の様々な施設を利用することができます。</small></p>
+            <p><small>広場に到着した。どこに向かおうか。</small></p>
           </div>
           <hr>
+          <div style="font-size: 0.9em;">
+            <p>
+              <b>{{ facilityInfo.name }}</b>
+              <br>
+              <span>{{ facilityInfo.description }}</span>
+            </p>
+          </div>
         </div>
       </div>
 
       <div class="row mt-3 sub-sucreen-main-space sub-screen-back-img">
         <div class="col-12">
           <!-- 図書館 -->
-          <div class="clickable-marker" style="top: 5%; left: 50%;" @click="selectDestination('Library')"></div>
-          <!-- 中央掲示板 -->
-          <div class="clickable-marker" style="top: 30%; left: 50%;" @click="selectDestination('Bbs')"></div>
-          <!-- リフレッシュ場 -->
-          <div class="clickable-marker" style="top: 24%; left: 83%;" @click="selectDestination('Refresh')"></div>
-          <!-- バイト -->
-          <div class="clickable-marker" style="top: 22%; left: 18%;" @click="selectDestination('Job')"></div>
+          <div class="clickable-marker" 
+            style="top: 5%; left: 50%;" 
+            @click="selectDestination('Library')"
+            @mouseover="showFacilityInfo('Library')"
+          ></div>
+          <!-- 冒険者掲示板 -->
+          <div class="clickable-marker" 
+            style="top: 40%; left: 50%;" 
+            @click="selectDestination('Bbs')"
+            @mouseover="showFacilityInfo('Bbs')"
+          ></div>
+          <!-- 癒しの館 -->
+          <div v-if="isEnableRefresh == true">
+            <div class="clickable-marker" 
+              style="top: 30%; left: 76%;" 
+              @click="selectDestination('Refresh')"
+              @mouseover="showFacilityInfo('Refresh')"
+            ></div>
+          </div>
+          <div v-else>
+            <div class="clickable-disable-marker" 
+              style="top: 30%; left: 76%;" 
+              @mouseover="showFacilityInfo('disabledRefresh')"
+            ></div>
+          </div>
+
+          <!-- 日雇いギルド -->
+          <div class="clickable-marker"
+            style="top: 22%; left: 20%;" 
+            @click="selectDestination('Job')"
+            @mouseover="showFacilityInfo('Job')"
+          ></div>
           <!-- 冒険 -->
-          <div class="clickable-marker" style="top: 90%; left: 50%;" @click="selectDestination('Adventure')"></div>
+          <div class="clickable-marker"
+            style="top: 90%; left: 50%;"
+            @click="selectDestination('Adventure')"
+            @mouseover="showFacilityInfo('Adventure')"
+          ></div>
 
         </div>
       </div>
@@ -95,7 +154,12 @@
   export default {
     data() { // script内で使用する変数を定義する。
       return {
-        
+        // マウスオーバーで表示させる施設情報
+        facilityInfo: {
+          name: '',
+          description: '',
+        },
+        isEnableRefresh: false,
       }
     },
     // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -118,7 +182,7 @@
         console.log(`checkPlazaStatus(): --------`);
         axios.get('/api/game/rpg/menu/plaza/check_status')
           .then(response => {
-            console.log(`response`);
+            this.isEnableRefresh = response.data[0];
             this.$store.dispatch('setMenuPlazaStatus', 'loaded');
           });
       },
@@ -142,6 +206,36 @@
         }
         this.$store.dispatch('setMenuPlazaStatus', 'moved');
 
+      },
+
+      // マウスオーバーした時、その施設の情報を説明欄に表示する
+      showFacilityInfo(facility) {
+        console.log(`showFacilityInfo(): ${facility} `);
+        switch (facility) {
+          case 'Library':
+            this.facilityInfo.name = '図書館';
+            this.facilityInfo.description = '冒険に役立つ書籍はもちろん、この地にまつわる民話を閲読できます。';
+            break;
+          case 'Bbs':
+            this.facilityInfo.name = '冒険者掲示板';
+            this.facilityInfo.description = '他の冒険者たちの風聞を見たり、自身が書き込んだりすることができます。';
+            break;
+          case 'disabledRefresh':
+            this.facilityInfo.name = '？？？';
+            this.facilityInfo.description = '改装中のようです。冒険を進めたら再度訪れてみましょう。';
+            break;
+          case 'Refresh':
+            this.facilityInfo.name = '癒しの館';
+            this.facilityInfo.description = '心身をリフレッシュし、スッキリ爽快できます。';
+            break;
+          case 'Job':
+            this.facilityInfo.name = '日雇いギルド';
+            this.facilityInfo.description = '簡単な仕事をひたすらこなし、報酬を得ることができます。';
+            break;
+          case 'Adventure':
+            this.facilityInfo.name = '中央通り表門';
+            this.facilityInfo.description = '冒険に出かけることができます。';
+        }
       }
 
 
