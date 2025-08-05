@@ -74,7 +74,7 @@ if (config('app.env') === 'production') {
     Route::get('/game/rpg/{any?}', function () {
         return redirect()->route('/');
     })
-    ->where('any', '.*')->name('game_rpg_index');
+        ->where('any', '.*')->name('game_rpg_index');
 }
 
 // Auth認証のかかるページ
