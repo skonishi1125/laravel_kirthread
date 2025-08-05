@@ -69,6 +69,14 @@ if (config('app.env') === 'local') {
 
 }
 
+if (config('app.env') === 'production') {
+    // RPG関連のルーティングにアクセスしたとき、トップにリダイレクトさせる
+    Route::get('/game/rpg/{any?}', function () {
+        return redirect()->route('/');
+    })
+    ->where('any', '.*')->name('game_rpg_index');
+}
+
 // Auth認証のかかるページ
 Route::group(['middleware' => 'auth'], function () {
     Route::post('/store', 'PostController@store')->name('store');
