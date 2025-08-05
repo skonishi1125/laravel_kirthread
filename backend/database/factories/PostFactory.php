@@ -12,6 +12,5 @@ $factory->define(Post::class, function (Faker $faker) {
         'picture' => $faker->unique()->safeEmail,
         'good' => random_int(0, 99),
         'user_id' => random_int(1, 10),
-        'reply_post_id' => random_int(1, 10),
     ];
 });
