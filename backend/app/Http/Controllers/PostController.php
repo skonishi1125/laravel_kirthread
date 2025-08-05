@@ -65,12 +65,6 @@ class PostController extends Controller
             $picture_name = null;
         }
 
-        if (isset($request->reply_post_id)) {
-            $reply_post_id = null;
-        } else {
-            $reply_post_id = $request->reply_post_id;
-        }
-
         // YouTube処理
         $youtube_video_id = null;
         if (isset($request->youtube_url)) {
@@ -83,7 +77,6 @@ class PostController extends Controller
             'youtube_url' => $youtube_video_id,
             'good' => 0,
             'user_id' => Auth::id(),
-            'reply_post_id' => $reply_post_id,
         ]);
         $create->save();
 
