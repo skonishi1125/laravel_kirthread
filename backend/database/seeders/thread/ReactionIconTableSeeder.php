@@ -125,6 +125,24 @@ class ReactionIconTableSeeder extends Seeder
                 'url' => 'pic_kirbis_in.png',
                 'description' => null, 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null,
             ],
+            [
+                'id' => 15,
+                'name' => 'cold',
+                'name_plural' => 'colds',
+                'is_picture_icon' => false,
+                'value' => '🥶',
+                'url' => null,
+                'description' => null, 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null,
+            ],
+            [
+                'id' => 16,
+                'name' => 'explosion',
+                'name_plural' => 'explosions',
+                'is_picture_icon' => false,
+                'value' => '🤯',
+                'url' => null,
+                'description' => null, 'created_at' => $now, 'updated_at' => $now, 'deleted_at' => null,
+            ],
 
         ];
 
