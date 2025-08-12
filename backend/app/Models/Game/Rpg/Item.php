@@ -13,6 +13,10 @@ class Item extends Model
 
     protected $table = 'rpg_items';
 
+    public const PER_POINT_LUC_RATE = 0.0002; // 1 LUC あたり 0.02%の増加 | 割引
+
+    public const DISCOUNT_MAX_LUC_RATE = 0.30; // 最大30%まで安価となる ( = LUC 1,500)
+
     // Savedata自体とは多対多だが、中間テーブルとは1:1の関係である
     public function savedata_has_item()
     {
