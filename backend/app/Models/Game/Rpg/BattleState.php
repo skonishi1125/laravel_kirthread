@@ -1035,27 +1035,34 @@ class BattleState extends Model
                 Debugbar::debug("storePartyDamage(): ATTACK {$actor_data->name} → {$opponent_data->name}");
 
                 // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
-                $calculated_damage = self::calculatePhysicalDamage(
+                $result = self::calculatePhysicalDamage(
                     $pure_damage,
                     self::calculateActualStatusValue($opponent_data, 'def'),
                     self::calculateActualStatusValue($actor_data, 'luc'),
                 );
 
+                $calculated_damage = $result['damage'] ?? 0;
+                $is_critical = $result['is_critical'] ?? false;
+
                 if ($calculated_damage > 0) {
                     Debugbar::debug("【ATTACK】ダメージが1以上。相手の現在体力: {$opponent_data->value_hp}");
                     $opponent_data->value_hp -= $calculated_damage;
                     Debugbar::debug("攻撃した。相手の残り体力: {$opponent_data->value_hp}");
+
+                    // クリティカル メッセージ分岐
+                    if ($is_critical) {
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                    } else {
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}に{$calculated_damage}のダメージ。");
+                    }
+
                     // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
                     if ($opponent_data->value_hp <= 0) {
                         $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                         $opponent_data->is_defeated_flag = true;
                         self::clearBuff($opponent_data);
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}に{$calculated_damage}のダメージ。");
                         $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                         Debugbar::debug("{$opponent_data->name}を倒した。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                    } else {
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}に{$calculated_damage}のダメージ。");
-                        Debugbar::debug("{$opponent_data->name}はまだ生存している。相手の残り体力: {$opponent_data->value_hp} 相手討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
                 } else {
                     // ダメージを与えられなかった場合
@@ -1073,7 +1080,7 @@ class BattleState extends Model
                     // ダメージ計算 物理か魔法攻撃かで変える
                     if ($attack_type === AttackType::Physical->value) {
                         Debugbar::debug('物理。');
-                        $calculated_damage = self::calculatePhysicalDamage(
+                        $result = self::calculatePhysicalDamage(
                             $pure_damage,
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($actor_data, 'luc')
@@ -1084,28 +1091,38 @@ class BattleState extends Model
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($opponent_data, 'int')
                         );
-                        $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
+                        $result = self::calculateMagicDamage(
+                            $pure_damage,
+                            $opponent_mdef,
+                            self::calculateActualStatusValue($actor_data, 'luc')
+                        );
                     }
+
+                    $calculated_damage = $result['damage'] ?? 0;
+                    $is_critical = $result['is_critical'] ?? false;
 
                     if ($calculated_damage > 0) {
                         Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
                         $opponent_data->value_hp -= $calculated_damage;
                         Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                        // クリティカル メッセージ分岐
+                        if ($is_critical) {
+                            $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        }
+
                         // 敵を倒した場合
                         if ($opponent_data->value_hp <= 0) {
                             $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                             $opponent_data->is_defeated_flag = true;
                             self::clearBuff($opponent_data);
-                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                             $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                             Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                        } else {
-                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
                     } else {
                         // ダメージを与えられなかった場合
-                        Debugbar::debug('ダメージを与えられない。');
                         $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
                         Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
@@ -1127,7 +1144,7 @@ class BattleState extends Model
                         // ダメージ計算 物理か魔法攻撃かで変える
                         if ($attack_type === AttackType::Physical->value) {
                             Debugbar::debug('物理。');
-                            $calculated_damage = self::calculatePhysicalDamage(
+                            $result = self::calculatePhysicalDamage(
                                 $base_damage,
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($actor_data, 'luc')
@@ -1138,31 +1155,38 @@ class BattleState extends Model
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
-                            $calculated_damage = self::calculateMagicDamage(
+                            $result = self::calculateMagicDamage(
                                 $base_damage,
-                                $opponent_mdef
+                                $opponent_mdef,
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         }
+
+                        $calculated_damage = $result['damage'] ?? 0;
+                        $is_critical = $result['is_critical'] ?? false;
 
                         if ($calculated_damage > 0) {
                             Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
                             $opponent_data->value_hp -= $calculated_damage;
                             Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                            // クリティカル メッセージ分岐
+                            if ($is_critical) {
+                                $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            } else {
+                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            }
+
                             // 敵を倒した場合
                             if ($opponent_data->value_hp <= 0) {
                                 $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                                 $opponent_data->is_defeated_flag = true;
                                 self::clearBuff($opponent_data);
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                                 $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                                 Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                            } else {
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                                Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                             }
                         } else {
                             // ダメージを与えられなかった場合
-                            Debugbar::debug('ダメージを与えられない。');
                             $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
                             Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
@@ -1182,11 +1206,12 @@ class BattleState extends Model
                     // is_percent_basedのアイテムの場合は、相手の現在体力に合わせたダメージを与える
                     if ($pure_damage == null || $selected_item->is_percent_based) {
                         $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
+                        $is_critical = false;
                     } else {
                         // ダメージ計算 物理か魔法攻撃かで変える
                         if ($attack_type === AttackType::Physical->value) {
                             Debugbar::debug('物理。');
-                            $calculated_damage = self::calculatePhysicalDamage(
+                            $result = self::calculatePhysicalDamage(
                                 $pure_damage,
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($actor_data, 'luc')
@@ -1197,32 +1222,42 @@ class BattleState extends Model
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
-                            $calculated_damage = self::calculateMagicDamage(
+                            $result = self::calculateMagicDamage(
                                 $pure_damage,
-                                $opponent_mdef
+                                $opponent_mdef,
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         }
+
+                        $calculated_damage = $result['damage'] ?? 0;
+                        $is_critical = $result['is_critical'] ?? false;
+
                     }
 
                     if ($calculated_damage > 0) {
                         Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
                         $opponent_data->value_hp -= $calculated_damage;
                         Debugbar::debug("アイテムで攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                        // クリティカル メッセージ分岐
+                        // TODO: アイテムでも必要だろうか？
+                        if ($is_critical) {
+                            $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        }
+
                         // 敵を倒した場合
                         if ($opponent_data->value_hp <= 0) {
                             $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                             $opponent_data->is_defeated_flag = true;
                             self::clearBuff($opponent_data);
-                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                             $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                             Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                        } else {
-                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
-                        // ダメージを与えられなかった場合
+
                     } else {
-                        Debugbar::debug('ダメージを与えられない。');
+                        // ダメージを与えられなかった場合
                         $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
                         Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                     }
@@ -1244,11 +1279,12 @@ class BattleState extends Model
                         // is_percent_basedのアイテムの場合は、相手の現在体力に合わせたダメージを与える
                         if ($base_damage == null || $selected_item->is_percent_based) {
                             $calculated_damage = ceil($opponent_data->value_hp * $selected_item->percent);
+                            $is_critical = false;
                         } else {
                             // ダメージ計算 物理か魔法攻撃かで変える
                             if ($attack_type === AttackType::Physical->value) {
                                 Debugbar::debug('物理。');
-                                $calculated_damage = self::calculatePhysicalDamage(
+                                $result = self::calculatePhysicalDamage(
                                     $base_damage,
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($actor_data, 'luc')
@@ -1259,32 +1295,39 @@ class BattleState extends Model
                                     self::calculateActualStatusValue($opponent_data, 'def'),
                                     self::calculateActualStatusValue($opponent_data, 'int')
                                 );
-                                $calculated_damage = self::calculateMagicDamage(
+                                $result = self::calculateMagicDamage(
                                     $base_damage,
-                                    $opponent_mdef
+                                    $opponent_mdef,
+                                    self::calculateActualStatusValue($actor_data, 'luc')
                                 );
                             }
+                            $calculated_damage = $result['damage'] ?? 0;
+                            $is_critical = $result['is_critical'] ?? false;
                         }
 
                         if ($calculated_damage > 0) {
                             Debugbar::debug("【ITEM】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
                             $opponent_data->value_hp -= $calculated_damage;
                             Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                            // クリティカル メッセージ分岐
+                            // TODO: アイテムでも必要だろうか？
+                            if ($is_critical) {
+                                $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            } else {
+                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                            }
+
                             // 敵を倒した場合
                             if ($opponent_data->value_hp <= 0) {
                                 $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                                 $opponent_data->is_defeated_flag = true;
                                 self::clearBuff($opponent_data);
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                                 $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                                 Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
-                            } else {
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                                Debugbar::debug("{$opponent_data->name}はまだ生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                             }
                         } else {
                             // ダメージを与えられなかった場合
-                            Debugbar::debug('ダメージを与えられない。');
                             $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
                             Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
                         }
@@ -1329,29 +1372,36 @@ class BattleState extends Model
                 Debugbar::warning("storeEnemyDamage(): ATTACK {$actor_data->name} → {$opponent_data->name}");
 
                 // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
-                $calculated_damage = self::calculatePhysicalDamage(
+                $result = self::calculatePhysicalDamage(
                     $pure_damage,
                     self::calculateActualStatusValue($opponent_data, 'def'),
                     self::calculateActualStatusValue($actor_data, 'luc')
                 );
+                $calculated_damage = $result['damage'] ?? 0;
+                $is_critical = $result['is_critical'] ?? false;
 
                 if ($calculated_damage > 0) {
                     Debugbar::warning("【ATTACK】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
                     $opponent_data->value_hp -= $calculated_damage;
                     Debugbar::warning("攻撃された。味方の残り体力: {$opponent_data->value_hp}");
+
+                    // クリティカル メッセージ分岐
+                    if ($is_critical) {
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    } else {
+                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    }
+
                     // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
                     if ($opponent_data->value_hp <= 0) {
                         $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                         $opponent_data->is_defeated_flag = true;
                         self::clearBuff($opponent_data);
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
                         $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
                         Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
-                    } else {
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
-                        Debugbar::warning("{$opponent_data->name}はまだ生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                     }
                 } else {
+                    // ダメージを与えられなかった場合
                     $battle_logs_collection->push("{$actor_data->name}の攻撃！しかし{$opponent_data->name}は攻撃を防いだ！");
                     Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は当然生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                 }
@@ -1366,7 +1416,7 @@ class BattleState extends Model
                     // ダメージ計算 物理か魔法攻撃かで変える
                     if ($attack_type === AttackType::Physical->value) {
                         Debugbar::warning('物理。');
-                        $calculated_damage = self::calculatePhysicalDamage(
+                        $result = self::calculatePhysicalDamage(
                             $pure_damage,
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($actor_data, 'luc')
@@ -1377,28 +1427,38 @@ class BattleState extends Model
                             self::calculateActualStatusValue($opponent_data, 'def'),
                             self::calculateActualStatusValue($opponent_data, 'int')
                         );
-                        $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
+                        $result = self::calculateMagicDamage(
+                            $pure_damage,
+                            $opponent_mdef,
+                            self::calculateActualStatusValue($actor_data, 'luc')
+                        );
                     }
+
+                    $calculated_damage = $result['damage'] ?? 0;
+                    $is_critical = $result['is_critical'] ?? false;
 
                     if ($calculated_damage > 0) {
                         Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
                         $opponent_data->value_hp -= $calculated_damage;
                         Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+
+                        // クリティカル メッセージ分岐
+                        if ($is_critical) {
+                            $battle_logs_collection->push("致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        }
+
                         // 味方がやられた場合
                         if ($opponent_data->value_hp <= 0) {
                             $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                             $opponent_data->is_defeated_flag = true;
                             self::clearBuff($opponent_data);
-                            $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
                             $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
                             Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
-                        } else {
-                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                            Debugbar::warning("{$opponent_data->name}は生存中。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                         }
                     } else {
                         // 防御などが高く、ダメージを受けなかった場合
-                        Debugbar::warning('ダメージを受けなかった。');
                         $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
                         Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                     }
@@ -1420,7 +1480,7 @@ class BattleState extends Model
                         // ダメージ計算 物理か魔法攻撃かで変える
                         if ($attack_type === AttackType::Physical->value) {
                             Debugbar::debug('物理。');
-                            $calculated_damage = self::calculatePhysicalDamage(
+                            $result = self::calculatePhysicalDamage(
                                 $base_damage,
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($actor_data, 'luc')
@@ -1431,31 +1491,38 @@ class BattleState extends Model
                                 self::calculateActualStatusValue($opponent_data, 'def'),
                                 self::calculateActualStatusValue($opponent_data, 'int')
                             );
-                            $calculated_damage = self::calculateMagicDamage(
+                            $result = self::calculateMagicDamage(
                                 $base_damage,
-                                $opponent_mdef
+                                $opponent_mdef,
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         }
+
+                        $calculated_damage = $result['damage'] ?? 0;
+                        $is_critical = $result['is_critical'] ?? false;
 
                         if ($calculated_damage > 0) {
                             Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
                             $opponent_data->value_hp -= $calculated_damage;
                             Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+
+                            // クリティカル メッセージ分岐
+                            if ($is_critical) {
+                                $battle_logs_collection->push("致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                            } else {
+                                $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                            }
+
                             // 敵を倒した場合
                             if ($opponent_data->value_hp <= 0) {
                                 $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
                                 $opponent_data->is_defeated_flag = true;
                                 self::clearBuff($opponent_data);
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                                 $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
                                 Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
-                            } else {
-                                $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
-                                Debugbar::warning("{$opponent_data->name}は生存中。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                             }
                         } else {
                             // 防御などが高く、ダメージを受けなかった場合
-                            Debugbar::warning('ダメージを受けなかった。');
                             $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
                             Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                         }
@@ -1845,7 +1912,7 @@ class BattleState extends Model
         // ダメージ計算 物理か魔法攻撃かで変える
         if ($attack_type === AttackType::Physical->value) {
             Debugbar::debug('applyAttackAndLog():: 物理。');
-            $calculated_damage = self::calculatePhysicalDamage(
+            $result = self::calculatePhysicalDamage(
                 $pure_damage,
                 self::calculateActualStatusValue($opponent_data, 'def'),
                 self::calculateActualStatusValue($actor_data, 'luc')
@@ -1856,22 +1923,36 @@ class BattleState extends Model
                 self::calculateActualStatusValue($opponent_data, 'def'),
                 self::calculateActualStatusValue($opponent_data, 'int')
             );
-            $calculated_damage = self::calculateMagicDamage($pure_damage, $opponent_mdef);
+            $result = self::calculateMagicDamage(
+                $pure_damage,
+                $opponent_mdef,
+                self::calculateActualStatusValue($actor_data, 'luc')
+            );
         }
+
+        $calculated_damage = $result['damage'] ?? 0;
+        $is_critical = $result['is_critical'] ?? false;
 
         if (! $is_enemy) {
             // パーティの場合のログ
             if ($calculated_damage > 0) {
                 $opponent_data->value_hp -= $calculated_damage;
+
+                // クリティカル メッセージ分岐
+                if ($is_critical) {
+                    $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                }
+
+                // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
                 if ($opponent_data->value_hp <= 0) {
                     $opponent_data->value_hp = 0;
                     $opponent_data->is_defeated_flag = true;
                     self::clearBuff($opponent_data);
-                    $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                     $battle_logs_collection->push("{$opponent_data->name}を倒した！");
                     Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
                 } else {
-                    $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
                     Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
             } else {
@@ -1884,15 +1965,22 @@ class BattleState extends Model
             // 敵の場合のログ
             if ($calculated_damage > 0) {
                 $opponent_data->value_hp -= $calculated_damage;
+
+                // クリティカル メッセージ分岐
+                if ($is_critical) {
+                    $battle_logs_collection->push("致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                }
+
+                // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
                 if ($opponent_data->value_hp <= 0) {
                     $opponent_data->value_hp = 0;
                     $opponent_data->is_defeated_flag = true;
                     self::clearBuff($opponent_data);
-                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
                     $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
                     Debugbar::warning("{$opponent_data->name}がやられた。残HP: {$opponent_data->value_hp}");
                 } else {
-                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！！");
                     Debugbar::warning("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
             } else {
@@ -2078,12 +2166,8 @@ class BattleState extends Model
      * 通常攻撃 (物理・単体)や物理スキルのダメージ計算
      *
      * 基礎計算式: damage² / (damage + def) ※ただし、多少のばらつきを入れる。
-     * 
-     * @param int $actor_luc 実数値 + バフを考慮したactorのLUC値
-     * 
-     * 
      */
-    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def, int $actor_luc): int
+    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def, int $actor_luc)
     {
         Debugbar::debug("calculatePhysicalDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_def} 自身のLUC: {$actor_luc}");
 
@@ -2126,12 +2210,9 @@ class BattleState extends Model
             Debugbar::warning("Critical! ダメージ: {$pre}");
         }
 
-        // TODO: 「クリティカル」！と画面に出す
-        // 魔法側も調整する
-
         // 最終ダメージ（四捨五入）
         $final_damage = (int) round($pre);
-        Debugbar::debug("最終ダメージ: {$final_damage}" . ($is_critical ? " (LUCKY)" : ""));
+        Debugbar::debug("最終ダメージ: {$final_damage}".($is_critical ? ' (LUCKY)' : ''));
 
         // ダメージが0の場合、確率で1ダメージにする
         // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
@@ -2148,10 +2229,10 @@ class BattleState extends Model
 
         $result = [
             'damage' => $final_damage,
-            'is_critical' => $is_critical
+            'is_critical' => $is_critical,
         ];
 
-        return $final_damage;
+        return $result;
     }
 
     /**
@@ -2160,7 +2241,7 @@ class BattleState extends Model
      * 基礎計算式: damage² / (damage + mdef) ※ただし、多少のばらつきを入れる。
      * 物理と同じなのでメソッドを統一してもいいが、今後の拡張性を持たせるために分割しておく
      */
-    public static function calculateMagicDamage(int $pure_damage, int $opponent_mdef): int
+    public static function calculateMagicDamage(int $pure_damage, int $opponent_mdef, int $actor_luc)
     {
         Debugbar::debug("calculateMagicDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_mdef}");
 
@@ -2175,8 +2256,37 @@ class BattleState extends Model
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
-        $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
-        Debugbar::debug("計算結果: ダメージ = {$base_damage}, ばらつき = {$variance_rate}, 最終ダメージ: {$final_damage}");
+        $varied = $base_damage * $variance_rate;
+        Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
+
+        // LUC 基礎ボーナス
+        $perSqrt = 0.01;
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus = 0.0;
+        if ($bonus_rate_max > 0) {
+            // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
+            // $varied = 100, $bonus_rate_max = 0.15の場合、
+            // random_valueが 0 の場合、 加算なし
+            // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
+            // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
+            $random_value = random_int(0, 10000) / 10000;
+            $bonus = $varied * $bonus_rate_max * $random_value;
+        }
+        $pre = $varied + $bonus;
+        Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
+
+        // LUC クリティカル (1.5倍)
+        $is_critical = false;
+        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
+        if (random_int(0, 10000) / 10000 < $critical_chance) {
+            $pre = $pre * 1.5;
+            $is_critical = true;
+            Debugbar::warning("Critical! ダメージ: {$pre}");
+        }
+
+        // 最終ダメージ（四捨五入）
+        $final_damage = (int) round($pre);
+        Debugbar::debug("最終ダメージ: {$final_damage}".($is_critical ? ' (LUCKY)' : ''));
 
         // ダメージが0の場合、確率で1ダメージにする
         // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
@@ -2191,7 +2301,12 @@ class BattleState extends Model
             Debugbar::debug("基礎ダメージが0だったため、確率で1ダメージ。random: {$random} final_damage: {$final_damage}");
         }
 
-        return $final_damage;
+        $result = [
+            'damage' => $final_damage,
+            'is_critical' => $is_critical,
+        ];
+
+        return $result;
     }
 
     /**
