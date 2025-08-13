@@ -1037,7 +1037,8 @@ class BattleState extends Model
                 // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
                 $calculated_damage = self::calculatePhysicalDamage(
                     $pure_damage,
-                    self::calculateActualStatusValue($opponent_data, 'def')
+                    self::calculateActualStatusValue($opponent_data, 'def'),
+                    self::calculateActualStatusValue($actor_data, 'luc'),
                 );
 
                 if ($calculated_damage > 0) {
@@ -1074,7 +1075,8 @@ class BattleState extends Model
                         Debugbar::debug('物理。');
                         $calculated_damage = self::calculatePhysicalDamage(
                             $pure_damage,
-                            self::calculateActualStatusValue($opponent_data, 'def')
+                            self::calculateActualStatusValue($opponent_data, 'def'),
+                            self::calculateActualStatusValue($actor_data, 'luc')
                         );
                     } elseif ($attack_type === AttackType::Magic->value) {
                         Debugbar::debug('魔法。');
@@ -1127,7 +1129,8 @@ class BattleState extends Model
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $base_damage,
-                                self::calculateActualStatusValue($opponent_data, 'def')
+                                self::calculateActualStatusValue($opponent_data, 'def'),
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
@@ -1185,7 +1188,8 @@ class BattleState extends Model
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $pure_damage,
-                                self::calculateActualStatusValue($opponent_data, 'def')
+                                self::calculateActualStatusValue($opponent_data, 'def'),
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
@@ -1246,7 +1250,8 @@ class BattleState extends Model
                                 Debugbar::debug('物理。');
                                 $calculated_damage = self::calculatePhysicalDamage(
                                     $base_damage,
-                                    self::calculateActualStatusValue($opponent_data, 'def')
+                                    self::calculateActualStatusValue($opponent_data, 'def'),
+                                    self::calculateActualStatusValue($actor_data, 'luc')
                                 );
                             } elseif ($attack_type === AttackType::Magic->value) {
                                 Debugbar::debug('魔法。');
@@ -1326,7 +1331,8 @@ class BattleState extends Model
                 // $pure_damageをベースに、相手のバフ後DEFを考慮してのダメージ計算
                 $calculated_damage = self::calculatePhysicalDamage(
                     $pure_damage,
-                    self::calculateActualStatusValue($opponent_data, 'def')
+                    self::calculateActualStatusValue($opponent_data, 'def'),
+                    self::calculateActualStatusValue($actor_data, 'luc')
                 );
 
                 if ($calculated_damage > 0) {
@@ -1362,7 +1368,8 @@ class BattleState extends Model
                         Debugbar::warning('物理。');
                         $calculated_damage = self::calculatePhysicalDamage(
                             $pure_damage,
-                            self::calculateActualStatusValue($opponent_data, 'def')
+                            self::calculateActualStatusValue($opponent_data, 'def'),
+                            self::calculateActualStatusValue($actor_data, 'luc')
                         );
                     } elseif ($attack_type === AttackType::Magic->value) {
                         Debugbar::warning('魔法。');
@@ -1415,7 +1422,8 @@ class BattleState extends Model
                             Debugbar::debug('物理。');
                             $calculated_damage = self::calculatePhysicalDamage(
                                 $base_damage,
-                                self::calculateActualStatusValue($opponent_data, 'def')
+                                self::calculateActualStatusValue($opponent_data, 'def'),
+                                self::calculateActualStatusValue($actor_data, 'luc')
                             );
                         } elseif ($attack_type === AttackType::Magic->value) {
                             Debugbar::debug('魔法。');
@@ -1839,7 +1847,8 @@ class BattleState extends Model
             Debugbar::debug('applyAttackAndLog():: 物理。');
             $calculated_damage = self::calculatePhysicalDamage(
                 $pure_damage,
-                self::calculateActualStatusValue($opponent_data, 'def')
+                self::calculateActualStatusValue($opponent_data, 'def'),
+                self::calculateActualStatusValue($actor_data, 'luc')
             );
         } elseif ($attack_type === AttackType::Magic->value) {
             Debugbar::debug('applyAttackAndLog():: 魔法。');
@@ -1897,7 +1906,7 @@ class BattleState extends Model
     /**
      * 敵スキル 特殊系スキルの処理メソッド。
      *
-     * ハイスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応す流。
+     * ハイスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
      */
     public static function storeEnemySpecialSkill(
         object $actor_data,
@@ -2069,10 +2078,14 @@ class BattleState extends Model
      * 通常攻撃 (物理・単体)や物理スキルのダメージ計算
      *
      * 基礎計算式: damage² / (damage + def) ※ただし、多少のばらつきを入れる。
+     * 
+     * @param int $actor_luc 実数値 + バフを考慮したactorのLUC値
+     * 
+     * 
      */
-    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def): int
+    public static function calculatePhysicalDamage(int $pure_damage, int $opponent_def, int $actor_luc): int
     {
-        Debugbar::debug("calculatePhysicalDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_def}");
+        Debugbar::debug("calculatePhysicalDamage(): --- pure_damage: {$pure_damage} 対象DEF: {$opponent_def} 自身のLUC: {$actor_luc}");
 
         // ゼロ除算対策
         if ($pure_damage <= 0) {
@@ -2085,8 +2098,40 @@ class BattleState extends Model
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
-        $final_damage = round($base_damage * $variance_rate); // ceilでなく、roundで0のケースが発生するようにする
-        Debugbar::debug("計算結果: ダメージ = {$base_damage}, ばらつき = {$variance_rate}, 最終ダメージ: {$final_damage}");
+        $varied = $base_damage * $variance_rate;
+        Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
+
+        // LUC 基礎ボーナス
+        $perSqrt = 0.01;
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus = 0.0;
+        if ($bonus_rate_max > 0) {
+            // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
+            // $varied = 100, $bonus_rate_max = 0.15の場合、
+            // random_valueが 0 の場合、 加算なし
+            // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
+            // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
+            $random_value = random_int(0, 10000) / 10000;
+            $bonus = $varied * $bonus_rate_max * $random_value;
+        }
+        $pre = $varied + $bonus;
+        Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
+
+        // LUC クリティカル (1.5倍)
+        $is_critical = false;
+        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
+        if (random_int(0, 10000) / 10000 < $critical_chance) {
+            $pre = $pre * 1.5;
+            $is_critical = true;
+            Debugbar::warning("Critical! ダメージ: {$pre}");
+        }
+
+        // TODO: 「クリティカル」！と画面に出す
+        // 魔法側も調整する
+
+        // 最終ダメージ（四捨五入）
+        $final_damage = (int) round($pre);
+        Debugbar::debug("最終ダメージ: {$final_damage}" . ($is_critical ? " (LUCKY)" : ""));
 
         // ダメージが0の場合、確率で1ダメージにする
         // いわゆるメタル系の敵には、ダメージが足りない場合でも1ダメージ入るような形にできる
@@ -2100,6 +2145,11 @@ class BattleState extends Model
             }
             Debugbar::debug("基礎ダメージが0だったため、確率で1ダメージ。random: {$random} final_damage: {$final_damage}");
         }
+
+        $result = [
+            'damage' => $final_damage,
+            'is_critical' => $is_critical
+        ];
 
         return $final_damage;
     }
