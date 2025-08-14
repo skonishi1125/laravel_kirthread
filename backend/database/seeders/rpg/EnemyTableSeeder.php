@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\rpg;
 
+use App\Enums\Rpg\EnemyData;
 use App\Models\Game\Rpg\Enemy;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -18,10 +19,9 @@ class EnemyTableSeeder extends Seeder
         Enemy::truncate();
 
         $enemies = [
-            // field 1
             [
-                'id' => '1',
-                'name' => 'スララ',
+                'id' => EnemyData::Srara,
+                'name' => EnemyData::Srara->label(),
                 'appear_field_id' => 1,
                 'value_hp' => 80,
                 'value_ap' => 0,
@@ -32,14 +32,16 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 0,
                 'exp' => 15,
                 'drop_money' => 10,
-                'portrait_image_path' => 'srara.png',
-                'description' => '冒険者の前に立ちはだかる最初の敵。油断禁物！',
+                'portrait_image_path' => EnemyData::Srara->image_path(),
+                'description' => EnemyData::Srara->description(),
+                'is_boss' => false,
+                'has_pattern' => false,
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'id' => '2',
-                'name' => 'ガオー',
+                'id' => EnemyData::Gao,
+                'name' => EnemyData::Gao->label(),
                 'appear_field_id' => 1,
                 'value_hp' => 100,
                 'value_ap' => 0,
@@ -50,14 +52,14 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 0,
                 'exp' => 50,
                 'drop_money' => 15,
-                'portrait_image_path' => 'gao.png',
-                'description' => '素早い動きが特徴。早めに倒そう。',
+                'portrait_image_path' => EnemyData::Gao->image_path(),
+                'description' => EnemyData::Gao->description(),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'id' => '3',
-                'name' => 'ノラワニ',
+                'id' => EnemyData::Norawani,
+                'name' => EnemyData::Norawani->label(),
                 'appear_field_id' => 1,
                 'value_hp' => 160,
                 'value_ap' => 0,
@@ -68,14 +70,14 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 0,
                 'exp' => 100,
                 'drop_money' => 50,
-                'portrait_image_path' => 'norawani.png',
-                'description' => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
+                'portrait_image_path' => EnemyData::Norawani->image_path(),
+                'description' => EnemyData::Norawani->description(),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'id' => '4',
-                'name' => 'イッカク',
+                'id' => EnemyData::Ikkaku,
+                'name' => EnemyData::Ikkaku->label(),
                 'appear_field_id' => 1,
                 'value_hp' => 130,
                 'value_ap' => 10,
@@ -86,14 +88,14 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 0,
                 'exp' => 150,
                 'drop_money' => 100,
-                'portrait_image_path' => 'ikkaku.png',
-                'description' => '頑丈な口角を持ち、立派なツノで行われる雷攻撃には要注意。',
+                'portrait_image_path' => EnemyData::Ikkaku->image_path(),
+                'description' => EnemyData::Ikkaku->description(),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             [
-                'id' => '5',
-                'name' => 'オヤダマワニ',
+                'id' => EnemyData::Oyadamawani,
+                'name' => EnemyData::Oyadamawani->label(),
                 'appear_field_id' => 1,
                 'value_hp' => 600,
                 'value_ap' => 30,
@@ -104,8 +106,8 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 30,
                 'exp' => 1500,
                 'drop_money' => 500,
-                'portrait_image_path' => 'oyadamawani.png',
-                'description' => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない。',
+                'portrait_image_path' => EnemyData::Oyadamawani->image_path(),
+                'description' => EnemyData::Oyadamawani->description(),
                 'is_boss' => true,
                 'has_pattern' => true,
                 'created_at' => $now,
@@ -113,8 +115,8 @@ class EnemyTableSeeder extends Seeder
             ],
             // field 2
             [
-                'id' => '6',
-                'name' => 'ハイスララ',
+                'id' => EnemyData::HighSrara,
+                'name' => EnemyData::HighSrara->label(),
                 'appear_field_id' => 2,
                 'value_hp' => 120,
                 'value_ap' => 20,
@@ -125,15 +127,15 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 0,
                 'exp' => 200,
                 'drop_money' => 900,
-                'portrait_image_path' => 'highsrara.png',
-                'description' => 'スララの突然変異体。バランスの良いパラメータを持つ。',
+                'portrait_image_path' => EnemyData::HighSrara->image_path(),
+                'description' => EnemyData::HighSrara->description(),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
             // field 3
             [
-                'id' => '11',
-                'name' => 'フレアドラゴ',
+                'id' => EnemyData::FlareDrago,
+                'name' => EnemyData::FlareDrago->label(),
                 'appear_field_id' => 3,
                 'value_hp' => 4000,
                 'value_ap' => 100,
@@ -144,8 +146,8 @@ class EnemyTableSeeder extends Seeder
                 'value_luc' => 100,
                 'exp' => 4500,
                 'drop_money' => 2500,
-                'portrait_image_path' => 'flaredrago.png',
-                'description' => '非常に知能の高い龍で、狡猾な手口を使い冒険者を餌とする。',
+                'portrait_image_path' => EnemyData::FlareDrago->image_path(),
+                'description' => EnemyData::FlareDrago->description(),
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
