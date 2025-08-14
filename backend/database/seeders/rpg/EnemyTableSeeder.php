@@ -22,7 +22,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Srara,
                 'name' => EnemyData::Srara->label(),
-                'appear_field_id' => 1,
                 'value_hp' => 80,
                 'value_ap' => 0,
                 'value_str' => 18,
@@ -42,7 +41,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Gao,
                 'name' => EnemyData::Gao->label(),
-                'appear_field_id' => 1,
                 'value_hp' => 100,
                 'value_ap' => 0,
                 'value_str' => 25,
@@ -60,7 +58,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Norawani,
                 'name' => EnemyData::Norawani->label(),
-                'appear_field_id' => 1,
                 'value_hp' => 160,
                 'value_ap' => 0,
                 'value_str' => 25,
@@ -78,7 +75,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Ikkaku,
                 'name' => EnemyData::Ikkaku->label(),
-                'appear_field_id' => 1,
                 'value_hp' => 130,
                 'value_ap' => 10,
                 'value_str' => 25,
@@ -96,7 +92,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Oyadamawani,
                 'name' => EnemyData::Oyadamawani->label(),
-                'appear_field_id' => 1,
                 'value_hp' => 600,
                 'value_ap' => 30,
                 'value_str' => 50,
@@ -117,7 +112,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::HighSrara,
                 'name' => EnemyData::HighSrara->label(),
-                'appear_field_id' => 2,
                 'value_hp' => 120,
                 'value_ap' => 20,
                 'value_str' => 40,
@@ -136,7 +130,6 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::FlareDrago,
                 'name' => EnemyData::FlareDrago->label(),
-                'appear_field_id' => 3,
                 'value_hp' => 4000,
                 'value_ap' => 100,
                 'value_str' => 100,
