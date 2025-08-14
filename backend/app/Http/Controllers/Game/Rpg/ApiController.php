@@ -225,30 +225,52 @@ class ApiController extends Controller
             'sellItemList' => [],
         ];
 
+        // パーティメンバーのLUC合計値を取得(割引に使う)
+        $parties_sum_luc = $savedata->parties->sum('value_luc') + $savedata->parties->sum('allocated_luc');
+        $rate = min(Item::DISCOUNT_MAX_LUC_RATE, $parties_sum_luc * Item::PER_POINT_LUC_RATE); // 割引率
+        $factor = 1 - $rate; // 実際に価格にかける倍率 $rateが0.2なら、 1 - 0.2で0.8 (80%の値段で売る)
+
         // --------- 所持金の取得 ---------
         $return_list['money'] = $savedata->money;
 
         //  --------- 購入アイテムの取得 ---------
         $buyable_items = Item::getShopListItem($savedata);
         $owned_items = $savedata->items()->withPivot('possession_number')->get(); // 所持中のアイテム一覧
-        // 所持数を確認しし、配列にその値を格納
-        $buyable_items->map(function ($item) use ($owned_items) {
+        // 所持数を確認し、配列にその値を格納
+        $buyable_items->map(function ($item) use ($owned_items, $factor) {
             $owned = $owned_items->firstWhere('id', $item->id);
             $item->possession_number = $owned ? $owned->pivot->possession_number : 0;
+
+            // 価格の割引
+            $discounted = (int) floor($item->price * $factor);
+            $item->discounted_price = max(1, $discounted);
 
             return $item;
         });
         $buyable_items = $buyable_items
-            ->select('id', 'name', 'price', 'description', 'possession_number', 'max_possession_number');
+            ->select('id', 'name', 'price', 'discounted_price', 'description', 'possession_number', 'max_possession_number');
         $return_list['buyItemList'] = $buyable_items;
 
         //  --------- 売却アイテムの取得 ---------
+        $base = 0.5;    // ベースはpriceの半額として、それからLUCに応じて金額を引き上げる
+        $bonus = $parties_sum_luc * Item::PER_POINT_LUC_RATE;
+        $sellFactor = $base * (1 + $bonus);         // 例: LUC 100 なら 0.5 * 1.02 = 0.51
+
         // pivotの値を取る時は、mapで加工する
-        $sellable_items = $owned_items->map(function ($item) {
+        $sellable_items = $owned_items->map(function ($item) use ($sellFactor) {
+            $listPrice = $item->price;
+            $raw = $listPrice * $sellFactor;
+
+            // 丸め規則（10G単位で切り捨て）
+            $rounded = (int) round($raw);
+
+            // 最低1G保証
+            $sellPrice = max(1, $rounded);
+
             return [
                 'id' => $item->id,
                 'name' => $item->name,
-                'price' => round($item->price / 2), // 半額
+                'price' => $sellPrice,
                 'description' => $item->description,
                 'possession_number' => $item->pivot->possession_number,
                 'max_possession_number' => $item->max_possession_number,

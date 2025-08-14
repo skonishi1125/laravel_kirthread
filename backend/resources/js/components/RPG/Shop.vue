@@ -84,7 +84,7 @@
             <tbody>
               <tr v-for="buyItem in buyItemList" @click="showPurchaseForm(buyItem)">
                 <td class="weight-bold">{{ buyItem.name }}</td>
-                <td class="weight-bold">{{ buyItem.price }} G</td>
+                <td class="weight-bold">{{ buyItem.discounted_price }} G</td>
                 <td class="weight-bold">{{ buyItem.description }}</td>
                 <td class="weight-bold">{{ buyItem.possession_number }}/<span color:red></span>{{ buyItem.max_possession_number }}</td>
               </tr>
@@ -362,7 +362,7 @@
         // アイテム情報をpurchaseForm配列に格納しておく。
         this.purchaseForm.item_id = buyItem.id;
         this.purchaseForm.name = buyItem.name;
-        this.purchaseForm.price = buyItem.price;
+        this.purchaseForm.price = buyItem.discounted_price;
         this.purchaseForm.possession_number = buyItem.possession_number;
         this.purchaseForm.max_possession_number = buyItem.max_possession_number;
 
