@@ -114,7 +114,7 @@
                   <button class="btn btn-info" 
                     style="width: 170px" 
                     @click="openPaymentModal"
-                    :class="{'disabled': pushCounter < 10}" 
+                    :disabled="pushCounter < 10"
                     >精算する</button>
                 </div>
               </div>

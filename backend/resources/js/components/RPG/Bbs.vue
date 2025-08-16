@@ -108,7 +108,7 @@
                 <div class="col-12 mt-5">
                   <form @submit.prevent="submitPost" class="d-flex align-items-center">
                     <div class="form-inline">
-                      <input type="text" class="form-control form-control-sm mr-2" placeholder="投稿する内容を記入してください(最大:20文字)" style="width: 570px;" v-model="newPostMessage" maxlength="30">
+                      <input type="text" class="form-control form-control-sm mr-2" placeholder="投稿する内容を記入してください(最大:20文字)" style="width: 570px;" v-model="newPostMessage" maxlength="20">
                       <label for="spoiler" class="mr-1">ネタバレ有</label>
                       <input type="checkbox" id="spoiler" name="spoiler" v-model="newPostIsSpoiled">
                     </div>
