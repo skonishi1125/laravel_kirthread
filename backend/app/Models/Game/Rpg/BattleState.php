@@ -1994,7 +1994,7 @@ class BattleState extends Model
     /**
      * 敵スキル 特殊系スキルの処理メソッド。
      *
-     * ハイスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
+     * ビッグスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
      */
     public static function storeEnemySpecialSkill(
         object $actor_data,

@@ -9,6 +9,7 @@ enum EnemyData: int
     case Norawani = 12;
     case Ikkaku = 13;
     case Oyadamawani = 14;
+    case BigSrara = 15;
 
     case HighSrara = 20;
 
@@ -22,6 +23,7 @@ enum EnemyData: int
             self::Norawani => 'ノラワニ',
             self::Ikkaku => 'イッカク',
             self::Oyadamawani => 'オヤダマワニ',
+            self::BigSrara => 'ビッグスララ',
 
             self::HighSrara => 'ハイスララ',
 
@@ -38,6 +40,7 @@ enum EnemyData: int
             self::Norawani => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
             self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
             self::Oyadamawani => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない',
+            self::BigSrara => 'スララの合成体。相変わらず鈍重だが生命力は侮れない。',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -53,6 +56,7 @@ enum EnemyData: int
             self::Norawani => 'norawani.png',
             self::Ikkaku => 'ikkaku.png',
             self::Oyadamawani => 'oyadamawani.png',
+            self::BigSrara => 'bigsrara.png',
 
             self::HighSrara => 'highsrara.png',
 

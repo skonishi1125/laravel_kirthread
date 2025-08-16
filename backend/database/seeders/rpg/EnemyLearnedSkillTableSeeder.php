@@ -17,6 +17,9 @@ class EnemyLearnedSkillTableSeeder extends Seeder
         EnemyLearnedSkill::truncate();
 
         $seeds = [
+            // ビッグスララ
+            ['enemy_id' => EnemyData::BigSrara, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
+
             // イッカク
             ['enemy_id' => EnemyData::Ikkaku, 'skill_id' => SkillDefinition::Biribiri, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Ikkaku, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 1],
