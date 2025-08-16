@@ -45,7 +45,7 @@ class EnemyTableSeeder extends Seeder
                 'value_ap' => 30,
                 'value_str' => 20,
                 'value_def' => 10,
-                'value_int' => 0,
+                'value_int' => 1,
                 'value_spd' => 15,
                 'value_luc' => 0,
                 'exp' => 40,

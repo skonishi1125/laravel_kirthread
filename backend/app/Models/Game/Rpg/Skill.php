@@ -614,7 +614,6 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     // マイナスの値にして、相手にデバフとして付与する
                     $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
-                    \Debugbar::debug($new_buff['buffed_def']);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
