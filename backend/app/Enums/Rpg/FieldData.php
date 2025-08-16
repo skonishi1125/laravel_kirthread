@@ -32,4 +32,21 @@ enum FieldData: int
             self::VastExpanse => '茫洋の地'
         };
     }
+
+    public function image_path(): string
+    {
+        return match ($this) {
+            self::Grassland => 'grassland.png',
+            self::Desert => 'desert.png',
+            self::Volcano => 'volcano.png',
+            self::Coast => 'coast.png',
+            self::IceAndSnow => 'iceandsnow.png',
+            self::WetFog => 'wetfog.png',
+            self::NightForest => 'nightforest.png',
+            self::DecayedFarmland => 'decayedfarmland.png',
+            self::CastleTown => 'castletown.png',
+            self::AncientCastle => 'ancientcastle.png',
+            self::VastExpanse => 'vastexpanse.png',
+        };
+    }
 }

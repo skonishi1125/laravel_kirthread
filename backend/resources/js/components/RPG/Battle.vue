@@ -283,8 +283,13 @@
 
 <template>
   <div class="row" @click="nextAction">
-    <!-- todo: ステージごとに背景を変える -->
-    <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;">
+    <!-- <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;"> -->
+    <div class="col-12" 
+      :style="{
+        backgroundImage: `url('/image/rpg/field/${backgroundImagePath}')`,
+        backgroundSize: 'cover',
+        position: 'relative'
+      }">
 
       <div v-if="battle.status == 'error'">
         <div class="nextScene_button" @click="refreshBattleStateAndReturnToMenu">
@@ -580,6 +585,7 @@ export default {
       partyData: {},
       itemData: {},
       currentTurn: 1,
+      backgroundImagePath: 'none.png',
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       hoveredEnemy: null,
       enemyData: {},
@@ -668,6 +674,7 @@ export default {
         this.$store.dispatch('setBattleSessionId', data[2] || []);
         this.itemData = data[3] || [];
         this.currentTurn = data[4] || 1;
+        this.backgroundImagePath = data[5] || 'none.png';
 
         console.log('encount | buff格納');
         // バフ配列

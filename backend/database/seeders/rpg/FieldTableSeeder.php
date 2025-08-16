@@ -19,6 +19,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::Grassland,
                 'name' => FieldData::Grassland->label(),
+                'background_image_path' => FieldData::Grassland->image_path(),
                 'difficulty' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -26,6 +27,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::Desert,
                 'name' => FieldData::Desert->label(),
+                'background_image_path' => FieldData::Desert->image_path(),
                 'difficulty' => 2,
                 'required_clears' => 1,
                 'created_at' => now(),
@@ -34,6 +36,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::Volcano,
                 'name' => FieldData::Volcano->label(),
+                'background_image_path' => FieldData::Volcano->image_path(),
                 'difficulty' => 2,
                 'required_clears' => 1,
                 'created_at' => now(),
@@ -42,6 +45,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::Coast,
                 'name' => FieldData::Coast->label(),
+                'background_image_path' => FieldData::Coast->image_path(),
                 'difficulty' => 2,
                 'required_clears' => 1,
                 'created_at' => now(),
@@ -50,6 +54,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::IceAndSnow,
                 'name' => FieldData::IceAndSnow->label(),
+                'background_image_path' => FieldData::IceAndSnow->image_path(),
                 'difficulty' => 3,
                 'required_clears' => 3,
                 'created_at' => now(),
@@ -58,6 +63,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::WetFog,
                 'name' => FieldData::WetFog->label(),
+                'background_image_path' => FieldData::WetFog->image_path(),
                 'difficulty' => 3,
                 'required_clears' => 3,
                 'created_at' => now(),
@@ -66,6 +72,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::NightForest,
                 'name' => FieldData::NightForest->label(),
+                'background_image_path' => FieldData::NightForest->image_path(),
                 'difficulty' => 3,
                 'required_clears' => 3,
                 'created_at' => now(),
@@ -74,6 +81,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::DecayedFarmland,
                 'name' => FieldData::DecayedFarmland->label(),
+                'background_image_path' => FieldData::DecayedFarmland->image_path(),
                 'difficulty' => 4,
                 'required_clears' => 5,
                 'created_at' => now(),
@@ -82,6 +90,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::CastleTown,
                 'name' => FieldData::CastleTown->label(),
+                'background_image_path' => FieldData::CastleTown->image_path(),
                 'difficulty' => 4,
                 'required_clears' => 5,
                 'created_at' => now(),
@@ -90,6 +99,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::AncientCastle,
                 'name' => FieldData::AncientCastle->label(),
+                'background_image_path' => FieldData::AncientCastle->image_path(),
                 'difficulty' => 5,
                 'required_clears' => 6,
                 'created_at' => now(),
@@ -98,6 +108,7 @@ class FieldTableSeeder extends Seeder
             [
                 'id' => FieldData::VastExpanse,
                 'name' => FieldData::VastExpanse->label(),
+                'background_image_path' => FieldData::VastExpanse->image_path(),
                 'difficulty' => 6,
                 'required_clears' => 10,
                 'created_at' => now(),
