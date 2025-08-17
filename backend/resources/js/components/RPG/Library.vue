@@ -169,7 +169,7 @@
 
           <div class="modal-body book-modal-body">
             <div v-html="modalBook.content"></div>
-            <p>【終】</p>
+            <p style="text-align: right; font-weight: bold;">【終】</p>
           </div>
 
           <div class="modal-footer book-modal-footer">
