@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // 3つ以上クリアすることが条件
-    public const PLAZA_ENABLE_CLEAR_FIELD = 3;
+    // 4つ以上クリアすることが条件
+    public const PLAZA_ENABLE_CLEAR_FIELD = 4;
 
     // TODO:
     // * constructなどでログインしているユーザーがアクセスできる前提とする

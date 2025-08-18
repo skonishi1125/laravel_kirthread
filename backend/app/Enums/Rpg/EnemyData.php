@@ -6,24 +6,36 @@ enum EnemyData: int
 {
     case Srara = 10;
     case Gao = 11;
-    case Norawani = 12;
-    case Ikkaku = 13;
-    case Oyadamawani = 14;
-    case BigSrara = 15;
+    case BigSrara = 12;
 
-    case HighSrara = 20;
+    case Rizard = 20;
+    case Scorpio = 21;
+    case RockRizard = 22;
 
-    case FlareDrago = 30;
+    case Ikkaku = 30;
+
+    case Norawani = 40;
+    case Oyadamawani = 41;
+
+    case HighSrara = 50;
+
+    case FlareDrago = 60;
 
     public function label(): string
     {
         return match ($this) {
             self::Srara => 'スララ',
             self::Gao => 'ガオー',
-            self::Norawani => 'ノラワニ',
-            self::Ikkaku => 'イッカク',
-            self::Oyadamawani => 'オヤダマワニ',
             self::BigSrara => 'ビッグスララ',
+
+            self::Rizard => 'リザード',
+            self::Scorpio => 'スコーピオ',
+            self::RockRizard => 'ロックリザード',
+
+            self::Ikkaku => 'イッカク',
+
+            self::Norawani => 'ノラワニ',
+            self::Oyadamawani => 'オヤダマワニ',
 
             self::HighSrara => 'ハイスララ',
 
@@ -37,10 +49,16 @@ enum EnemyData: int
         return match ($this) {
             self::Srara => '冒険者の前に立ちはだかる最初の敵。油断禁物！',
             self::Gao => '素早い動きが特徴。攻撃力が高めなので早めに倒そう。',
-            self::Norawani => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
-            self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
-            self::Oyadamawani => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない',
             self::BigSrara => 'スララの合成体。相変わらず鈍重だが生命力は侮れない。',
+
+            self::Rizard => '',
+            self::Scorpio => '',
+            self::RockRizard => '',
+
+            self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
+
+            self::Norawani => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
+            self::Oyadamawani => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -53,10 +71,16 @@ enum EnemyData: int
         return match ($this) {
             self::Srara => 'srara.png',
             self::Gao => 'gao.png',
-            self::Norawani => 'norawani.png',
-            self::Ikkaku => 'ikkaku.png',
-            self::Oyadamawani => 'oyadamawani.png',
             self::BigSrara => 'bigsrara.png',
+
+            self::Rizard => 'rizard.png',
+            self::Scorpio => 'scorpio.png',
+            self::RockRizard => 'rockrizard.png',
+
+            self::Ikkaku => 'ikkaku.png',
+
+            self::Norawani => 'norawani.png',
+            self::Oyadamawani => 'oyadamawani.png',
 
             self::HighSrara => 'highsrara.png',
 
