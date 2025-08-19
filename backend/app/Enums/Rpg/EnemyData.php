@@ -12,10 +12,13 @@ enum EnemyData: int
     case Scorpio = 21;
     case RockRizard = 22;
 
-    case Ikkaku = 30;
+    case Norawani = 30;
+    case Oyadamawani = 31;
 
-    case Norawani = 40;
-    case Oyadamawani = 41;
+    case MageSrara = 40;
+    case Clion = 41;
+    case Ikkaku = 42;
+    case SpikeWhale = 43;
 
     case HighSrara = 50;
 
@@ -32,10 +35,13 @@ enum EnemyData: int
             self::Scorpio => 'スコーピオ',
             self::RockRizard => 'ロックリザード',
 
-            self::Ikkaku => 'イッカク',
-
             self::Norawani => 'ノラワニ',
             self::Oyadamawani => 'オヤダマワニ',
+
+            self::MageSrara => 'メイジスララ',
+            self::Clion => 'クリオン',
+            self::Ikkaku => 'イッカク',
+            self::SpikeWhale => 'スパイクホエール',
 
             self::HighSrara => 'ハイスララ',
 
@@ -55,10 +61,13 @@ enum EnemyData: int
             self::Scorpio => '',
             self::RockRizard => '',
 
-            self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
-
             self::Norawani => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
             self::Oyadamawani => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない',
+
+            self::MageSrara => 'メイジスララ',
+            self::Clion => 'クリオン',
+            self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
+            self::SpikeWhale => 'スパイクホエール',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -77,10 +86,13 @@ enum EnemyData: int
             self::Scorpio => 'scorpio.png',
             self::RockRizard => 'rockrizard.png',
 
-            self::Ikkaku => 'ikkaku.png',
-
             self::Norawani => 'norawani.png',
             self::Oyadamawani => 'oyadamawani.png',
+
+            self::MageSrara => 'magesrara.png',
+            self::Clion => 'clion.png',
+            self::Ikkaku => 'ikkaku.png',
+            self::SpikeWhale => 'spikewhale.png',
 
             self::HighSrara => 'highsrara.png',
 

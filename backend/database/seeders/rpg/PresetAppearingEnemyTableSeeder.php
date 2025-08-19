@@ -24,39 +24,39 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::Srara,
-                'number' => 1
+                'number' => 1,
             ],
             // 1-2
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 2,
                 'enemy_id' => EnemyData::Gao,
-                'number' => 1
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 2,
                 'enemy_id' => EnemyData::Srara,
-                'number' => 1
+                'number' => 1,
             ],
             // 1-3 ボス スララで囲む
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::Srara,
-                'number' => 1
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::BigSrara,
-                'number' => 1
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::Srara,
-                'number' => 1
+                'number' => 1,
             ],
             // --------- 砂漠 ---------
             [
@@ -108,9 +108,59 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Scorpio,
                 'number' => 1,
             ],
+            // --------- 火山 ---------
+            // --------- 海岸 ---------
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::MageSrara,
+                'number' => 2,
+            ],
+            // クリオン、メイジスララ、クリオン
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Clion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::MageSrara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Clion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Clion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::SpikeWhale,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
 
         ];
-
 
         foreach ($seeds as $seed) {
             PresetAppearingEnemy::create($seed);

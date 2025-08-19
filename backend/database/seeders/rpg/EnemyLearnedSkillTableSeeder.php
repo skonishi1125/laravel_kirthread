@@ -40,6 +40,9 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // ['enemy_id' => 5, 'skill_id' => SkillDefinition::EnemyGuardSpell, 'skill_level' => 1],
             // ['enemy_id' => 5, 'skill_id' => SkillDefinition::EnemyAllGuardSpell, 'skill_level' => 1],
 
+            // メイジスララ
+            ['enemy_id' => EnemyData::MageSrara, 'skill_id' => SkillDefinition::Freeze, 'skill_level' => 1],
+
         ];
 
         foreach ($seeds as $seed) {

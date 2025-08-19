@@ -615,6 +615,11 @@ class Skill extends Model
                     // マイナスの値にして、相手にデバフとして付与する
                     $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
                     break;
+                case SkillDefinition::Freeze :
+                    Debugbar::warning(SkillDefinition::Freeze->label());
+                    $battle_logs_collection->push("{$actor_data->name}はフリーズを唱えた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
