@@ -76,7 +76,7 @@ enum ItemData: int
             self::Bomb => '敵単体に物理の大ダメージ。',
             self::TerminateBomb => '大きな爆風と共に、敵全体に物理の大ダメージ。',
 
-            self::EtherCapsule => 'マナの力が詰まったカプセル。敵単体に魔法の大ダメージ',
+            self::EtherCapsule => 'マナの力が詰まったカプセル。敵単体に魔法の大ダメージ。',
             self::EtherCrystal => 'マナの凝縮されたクリスタル。解き放つことで敵全体に魔法の大ダメージ。',
 
             self::GoldBar => '売るとお金になる。',
