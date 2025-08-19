@@ -620,6 +620,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}はフリーズを唱えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::Bubble :
+                    Debugbar::warning(SkillDefinition::Bubble->label());
+                    $battle_logs_collection->push("{$actor_data->name}はぶくぶくと泡を吹き出してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

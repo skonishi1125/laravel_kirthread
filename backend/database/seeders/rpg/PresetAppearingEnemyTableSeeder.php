@@ -30,31 +30,38 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Grassland,
                 'stage_id' => 2,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 2,
+            ],
+            // 1-3
+            [
+                'field_id' => FieldData::Grassland,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::Gao,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Grassland,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::Srara,
-                'number' => 1,
-            ],
-            // 1-3 ボス スララで囲む
-            [
-                'field_id' => FieldData::Grassland,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::Srara,
                 'number' => 1,
             ],
+            // 1-4 ボス スララで囲む
             [
                 'field_id' => FieldData::Grassland,
-                'stage_id' => 3,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Grassland,
+                'stage_id' => 4,
                 'enemy_id' => EnemyData::BigSrara,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Grassland,
-                'stage_id' => 3,
+                'stage_id' => 4,
                 'enemy_id' => EnemyData::Srara,
                 'number' => 1,
             ],
