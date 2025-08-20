@@ -384,7 +384,7 @@ class Skill extends Model
                     // -------------------- 重騎士 --------------------
                 case SkillDefinition::WideThrust :
                     Debugbar::debug(SkillDefinition::WideThrust->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手持ちの斧で周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::WideGuard :
@@ -458,8 +458,8 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！相手の甲殻を打ち砕く、鋭い一撃！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                     // マイナスの値にして、相手にデバフとして付与する
-                    //  例: 自身のDEFが100 SLv1の場合、-(100) * 1.0 = -100
-                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
+                    //  例: 自身のDEFが100 SLv1の場合、-(100) * (1.0 / 2) = -50
+                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * (($selected_skill_data->skill_percent) / 2));
                     \Debugbar::debug($new_buff['buffed_def']);
                     break;
                 case SkillDefinition::WindAccel :
@@ -623,6 +623,11 @@ class Skill extends Model
                 case SkillDefinition::Bubble :
                     Debugbar::warning(SkillDefinition::Bubble->label());
                     $battle_logs_collection->push("{$actor_data->name}はぶくぶくと泡を吹き出してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Wave :
+                    Debugbar::warning(SkillDefinition::Wave->label());
+                    $battle_logs_collection->push("{$actor_data->name}は自慢のツノを怪しく光らせ、大波を呼び寄せた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 default:

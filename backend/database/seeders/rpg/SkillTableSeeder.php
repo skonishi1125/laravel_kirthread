@@ -1423,6 +1423,22 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::Bubble->description(),
             ],
+            [
+                'id' => SkillDefinition::Wave->value,
+                'name' => SkillDefinition::Wave->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Damage->value,
+                'target_range' => TargetRange::All->value,
+                'lv1_percent' => 0.8,
+                'lv1_ap_cost' => 10,
+                'lv2_percent' => 1.2,
+                'lv2_ap_cost' => 16,
+                'lv3_percent' => 1.6,
+                'lv3_ap_cost' => 24,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::Wave->description(),
+            ],
 
         ];
 

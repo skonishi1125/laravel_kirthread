@@ -46,6 +46,9 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // クリオン
             ['enemy_id' => EnemyData::Clion, 'skill_id' => SkillDefinition::Bubble, 'skill_level' => 1],
 
+            // スパイクホエール
+            ['enemy_id' => EnemyData::SpikeWhale, 'skill_id' => SkillDefinition::Wave, 'skill_level' => 1],
+
         ];
 
         foreach ($seeds as $seed) {
