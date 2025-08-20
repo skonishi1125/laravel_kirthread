@@ -2,6 +2,8 @@
 
 namespace Database\Seeders\rpg;
 
+use App\Enums\Rpg\EnemyData;
+use App\Models\Game\Rpg\Enemy;
 use App\Models\Game\Rpg\Library;
 use Illuminate\Database\Seeder;
 
@@ -13,6 +15,58 @@ class LibraryTableSeeder extends Seeder
     public function run(): void
     {
         Library::truncate();
+
+        // 魔物図譜 準備
+        $grassland_enemies = Enemy::whereIn('id', EnemyData::grasslandAppearingEnemies())->get();
+        // 敵の情報をテキスト化Seeder内：敵リストHTMLを生成
+        $enemy_items_html = $grassland_enemies->map(function ($enemy) {
+            $name = e($enemy->name);
+            $hp = e($enemy->value_hp);
+            $ap = e($enemy->value_ap);
+            $str = e($enemy->value_str);
+            $def = e($enemy->value_def);
+            $int = e($enemy->value_int);
+            $spd = e($enemy->value_spd);
+            $luc = e($enemy->value_luc);
+            $desc = e($enemy->description);
+            $img = "/image/rpg/enemy/{$enemy->portrait_image_path}";
+
+            return <<<HTML
+            <li class="list-group-item py-3">
+            <div class="d-flex">
+                <img src="{$img}" alt="{$name}" loading="lazy"
+                    class="rounded flex-shrink-0"
+                    style="width:140px;height:100px;object-fit:contain;">
+                <div class="flex-grow-1">
+                <div class="font-weight-bold">{$name}</div>
+                <div class="small text-muted text-nowrap">
+                    <span>HP: {$hp} |</span>
+                    <span>AP: {$ap} |</span>
+                    <span>STR: {$str} |</span>
+                    <span>DEF: {$def} |</span>
+                    <span>INT: {$int} |</span>
+                    <span>SPD: {$spd} |</span>
+                    <span>LUC: {$luc}</span>
+                </div>
+                <p class="mb-0 mt-1">{$desc}</p>
+                </div>
+            </div>
+            </li>
+            HTML;
+        })
+            ->implode('');
+
+        $enemy_list_html = <<<HTML
+            <ul class="list-group list-group-flush">
+            {$enemy_items_html}
+            </ul>
+            HTML;
+
+        // イントロ＋リスト＋締めをcontentに
+        $content = <<<HTML
+            <p>草原とは、この街周辺に広がる平原のことを指す。ここは魔物の巣窟となっている城から最も外れた地域のため、点在するモンスターも強力な個体は存在しない。ただし、それでも冒険初心者には難敵となる存在もいくつかいるため注意が必要。</p>
+            {$enemy_list_html}
+            HTML;
 
         $seeds = [
             [
@@ -85,11 +139,13 @@ class LibraryTableSeeder extends Seeder
                 'content' => '<p>この本を開いたってことは、初心者と見たぜ。<br>そんなお前に向けて、優しくステータスについて紹介してやるぜ。</p><hr><p>【HP】: Hit Point (体力)<br>0になると戦闘不能になり、その戦闘中では原則戦えなくなるぜ。</p><p>【AP】: Ability Point (AP)<br>スキルを使う時に必要になるポイントだぜ。</p><p>【STR】: Strength (物理攻撃力)<br>この値が高ければ高いほど通常攻撃、物理スキルのダメージが上昇するぜ。</p><p>【DEF】: Defence (物理防御力)<br>この値が高いと、相手から受ける物理防御力のダメージが低下するぜ。<br>多少だが魔法への耐性にも影響するぜ。</p><p>【INT】 : Intelligence (知力)<br>この値が高いと、魔法攻撃の威力が上昇するぜ。<br>また、魔法への耐性もアップするぜ。</p><p>【SPD】 : Speed(素早さ)<br>この値が高いと、戦闘中に行動できる順番が早くなるぜ。<br>また、戦闘から逃走出来る確率もアップするぜ。</p><p>【LUC】 : Luck(運の良さ)<br>この値が高いと、良いことが色々あるらしいぜ。<br>ショップの値段が安くなったり、敵にクリティカルダメージが入りやすくなるって噂だ。</p><hr><p>まあ最初は細かいことは考えず、<br>攻撃しまくるヤツはSTRアップ！魔法を使うヤツはINTアップ！って感じで良いぜ。</p>',
                 'required_clears' => 1,
             ],
+
+            // 魔物図譜
             [
                 'id' => 101,
-                'name' => 'モンスター図鑑:草原',
+                'name' => '魔物図譜:草原',
                 'book_category' => Library::CATEGORY_ENEMY,
-                'content' => '<p>草原はこの街周辺に広がる平原そのものを指す。この地域は魔物の巣窟となっている城から最も外れた地域のため、点在するモンスターも強力な個体は存在しないが、それでも冒険初心者には難敵となる存在もいくつかいるため注意が必要。</p><br><p>スララ いうまでもなく、弱い。</p>',
+                'content' => $content,
                 'required_clears' => 0,
             ],
             [

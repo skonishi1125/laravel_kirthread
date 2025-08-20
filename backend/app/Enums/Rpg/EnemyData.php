@@ -99,4 +99,13 @@ enum EnemyData: int
             self::FlareDrago => 'flaredrago.png',
         };
     }
+
+    public static function grasslandAppearingEnemies(): array
+    {
+        return [
+            self::Srara->value,
+            self::Gao->value,
+            self::BigSrara->value,
+        ];
+    }
 }
