@@ -3,6 +3,7 @@
 namespace Database\Seeders\rpg;
 
 use App\Enums\Rpg\EnemyData;
+use App\Enums\Rpg\FieldData;
 use App\Models\Game\Rpg\Enemy;
 use App\Models\Game\Rpg\Library;
 use Illuminate\Database\Seeder;
@@ -16,57 +17,33 @@ class LibraryTableSeeder extends Seeder
     {
         Library::truncate();
 
-        // 魔物図譜 準備
-        $grassland_enemies = Enemy::whereIn('id', EnemyData::grasslandAppearingEnemies())->get();
-        // 敵の情報をテキスト化Seeder内：敵リストHTMLを生成
-        $enemy_items_html = $grassland_enemies->map(function ($enemy) {
-            $name = e($enemy->name);
-            $hp = e($enemy->value_hp);
-            $ap = e($enemy->value_ap);
-            $str = e($enemy->value_str);
-            $def = e($enemy->value_def);
-            $int = e($enemy->value_int);
-            $spd = e($enemy->value_spd);
-            $luc = e($enemy->value_luc);
-            $desc = e($enemy->description);
-            $img = "/image/rpg/enemy/{$enemy->portrait_image_path}";
+        // 魔物図譜 草原
+        $grassland_preface = '<p>ここで述べる草原とは、この街周辺に広がる地帯一帯を指す。<br>魔物の巣窟となっている古城より最も離れに位置する地域のため、点在するモンスターも強力な個体は存在しない。ただしそれでも、初心者の冒険者にとっては難敵と言える個体も存在するため充分な警戒は必要。</p>';
+        $grassland_content = $this->buildEnemyHTMLElement(
+            EnemyData::grasslandAppearingEnemies(),
+            $grassland_preface
+        );
 
-            return <<<HTML
-            <li class="list-group-item py-3">
-            <div class="d-flex">
-                <img src="{$img}" alt="{$name}" loading="lazy"
-                    class="rounded flex-shrink-0"
-                    style="width:140px;height:100px;object-fit:contain;">
-                <div class="flex-grow-1">
-                <div class="font-weight-bold">{$name}</div>
-                <div class="small text-muted text-nowrap">
-                    <span>HP: {$hp} |</span>
-                    <span>AP: {$ap} |</span>
-                    <span>STR: {$str} |</span>
-                    <span>DEF: {$def} |</span>
-                    <span>INT: {$int} |</span>
-                    <span>SPD: {$spd} |</span>
-                    <span>LUC: {$luc}</span>
-                </div>
-                <p class="mb-0 mt-1">{$desc}</p>
-                </div>
-            </div>
-            </li>
-            HTML;
-        })
-            ->implode('');
+        // 砂漠
+        $desert_preface = '<p>砂漠。</p>';
+        $desert_content = $this->buildEnemyHTMLElement(
+            EnemyData::desertAppearingEnemies(),
+            $desert_preface
+        );
 
-        $enemy_list_html = <<<HTML
-            <ul class="list-group list-group-flush">
-            {$enemy_items_html}
-            </ul>
-            HTML;
+        // 火山
+        $volcano_preface = '<p>あつい。</p>';
+        $volcano_content = $this->buildEnemyHTMLElement(
+            EnemyData::volcanoAppearingEnemies(),
+            $volcano_preface
+        );
 
-        // イントロ＋リスト＋締めをcontentに
-        $content = <<<HTML
-            <p>草原とは、この街周辺に広がる平原のことを指す。ここは魔物の巣窟となっている城から最も外れた地域のため、点在するモンスターも強力な個体は存在しない。ただし、それでも冒険初心者には難敵となる存在もいくつかいるため注意が必要。</p>
-            {$enemy_list_html}
-            HTML;
+        // 海岸
+        $coast_preface = '<p>知能が高く魔法を使う魔物が多い。</p>';
+        $coast_content = $this->buildEnemyHTMLElement(
+            EnemyData::coastAppearingEnemies(),
+            $coast_preface
+        );
 
         $seeds = [
             [
@@ -143,11 +120,34 @@ class LibraryTableSeeder extends Seeder
             // 魔物図譜
             [
                 'id' => 101,
-                'name' => '魔物図譜:草原',
+                'name' => '魔物図譜: '.FieldData::Grassland->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $content,
+                'content' => $grassland_content,
                 'required_clears' => 0,
             ],
+            [
+                'id' => 102,
+                'name' => '魔物図譜: '.FieldData::Desert->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $desert_content,
+                'required_clears' => 0,
+            ],
+            [
+                'id' => 103,
+                'name' => '魔物図譜: '.FieldData::Volcano->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $volcano_content,
+                'required_clears' => 0,
+            ],
+            [
+                'id' => 104,
+                'name' => '魔物図譜: '.FieldData::Coast->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $coast_content,
+                'required_clears' => 0,
+            ],
+
+            // 神話歴史学
             [
                 'id' => 201,
                 'name' => '民話1: 伝説の英雄たち',
@@ -168,5 +168,63 @@ class LibraryTableSeeder extends Seeder
             Library::create($seed);
         }
 
+    }
+
+    /**
+     * 受け取った敵ID配列を元に、図鑑のHTML要素を生成する
+     */
+    private function buildEnemyHTMLElement(array $enemyIds, string $preface): string
+    {
+        $enemies = Enemy::whereIn('id', $enemyIds)
+            ->orderByRaw('FIELD(id, '.implode(',', $enemyIds).')') // 並びをEnum順に固定
+            ->get();
+
+        $itemsHtml = $enemies->map(fn ($enemy) => $this->renderEnemyListItem($enemy))->implode('');
+
+        return
+            <<<HTML
+                {$preface}
+                <ul class="list-group list-group-flush">
+                {$itemsHtml}
+                </ul>
+            HTML;
+    }
+
+    private function renderEnemyListItem(Enemy $enemy): string
+    {
+        $name = e($enemy->name);
+        $hp = e($enemy->value_hp);
+        $ap = e($enemy->value_ap);
+        $str = e($enemy->value_str);
+        $def = e($enemy->value_def);
+        $int = e($enemy->value_int);
+        $spd = e($enemy->value_spd);
+        $luc = e($enemy->value_luc);
+        $desc = e($enemy->description);
+        $img = "/image/rpg/enemy/{$enemy->portrait_image_path}";
+
+        return
+            <<<HTML
+                <li class="list-group-item py-3">
+                <div class="d-flex">
+                    <img src="{$img}" alt="{$name}" loading="lazy"
+                        class="rounded flex-shrink-0"
+                        style="width:140px;height:100px;object-fit:contain;">
+                    <div class="flex-grow-1 ms-3">
+                    <div class="fw-bold">{$name}</div>
+                    <div class="small text-muted text-nowrap">
+                        <span>HP: {$hp} |</span>
+                        <span>AP: {$ap} |</span>
+                        <span>STR: {$str} |</span>
+                        <span>DEF: {$def} |</span>
+                        <span>INT: {$int} |</span>
+                        <span>SPD: {$spd} |</span>
+                        <span>LUC: {$luc}</span>
+                    </div>
+                    <p class="mb-0 mt-1">{$desc}</p>
+                    </div>
+                </div>
+                </li>
+            HTML;
     }
 }

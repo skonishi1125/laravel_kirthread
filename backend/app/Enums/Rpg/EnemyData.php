@@ -108,4 +108,31 @@ enum EnemyData: int
             self::BigSrara->value,
         ];
     }
+
+    public static function desertAppearingEnemies(): array
+    {
+        return [
+            self::Gao->value,
+            self::Rizard->value,
+            self::Scorpio->value,
+            self::RockRizard->value,
+        ];
+    }
+
+    public static function volcanoAppearingEnemies(): array
+    {
+        return [
+            self::Scorpio->value,
+        ];
+    }
+
+    public static function coastAppearingEnemies(): array
+    {
+        return [
+            self::MageSrara->value,
+            self::Clion->value,
+            self::Ikkaku->value,
+            self::SpikeWhale->value,
+        ];
+    }
 }
