@@ -167,7 +167,7 @@
             </button>
           </div>
 
-          <div class="modal-body book-modal-body">
+          <div class="modal-body book-modal-body" ref="bookBody">
             <div v-html="modalBook.content"></div>
             <p style="text-align: right; font-weight: bold;">【終】</p>
           </div>
@@ -231,7 +231,14 @@
       // モーダル用の変数に現在の書籍情報を格納する
       openBookModal(book) {
         this.modalBook = book;
-        $('#book-modal').modal('show');
+
+        // 表示する時、別の本でスクロールが下までいっていたら上に戻す。
+        const $modal = $('#book-modal');
+        $modal.one('shown.bs.modal', () => {
+          const el = this.$refs.bookBody; // ref="bookBody"をつけた、modalのbodyを対象にする
+          if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        $modal.modal('show');
       },
 
       changeCurrentBookCategory(category) {

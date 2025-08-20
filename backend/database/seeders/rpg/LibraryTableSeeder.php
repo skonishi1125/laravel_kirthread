@@ -211,7 +211,7 @@ class LibraryTableSeeder extends Seeder
                         class="rounded flex-shrink-0"
                         style="width:140px;height:100px;object-fit:contain;">
                     <div class="flex-grow-1 ms-3">
-                    <div class="fw-bold">{$name}</div>
+                    <div class="font-weight-bold">{$name}</div>
                     <div class="small text-muted text-nowrap">
                         <span>HP: {$hp} |</span>
                         <span>AP: {$ap} |</span>
