@@ -116,6 +116,60 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
             // --------- 火山 ---------
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Bou,
+                'number' => 4,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Norawani,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Bou,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Norawani,
+                'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Bou,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Norawani,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::MagmaDile,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Norawani,
+                'number' => 1,
+            ],
             // --------- 海岸 ---------
             [
                 'field_id' => FieldData::Coast,

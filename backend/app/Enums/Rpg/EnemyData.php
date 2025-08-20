@@ -12,8 +12,10 @@ enum EnemyData: int
     case Scorpio = 21;
     case RockRizard = 22;
 
-    case Norawani = 30;
-    case Oyadamawani = 31;
+    case Bou = 30;
+    case IwaMet = 31;
+    case Norawani = 32;
+    case MagmaDile = 33;
 
     case MageSrara = 40;
     case Clion = 41;
@@ -35,8 +37,10 @@ enum EnemyData: int
             self::Scorpio => 'スコーピオ',
             self::RockRizard => 'ロックリザード',
 
+            self::Bou => 'ボウ',
+            self::IwaMet => 'イワメット',
             self::Norawani => 'ノラワニ',
-            self::Oyadamawani => 'オヤダマワニ',
+            self::MagmaDile => 'マグマダイル',
 
             self::MageSrara => 'メイジスララ',
             self::Clion => 'クリオン',
@@ -54,20 +58,22 @@ enum EnemyData: int
     {
         return match ($this) {
             self::Srara => '冒険者の前に立ちはだかる最初の敵。油断禁物！',
-            self::Gao => '素早い動きが特徴。攻撃力が高めなので早めに倒そう。',
-            self::BigSrara => 'スララの合成体。相変わらず鈍重だが生命力は侮れない。',
+            self::Gao => '素早い動きが特徴。攻撃力が高いため、優先的に倒そう。',
+            self::BigSrara => 'スララが偶然合体した生物。消化液で防御力を落としてくるのがいやらしい。',
 
-            self::Rizard => '',
-            self::Scorpio => '',
-            self::RockRizard => '',
+            self::Rizard => '砂漠に生息するトカゲ。防御力には自信あり。',
+            self::Scorpio => '致命の一撃を得意とするサソリ。魔法に弱いので、早めに倒してしまおう。',
+            self::RockRizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
-            self::Norawani => '草むらを彷徨いている野良のワニ。バランスの良いステータスが特徴。',
-            self::Oyadamawani => 'ノラワニ達を仕切る強力なワニ。鋭い歯を持ち、噛まれたらひとたまりもない',
+            self::Bou => '炎のマナが集まってできた生命体。集団で出てくるため、全体攻撃でさっさと倒そう。',
+            self::IwaMet => '防御が自慢のカメ。魔法での攻撃が有効。',
+            self::Norawani => '火山を彷徨く野良のワニ。生命力が高くバランスの良いステータスが特徴。',
+            self::MagmaDile => 'ノラワニ達を仕切るボス。咆哮で攻撃力を上げてから、最後に暴れ回る。',
 
-            self::MageSrara => 'メイジスララ',
-            self::Clion => 'クリオン',
+            self::MageSrara => 'スララの変異体。冒険者の杖を振り回して簡易的な魔法を使う。',
+            self::Clion => 'ふよふよと浮遊する生命体。吐き出す泡は強力なので、吐かれる前にさっさと倒してしまおう。',
             self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
-            self::SpikeWhale => 'スパイクホエール',
+            self::SpikeWhale => '海岸のボス。特定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -86,8 +92,10 @@ enum EnemyData: int
             self::Scorpio => 'scorpio.png',
             self::RockRizard => 'rockrizard.png',
 
+            self::Bou => 'bou.png',
+            self::IwaMet => 'iwamet.png',
             self::Norawani => 'norawani.png',
-            self::Oyadamawani => 'oyadamawani.png',
+            self::MagmaDile => 'MagmaDile.png',
 
             self::MageSrara => 'magesrara.png',
             self::Clion => 'clion.png',
@@ -122,7 +130,10 @@ enum EnemyData: int
     public static function volcanoAppearingEnemies(): array
     {
         return [
-            self::Scorpio->value,
+            self::Bou->value,
+            self::IwaMet->value,
+            self::Norawani->value,
+            self::MagmaDile->value,
         ];
     }
 

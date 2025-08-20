@@ -59,6 +59,7 @@ enum SkillDefinition: int
     case Freeze = 111;
     case Bubble = 112;
     case Wave = 113;
+    case Fire = 114;
 
     public function label(): string
     {
@@ -111,6 +112,7 @@ enum SkillDefinition: int
             self::Freeze => 'フリーズ', // 攻撃魔法単体
             self::Bubble => 'バブル', // 攻撃魔法全体
             self::Wave => '大波', // 攻撃魔法全体
+            self::Fire => 'ファイアー', // 攻撃魔法単体
 
         };
     }
@@ -166,6 +168,7 @@ enum SkillDefinition: int
             self::Freeze => '氷の呪文で相手単体に魔法攻撃。',
             self::Bubble => '相手全体に泡を撒き散らし、魔法攻撃。',
             self::Wave => '大波を呼び寄せ、相手全体に魔法攻撃。',
+            self::Fire => '炎の呪文で相手単体に魔法攻撃。',
         };
     }
 }
