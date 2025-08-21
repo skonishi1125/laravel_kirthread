@@ -13,9 +13,11 @@ class Library extends Model
 
     public const CATEGORY_ADVENTURE = 0;
 
-    public const CATEGORY_ENEMY = 1;
+    public const CATEGORY_JOB = 1;
 
-    public const CATEGORY_HISTORY = 2;
+    public const CATEGORY_ENEMY = 2;
+
+    public const CATEGORY_HISTORY = 3;
 
     /**
      * セーブデータ進行度に応じて、閲覧可能な書籍を取得

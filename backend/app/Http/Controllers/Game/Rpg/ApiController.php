@@ -1093,13 +1093,15 @@ class ApiController extends Controller
         }
 
         $readable_adventure_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ADVENTURE);
+        $readable_job_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_JOB);
         $readable_enemy_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ENEMY);
         $readable_history_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_HISTORY);
 
         // vueに渡すデータ
-        // [0]戦術学論 [1]魔物図譜 [2]歴史神話学
+        // [0]戦術学論 [1]職能編纂 [2]魔物図譜 [3]歴史神話学
         $all_data = collect()
             ->push($readable_adventure_libraries)
+            ->push($readable_job_libraries)
             ->push($readable_enemy_libraries)
             ->push($readable_history_libraries);
 

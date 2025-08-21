@@ -106,6 +106,12 @@
                 </div> <!-- デフォルト -->
                 <div>
                   <button class="btn btn-sm btn-outline-info"
+                  :class="{'active': status.status === 'job'}"
+                  @click="changeCurrentBookCategory('job')">
+                  職能編纂</button> <!-- へんさん -->
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
                   :class="{'active': status.status === 'enemy'}"
                   @click="changeCurrentBookCategory('enemy')">
                   魔物図譜</button>
@@ -131,6 +137,7 @@
                   <thead>
                     <tr style="border-bottom: 1px dotted;">
                       <th v-if="status.status === 'adventure'">戦術学論 書籍一覧</th>
+                      <th v-if="status.status === 'job'">職能編纂 書籍一覧</th>
                       <th v-if="status.status === 'enemy'">魔物図譜 書籍一覧</th>
                       <th v-if="status.status === 'history'">歴史神話学 書籍一覧</th>
                     </tr>
@@ -190,6 +197,7 @@
     data() { // script内で使用する変数を定義する。
       return {
         adventureBooks: {},
+        jobBooks: {},
         enemyBooks: {},
         historyBooks: {},
         currentBooks: {}, // 現在の状態で表示する本の配列をそのまま入れる
@@ -217,8 +225,9 @@
           .then(response => {
             console.log(`fetchBook: OK`);
             this.adventureBooks = response.data[0] || [];
-            this.enemyBooks = response.data[1] || [];
-            this.historyBooks = response.data[2] || [];
+            this.jobBooks = response.data[1] || [];
+            this.enemyBooks = response.data[2] || [];
+            this.historyBooks = response.data[3] || [];
 
             // 画面にそれぞれ表示させられるよう、項目を入れる
             this.currentBooks = this.adventureBooks;
@@ -246,6 +255,10 @@
           case 'adventure':
             this.currentBooks = this.adventureBooks;
             this.$store.dispatch('setMenuPlazaLibraryStatus', 'adventure');
+            break;
+          case 'job':
+            this.currentBooks = this.jobBooks;
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'job');
             break;
           case 'enemy':
             this.currentBooks = this.enemyBooks;
