@@ -84,11 +84,26 @@
   z-index: 4;
 }
 
+.enemy-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  /* ボスで画像が大きくなっても、敵wrapperのheightは300pxで固定しておく */
+  max-height: 300px;
+  min-height: 300px;
+  margin-bottom: 50px;
+}
+
 .enemy-picture {
   background-size: cover;
   width: 180px;
   height: 180px;
   margin-top: 20px;
+}
+
+.enemy-boss-picture {
+  width: 250px !important;
+  height: 250px !important;
 }
 
 .enemy-hp {
@@ -414,7 +429,7 @@
         </div>
 
         <!-- enemy -->
-        <div style="display: flex; justify-content: space-evenly; min-height: 300px; margin-bottom: 50px;">
+        <div class="enemy-wrapper">
           <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
             <div class="progress">
               <div class="progress-bar bg-danger enemy-hp" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
@@ -426,7 +441,11 @@
               @mouseenter="hoveredEnemy = enemy"
               @mouseleave="hoveredEnemy = null"
               :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
-              :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
+              :class="{ 
+                'enemy-picture': true, 
+                'enemy-hover-active': battle.status === 'enemySelect',
+                'enemy-boss-picture': enemy.is_boss == true
+                }"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
