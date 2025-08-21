@@ -6,6 +6,7 @@ use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AttackType;
 use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\HealType;
+use App\Enums\Rpg\ItemData;
 use App\Enums\Rpg\SkillDefinition;
 use App\Enums\Rpg\TargetRange;
 use App\Helpers\DataHelper;
@@ -985,11 +986,11 @@ class BattleState extends Model
                 case EffectType::Buff->value:
                     // バフは個別に処理
                     switch ($selected_item_data->id) {
-                        case 21:
+                        case ItemData::AttackGummy->value:
                             Debugbar::debug('アタックドロップ');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
                             break;
-                        case 22:
+                        case ItemData::AttackMist->value:
                             Debugbar::debug('アタックミスト');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
                             break;
@@ -1994,7 +1995,7 @@ class BattleState extends Model
     /**
      * 敵スキル 特殊系スキルの処理メソッド。
      *
-     * ハイスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
+     * ビッグスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
      */
     public static function storeEnemySpecialSkill(
         object $actor_data,

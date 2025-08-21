@@ -56,6 +56,10 @@ enum SkillDefinition: int
     case EnemyAllGuardSpell = 108;
     case Roar = 109;
     case DigestiveFluid = 110;
+    case Freeze = 111;
+    case Bubble = 112;
+    case Wave = 113;
+    case Fire = 114;
 
     public function label(): string
     {
@@ -105,6 +109,11 @@ enum SkillDefinition: int
             self::EnemyAllGuardSpell => 'エネミーオールガードスペル', // バフ 全体
             self::Roar => '咆哮', // バフ 自身
             self::DigestiveFluid => '消化液', // 特殊 攻撃 + 防御デバフ
+            self::Freeze => 'フリーズ', // 攻撃魔法単体
+            self::Bubble => 'バブル', // 攻撃魔法全体
+            self::Wave => '大波', // 攻撃魔法全体
+            self::Fire => 'ファイアー', // 攻撃魔法単体
+
         };
     }
 
@@ -156,6 +165,10 @@ enum SkillDefinition: int
             self::EnemyAllGuardSpell => '敵専用のバフ魔法。全体の防御力を上げる。',
             self::Roar => '雄叫びを上げ、自身の攻撃力を上げる。',
             self::DigestiveFluid => '消化液を吐き出す。相手単体にダメージを与え、DEFを低下させる。',
+            self::Freeze => '氷の呪文で相手単体に魔法攻撃。',
+            self::Bubble => '相手全体に泡を撒き散らし、魔法攻撃。',
+            self::Wave => '大波を呼び寄せ、相手全体に魔法攻撃。',
+            self::Fire => '炎の呪文で相手単体に魔法攻撃。',
         };
     }
 }

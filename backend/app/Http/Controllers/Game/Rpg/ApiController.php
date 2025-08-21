@@ -27,8 +27,8 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // 3つ以上クリアすることが条件
-    public const PLAZA_ENABLE_CLEAR_FIELD = 3;
+    // 4つ以上クリアすることが条件
+    public const PLAZA_ENABLE_CLEAR_FIELD = 4;
 
     // TODO:
     // * constructなどでログインしているユーザーがアクセスできる前提とする
@@ -591,14 +591,18 @@ class ApiController extends Controller
 
         }
 
+        // 戦闘フィールドのbackground_image_pathを取得
+        $background_field_path = Field::find($field_id)->background_image_path;
+
         // vueに渡すデータ
-        // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム [4]ターン数
+        // [0]プレイヤー情報 [1]敵情報 [2]セッションID [3]アイテム [4]ターン数 [5]フィールドの背景
         $all_data = collect()
             ->push($players_collection)
             ->push($enemies_collection)
             ->push($battle_state->session_id)
             ->push($items_collection)
-            ->push($current_turn);
+            ->push($current_turn)
+            ->push($background_field_path);
 
         return $all_data;
     }
@@ -1089,13 +1093,15 @@ class ApiController extends Controller
         }
 
         $readable_adventure_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ADVENTURE);
+        $readable_job_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_JOB);
         $readable_enemy_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_ENEMY);
         $readable_history_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_HISTORY);
 
         // vueに渡すデータ
-        // [0]戦術学論 [1]魔物図譜 [2]歴史神話学
+        // [0]戦術学論 [1]職能編纂 [2]魔物図譜 [3]歴史神話学
         $all_data = collect()
             ->push($readable_adventure_libraries)
+            ->push($readable_job_libraries)
             ->push($readable_enemy_libraries)
             ->push($readable_history_libraries);
 

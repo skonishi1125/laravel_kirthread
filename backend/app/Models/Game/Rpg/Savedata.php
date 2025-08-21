@@ -41,7 +41,7 @@ class Savedata extends Model
                 $party->delete();
             }
             $savedata->battle_state()->delete();
-            $savedata->savedata_has_item()->delete();
+            $savedata->savedata_has_items()->delete();
             $savedata->savedata_cleared_Fields()->delete();
             $savedata->job()->delete();
         });

@@ -84,11 +84,26 @@
   z-index: 4;
 }
 
+.enemy-wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  /* ボスで画像が大きくなっても、敵wrapperのheightは300pxで固定しておく */
+  max-height: 300px;
+  min-height: 300px;
+  margin-bottom: 50px;
+}
+
 .enemy-picture {
   background-size: cover;
   width: 180px;
   height: 180px;
   margin-top: 20px;
+}
+
+.enemy-boss-picture {
+  width: 250px !important;
+  height: 250px !important;
 }
 
 .enemy-hp {
@@ -283,8 +298,13 @@
 
 <template>
   <div class="row" @click="nextAction">
-    <!-- todo: ステージごとに背景を変える -->
-    <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;">
+    <!-- <div class="col-12" style="background-image: url('/image/rpg/field/grassland.png'); background-size: cover;  position: relative;"> -->
+    <div class="col-12" 
+      :style="{
+        backgroundImage: `url('/image/rpg/field/${backgroundImagePath}')`,
+        backgroundSize: 'cover',
+        position: 'relative'
+      }">
 
       <div v-if="battle.status == 'error'">
         <div class="nextScene_button" @click="refreshBattleStateAndReturnToMenu">
@@ -409,7 +429,7 @@
         </div>
 
         <!-- enemy -->
-        <div style="display: flex; justify-content: space-evenly; min-height: 300px; margin-bottom: 50px;">
+        <div class="enemy-wrapper">
           <div v-if="Array.isArray(enemyData) && enemyData.length > 0" style="margin: 20px 0 20px 0;" v-for="(enemy, index) in enemyData.filter(enemy => !enemy.is_defeated_flag)" :key="index">
             <div class="progress">
               <div class="progress-bar bg-danger enemy-hp" role="progressbar" :style="{ width: calculatePercentage(enemy.value_hp, enemy.max_value_hp) + '%' }" aria-valuenow="enemy.value_hp" aria-valuemin="0" :aria-valuemax="enemy.max_value_hp">
@@ -421,7 +441,11 @@
               @mouseenter="hoveredEnemy = enemy"
               @mouseleave="hoveredEnemy = null"
               :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
-              :class="{ 'enemy-picture': true, 'enemy-hover-active': battle.status === 'enemySelect'}"
+              :class="{ 
+                'enemy-picture': true, 
+                'enemy-hover-active': battle.status === 'enemySelect',
+                'enemy-boss-picture': enemy.is_boss == true
+                }"
             >
               <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
@@ -580,6 +604,7 @@ export default {
       partyData: {},
       itemData: {},
       currentTurn: 1,
+      backgroundImagePath: 'none.png',
       hoveredDescription: null, // 現在マウスオーバーしているスキルの説明
       hoveredEnemy: null,
       enemyData: {},
@@ -668,6 +693,7 @@ export default {
         this.$store.dispatch('setBattleSessionId', data[2] || []);
         this.itemData = data[3] || [];
         this.currentTurn = data[4] || 1;
+        this.backgroundImagePath = data[5] || 'none.png';
 
         console.log('encount | buff格納');
         // バフ配列

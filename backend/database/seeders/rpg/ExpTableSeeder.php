@@ -19,13 +19,12 @@ class ExpTableSeeder extends Seeder
             ['level' => 2, 'total_exp' => 20], // スララを2回倒せば、パーティ全員上がる感じ
             ['level' => 3, 'total_exp' => 80],
             ['level' => 4, 'total_exp' => 200],
-            ['level' => 5, 'total_exp' => 500],
-            ['level' => 6, 'total_exp' => 900],
+            ['level' => 5, 'total_exp' => 350],
+            ['level' => 6, 'total_exp' => 800], // 3刻みでスキルの都合上、めちゃ強くなるので抑える
             ['level' => 7, 'total_exp' => 1400],
-            // 一旦体験版に向けて、ある程度レベルを上がりやすくしとく
-            ['level' => 8, 'total_exp' => 1900],
-            ['level' => 9, 'total_exp' => 2400],
-            ['level' => 10, 'total_exp' => 3000],
+            ['level' => 8, 'total_exp' => 2100],
+            ['level' => 9, 'total_exp' => 3000],
+            ['level' => 10, 'total_exp' => 4500],
         ];
 
         foreach ($seeds as $seed) {

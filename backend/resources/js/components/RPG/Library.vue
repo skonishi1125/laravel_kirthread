@@ -106,6 +106,12 @@
                 </div> <!-- デフォルト -->
                 <div>
                   <button class="btn btn-sm btn-outline-info"
+                  :class="{'active': status.status === 'job'}"
+                  @click="changeCurrentBookCategory('job')">
+                  職能編纂</button> <!-- へんさん -->
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-info"
                   :class="{'active': status.status === 'enemy'}"
                   @click="changeCurrentBookCategory('enemy')">
                   魔物図譜</button>
@@ -131,6 +137,7 @@
                   <thead>
                     <tr style="border-bottom: 1px dotted;">
                       <th v-if="status.status === 'adventure'">戦術学論 書籍一覧</th>
+                      <th v-if="status.status === 'job'">職能編纂 書籍一覧</th>
                       <th v-if="status.status === 'enemy'">魔物図譜 書籍一覧</th>
                       <th v-if="status.status === 'history'">歴史神話学 書籍一覧</th>
                     </tr>
@@ -167,9 +174,9 @@
             </button>
           </div>
 
-          <div class="modal-body book-modal-body">
+          <div class="modal-body book-modal-body" ref="bookBody">
             <div v-html="modalBook.content"></div>
-            <p>【終】</p>
+            <p style="text-align: right; font-weight: bold;">【終】</p>
           </div>
 
           <div class="modal-footer book-modal-footer">
@@ -190,6 +197,7 @@
     data() { // script内で使用する変数を定義する。
       return {
         adventureBooks: {},
+        jobBooks: {},
         enemyBooks: {},
         historyBooks: {},
         currentBooks: {}, // 現在の状態で表示する本の配列をそのまま入れる
@@ -217,8 +225,9 @@
           .then(response => {
             console.log(`fetchBook: OK`);
             this.adventureBooks = response.data[0] || [];
-            this.enemyBooks = response.data[1] || [];
-            this.historyBooks = response.data[2] || [];
+            this.jobBooks = response.data[1] || [];
+            this.enemyBooks = response.data[2] || [];
+            this.historyBooks = response.data[3] || [];
 
             // 画面にそれぞれ表示させられるよう、項目を入れる
             this.currentBooks = this.adventureBooks;
@@ -231,7 +240,14 @@
       // モーダル用の変数に現在の書籍情報を格納する
       openBookModal(book) {
         this.modalBook = book;
-        $('#book-modal').modal('show');
+
+        // 表示する時、別の本でスクロールが下までいっていたら上に戻す。
+        const $modal = $('#book-modal');
+        $modal.one('shown.bs.modal', () => {
+          const el = this.$refs.bookBody; // ref="bookBody"をつけた、modalのbodyを対象にする
+          if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        $modal.modal('show');
       },
 
       changeCurrentBookCategory(category) {
@@ -239,6 +255,10 @@
           case 'adventure':
             this.currentBooks = this.adventureBooks;
             this.$store.dispatch('setMenuPlazaLibraryStatus', 'adventure');
+            break;
+          case 'job':
+            this.currentBooks = this.jobBooks;
+            this.$store.dispatch('setMenuPlazaLibraryStatus', 'job');
             break;
           case 'enemy':
             this.currentBooks = this.enemyBooks;
