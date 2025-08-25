@@ -324,6 +324,23 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::HeavenRay->description(),
             ],
+            [
+                'id' => SkillDefinition::Resurrection->value,
+                'name' => SkillDefinition::Resurrection->label(),
+                'available_role_id' => Role::ROLE_MEDIC,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Special->value,
+                'target_range' => TargetRange::Single->value,
+                'is_target_enemy' => false,
+                'lv1_percent' => 0.5,
+                'lv1_ap_cost' => 50,
+                'lv2_percent' => 0.75,
+                'lv2_ap_cost' => 75,
+                'lv3_percent' => 1.0,
+                'lv3_ap_cost' => 100,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::Resurrection->description(),
+            ],
             /*
             [
                 'id' => '23',

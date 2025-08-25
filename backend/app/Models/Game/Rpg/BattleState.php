@@ -1870,6 +1870,28 @@ class BattleState extends Model
                     Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
                 break;
+            case SkillDefinition::Resurrection : // リザレクション
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 戦闘不能でなければスキップ
+                if ($opponent_data->is_defeated_flag == false) {
+                    $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能ではないため、効果が無かった！");
+                } else {
+                    // HPの最大値を100%として、スキル%の分だけHPを回復
+                    if ($selected_skill_data->skill_level == 1) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 0.5);
+                    } elseif ($selected_skill_data->skill_level == 2) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 0.75);
+                    } elseif ($selected_skill_data->skill_level == 3) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 1.0);
+                    }
+                    // 戦闘不能フラグを解除
+                    $opponent_data->is_defeated_flag = false;
+                    if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                        $opponent_data->value_hp = $opponent_data->max_value_hp;
+                    }
+                    $battle_logs_collection->push("{$opponent_data->name}は気力を取り戻し、戦線に復帰した！");
+                }
+                break;
             case SkillDefinition::WideGuard : // ワイドガード
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");

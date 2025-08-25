@@ -386,6 +386,10 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！光の柱が敵全体に降り注ぐ！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
+                case SkillDefinition::Resurrection :
+                    Debugbar::debug(SkillDefinition::Resurrection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
+                    break;
                     // -------------------- 重騎士 --------------------
                 case SkillDefinition::WideThrust :
                     Debugbar::debug(SkillDefinition::WideThrust->label());

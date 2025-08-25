@@ -17,6 +17,7 @@ enum SkillDefinition: int
     case MiniVolt = 23;
     case HolyArrow = 24;
     case HeavenRay = 25;
+    case Resurrection = 26;
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 30;
@@ -77,6 +78,7 @@ enum SkillDefinition: int
             self::MiniVolt => 'ミニボルト',
             self::HolyArrow => 'ホーリーアロー',
             self::HeavenRay => 'ヘヴンレイ',
+            self::Resurrection => 'リザレクション',
 
             self::WideThrust => 'ワイドスラスト',
             self::WideGuard => 'ワイドガード',
@@ -135,6 +137,7 @@ enum SkillDefinition: int
             self::MiniVolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
             self::HolyArrow => '聖なる力を込め、具現化した光の矢を敵単体に撃ち込む。',
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体にダメージを与える。',
+            self::Resurrection => '聖なる力を分け与え、戦闘不能の味方を復活させる。',
 
             self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',

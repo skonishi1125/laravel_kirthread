@@ -63,6 +63,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 10,
             ],
+            // リザレクション pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::Resurrection->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
             // -------------------- 重騎士 --------------------
             // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
             [
