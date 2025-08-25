@@ -442,6 +442,11 @@ class Skill extends Model
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                     break;
+                case SkillDefinition::MagicalSmash :
+                    Debugbar::debug(SkillDefinition::MagicalSmash->label());
+                    $battle_logs_collection->push("{$actor_data->name}は手持ちの杖を掲げて照れつつ叫ぶ...「マジカル☆スマッシュ」！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
                     // -------------------- 弓馭者 --------------------
                 case SkillDefinition::FirstAid :
                     Debugbar::debug(SkillDefinition::FirstAid->label());

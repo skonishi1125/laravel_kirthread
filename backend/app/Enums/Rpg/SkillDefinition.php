@@ -29,7 +29,8 @@ enum SkillDefinition: int
     case ManaExplosion = 42;
     case MiniHeal = 43;
     case PopHeal = 44;
-    case BattleMage = 45;
+    case MagicalSmash = 45;
+    case BattleMage = 46;
 
     // -------------------- 弓馭者 --------------------
     case FirstAid = 50;
@@ -85,6 +86,7 @@ enum SkillDefinition: int
             self::PetitBlast => 'プチブラスト',
             self::CrashBolt => 'クラッシュボルト',
             self::ManaExplosion => 'マナエクスプロージョン',
+            self::MagicalSmash => 'マジカルスマッシュ',
             self::BattleMage => 'バトルメイジ',
 
             self::FirstAid => 'ファーストエイド',
@@ -141,6 +143,7 @@ enum SkillDefinition: int
             self::PetitBlast => '小さな魔力弾を敵単体に放つ、低コストな攻撃手段。',
             self::CrashBolt => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
             self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
+            self::MagicalSmash => '魔法少女必携。敵単体を手持ちの杖で思いっきりぶん殴る！',
             self::BattleMage => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
