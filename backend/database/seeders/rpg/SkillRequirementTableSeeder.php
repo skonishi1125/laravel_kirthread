@@ -34,27 +34,34 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 15,
             ],
             // -------------------- 治療師 --------------------
-            // オールヒーリング ヒーリング Lv2以上, pLv7以上
+            // オールヒーリング ヒーリング Lv1以上, pLv6以上
             [
                 'acquired_skill_id' => SkillDefinition::AllHealing->value,
                 'requirement_skill_id' => SkillDefinition::Healing->value,
-                'requirement_skill_level' => 2,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 7,
             ],
-            // ホーリーアロー ミニボルト Lv2以上, pLv10以上
+            // クイックヒール ヒーリング Lv1以上、 pLv9以上
             [
-                'acquired_skill_id' => SkillDefinition::HolyAllow->value,
+                'acquired_skill_id' => SkillDefinition::QuickHeal->value,
+                'requirement_skill_id' => SkillDefinition::Healing->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 9,
+            ],
+            // ホーリーアロー ミニボルト Lv2以上, pLv6以上
+            [
+                'acquired_skill_id' => SkillDefinition::HolyArrow->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 6,
             ],
-            // ヘヴンレイ ミニボルト Lv3以上, pLv15以上
+            // ヘヴンレイ ミニボルト Lv2以上, pLv10以上
             // さらに入れ子にすることはできないので、ミニボルトを前提条件にする。
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
-                'requirement_skill_level' => 3,
-                'requirement_party_level' => 15,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 10,
             ],
             // -------------------- 重騎士 --------------------
             // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上

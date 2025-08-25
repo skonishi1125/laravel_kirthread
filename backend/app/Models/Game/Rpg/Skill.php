@@ -366,14 +366,19 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::QuickHeal :
+                    Debugbar::debug(SkillDefinition::QuickHeal->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::MiniVolt :
                     Debugbar::debug(SkillDefinition::MiniVolt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::HolyAllow :
-                    Debugbar::debug(SkillDefinition::HolyAllow->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！光の弓矢が相手を貫く！");
+                case SkillDefinition::HolyArrow :
+                    Debugbar::debug(SkillDefinition::HolyArrow->label());
+                    $battle_logs_collection->push("{$actor_data->name}はマナから光の弓矢を創り出し、相手に目掛けて放った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::HeavenRay :
