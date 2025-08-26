@@ -8,6 +8,7 @@ enum SkillDefinition: int
     case MiddleBlow = 10;
     case HeavyKnuckle = 11;
     case SpinKick = 12;
+    case RapidFist = 13;
     case Transform = 14;
 
     // -------------------- 治療師 --------------------
@@ -70,6 +71,7 @@ enum SkillDefinition: int
             self::MiddleBlow => 'ミドルブロウ',
             self::SpinKick => 'スピンキック',
             self::HeavyKnuckle => 'ヘビーナックル',
+            self::RapidFist => 'ラピッドフィスト',
             self::Transform => 'トランスフォーム',
 
             self::Healing => 'ヒーリング',
@@ -129,6 +131,7 @@ enum SkillDefinition: int
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
             self::HeavyKnuckle => '敵単体に強烈な一撃を撃ち込み、対象の相手に固定ダメージを与える。',
+            self::RapidFist => '目にも止まらぬ速さで敵単体に、高速の六連攻撃！',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。',
 
             self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',

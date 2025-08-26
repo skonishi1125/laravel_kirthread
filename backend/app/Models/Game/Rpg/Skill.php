@@ -345,6 +345,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
                     break;
+                case SkillDefinition::RapidFist :
+                    Debugbar::debug(SkillDefinition::RapidFist->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！目にも止まらぬ、超速の六連攻撃！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::Transform :
                     Debugbar::debug(SkillDefinition::Transform->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！守りを捨て、全ての力を解放する！");

@@ -19,12 +19,19 @@ class SkillRequirementTableSeeder extends Seeder
 
         $seeds = [
             // -------------------- 格闘家 --------------------
-            // ヘビーナックル ミドルブロウ Lv1以上, pLv7以上
+            // ヘビーナックル pLv6以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavyKnuckle->value,
-                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 6,
+            ],
+            // ラピッドフィスト ヘビーナックルLv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::RapidFist->value,
+                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 7,
+                'requirement_party_level' => 15,
             ],
             // トランスフォーム pLv15以上
             [

@@ -1870,6 +1870,46 @@ class BattleState extends Model
                     Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
                 break;
+            case SkillDefinition::RapidFist : // ラピッドフィスト
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 6回攻撃なので、一旦forで回す
+                for ($i = 0; $i < 6; $i++) {
+                    $result = self::calculatePhysicalDamage(
+                        $pure_damage,
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                    $calculated_damage = $result['damage'] ?? 0;
+                    $is_critical = $result['is_critical'] ?? false;
+                    if ($calculated_damage > 0) {
+                        $opponent_data->value_hp -= $calculated_damage;
+
+                        // クリティカル メッセージ分岐
+                        if ($is_critical) {
+                            $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        }
+
+                        // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
+                        // また、for文からも抜ける
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0;
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                            Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
+                            break;
+                        } else {
+                            Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+                        }
+                    } else {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+                        Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+                    }
+                }
+
+                break;
             case SkillDefinition::Resurrection : // リザレクション
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 戦闘不能でなければスキップ
