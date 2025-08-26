@@ -427,6 +427,13 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::BloodMoon :
+                    Debugbar::debug(SkillDefinition::BloodMoon->label());
+                    $battle_logs_collection->push("{$actor_data->name}は狂ったような雄叫びを上げた！それと共に、紅き月が天に昇る...");
+                    // buffed_str = (value_def * ダメージ%) また、DEFを0にする
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil(-$actor_data->value_def);
+                    break;
                     // -------------------- 魔導師 --------------------
                 case SkillDefinition::MiniHeal :
                     // 回復量 = (INT * ダメージ%)

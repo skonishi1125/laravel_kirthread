@@ -27,6 +27,7 @@ enum SkillDefinition: int
     case BraveSlash = 32;
     case CurseEdge = 33;
     case GuardUp = 34;
+    case BloodMoon = 35;
 
     // -------------------- 魔導師 --------------------
     case PetitBlast = 40;
@@ -90,6 +91,7 @@ enum SkillDefinition: int
             self::BraveSlash => 'ブレイヴスラッシュ',
             self::CurseEdge => 'カースエッジ',
             self::GuardUp => 'ガードアップ',
+            self::BloodMoon => 'ブラッドムーン',
 
             self::MiniHeal => 'ミニヒール',
             self::PopHeal => 'ポップヒール',
@@ -152,6 +154,7 @@ enum SkillDefinition: int
             self::BraveSlash => '敵単体に攻撃する。自分の防御力に依存して威力が上昇する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
             self::GuardUp => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
+            self::BloodMoon => '暫くの間自身の防御力を0にし、その値を攻撃力に還元する。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',

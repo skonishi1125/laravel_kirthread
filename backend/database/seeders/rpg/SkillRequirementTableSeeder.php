@@ -99,6 +99,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 12,
             ],
+            // ブラッドムーン pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::BloodMoon->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
             // -------------------- 魔導師 --------------------
             // ポップヒール ミニヒールLv2, pLv12以上
             [
