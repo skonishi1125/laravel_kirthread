@@ -129,6 +129,7 @@ class BattleData
         'target_range' => null,
         'is_target_enemy' => null,
         'is_first' => null,
+        'is_slow' => null,
         'skill_level' => null,
         'ap_cost' => null,
         'buff_turn' => null,

@@ -256,6 +256,7 @@ class Skill extends Model
             $skill_template['target_range'] = $skill['target_range'];
             $skill_template['is_target_enemy'] = $skill['is_target_enemy'];
             $skill_template['is_first'] = $skill['is_first'];
+            $skill_template['is_slow'] = $skill['is_slow'];
             $skill_template['skill_level'] = $skill_level;
             $skill_template['ap_cost'] = $ap_cost;
             $skill_template['buff_turn'] = $buff_turn;
@@ -348,7 +349,12 @@ class Skill extends Model
                 case SkillDefinition::RapidFist :
                     Debugbar::debug(SkillDefinition::RapidFist->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！目にも止まらぬ、超速の六連攻撃！");
-                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                    break;
+                case SkillDefinition::TitanBreak :
+                    Debugbar::debug(SkillDefinition::RapidFist->label());
+                    $battle_logs_collection->push("{$actor_data->name}はぐっと腰を下ろし、その膂力を解き放った！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 50;
                     break;
                 case SkillDefinition::Transform :
                     Debugbar::debug(SkillDefinition::Transform->label());

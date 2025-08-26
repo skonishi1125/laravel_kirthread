@@ -33,6 +33,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 15,
             ],
+            // タイタンブレイク ヘビーナックルLv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::TitanBreak->value,
+                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 15,
+            ],
             // トランスフォーム pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::Transform->value,

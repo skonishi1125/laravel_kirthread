@@ -243,7 +243,17 @@ class BattleState extends Model
                     return 1;
                 }
 
-                // 3. 速度順で降順ソート
+                // 3. 後攻発動するスキルを選択したかどうか（必ず最後）
+                $a_is_slow = (bool) ($a->selected_skill_is_slow ?? false);
+                $b_is_slow = (bool) ($b->selected_skill_is_slow ?? false);
+                if ($a_is_slow && ! $b_is_slow) {
+                    return 1;   // $aが必ず後
+                }
+                if ($b_is_slow && ! $a_is_slow) {
+                    return -1;  // $bが必ず後
+                }
+
+                // 4. 速度順で降順ソート
                 $a_spd = self::calculateActualStatusValue($a, 'spd');
                 $b_spd = self::calculateActualStatusValue($b, 'spd');
 
