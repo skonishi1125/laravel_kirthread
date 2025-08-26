@@ -402,15 +402,20 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
                     break;
                     // -------------------- 重騎士 --------------------
+                case SkillDefinition::WideGuard :
+                    Debugbar::debug(SkillDefinition::WideGuard->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::WideThrust :
                     Debugbar::debug(SkillDefinition::WideThrust->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手持ちの斧で周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::WideGuard :
-                    Debugbar::debug(SkillDefinition::WideGuard->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
-                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                case SkillDefinition::CurseEdge :
+                    Debugbar::debug(SkillDefinition::CurseEdge->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！自身の生命力を捧げ、その刃を奮わせる！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::BraveSlash :
                     Debugbar::debug(SkillDefinition::BraveSlash->label());
@@ -432,27 +437,27 @@ class Skill extends Model
                 case SkillDefinition::PopHeal :
                     // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PopHeal->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの霧が味方を包む！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方を包む！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::PetitBlast :
                     // 威力 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PetitBlast->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力の粒が相手を襲う！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱え、マナの弾丸を放った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::CrashBolt :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ50
                     Debugbar::debug(SkillDefinition::CrashBolt->label());
                     // レベルごとに文章を変えられたら熱い
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが爆発する！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが敵の目前で爆発する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                     break;
                 case SkillDefinition::ManaExplosion :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ30
                     Debugbar::debug(SkillDefinition::ManaExplosion->label());
                     // (独り言)レベルごとに文章を変えられたら熱いけど
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解き放ったマナの塊が大爆発を起こす！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解放したマナエネルギーが大爆発を起こす！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::BattleMage :

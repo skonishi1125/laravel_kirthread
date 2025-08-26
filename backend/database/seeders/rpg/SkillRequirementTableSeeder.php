@@ -85,11 +85,18 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 15,
             ],
             // -------------------- 重騎士 --------------------
-            // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
+            // カースエッジ Lv9以上
+            [
+                'acquired_skill_id' => SkillDefinition::CurseEdge->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 9,
+            ],
+            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv12以上
             [
                 'acquired_skill_id' => SkillDefinition::BraveSlash->value,
                 'requirement_skill_id' => SkillDefinition::WideThrust->value,
-                'requirement_skill_level' => 2,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 12,
             ],
             // -------------------- 魔導師 --------------------

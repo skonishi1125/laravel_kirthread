@@ -1948,6 +1948,34 @@ class BattleState extends Model
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
                 break;
+            case SkillDefinition::CurseEdge : // カースエッジ
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $skill_level = $selected_skill_data->skill_level;
+                $self_harm_damage = 0;
+                if ($skill_level == 1) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.2);
+                } elseif ($skill_level == 2) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.25);
+                } elseif ($skill_level == 3) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.3);
+                }
+                $actor_data->value_hp -= $self_harm_damage;
+                $battle_logs_collection->push("{$actor_data->name}は代償として、{$self_harm_damage}の自傷ダメージを受けた！");
+                // 自身が倒れてしまった時、戦闘不能フラグを有効化し、バフをリセット
+                if ($actor_data->value_hp <= 0) {
+                    $actor_data->value_hp = 0;
+                    $actor_data->is_defeated_flag = true;
+                    self::clearBuff($actor_data);
+                    $battle_logs_collection->push("{$actor_data->name}は倒れてしまった！");
+                    Debugbar::debug("{$actor_data->name}が倒れてしまった。残HP: {$actor_data->value_hp}");
+                } else {
+                    Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
+                }
+
+                break;
             case SkillDefinition::BreakBowGun : // ブレイクボウガン
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後デバフをかける。

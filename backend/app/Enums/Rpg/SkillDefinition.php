@@ -25,7 +25,8 @@ enum SkillDefinition: int
     case WideGuard = 30;
     case WideThrust = 31;
     case BraveSlash = 32;
-    case GuardUp = 33;
+    case CurseEdge = 33;
+    case GuardUp = 34;
 
     // -------------------- 魔導師 --------------------
     case PetitBlast = 40;
@@ -87,6 +88,7 @@ enum SkillDefinition: int
             self::WideThrust => 'ワイドスラスト',
             self::WideGuard => 'ワイドガード',
             self::BraveSlash => 'ブレイヴスラッシュ',
+            self::CurseEdge => 'カースエッジ',
             self::GuardUp => 'ガードアップ',
 
             self::MiniHeal => 'ミニヒール',
@@ -145,9 +147,10 @@ enum SkillDefinition: int
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体にダメージを与える。',
             self::Resurrection => '聖なる力を分け与え、戦闘不能の味方を復活させる。',
 
-            self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
+            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
-            self::BraveSlash => '敵単体に自分の防御力に依存した物理ダメージを与える。',
+            self::BraveSlash => '敵単体に攻撃する。自分の防御力に依存して威力が上昇する。',
+            self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
             self::GuardUp => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
