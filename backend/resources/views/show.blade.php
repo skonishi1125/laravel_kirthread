@@ -6,7 +6,7 @@
     <div class="col-md-12">
       <div class="card">
         <div class="card-header">
-          <h5>{{App\User::where('id',$post->user_id)->value('name')}}さんの投稿</h5>
+          <h5>{{ $post->user->name }}さんの投稿</h5>
         </div>
 
         <div class="card-body">

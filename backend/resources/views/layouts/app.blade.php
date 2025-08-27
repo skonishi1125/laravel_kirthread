@@ -25,6 +25,17 @@
       <meta name="twitter:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
       <meta name="twitter:image" content="{{ asset('image/ogp/game.png') }}"> 
     --}}
+  @elseif (Request::routeIs('show') )
+    <meta property="og:title" content="{{ config('app.name')}} - {{ $post->user->name }}さんの投稿">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    @if (! is_null($post->picture))
+      <meta property="og:image" content="{{ asset('storage/uploads/'.$post->picture) }}">
+    @else
+      <meta property="og:image" content="{{ asset('image/ogp/default.png') }}">
+    @endif
+    <meta property="og:site_name" content="{{ config('app.name') }}">
+    <meta property="og:description" content="{{ $post->message ?? $post->user->name . 'さんの投稿' }}">
   @else
     <meta property="og:title" content="{{ config('app.name') }}">
     <meta property="og:type" content="website">
