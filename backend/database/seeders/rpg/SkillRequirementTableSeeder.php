@@ -99,6 +99,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 12,
             ],
+            // オーバープロテクト プロテクションSLv1, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::OverProtect->value,
+                'requirement_skill_id' => SkillDefinition::Protection->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 12,
+            ],
             // ブラッドムーン pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::BloodMoon->value,

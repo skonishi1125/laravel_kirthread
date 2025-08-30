@@ -422,9 +422,14 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！天地を揺らす一撃！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + BattleState::calculateActualStatusValue($actor_data, 'def');
                     break;
-                case SkillDefinition::GuardUp :
-                    Debugbar::debug(SkillDefinition::GuardUp->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
+                case SkillDefinition::Protection :
+                    Debugbar::debug(SkillDefinition::Protection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::OverProtect :
+                    Debugbar::debug(SkillDefinition::OverProtect->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！護りの力が味方を包み込む！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::BloodMoon :

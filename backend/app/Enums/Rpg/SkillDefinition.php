@@ -26,8 +26,9 @@ enum SkillDefinition: int
     case WideThrust = 31;
     case BraveSlash = 32;
     case CurseEdge = 33;
-    case GuardUp = 34;
-    case BloodMoon = 35;
+    case Protection = 34;
+    case OverProtect = 35;
+    case BloodMoon = 36;
 
     // -------------------- 魔導師 --------------------
     case PetitBlast = 40;
@@ -90,7 +91,8 @@ enum SkillDefinition: int
             self::WideGuard => 'ワイドガード',
             self::BraveSlash => 'ブレイヴスラッシュ',
             self::CurseEdge => 'カースエッジ',
-            self::GuardUp => 'ガードアップ',
+            self::Protection => 'プロテクション',
+            self::OverProtect => 'オーバープロテクト',
             self::BloodMoon => 'ブラッドムーン',
 
             self::MiniHeal => 'ミニヒール',
@@ -153,7 +155,8 @@ enum SkillDefinition: int
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
             self::BraveSlash => '敵単体に攻撃する。自分の防御力に依存して威力が上昇する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
-            self::GuardUp => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
+            self::Protection => '守護魔法を味方1人に付与し、暫くの間DEFをアップさせる。',
+            self::OverProtect => '広範囲に拡大した守護魔法を唱え、暫くの間味方全員のDEFをアップさせる。',
             self::BloodMoon => '暫くの間自身の防御力を0にし、その値を攻撃力に還元する。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
