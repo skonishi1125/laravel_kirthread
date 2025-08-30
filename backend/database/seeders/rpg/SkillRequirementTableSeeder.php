@@ -157,6 +157,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 9,
             ],
+            // ケルベロスフォース pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::CerberusForce->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
             // -------------------- 理術師 --------------------
 
         ];

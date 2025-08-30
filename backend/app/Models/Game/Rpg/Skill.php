@@ -515,6 +515,12 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は敵目掛けて、引き絞った弩を射出した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 20;
                     break;
+                case SkillDefinition::CerberusForce :
+                    Debugbar::debug(SkillDefinition::CerberusForce->label());
+                    $battle_logs_collection->push("{$actor_data->name}は咆哮を上げ、臨戦態勢に入った！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
                     // -------------------- 理術師 --------------------
                 case SkillDefinition::BookSmash :
                     Debugbar::debug(SkillDefinition::BookSmash->label());
