@@ -352,7 +352,7 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::TitanBreak :
-                    Debugbar::debug(SkillDefinition::RapidFist->label());
+                    Debugbar::debug(SkillDefinition::TitanBreak->label());
                     $battle_logs_collection->push("{$actor_data->name}はぐっと腰を下ろし、その膂力を解き放った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 50;
                     break;
@@ -509,6 +509,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は風の力を使役し、攻撃した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::BallistaShot :
+                    Debugbar::debug(SkillDefinition::BallistaShot->label());
+                    $battle_logs_collection->push("{$actor_data->name}は敵目掛けて、引き絞った弩を射出した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 20;
                     break;
                     // -------------------- 理術師 --------------------
                 case SkillDefinition::BookSmash :

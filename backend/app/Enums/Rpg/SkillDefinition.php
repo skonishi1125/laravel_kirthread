@@ -44,6 +44,7 @@ enum SkillDefinition: int
     case FairyFog = 51;
     case BreakBowGun = 52;
     case WindAccel = 53;
+    case BallistaShot = 54;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
@@ -107,6 +108,7 @@ enum SkillDefinition: int
             self::FairyFog => 'フェアリーフォグ',
             self::BreakBowGun => 'ブレイクボウガン',
             self::WindAccel => 'ウインドアクセル',
+            self::BallistaShot => 'バリスタショット',
 
             self::BookSmash => 'ブックスマッシュ',
             self::MagicMissile => 'マジックミサイル',
@@ -170,7 +172,8 @@ enum SkillDefinition: int
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
             self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
-            self::WindAccel => '敵単体を攻撃しつつ、風の力を纏うことで次のターンのSPDを上げる。',
+            self::WindAccel => '敵全体に弓を放ちつつ、風の力を纏うことで次のターンのSPDを上げる。',
+            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に攻撃。',
 
             self::GuardSpell => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
             self::AttackSpell => '味方1人の攻撃力をアップさせる。上昇率は自身のステータスに依存する。',
