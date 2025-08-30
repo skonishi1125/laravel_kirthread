@@ -604,6 +604,26 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::CerberusForce->description(),
             ],
+            [
+                'id' => SkillDefinition::SirenAura->value,
+                'name' => SkillDefinition::SirenAura->label(),
+                'available_role_id' => Role::ROLE_RANGER,
+                'attack_type' => AttackType::NoType->value,
+                'effect_type' => EffectType::Buff->value,
+                'target_range' => TargetRange::Self->value,
+                'is_target_enemy' => false,
+                'lv1_percent' => 0.5,
+                'lv1_ap_cost' => 10,
+                'lv1_buff_turn' => 6,
+                'lv2_percent' => 0.8,
+                'lv2_ap_cost' => 12,
+                'lv2_buff_turn' => 6,
+                'lv3_percent' => 1.0,
+                'lv3_ap_cost' => 15,
+                'lv3_buff_turn' => 6,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::SirenAura->description(),
+            ],
 
             // -------------------- 理術師 --------------------
             [

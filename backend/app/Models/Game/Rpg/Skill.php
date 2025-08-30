@@ -327,6 +327,8 @@ class Skill extends Model
             $new_buff['buffed_from'] = 'SKILL';
             $new_buff['buffed_skill_id'] = $selected_skill_data->id;
             $new_buff['buffed_skill_name'] = $selected_skill_data->name;
+            $new_buff['buffed_skill_level'] = $selected_skill_data->skill_level;
+            $new_buff['buffed_skill_percent'] = $selected_skill_data->skill_percent;
             $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
             switch (SkillDefinition::from($selected_skill_data->id)) {
@@ -488,11 +490,25 @@ class Skill extends Model
                 case SkillDefinition::FirstAid :
                     Debugbar::debug(SkillDefinition::FirstAid->label());
                     $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
+
+                    $has_siren_aura = false;
+                    $siren_aura_percent = 0;
+                    foreach ($actor_data->buffs as $buff) {
+                        $buff = (object) $buff; // 配列・オブジェクトどちらにも対応させるためキャスト
+                        if ($buff->buffed_skill_id == SkillDefinition::SirenAura->value) {
+                            $has_siren_aura = true;
+                            $siren_aura_percent = $buff->buffed_skill_percent;
+                        }
+                    }
                     $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                    // SirenAuraが付与されている場合、回復%を上げる
+                    if ($has_siren_aura) {
+                        $heal_point = (int) ceil($heal_point + ($heal_point * $siren_aura_percent));
+                    }
                     break;
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精たちの力を借りて味方の傷を包み込む...");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の力を借りて味方の傷を包み込む...");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                     break;
                 case SkillDefinition::BreakBowGun :
@@ -520,6 +536,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は咆哮を上げ、臨戦態勢に入った！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SirenAura :
+                    Debugbar::debug(SkillDefinition::SirenAura->label());
+                    $battle_logs_collection->push("{$actor_data->name}は何処からか聞こえてくる歌声に耳を傾け、その身を委ねる...");
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     break;
                     // -------------------- 理術師 --------------------
                 case SkillDefinition::BookSmash :
@@ -613,6 +634,8 @@ class Skill extends Model
             $new_buff['buffed_from'] = 'SKILL';
             $new_buff['buffed_skill_id'] = $selected_skill_data->id;
             $new_buff['buffed_skill_name'] = $selected_skill_data->name;
+            $new_buff['buffed_skill_level'] = $selected_skill_data->skill_level;
+            $new_buff['buffed_skill_percent'] = $selected_skill_data->skill_percent;
             $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
             switch (SkillDefinition::from($selected_skill_data->id)) {

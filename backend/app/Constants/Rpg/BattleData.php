@@ -100,8 +100,10 @@ class BattleData
      */
     public const BUFF_TEMPLATE = [
         'buffed_skill_id' => null,
-        'buffed_item_id' => null,
         'buffed_skill_name' => null,
+        'buffed_skill_level' => null,
+        'buffed_skill_percent' => null,
+        'buffed_item_id' => null,
         'buffed_item_name' => null,
         'buffed_hp' => null,
         'buffed_ap' => null,
