@@ -51,9 +51,11 @@ enum SkillDefinition: int
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
     case MagicMissile = 61;
-    case GuardSpell = 62;
-    case AttackSpell = 63;
-    case MagicSpell = 64;
+    case PowerEnt = 62;
+
+    case ShieldEnt = 64;
+
+    case MagicEnt = 66;
 
     // -------------------- 敵 --------------------
     case Bite = 100;
@@ -116,9 +118,9 @@ enum SkillDefinition: int
 
             self::BookSmash => 'ブックスマッシュ',
             self::MagicMissile => 'マジックミサイル',
-            self::GuardSpell => 'ガードスペル',
-            self::AttackSpell => 'アタックスペル',
-            self::MagicSpell => 'マジックスペル',
+            self::PowerEnt => 'パワーエント',
+            self::ShieldEnt => 'シールドエント',
+            self::MagicEnt => 'マジックエント',
 
             self::Bite => 'かみつく', // 攻撃 物理 単体
             self::Rampage => 'あばれる', // 攻撃 物理 全体
@@ -181,11 +183,11 @@ enum SkillDefinition: int
             self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
             self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
 
-            self::GuardSpell => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::AttackSpell => '味方1人の攻撃力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::MagicSpell => '味方1人の魔力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
-            self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
+            self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
+            self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
+            self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
+            self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
+            self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',

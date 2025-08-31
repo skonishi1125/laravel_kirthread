@@ -553,18 +553,18 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::GuardSpell :
-                    Debugbar::debug(SkillDefinition::GuardSpell->label());
+                case SkillDefinition::ShieldEnt :
+                    Debugbar::debug(SkillDefinition::ShieldEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::AttackSpell :
-                    Debugbar::debug(SkillDefinition::AttackSpell->label());
+                case SkillDefinition::PowerEnt :
+                    Debugbar::debug(SkillDefinition::PowerEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::MagicSpell :
-                    Debugbar::debug(SkillDefinition::MagicSpell->label());
+                case SkillDefinition::MagicEnt :
+                    Debugbar::debug(SkillDefinition::MagicEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
