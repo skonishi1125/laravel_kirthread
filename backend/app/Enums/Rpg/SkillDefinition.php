@@ -57,6 +57,10 @@ enum SkillDefinition: int
 
     case MagicEnt = 66;
 
+    case SpeedEnt = 68;
+
+    case LuckEnt = 70;
+
     // -------------------- 敵 --------------------
     case Bite = 100;
     case Rampage = 101;
@@ -121,6 +125,8 @@ enum SkillDefinition: int
             self::PowerEnt => 'パワーエント',
             self::ShieldEnt => 'シールドエント',
             self::MagicEnt => 'マジックエント',
+            self::SpeedEnt => 'スピードエント',
+            self::LuckEnt => 'ラックエント',
 
             self::Bite => 'かみつく', // 攻撃 物理 単体
             self::Rampage => 'あばれる', // 攻撃 物理 全体
@@ -188,6 +194,8 @@ enum SkillDefinition: int
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
             self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
+            self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
+            self::LuckEnt => '味方1人のLUCを暫くの間向上させる。',
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',

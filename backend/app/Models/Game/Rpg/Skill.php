@@ -550,23 +550,33 @@ class Skill extends Model
                     break;
                 case SkillDefinition::MagicMissile :
                     Debugbar::debug(SkillDefinition::MagicMissile->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力で生成されたミサイルで敵目掛けて狙撃する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::PowerEnt :
+                    Debugbar::debug(SkillDefinition::PowerEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::ShieldEnt :
                     Debugbar::debug(SkillDefinition::ShieldEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::PowerEnt :
-                    Debugbar::debug(SkillDefinition::PowerEnt->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
-                    break;
                 case SkillDefinition::MagicEnt :
                     Debugbar::debug(SkillDefinition::MagicEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SpeedEnt :
+                    Debugbar::debug(SkillDefinition::SpeedEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::LuckEnt :
+                    Debugbar::debug(SkillDefinition::LuckEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
