@@ -52,6 +52,7 @@ enum SkillDefinition: int
     case BookSmash = 60;
     case MagicMissile = 61;
     case PowerEnt = 62;
+    case BladeForce = 63;
 
     case ShieldEnt = 64;
 
@@ -123,6 +124,7 @@ enum SkillDefinition: int
             self::BookSmash => 'ブックスマッシュ',
             self::MagicMissile => 'マジックミサイル',
             self::PowerEnt => 'パワーエント',
+            self::BladeForce => 'ブレードフォース',
             self::ShieldEnt => 'シールドエント',
             self::MagicEnt => 'マジックエント',
             self::SpeedEnt => 'スピードエント',
@@ -192,6 +194,7 @@ enum SkillDefinition: int
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
             self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
+            self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
             self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
             self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',

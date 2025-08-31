@@ -558,6 +558,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::BladeForce :
+                    Debugbar::debug(SkillDefinition::BladeForce->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方の武具が魔法の刃で強化される！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::ShieldEnt :
                     Debugbar::debug(SkillDefinition::ShieldEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");

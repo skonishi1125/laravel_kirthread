@@ -172,6 +172,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 15,
             ],
             // -------------------- 理術師 --------------------
+            // ブレードフォース pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::BladeForce->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
 
         ];
 
