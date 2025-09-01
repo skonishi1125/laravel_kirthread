@@ -644,8 +644,15 @@ class ApiController extends Controller
                         // firstWhereを使うため、Collectionに変換している
                         collect($data->skills)->firstWhere('id', $data->selected_skill_id)->is_first;
                     $data->selected_skill_is_first = $selected_skill_is_first;
+
+                    /** @var bool $selected_skill_is_slow */
+                    $selected_skill_is_slow =
+                        // firstWhereを使うため、Collectionに変換している
+                        collect($data->skills)->firstWhere('id', $data->selected_skill_id)->is_slow;
+                    $data->selected_skill_is_slow = $selected_skill_is_slow;
                 } else {
                     $data->selected_skill_is_first = null;
+                    $data->selected_skill_is_slow = null;
                 }
             }
 

@@ -243,7 +243,17 @@ class BattleState extends Model
                     return 1;
                 }
 
-                // 3. 速度順で降順ソート
+                // 3. 後攻発動するスキルを選択したかどうか（必ず最後）
+                $a_is_slow = (bool) ($a->selected_skill_is_slow ?? false);
+                $b_is_slow = (bool) ($b->selected_skill_is_slow ?? false);
+                if ($a_is_slow && ! $b_is_slow) {
+                    return 1;   // $aが必ず後
+                }
+                if ($b_is_slow && ! $a_is_slow) {
+                    return -1;  // $bが必ず後
+                }
+
+                // 4. 速度順で降順ソート
                 $a_spd = self::calculateActualStatusValue($a, 'spd');
                 $b_spd = self::calculateActualStatusValue($b, 'spd');
 
@@ -1870,11 +1880,101 @@ class BattleState extends Model
                     Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
                 break;
+            case SkillDefinition::RapidFist : // ラピッドフィスト
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 6回攻撃なので、一旦forで回す
+                for ($i = 0; $i < 6; $i++) {
+                    $result = self::calculatePhysicalDamage(
+                        $pure_damage,
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                    $calculated_damage = $result['damage'] ?? 0;
+                    $is_critical = $result['is_critical'] ?? false;
+                    if ($calculated_damage > 0) {
+                        $opponent_data->value_hp -= $calculated_damage;
+
+                        // クリティカル メッセージ分岐
+                        if ($is_critical) {
+                            $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        }
+
+                        // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
+                        // また、for文からも抜ける
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0;
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                            Debugbar::debug("{$opponent_data->name}を倒した。残HP: {$opponent_data->value_hp}");
+                            break;
+                        } else {
+                            Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
+                        }
+                    } else {
+                        $battle_logs_collection->push("しかし{$opponent_data->name}にダメージを与えられない！");
+                        Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は生存。残HP: {$opponent_data->value_hp}");
+                    }
+                }
+
+                break;
+            case SkillDefinition::Resurrection : // リザレクション
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 戦闘不能でなければスキップ
+                if ($opponent_data->is_defeated_flag == false) {
+                    $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能ではないため、効果が無かった！");
+                } else {
+                    // HPの最大値を100%として、スキル%の分だけHPを回復
+                    if ($selected_skill_data->skill_level == 1) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 0.5);
+                    } elseif ($selected_skill_data->skill_level == 2) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 0.75);
+                    } elseif ($selected_skill_data->skill_level == 3) {
+                        $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * 1.0);
+                    }
+                    // 戦闘不能フラグを解除
+                    $opponent_data->is_defeated_flag = false;
+                    if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                        $opponent_data->value_hp = $opponent_data->max_value_hp;
+                    }
+                    $battle_logs_collection->push("{$opponent_data->name}は気力を取り戻し、戦線に復帰した！");
+                }
+                break;
             case SkillDefinition::WideGuard : // ワイドガード
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
+                break;
+            case SkillDefinition::CurseEdge : // カースエッジ
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $skill_level = $selected_skill_data->skill_level;
+                $self_harm_damage = 0;
+                if ($skill_level == 1) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.2);
+                } elseif ($skill_level == 2) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.25);
+                } elseif ($skill_level == 3) {
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.3);
+                }
+                $actor_data->value_hp -= $self_harm_damage;
+                $battle_logs_collection->push("{$actor_data->name}は代償として、{$self_harm_damage}の自傷ダメージを受けた！");
+                // 自身が倒れてしまった時、戦闘不能フラグを有効化し、バフをリセット
+                if ($actor_data->value_hp <= 0) {
+                    $actor_data->value_hp = 0;
+                    $actor_data->is_defeated_flag = true;
+                    self::clearBuff($actor_data);
+                    $battle_logs_collection->push("{$actor_data->name}は倒れてしまった！");
+                    Debugbar::debug("{$actor_data->name}が倒れてしまった。残HP: {$actor_data->value_hp}");
+                } else {
+                    Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
+                }
+
                 break;
             case SkillDefinition::BreakBowGun : // ブレイクボウガン
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];

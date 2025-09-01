@@ -8,20 +8,27 @@ enum SkillDefinition: int
     case MiddleBlow = 10;
     case HeavyKnuckle = 11;
     case SpinKick = 12;
-    case Transform = 14;
+    case RapidFist = 13;
+    case TitanBreak = 14;
+    case Transform = 15;
 
     // -------------------- 治療師 --------------------
     case Healing = 20;
     case AllHealing = 21;
-    case MiniVolt = 22;
-    case HolyAllow = 23;
-    case HeavenRay = 24;
+    case QuickHeal = 22;
+    case MiniVolt = 23;
+    case HolyArrow = 24;
+    case HeavenRay = 25;
+    case Resurrection = 26;
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 30;
     case WideThrust = 31;
     case BraveSlash = 32;
-    case GuardUp = 33;
+    case CurseEdge = 33;
+    case Protection = 34;
+    case OverProtect = 35;
+    case BloodMoon = 36;
 
     // -------------------- 魔導師 --------------------
     case PetitBlast = 40;
@@ -29,20 +36,31 @@ enum SkillDefinition: int
     case ManaExplosion = 42;
     case MiniHeal = 43;
     case PopHeal = 44;
-    case BattleMage = 45;
+    case MagicalSmash = 45;
+    case BattleMage = 46;
 
     // -------------------- 弓馭者 --------------------
     case FirstAid = 50;
     case FairyFog = 51;
     case BreakBowGun = 52;
     case WindAccel = 53;
+    case BallistaShot = 54;
+    case CerberusForce = 55;
+    case SirenAura = 56;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
     case MagicMissile = 61;
-    case GuardSpell = 62;
-    case AttackSpell = 63;
-    case MagicSpell = 64;
+    case PowerEnt = 62;
+    case BladeForce = 63;
+    case ShieldEnt = 64;
+    case DefendThreat = 65;
+    case MagicEnt = 66;
+    case ArcWisdom = 67;
+    case SpeedEnt = 68;
+    case SonicTrimming = 69;
+    case LuckEnt = 70;
+    case FortuneStar = 71;
 
     // -------------------- 敵 --------------------
     case Bite = 100;
@@ -67,36 +85,54 @@ enum SkillDefinition: int
             self::MiddleBlow => 'ミドルブロウ',
             self::SpinKick => 'スピンキック',
             self::HeavyKnuckle => 'ヘビーナックル',
+            self::RapidFist => 'ラピッドフィスト',
+            self::TitanBreak => 'タイタンブレイク',
             self::Transform => 'トランスフォーム',
 
             self::Healing => 'ヒーリング',
             self::AllHealing => 'オールヒーリング',
+            self::QuickHeal => 'クイックヒール',
             self::MiniVolt => 'ミニボルト',
-            self::HolyAllow => 'ホーリーアロー',
+            self::HolyArrow => 'ホーリーアロー',
             self::HeavenRay => 'ヘヴンレイ',
+            self::Resurrection => 'リザレクション',
 
             self::WideThrust => 'ワイドスラスト',
             self::WideGuard => 'ワイドガード',
             self::BraveSlash => 'ブレイヴスラッシュ',
-            self::GuardUp => 'ガードアップ',
+            self::CurseEdge => 'カースエッジ',
+            self::Protection => 'プロテクション',
+            self::OverProtect => 'オーバープロテクト',
+            self::BloodMoon => 'ブラッドムーン',
 
             self::MiniHeal => 'ミニヒール',
             self::PopHeal => 'ポップヒール',
             self::PetitBlast => 'プチブラスト',
             self::CrashBolt => 'クラッシュボルト',
             self::ManaExplosion => 'マナエクスプロージョン',
+            self::MagicalSmash => 'マジカルスマッシュ',
             self::BattleMage => 'バトルメイジ',
 
             self::FirstAid => 'ファーストエイド',
             self::FairyFog => 'フェアリーフォグ',
             self::BreakBowGun => 'ブレイクボウガン',
             self::WindAccel => 'ウインドアクセル',
+            self::BallistaShot => 'バリスタショット',
+            self::CerberusForce => 'ケルベロスフォース',
+            self::SirenAura => 'セイレーンオーラ',
 
             self::BookSmash => 'ブックスマッシュ',
             self::MagicMissile => 'マジックミサイル',
-            self::GuardSpell => 'ガードスペル',
-            self::AttackSpell => 'アタックスペル',
-            self::MagicSpell => 'マジックスペル',
+            self::PowerEnt => 'パワーエント',
+            self::BladeForce => 'ブレードフォース',
+            self::ShieldEnt => 'シールドエント',
+            self::DefendThreat => 'ディフェンドスリート',
+            self::MagicEnt => 'マジックエント',
+            self::ArcWisdom => 'アークウィズダム',
+            self::SpeedEnt => 'スピードエント',
+            self::SonicTrimming => 'ソニックトリミング',
+            self::LuckEnt => 'ラックエント',
+            self::FortuneStar => 'フォーチュンスター',
 
             self::Bite => 'かみつく', // 攻撃 物理 単体
             self::Rampage => 'あばれる', // 攻撃 物理 全体
@@ -123,36 +159,54 @@ enum SkillDefinition: int
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
             self::HeavyKnuckle => '敵単体に強烈な一撃を撃ち込み、対象の相手に固定ダメージを与える。',
+            self::RapidFist => '目にも止まらぬ速さで、敵単体に高速の六連攻撃！',
+            self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。',
 
             self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',
-            self::AllHealing => '癒しの力を広範囲に広げ、味方全体のHPを回復する。',
+            self::AllHealing => '癒しのマナを広範囲に拡散し、味方全体のHPを回復する。',
+            self::QuickHeal => '先制発動する。迅速な詠唱で味方1人のHPを回復する。',
             self::MiniVolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
-            self::HolyAllow => 'マナに聖なる力を込めて具現化した光の矢を敵単体に撃ち込む。',
+            self::HolyArrow => '聖なる力を込め、具現化した光の矢を敵単体に撃ち込む。',
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体にダメージを与える。',
+            self::Resurrection => '聖なる力を分け与え、戦闘不能の味方を復活させる。',
 
-            self::WideThrust => '手持ちの斧で敵全体を力強く薙ぎ払う。',
+            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
-            self::BraveSlash => '敵単体に自分の防御力に依存した物理ダメージを与える。',
-            self::GuardUp => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
+            self::BraveSlash => '敵単体に攻撃する。自分の防御力に依存して威力が上昇する。',
+            self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
+            self::Protection => '守護魔法を味方1人に付与し、暫くの間DEFをアップさせる。',
+            self::OverProtect => '広範囲に拡大した守護魔法を唱え、暫くの間味方全員のDEFをアップさせる。',
+            self::BloodMoon => '暫くの間自身の防御力を0にし、その値を攻撃力に還元する。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
             self::PetitBlast => '小さな魔力弾を敵単体に放つ、低コストな攻撃手段。',
             self::CrashBolt => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
             self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
+            self::MagicalSmash => '魔法少女必携。敵単体を手持ちの杖で思いっきりぶん殴る！',
             self::BattleMage => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
             self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
-            self::WindAccel => '敵単体を攻撃しつつ、風の力を纏うことで次のターンのSPDを上げる。',
+            self::WindAccel => '敵全体に弓を放ちつつ、風の力を纏うことで次のターンのSPDを上げる。',
+            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に攻撃。',
+            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
+            self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
 
-            self::GuardSpell => '味方1人の守備力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::AttackSpell => '味方1人の攻撃力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::MagicSpell => '味方1人の魔力をアップさせる。上昇率は自身のステータスに依存する。',
-            self::BookSmash => '手持ちの魔導書で敵単体を全力でぶん殴る。',
-            self::MagicMissile => 'マナの弾丸を敵単体に飛ばして攻撃する。',
+            self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
+            self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
+            self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
+            self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
+            self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
+            self::DefendThreat => '脅威を感知して自動で保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
+            self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
+            self::ArcWisdom => '自身の知見を魔法を通じて仲間に分け与える。味方全員のINTを暫くの間向上させる。',
+            self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
+            self::SonicTrimming => '行動をアルゴリズム化して無駄を省き最適化する呪文。味方全員のSPDを暫くの間向上させる。',
+            self::LuckEnt => '味方1人のLUCを暫くの間大幅に向上させる。',
+            self::FortuneStar => 'なんだかいい日になるような気がする。味方全員のLUCが大幅に向上する。',
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',

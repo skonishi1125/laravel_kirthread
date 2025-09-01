@@ -3,7 +3,6 @@
 namespace Database\Seeders\rpg;
 
 use App\Enums\Rpg\SkillDefinition;
-use App\Models\Game\Rpg\Skill;
 use App\Models\Game\Rpg\SkillRequirement;
 use Illuminate\Database\Seeder;
 
@@ -19,12 +18,26 @@ class SkillRequirementTableSeeder extends Seeder
 
         $seeds = [
             // -------------------- 格闘家 --------------------
-            // ヘビーナックル ミドルブロウ Lv1以上, pLv7以上
+            // ヘビーナックル pLv6以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavyKnuckle->value,
-                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 6,
+            ],
+            // ラピッドフィスト ヘビーナックルLv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::RapidFist->value,
+                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 7,
+                'requirement_party_level' => 15,
+            ],
+            // タイタンブレイク ヘビーナックルLv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::TitanBreak->value,
+                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 15,
             ],
             // トランスフォーム pLv15以上
             [
@@ -34,35 +47,70 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 15,
             ],
             // -------------------- 治療師 --------------------
-            // オールヒーリング ヒーリング Lv2以上, pLv7以上
+            // オールヒーリング ヒーリング Lv1以上, pLv6以上
             [
                 'acquired_skill_id' => SkillDefinition::AllHealing->value,
                 'requirement_skill_id' => SkillDefinition::Healing->value,
-                'requirement_skill_level' => 2,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 7,
             ],
-            // ホーリーアロー ミニボルト Lv2以上, pLv10以上
+            // クイックヒール ヒーリング Lv1以上、 pLv9以上
             [
-                'acquired_skill_id' => SkillDefinition::HolyAllow->value,
+                'acquired_skill_id' => SkillDefinition::QuickHeal->value,
+                'requirement_skill_id' => SkillDefinition::Healing->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 9,
+            ],
+            // ホーリーアロー ミニボルト Lv2以上, pLv6以上
+            [
+                'acquired_skill_id' => SkillDefinition::HolyArrow->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 6,
             ],
-            // ヘヴンレイ ミニボルト Lv3以上, pLv15以上
+            // ヘヴンレイ ミニボルト Lv2以上, pLv10以上
             // さらに入れ子にすることはできないので、ミニボルトを前提条件にする。
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
-                'requirement_skill_level' => 3,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 10,
+            ],
+            // リザレクション pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::Resurrection->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
             // -------------------- 重騎士 --------------------
-            // ブレイヴスラッシュ ワイドスラッシュ Lv2以上, pLv12以上
+            // カースエッジ Lv9以上
+            [
+                'acquired_skill_id' => SkillDefinition::CurseEdge->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 9,
+            ],
+            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv12以上
             [
                 'acquired_skill_id' => SkillDefinition::BraveSlash->value,
                 'requirement_skill_id' => SkillDefinition::WideThrust->value,
-                'requirement_skill_level' => 2,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 12,
+            ],
+            // オーバープロテクト プロテクションSLv1, pLv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::OverProtect->value,
+                'requirement_skill_id' => SkillDefinition::Protection->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 12,
+            ],
+            // ブラッドムーン pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::BloodMoon->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
             ],
             // -------------------- 魔導師 --------------------
             // ポップヒール ミニヒールLv2, pLv12以上
@@ -93,37 +141,72 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
-            // --------- テストスキルたち ---------
-            // スキル47 スキル46 Lv1以上, pLv2以上
-            // [
-            //     'acquired_skill_id' => 47,
-            //     'requirement_skill_id' => 46,
-            //     'requirement_skill_level' => 1,
-            //     'requirement_party_level' => 2,
-            // ],
-            // // スキル48 スキル46 Lv2以上, pLv2以上
-            // [
-            //     'acquired_skill_id' => 48,
-            //     'requirement_skill_id' => 46,
-            //     'requirement_skill_level' => 2,
-            //     'requirement_party_level' => 2,
-            // ],
-            // // スキル49 スキル46 Lv3以上, pLv2以上
-            // [
-            //     'acquired_skill_id' => 49,
-            //     'requirement_skill_id' => 46,
-            //     'requirement_skill_level' => 3,
-            //     'requirement_party_level' => 2,
-            // ],
+
             // -------------------- 弓馭者 --------------------
-            // フェアリーフォグ ファーストエイドLv2, pLv12以上
+            // フェアリーフォグ ファーストエイドLv2, pLv9以上
             [
                 'acquired_skill_id' => SkillDefinition::FairyFog->value,
                 'requirement_skill_id' => SkillDefinition::FirstAid->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 12,
+                'requirement_party_level' => 9,
+            ],
+            // バリスタショット pLv9以上
+            [
+                'acquired_skill_id' => SkillDefinition::BallistaShot->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 9,
+            ],
+            // ケルベロスフォース pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::CerberusForce->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // セイレーンオーラ pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::SirenAura->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
             ],
             // -------------------- 理術師 --------------------
+            // ブレードフォース pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::BladeForce->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // ディフェンドスリート pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::DefendThreat->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // アークウィズダム pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::ArcWisdom->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // ソニックトリミング pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::SonicTrimming->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // フォーチュンスター pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::FortuneStar->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
 
         ];
 

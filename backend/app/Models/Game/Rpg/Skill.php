@@ -256,6 +256,7 @@ class Skill extends Model
             $skill_template['target_range'] = $skill['target_range'];
             $skill_template['is_target_enemy'] = $skill['is_target_enemy'];
             $skill_template['is_first'] = $skill['is_first'];
+            $skill_template['is_slow'] = $skill['is_slow'];
             $skill_template['skill_level'] = $skill_level;
             $skill_template['ap_cost'] = $ap_cost;
             $skill_template['buff_turn'] = $buff_turn;
@@ -326,6 +327,8 @@ class Skill extends Model
             $new_buff['buffed_from'] = 'SKILL';
             $new_buff['buffed_skill_id'] = $selected_skill_data->id;
             $new_buff['buffed_skill_name'] = $selected_skill_data->name;
+            $new_buff['buffed_skill_level'] = $selected_skill_data->skill_level;
+            $new_buff['buffed_skill_percent'] = $selected_skill_data->skill_percent;
             $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
             switch (SkillDefinition::from($selected_skill_data->id)) {
@@ -344,6 +347,16 @@ class Skill extends Model
                     Debugbar::debug(SkillDefinition::SpinKick->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い蹴りで周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent + 5);
+                    break;
+                case SkillDefinition::RapidFist :
+                    Debugbar::debug(SkillDefinition::RapidFist->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！目にも止まらぬ、超速の六連攻撃！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                    break;
+                case SkillDefinition::TitanBreak :
+                    Debugbar::debug(SkillDefinition::TitanBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}はぐっと腰を下ろし、その膂力を解き放った！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 50;
                     break;
                 case SkillDefinition::Transform :
                     Debugbar::debug(SkillDefinition::Transform->label());
@@ -366,14 +379,19 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::QuickHeal :
+                    Debugbar::debug(SkillDefinition::QuickHeal->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::MiniVolt :
                     Debugbar::debug(SkillDefinition::MiniVolt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::HolyAllow :
-                    Debugbar::debug(SkillDefinition::HolyAllow->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！光の弓矢が相手を貫く！");
+                case SkillDefinition::HolyArrow :
+                    Debugbar::debug(SkillDefinition::HolyArrow->label());
+                    $battle_logs_collection->push("{$actor_data->name}はマナから光の弓矢を創り出し、相手に目掛けて放った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::HeavenRay :
@@ -381,26 +399,47 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！光の柱が敵全体に降り注ぐ！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
+                case SkillDefinition::Resurrection :
+                    Debugbar::debug(SkillDefinition::Resurrection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
+                    break;
                     // -------------------- 重騎士 --------------------
+                case SkillDefinition::WideGuard :
+                    Debugbar::debug(SkillDefinition::WideGuard->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::WideThrust :
                     Debugbar::debug(SkillDefinition::WideThrust->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手持ちの斧で周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::WideGuard :
-                    Debugbar::debug(SkillDefinition::WideGuard->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
-                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                case SkillDefinition::CurseEdge :
+                    Debugbar::debug(SkillDefinition::CurseEdge->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！自身の生命力を捧げ、その刃を奮わせる！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::BraveSlash :
                     Debugbar::debug(SkillDefinition::BraveSlash->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！天地を揺らす一撃！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + BattleState::calculateActualStatusValue($actor_data, 'def');
                     break;
-                case SkillDefinition::GuardUp :
-                    Debugbar::debug(SkillDefinition::GuardUp->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！");
+                case SkillDefinition::Protection :
+                    Debugbar::debug(SkillDefinition::Protection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::OverProtect :
+                    Debugbar::debug(SkillDefinition::OverProtect->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！護りの力が味方を包み込む！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::BloodMoon :
+                    Debugbar::debug(SkillDefinition::BloodMoon->label());
+                    $battle_logs_collection->push("{$actor_data->name}は狂ったような雄叫びを上げた！それと共に、紅き月が天に昇る...");
+                    // buffed_str = (value_def * ダメージ%) また、DEFを0にする
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil(-$actor_data->value_def);
                     break;
                     // -------------------- 魔導師 --------------------
                 case SkillDefinition::MiniHeal :
@@ -412,27 +451,27 @@ class Skill extends Model
                 case SkillDefinition::PopHeal :
                     // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PopHeal->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの霧が味方を包む！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方を包む！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::PetitBlast :
                     // 威力 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PetitBlast->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力の粒が相手を襲う！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱え、マナの弾丸を放った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::CrashBolt :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ50
                     Debugbar::debug(SkillDefinition::CrashBolt->label());
                     // レベルごとに文章を変えられたら熱い
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが爆発する！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが敵の目前で爆発する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                     break;
                 case SkillDefinition::ManaExplosion :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ30
                     Debugbar::debug(SkillDefinition::ManaExplosion->label());
                     // (独り言)レベルごとに文章を変えられたら熱いけど
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解き放ったマナの塊が大爆発を起こす！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解放したマナエネルギーが大爆発を起こす！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::BattleMage :
@@ -442,15 +481,34 @@ class Skill extends Model
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     $new_buff['buffed_int'] = (int) ceil(-$actor_data->value_int);
                     break;
+                case SkillDefinition::MagicalSmash :
+                    Debugbar::debug(SkillDefinition::MagicalSmash->label());
+                    $battle_logs_collection->push("{$actor_data->name}は手持ちの杖を掲げて照れつつ叫ぶ...「マジカル☆スマッシュ」！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
                     // -------------------- 弓馭者 --------------------
                 case SkillDefinition::FirstAid :
                     Debugbar::debug(SkillDefinition::FirstAid->label());
                     $battle_logs_collection->push("{$actor_data->name}は応急処置に取り掛かった！");
+
+                    $has_siren_aura = false;
+                    $siren_aura_percent = 0;
+                    foreach ($actor_data->buffs as $buff) {
+                        $buff = (object) $buff; // 配列・オブジェクトどちらにも対応させるためキャスト
+                        if ($buff->buffed_skill_id == SkillDefinition::SirenAura->value) {
+                            $has_siren_aura = true;
+                            $siren_aura_percent = $buff->buffed_skill_percent;
+                        }
+                    }
                     $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
+                    // SirenAuraが付与されている場合、回復%を上げる
+                    if ($has_siren_aura) {
+                        $heal_point = (int) ceil($heal_point + ($heal_point * $siren_aura_percent));
+                    }
                     break;
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精たちの力を借りて味方の傷を包み込む...");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の力を借りて味方の傷を包み込む...");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                     break;
                 case SkillDefinition::BreakBowGun :
@@ -468,6 +526,22 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::BallistaShot :
+                    Debugbar::debug(SkillDefinition::BallistaShot->label());
+                    $battle_logs_collection->push("{$actor_data->name}は敵目掛けて、引き絞った弩を射出した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 20;
+                    break;
+                case SkillDefinition::CerberusForce :
+                    Debugbar::debug(SkillDefinition::CerberusForce->label());
+                    $battle_logs_collection->push("{$actor_data->name}は咆哮を上げ、臨戦態勢に入った！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SirenAura :
+                    Debugbar::debug(SkillDefinition::SirenAura->label());
+                    $battle_logs_collection->push("{$actor_data->name}は何処からか聞こえてくる歌声に耳を傾け、その身を委ねる...");
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    break;
                     // -------------------- 理術師 --------------------
                 case SkillDefinition::BookSmash :
                     Debugbar::debug(SkillDefinition::BookSmash->label());
@@ -476,23 +550,58 @@ class Skill extends Model
                     break;
                 case SkillDefinition::MagicMissile :
                     Debugbar::debug(SkillDefinition::MagicMissile->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔力で生成されたミサイルで敵目掛けて狙撃する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::GuardSpell :
-                    Debugbar::debug(SkillDefinition::GuardSpell->label());
+                case SkillDefinition::PowerEnt :
+                    Debugbar::debug(SkillDefinition::PowerEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::BladeForce :
+                    Debugbar::debug(SkillDefinition::BladeForce->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方の武具が魔法の刃で強化される！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::ShieldEnt :
+                    Debugbar::debug(SkillDefinition::ShieldEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::AttackSpell :
-                    Debugbar::debug(SkillDefinition::AttackSpell->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                case SkillDefinition::DefendThreat :
+                    Debugbar::debug(SkillDefinition::DefendThreat->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方に魔法の衣が施される...");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::MagicSpell :
-                    Debugbar::debug(SkillDefinition::MagicSpell->label());
+                case SkillDefinition::MagicEnt :
+                    Debugbar::debug(SkillDefinition::MagicEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::ArcWisdom :
+                    Debugbar::debug(SkillDefinition::ArcWisdom->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！自身の積み続けてきた叡智を味方に分け与えた！");
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SpeedEnt :
+                    Debugbar::debug(SkillDefinition::SpeedEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SonicTrimming :
+                    Debugbar::debug(SkillDefinition::SonicTrimming->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！思考が冴え渡り、明瞭になっていく...");
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::LuckEnt :
+                    Debugbar::debug(SkillDefinition::LuckEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::FortuneStar :
+                    Debugbar::debug(SkillDefinition::FortuneStar->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！心が弾み、なんだかすごくご機嫌になった！");
+                    $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
@@ -560,6 +669,8 @@ class Skill extends Model
             $new_buff['buffed_from'] = 'SKILL';
             $new_buff['buffed_skill_id'] = $selected_skill_data->id;
             $new_buff['buffed_skill_name'] = $selected_skill_data->name;
+            $new_buff['buffed_skill_level'] = $selected_skill_data->skill_level;
+            $new_buff['buffed_skill_percent'] = $selected_skill_data->skill_percent;
             $new_buff['remaining_turn'] = $selected_skill_data->buff_turn;
 
             switch (SkillDefinition::from($selected_skill_data->id)) {
