@@ -179,6 +179,34 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
+            // ディフェンドスリート pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::DefendThreat->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // アークウィズダム pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::ArcWisdom->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // ソニックトリミング pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::SonicTrimming->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
+            // フォーチュンスター pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::FortuneStar->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 15,
+            ],
 
         ];
 

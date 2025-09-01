@@ -568,9 +568,19 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::DefendThreat :
+                    Debugbar::debug(SkillDefinition::DefendThreat->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方に魔法の衣が施される...");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::MagicEnt :
                     Debugbar::debug(SkillDefinition::MagicEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::ArcWisdom :
+                    Debugbar::debug(SkillDefinition::ArcWisdom->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！自身の積み続けてきた叡智を味方に分け与えた！");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::SpeedEnt :
@@ -578,9 +588,19 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::SonicTrimming :
+                    Debugbar::debug(SkillDefinition::SonicTrimming->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！思考が冴え渡り、明瞭になっていく...");
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::LuckEnt :
                     Debugbar::debug(SkillDefinition::LuckEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::FortuneStar :
+                    Debugbar::debug(SkillDefinition::FortuneStar->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！心が弾み、なんだかすごくご機嫌になった！");
                     $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
                     break;
                 default:

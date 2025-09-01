@@ -53,14 +53,14 @@ enum SkillDefinition: int
     case MagicMissile = 61;
     case PowerEnt = 62;
     case BladeForce = 63;
-
     case ShieldEnt = 64;
-
+    case DefendThreat = 65;
     case MagicEnt = 66;
-
+    case ArcWisdom = 67;
     case SpeedEnt = 68;
-
+    case SonicTrimming = 69;
     case LuckEnt = 70;
+    case FortuneStar = 71;
 
     // -------------------- 敵 --------------------
     case Bite = 100;
@@ -126,9 +126,13 @@ enum SkillDefinition: int
             self::PowerEnt => 'パワーエント',
             self::BladeForce => 'ブレードフォース',
             self::ShieldEnt => 'シールドエント',
+            self::DefendThreat => 'ディフェンドスリート',
             self::MagicEnt => 'マジックエント',
+            self::ArcWisdom => 'アークウィズダム',
             self::SpeedEnt => 'スピードエント',
+            self::SonicTrimming => 'ソニックトリミング',
             self::LuckEnt => 'ラックエント',
+            self::FortuneStar => 'フォーチュンスター',
 
             self::Bite => 'かみつく', // 攻撃 物理 単体
             self::Rampage => 'あばれる', // 攻撃 物理 全体
@@ -196,9 +200,13 @@ enum SkillDefinition: int
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
+            self::DefendThreat => '脅威を感知して自動で保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
             self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
+            self::ArcWisdom => '自身の知見を魔法を通じて仲間に分け与える。味方全員のINTを暫くの間向上させる。',
             self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
-            self::LuckEnt => '味方1人のLUCを暫くの間向上させる。',
+            self::SonicTrimming => '行動をアルゴリズム化して無駄を省き最適化する呪文。味方全員のSPDを暫くの間向上させる。',
+            self::LuckEnt => '味方1人のLUCを暫くの間大幅に向上させる。',
+            self::FortuneStar => 'なんだかいい日になるような気がする。味方全員のLUCが大幅に向上する。',
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',
