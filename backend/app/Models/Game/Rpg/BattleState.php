@@ -2302,11 +2302,11 @@ class BattleState extends Model
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (1.5倍)
+        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
         $is_critical = false;
         $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
         if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pre * 1.5;
+            $pre = $pure_damage + $bonus;
             $is_critical = true;
             Debugbar::warning("Critical! ダメージ: {$pre}");
         }
@@ -2376,11 +2376,11 @@ class BattleState extends Model
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (1.5倍)
+        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
         $is_critical = false;
         $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
         if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pre * 1.5;
+            $pre = $pure_damage + $bonus;
             $is_critical = true;
             Debugbar::warning("Critical! ダメージ: {$pre}");
         }
