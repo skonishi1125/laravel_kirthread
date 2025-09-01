@@ -473,30 +473,48 @@
                   <div class="modal-body">
                     <div class="row">
                       <!-- 味方 -->
-                      <div class="col-md-6">
-                        <h6 class="text-success">味方</h6>
+                      <div class="col-12">
+                        <h6 class="text-success font-weight-bold">味方</h6>
                         <div v-for="member in partyBuffs" :key="member.id" class="card mb-3">
                           <div class="card-header p-2">
                             <strong>{{ member.name }}</strong>
                           </div>
                           <ul class="list-group list-group-flush">
                             <li v-for="(buff, index) in member.buffs" :key="index" class="list-group-item py-1 px-2">
-                              {{ buff.buffed_skill_name }}（残り{{ buff.remaining_turn }}ターン）
+                              <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              <br>
+                              <small>(
+                                STR <span v-if="buff.buffed_str > 0 || buff.buffed_str == null">+</span>{{ buff.buffed_str ?? 0 }} 
+                                DEF <span v-if="buff.buffed_def > 0 || buff.buffed_def == null">+</span>{{ buff.buffed_def ?? 0 }} 
+                                INT <span v-if="buff.buffed_int > 0 || buff.buffed_int == null">+</span>{{ buff.buffed_int ?? 0 }} 
+                                SPD <span v-if="buff.buffed_spd > 0 || buff.buffed_spd == null">+</span>{{ buff.buffed_spd ?? 0 }} 
+                                LUC <span v-if="buff.buffed_luc > 0 || buff.buffed_luc == null">+</span>{{ buff.buffed_luc ?? 0 }} 
+                                )
+                              </small>
                             </li>
                           </ul>
                         </div>
                       </div>
 
                       <!-- 敵 -->
-                      <div class="col-md-6">
-                        <h6 class="text-danger">敵</h6>
+                      <div class="col-12">
+                        <h6 class="text-danger font-weight-bold">敵</h6>
                         <div v-for="enemy in enemyBuffs" :key="enemy.id" class="card mb-3">
                           <div class="card-header p-2 bg-light">
                             <strong>{{ enemy.name }}</strong>
                           </div>
                           <ul class="list-group list-group-flush">
                             <li v-for="(buff, index) in enemy.buffs" :key="index" class="list-group-item py-1 px-2">
-                              {{ buff.buffed_skill_name }}（残り{{ buff.remaining_turn }}ターン）
+                              <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              <br>
+                              <small>(
+                                STR <span v-if="buff.buffed_str > 0 || buff.buffed_str == null">+</span>{{ buff.buffed_str ?? 0 }} 
+                                DEF <span v-if="buff.buffed_def > 0 || buff.buffed_def == null">+</span>{{ buff.buffed_def ?? 0 }} 
+                                INT <span v-if="buff.buffed_int > 0 || buff.buffed_int == null">+</span>{{ buff.buffed_int ?? 0 }} 
+                                SPD <span v-if="buff.buffed_spd > 0 || buff.buffed_spd == null">+</span>{{ buff.buffed_spd ?? 0 }} 
+                                LUC <span v-if="buff.buffed_luc > 0 || buff.buffed_luc == null">+</span>{{ buff.buffed_luc ?? 0 }} 
+                                )
+                              </small>
                             </li>
                           </ul>
                         </div>
@@ -705,6 +723,7 @@ export default {
             name: member.name,
             buffs: member.buffs
           }));
+        console.log(this.partyBuffs, 'partydesu');
 
         // 敵バフ一覧
         this.enemyBuffs = this.enemyData
