@@ -149,6 +149,7 @@ class BattleState extends Model
             $enemy_data['value_spd'] = $enemy['value_spd'];
             $enemy_data['value_luc'] = $enemy['value_luc'];
             $enemy_data['portrait'] = $enemy['portrait_image_path'];
+            $enemy_data['aspect_ratio'] = $enemy['image_aspect_ratio'];
             $enemy_data['enemy_index'] = $enemy_index; // 敵の並び。
             $enemy_data['skills'] = $learned_skills;
             $enemy_data['is_boss'] = $enemy['is_boss'];
