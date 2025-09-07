@@ -27,14 +27,19 @@ class Library extends Model
     public static function fetchReadableLibraryList(Savedata $savedata, int $book_category = 0)
     {
 
-        // クリア済みのフィールドの数
         $cleared_count = $savedata->savedata_cleared_fields()->count();
+        $cleared_field_ids = $savedata->savedata_cleared_fields()->pluck('field_id');
 
-        $libraries = self::where('required_clears', '<=', $cleared_count)
-            ->where('book_category', $book_category)
+        return self::where('book_category', $book_category)
+            ->where(function ($q) use ($cleared_count, $cleared_field_ids) {
+                $q->where('required_clears', '<=', $cleared_count)
+                // クリアしたフィールドが存在するなら、そちらでも絞り込みを行う
+                    ->when($cleared_field_ids->isNotEmpty(), function ($q) use ($cleared_field_ids) {
+                        $q->orWhereIn('required_clear_field_id', $cleared_field_ids);
+                    });
+            })
             ->orderBy('id', 'asc')
             ->get();
 
-        return $libraries;
     }
 }

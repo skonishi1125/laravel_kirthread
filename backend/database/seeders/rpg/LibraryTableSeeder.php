@@ -164,6 +164,27 @@ class LibraryTableSeeder extends Seeder
                 'content' => '<p>やがてこの国は人々で集まり、その人混みに紛れて英雄たちもいつの間にか姿を消した。</p>',
                 'required_clears' => 0,
             ],
+            [
+                'id' => 397,
+                'name' => '草原クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>草原</p>',
+                'required_clear_field_id' => FieldData::Grassland,
+            ],
+            [
+                'id' => 398,
+                'name' => '砂クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>砂漠</p>',
+                'required_clear_field_id' => FieldData::Desert,
+            ],
+            [
+                'id' => 399,
+                'name' => '氷雪地帯クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>氷雪</p>',
+                'required_clear_field_id' => FieldData::IceAndSnow,
+            ],
         ];
 
         foreach ($seeds as $seed) {
