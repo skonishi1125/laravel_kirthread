@@ -17,6 +17,8 @@ class LibraryTableSeeder extends Seeder
     {
         Library::truncate();
 
+        $caution = '<p>※本地域はギルド未調査のため、魔物に関する情報を有していません。</p>';
+
         // 魔物図譜 草原
         $grassland_preface = '<p>ここで述べる草原とは、本街周辺に広がる平坦な地帯を指す。<br>陽光に恵まれ、風通しも良く、冒険者にとって最初の修練場として相応しい環境である。魔物の数は少なく、特筆すべき脅威は見られないが、それでも油断は禁物である。<br>とりわけ群れを成す小型種や、俊敏な個体は初心者にとって手強い相手となり得る。<br>ゆえに決して無害を意味しないことは忘れてはならない。</p>';
         $grassland_content = $this->buildEnemyHTMLElement(
@@ -43,6 +45,13 @@ class LibraryTableSeeder extends Seeder
         $coast_content = $this->buildEnemyHTMLElement(
             EnemyData::coastAppearingEnemies(),
             $coast_preface
+        );
+
+        // 氷雪地帯
+        $iceandsnow_preface = '<p>厳寒の大地に広がるとされる氷雪地帯は、氷結の甲殻や凍りついた筋肉を備え、物理的な攻撃に対して顕著な耐性を示す個体が多いと言われている。<br>氷雪の怪物に挑む際は、環境対策と共に魔法攻撃の準備を怠らぬことが肝要である。白銀の静寂は美しくも、油断する者にとっては永遠の眠りを意味するだろう。</p>';
+        $iceandsnow_content = $this->buildEnemyHTMLElement(
+            EnemyData::iceAndSnowAppearingEnemies(),
+            $iceandsnow_preface
         );
 
         $seeds = [
@@ -132,21 +141,36 @@ class LibraryTableSeeder extends Seeder
                 'name' => '魔物図譜: '.FieldData::Desert->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $desert_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
             ],
             [
                 'id' => 203,
                 'name' => '魔物図譜: '.FieldData::Volcano->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $volcano_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
             ],
             [
                 'id' => 204,
                 'name' => '魔物図譜: '.FieldData::Coast->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $coast_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
+            ],
+            [
+                'id' => 205,
+                'name' => '(未完成)魔物図譜: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 206,
+                'name' => '魔物図譜: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::IceAndSnow,
             ],
 
             // 神話歴史学

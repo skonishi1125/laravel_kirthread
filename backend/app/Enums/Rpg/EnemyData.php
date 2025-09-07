@@ -146,4 +146,11 @@ enum EnemyData: int
             self::SpikeWhale->value,
         ];
     }
+
+    public static function iceAndSnowAppearingEnemies(): array
+    {
+        return [
+            self::Srara->value,
+        ];
+    }
 }

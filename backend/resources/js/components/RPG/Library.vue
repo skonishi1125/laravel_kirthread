@@ -88,6 +88,11 @@
             <p><small>何を読もうかな？</small></p>
           </div>
           <hr>
+          <div style="font-size: 0.9em;">
+            <p>
+              <span style="color: gray;">※冒険を進行することで、読める書籍が増えていきます。こまめに確認してみましょう。</span>
+            </p>
+          </div>
         </div>
       </div>
 

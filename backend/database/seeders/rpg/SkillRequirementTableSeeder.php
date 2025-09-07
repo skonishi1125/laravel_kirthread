@@ -54,12 +54,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 7,
             ],
-            // クイックヒール ヒーリング Lv1以上、 pLv9以上
+            // クイックヒール ヒーリング Lv1以上
             [
                 'acquired_skill_id' => SkillDefinition::QuickHeal->value,
                 'requirement_skill_id' => SkillDefinition::Healing->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 9,
+                'requirement_party_level' => 1,
             ],
             // ホーリーアロー ミニボルト Lv2以上, pLv6以上
             [
