@@ -22,9 +22,13 @@ enum EnemyData: int
     case Ikkaku = 42;
     case SpikeWhale = 43;
 
-    case HighSrara = 50;
+    case Eripen = 50;
+    case IceFairy = 51;
+    case ScissorFlipper = 52;
 
-    case FlareDrago = 60;
+    case HighSrara = 900;
+
+    case FlareDrago = 901;
 
     public function label(): string
     {
@@ -46,6 +50,10 @@ enum EnemyData: int
             self::Clion => 'クリオン',
             self::Ikkaku => 'イッカク',
             self::SpikeWhale => 'スパイクホエール',
+
+            self::Eripen => 'エリペン',
+            self::IceFairy => 'アイスフェアリー',
+            self::ScissorFlipper => 'シザーフリッパー',
 
             self::HighSrara => 'ハイスララ',
 
@@ -75,6 +83,10 @@ enum EnemyData: int
             self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
             self::SpikeWhale => '海岸のボス。特定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
 
+            self::Eripen => 'エリペン',
+            self::IceFairy => 'アイスフェアリー',
+            self::ScissorFlipper => 'シザーフリッパー',
+
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
             self::FlareDrago => '非常に知能の高い龍で、狡猾な手口を使い冒険者を餌とする。',
@@ -101,6 +113,10 @@ enum EnemyData: int
             self::Clion => 'clion.png',
             self::Ikkaku => 'ikkaku.png',
             self::SpikeWhale => 'spikewhale.png',
+
+            self::Eripen => 'eripen.png',
+            self::IceFairy => 'icefairy.png',
+            self::ScissorFlipper => 'scissorflipper.png',
 
             self::HighSrara => 'highsrara.png',
 
@@ -148,6 +164,20 @@ enum EnemyData: int
     }
 
     public static function iceAndSnowAppearingEnemies(): array
+    {
+        return [
+            self::Srara->value,
+        ];
+    }
+
+    public static function wetFogAppearingEnemies(): array
+    {
+        return [
+            self::Srara->value,
+        ];
+    }
+
+    public static function nightForestAppearingEnemies(): array
     {
         return [
             self::Srara->value,

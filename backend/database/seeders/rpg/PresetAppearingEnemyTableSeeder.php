@@ -221,6 +221,42 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
+            // 氷雪地帯
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'number' => 1,
+            ],
+
+            // 湿霧の地
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
+
+            // 常夜の樹海
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {
