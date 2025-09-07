@@ -108,7 +108,6 @@
 }
 
 .enemy-boss-picture {
-  width: 250px !important;
   height: 250px !important;
 }
 

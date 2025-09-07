@@ -352,6 +352,7 @@ class EnemyTableSeeder extends Seeder
                 'drop_money' => 2500,
                 'portrait_image_path' => EnemyData::FlareDrago->image_path(),
                 'image_aspect_ratio' => '2/1',
+                'is_boss' => true,
                 'description' => EnemyData::FlareDrago->description(),
                 'created_at' => $now,
                 'updated_at' => $now,

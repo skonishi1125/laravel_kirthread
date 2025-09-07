@@ -26,6 +26,12 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Srara,
                 'number' => 1,
             ],
+            // [
+            //     'field_id' => FieldData::Grassland,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::FlareDrago,
+            //     'number' => 1,
+            // ],
             // 1-2
             [
                 'field_id' => FieldData::Grassland,
