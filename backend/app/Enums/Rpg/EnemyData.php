@@ -31,6 +31,11 @@ enum EnemyData: int
     case HazardBerry = 62;
     case WandEater = 63;
 
+    case HoshiHotaru = 70;
+    case Gyao = 71;
+    case ShadowWeed = 72;
+    case Twilight = 73;
+
     case HighSrara = 900;
 
     case FlareDrago = 901;
@@ -64,6 +69,11 @@ enum EnemyData: int
             self::Dionaea => 'ディオネア',
             self::HazardBerry => 'ハザードベリー',
             self::WandEater => 'ワンドイーター',
+
+            self::HoshiHotaru => 'ホシホタル',
+            self::Gyao => 'ギャオー',
+            self::ShadowWeed => 'シャドウウィード',
+            self::Twilight => 'トワイライト',
 
             self::HighSrara => 'ハイスララ',
 
@@ -102,6 +112,11 @@ enum EnemyData: int
             self::HazardBerry => 'ハザードベリー',
             self::WandEater => 'ワンドイーター',
 
+            self::HoshiHotaru => 'ホシホタル',
+            self::Gyao => 'ギャオー',
+            self::ShadowWeed => 'シャドウウィード',
+            self::Twilight => 'トワイライト',
+
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
             self::FlareDrago => '非常に知能の高い龍で、狡猾な手口を使い冒険者を餌とする。',
@@ -137,6 +152,11 @@ enum EnemyData: int
             self::Dionaea => 'dionaea.png',
             self::HazardBerry => 'hazardberry.png',
             self::WandEater => 'wandeater.png',
+
+            self::HoshiHotaru => 'hoshihotaru.png',
+            self::Gyao => 'gyao.png',
+            self::ShadowWeed => 'shadowweed.png',
+            self::Twilight => 'twilight.png',
 
             self::HighSrara => 'highsrara.png',
 
@@ -207,7 +227,10 @@ enum EnemyData: int
     public static function nightForestAppearingEnemies(): array
     {
         return [
-            self::Srara->value,
+            self::HoshiHotaru->value,
+            self::Gyao->value,
+            self::ShadowWeed->value,
+            self::Twilight->value,
         ];
     }
 }

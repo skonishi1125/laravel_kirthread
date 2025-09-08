@@ -61,6 +61,13 @@ class LibraryTableSeeder extends Seeder
             $wetfog_preface
         );
 
+        // 常夜の樹海
+        $nightforest_preface = '<p>長夜の樹海</p>';
+        $nightforest_content = $this->buildEnemyHTMLElement(
+            EnemyData::nightForestAppearingEnemies(),
+            $nightforest_preface
+        );
+
         $seeds = [
             [
                 'id' => 1,
@@ -193,6 +200,21 @@ class LibraryTableSeeder extends Seeder
                 'content' => $wetfog_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::WetFog,
+            ],
+            [
+                'id' => 209,
+                'name' => '(未完成)魔物図譜: '.FieldData::NightForest->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $nightforest_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 210,
+                'name' => '魔物図譜: '.FieldData::NightForest->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $nightforest_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::NightForest,
             ],
 
             // 神話歴史学

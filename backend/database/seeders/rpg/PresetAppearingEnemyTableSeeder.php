@@ -277,7 +277,25 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Srara,
+                'enemy_id' => EnemyData::HoshiHotaru,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Gyao,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ShadowWeed,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Twilight,
                 'number' => 1,
             ],
 
