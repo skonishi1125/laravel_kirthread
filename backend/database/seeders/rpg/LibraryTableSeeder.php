@@ -54,6 +54,13 @@ class LibraryTableSeeder extends Seeder
             $iceandsnow_preface
         );
 
+        // 湿霧の地
+        $wetfog_preface = '<p>しつむ</p>';
+        $wetfog_content = $this->buildEnemyHTMLElement(
+            EnemyData::wetFogAppearingEnemies(),
+            $wetfog_preface
+        );
+
         $seeds = [
             [
                 'id' => 1,
@@ -171,6 +178,21 @@ class LibraryTableSeeder extends Seeder
                 'content' => $iceandsnow_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::IceAndSnow,
+            ],
+            [
+                'id' => 207,
+                'name' => '(未完成)魔物図譜: '.FieldData::WetFog->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $wetfog_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 208,
+                'name' => '魔物図譜: '.FieldData::WetFog->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $wetfog_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::WetFog,
             ],
 
             // 神話歴史学

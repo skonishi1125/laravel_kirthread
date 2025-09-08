@@ -26,6 +26,11 @@ enum EnemyData: int
     case IceFairy = 51;
     case ScissorFlipper = 52;
 
+    case Nepenthos = 60;
+    case Dionaea = 61;
+    case HazardBerry = 62;
+    case WandEater = 63;
+
     case HighSrara = 900;
 
     case FlareDrago = 901;
@@ -55,6 +60,11 @@ enum EnemyData: int
             self::IceFairy => 'アイスフェアリー',
             self::ScissorFlipper => 'シザーフリッパー',
 
+            self::Nepenthos => 'ネペントス',
+            self::Dionaea => 'ディオネア',
+            self::HazardBerry => 'ハザードベリー',
+            self::WandEater => 'ワンドイーター',
+
             self::HighSrara => 'ハイスララ',
 
             self::FlareDrago => 'フレアドラゴ',
@@ -69,7 +79,7 @@ enum EnemyData: int
             self::Gao => '素早い動きが特徴。攻撃力が高いため、優先的に倒そう。',
             self::BigSrara => 'スララが偶然合体した生物。消化液で防御力を落としてくるのがいやらしい。',
 
-            self::Rizard => '砂漠に生息するトカゲ。防御力には自信あり。',
+            self::Rizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
             self::Scorpio => '致命の一撃を得意とするサソリ。魔法に弱いので、早めに倒してしまおう。',
             self::RockRizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
@@ -86,6 +96,11 @@ enum EnemyData: int
             self::Eripen => 'エリペン',
             self::IceFairy => 'アイスフェアリー',
             self::ScissorFlipper => 'シザーフリッパー',
+
+            self::Nepenthos => 'ネペントス',
+            self::Dionaea => 'ディオネア',
+            self::HazardBerry => 'ハザードベリー',
+            self::WandEater => 'ワンドイーター',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -117,6 +132,11 @@ enum EnemyData: int
             self::Eripen => 'eripen.png',
             self::IceFairy => 'icefairy.png',
             self::ScissorFlipper => 'scissorflipper.png',
+
+            self::Nepenthos => 'nepenthos.png',
+            self::Dionaea => 'dionaea.png',
+            self::HazardBerry => 'hazardberry.png',
+            self::WandEater => 'wandeater.png',
 
             self::HighSrara => 'highsrara.png',
 
@@ -166,14 +186,21 @@ enum EnemyData: int
     public static function iceAndSnowAppearingEnemies(): array
     {
         return [
-            self::Srara->value,
+            self::Ikkaku->value,
+            self::Eripen->value,
+            self::IceFairy->value,
+            self::ScissorFlipper->value,
         ];
     }
 
     public static function wetFogAppearingEnemies(): array
     {
         return [
-            self::Srara->value,
+            self::Rizard->value,
+            self::Nepenthos->value,
+            self::Dionaea->value,
+            self::HazardBerry->value,
+            self::WandEater->value,
         ];
     }
 

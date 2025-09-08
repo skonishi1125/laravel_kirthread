@@ -251,7 +251,25 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::WetFog,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Srara,
+                'enemy_id' => EnemyData::Nepenthos,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Dionaea,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::HazardBerry,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::WandEater,
                 'number' => 1,
             ],
 
