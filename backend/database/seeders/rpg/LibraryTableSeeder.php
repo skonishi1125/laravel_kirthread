@@ -68,6 +68,20 @@ class LibraryTableSeeder extends Seeder
             $nightforest_preface
         );
 
+        // 退廃した耕作地
+        $decayedfarmland_preface = '<p>退廃</p>';
+        $decayedfarmland_content = $this->buildEnemyHTMLElement(
+            EnemyData::decayedFarmlandAppearingEnemies(),
+            $decayedfarmland_preface
+        );
+
+        // 門前雀羅
+        $castletown_preface = '<p>門前雀羅</p>';
+        $castletown_content = $this->buildEnemyHTMLElement(
+            EnemyData::castleTownAppearingEnemies(),
+            $castletown_preface
+        );
+
         $seeds = [
             [
                 'id' => 1,

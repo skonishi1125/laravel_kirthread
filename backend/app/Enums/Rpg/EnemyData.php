@@ -233,4 +233,18 @@ enum EnemyData: int
             self::Twilight->value,
         ];
     }
+
+    public static function decayedFarmlandAppearingEnemies(): array
+    {
+        return [
+            self::HoshiHotaru->value,
+        ];
+    }
+
+    public static function castleTownAppearingEnemies(): array
+    {
+        return [
+            self::Gyao->value,
+        ];
+    }
 }
