@@ -315,6 +315,22 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
+            // 古城
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Twilight,
+                'number' => 1,
+            ],
+
+            // 茫洋の地
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Twilight,
+                'number' => 1,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {
