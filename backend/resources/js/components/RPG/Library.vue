@@ -181,9 +181,9 @@
 
           <div class="modal-body book-modal-body" ref="bookBody">
             <div v-html="modalBook.content"></div>
-            <!-- <div>
+              <!-- <div>
               <p></p>
-            </div> -->
+              </div> -->
             <p style="text-align: right; font-weight: bold;">【終】</p>
           </div>
 
