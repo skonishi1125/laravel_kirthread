@@ -36,6 +36,26 @@ enum EnemyData: int
     case ShadowWeed = 72;
     case Twilight = 73;
 
+    case CurseScareCrow = 80;
+    case DustBomb = 81;
+    case ZombieClion = 82;
+    case Narehate = 83;
+
+    case DarkSrara = 90;
+    case BazaarRizard = 91;
+    case Anima = 92;
+    case GolemBall = 94;
+    case StoneGolem = 95;
+
+    case GaiaHand = 100;
+    case DeathScorpio = 101;
+    case MetalGecko = 102;
+    case Stinger = 103;
+    case PlasmaBook = 104;
+
+    case Celavie = 110;
+    case GrandCube = 111;
+
     case HighSrara = 900;
 
     case FlareDrago = 901;
@@ -74,6 +94,26 @@ enum EnemyData: int
             self::Gyao => 'ギャオー',
             self::ShadowWeed => 'シャドウウィード',
             self::Twilight => 'トワイライト',
+
+            self::CurseScareCrow => '呪いのカカシ',
+            self::DustBomb => 'ダストボム',
+            self::ZombieClion => 'ゾンビクリオン',
+            self::Narehate => 'ナレハテ',
+
+            self::DarkSrara => 'ダークスララ',
+            self::BazaarRizard => 'バザールリザード',
+            self::Anima => 'アニマ',
+            self::GolemBall => 'ゴーレムボール',
+            self::StoneGolem => 'ストーンゴーレム',
+
+            self::GaiaHand => 'ガイアハンド',
+            self::DeathScorpio => 'デススコーピオ',
+            self::MetalGecko => 'メタルゲッコー',
+            self::Stinger => 'スティンガー',
+            self::PlasmaBook => 'プラズマブック',
+
+            self::Celavie => 'セラヴィ',
+            self::GrandCube => 'グランドキューブ',
 
             self::HighSrara => 'ハイスララ',
 
@@ -117,6 +157,26 @@ enum EnemyData: int
             self::ShadowWeed => 'シャドウウィード',
             self::Twilight => 'トワイライト',
 
+            self::CurseScareCrow => '呪いのカカシ',
+            self::DustBomb => 'ダストボム',
+            self::ZombieClion => 'ゾンビクリオン',
+            self::Narehate => 'ナレハテ',
+
+            self::DarkSrara => 'ダークスララ',
+            self::BazaarRizard => 'バザールリザード',
+            self::Anima => 'アニマ',
+            self::GolemBall => 'ゴーレムボール',
+            self::StoneGolem => 'ストーンゴーレム',
+
+            self::GaiaHand => 'ガイアハンド',
+            self::DeathScorpio => 'デススコーピオ',
+            self::MetalGecko => 'メタルゲッコー',
+            self::Stinger => 'スティンガー',
+            self::PlasmaBook => 'プラズマブック',
+
+            self::Celavie => 'セラヴィ',
+            self::GrandCube => 'グランドキューブ',
+
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
             self::FlareDrago => '非常に知能の高い龍で、狡猾な手口を使い冒険者を餌とする。',
@@ -157,6 +217,26 @@ enum EnemyData: int
             self::Gyao => 'gyao.png',
             self::ShadowWeed => 'shadowweed.png',
             self::Twilight => 'twilight.png',
+
+            self::CurseScareCrow => 'cursescarecrow.png',
+            self::DustBomb => 'dustbomb.png',
+            self::ZombieClion => 'zombieclion.png',
+            self::Narehate => 'narehate.png',
+
+            self::DarkSrara => 'darksrara.png',
+            self::BazaarRizard => 'bazaarrizard.png',
+            self::Anima => 'anima.png',
+            self::GolemBall => 'golemball.png',
+            self::StoneGolem => 'stonegolem.png',
+
+            self::GaiaHand => 'gaiahand.png',
+            self::DeathScorpio => 'deathscorpio.png',
+            self::MetalGecko => 'metalgecko.png',
+            self::Stinger => 'stinger.png',
+            self::PlasmaBook => 'plasmabook.png',
+
+            self::Celavie => 'celavie.png',
+            self::GrandCube => 'grandcube.png',
 
             self::HighSrara => 'highsrara.png',
 
@@ -237,14 +317,40 @@ enum EnemyData: int
     public static function decayedFarmlandAppearingEnemies(): array
     {
         return [
-            self::HoshiHotaru->value,
+            self::CurseScareCrow->value,
+            self::DustBomb->value,
+            self::ZombieClion->value,
+            self::Narehate->value,
         ];
     }
 
     public static function castleTownAppearingEnemies(): array
     {
         return [
-            self::Gyao->value,
+            self::DarkSrara->value,
+            self::BazaarRizard->value,
+            self::Anima->value,
+            self::GolemBall->value,
+            self::StoneGolem->value,
+        ];
+    }
+
+    public static function ancientCastleAppearingEnemies(): array
+    {
+        return [
+            self::GaiaHand->value,
+            self::DeathScorpio->value,
+            self::MetalGecko->value,
+            self::Stinger->value,
+            self::PlasmaBook->value,
+        ];
+    }
+
+    public static function vastExpanseAppearingEnemies(): array
+    {
+        return [
+            self::Celavie->value,
+            self::GrandCube->value,
         ];
     }
 }

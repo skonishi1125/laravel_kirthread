@@ -82,6 +82,20 @@ class LibraryTableSeeder extends Seeder
             $castletown_preface
         );
 
+        // 古城
+        $ancientcastle_preface = '<p>古城</p>';
+        $ancientcastle_content = $this->buildEnemyHTMLElement(
+            EnemyData::ancientCastleAppearingEnemies(),
+            $ancientcastle_preface
+        );
+
+        // 茫洋の地
+        $vastexpanse_preface = '<p>茫洋の地</p>';
+        $vastexpanse_content = $this->buildEnemyHTMLElement(
+            EnemyData::vastExpanseAppearingEnemies(),
+            $vastexpanse_preface
+        );
+
         $seeds = [
             [
                 'id' => 1,
@@ -229,6 +243,66 @@ class LibraryTableSeeder extends Seeder
                 'content' => $nightforest_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::NightForest,
+            ],
+            [
+                'id' => 211,
+                'name' => '(未完成)魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $decayedfarmland_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 212,
+                'name' => '魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $decayedfarmland_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::DecayedFarmland,
+            ],
+            [
+                'id' => 213,
+                'name' => '(未完成)魔物図譜: '.FieldData::CastleTown->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $castletown_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 214,
+                'name' => '魔物図譜: '.FieldData::CastleTown->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $castletown_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::CastleTown,
+            ],
+            [
+                'id' => 215,
+                'name' => '(未完成)魔物図譜: '.FieldData::AncientCastle->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $ancientcastle_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 216,
+                'name' => '魔物図譜: '.FieldData::AncientCastle->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $ancientcastle_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::AncientCastle,
+            ],
+            [
+                'id' => 217,
+                'name' => '(未完成)魔物図譜: '.FieldData::VastExpanse->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $vastexpanse_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 218,
+                'name' => '魔物図譜: '.FieldData::VastExpanse->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $vastexpanse_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::VastExpanse,
             ],
 
             // 神話歴史学

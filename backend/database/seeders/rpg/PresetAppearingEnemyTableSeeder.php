@@ -303,7 +303,25 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::DecayedFarmland,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Twilight,
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ZombieClion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Narehate,
                 'number' => 1,
             ],
 
@@ -311,7 +329,31 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Twilight,
+                'enemy_id' => EnemyData::DarkSrara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::BazaarRizard,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Anima,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::StoneGolem,
                 'number' => 1,
             ],
 
@@ -319,7 +361,31 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Twilight,
+                'enemy_id' => EnemyData::GaiaHand,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::DeathScorpio,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::MetalGecko,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Stinger,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::PlasmaBook,
                 'number' => 1,
             ],
 
@@ -327,7 +393,13 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::VastExpanse,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Twilight,
+                'enemy_id' => EnemyData::Celavie,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::GrandCube,
                 'number' => 1,
             ],
 
