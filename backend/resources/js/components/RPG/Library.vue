@@ -88,6 +88,11 @@
             <p><small>何を読もうかな？</small></p>
           </div>
           <hr>
+          <div style="font-size: 0.9em;">
+            <p>
+              <span style="color: gray;">※冒険を進行することで、読める書籍が増えていきます。こまめに確認してみましょう。</span>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -176,6 +181,9 @@
 
           <div class="modal-body book-modal-body" ref="bookBody">
             <div v-html="modalBook.content"></div>
+              <!-- <div>
+              <p></p>
+              </div> -->
             <p style="text-align: right; font-weight: bold;">【終】</p>
           </div>
 

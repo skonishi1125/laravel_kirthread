@@ -95,14 +95,19 @@
 }
 
 .enemy-picture {
-  background-size: cover;
-  width: 180px;
-  height: 180px;
+  /* 画像の表示 */
+  background-repeat: no-repeat;
+  background-size: contain;          /* クリップしない */
+  background-position: bottom center; /* 地面に足をつけるイメージ */
+
+  /* レイアウト */
+  height: var(--enemy-h, 180px);     /* 見た目の高さは固定（地面を揃えやすい） */
+  aspect-ratio: var(--enemy-ar, 1 / 1); /* 既定は正方形 */
+  width: auto;                       /* 高さ×アスペクト比で自動計算 */
   margin-top: 20px;
 }
 
 .enemy-boss-picture {
-  width: 250px !important;
   height: 250px !important;
 }
 
@@ -440,14 +445,16 @@
               @click="selectEnemy(enemy.enemy_index)"
               @mouseenter="hoveredEnemy = enemy"
               @mouseleave="hoveredEnemy = null"
-              :style="{ backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'}" 
+              :style="{ 
+                '--enemy-ar': enemy.aspect_ratio || '1 / 1',
+                backgroundImage: 'url(/image/rpg/enemy/' + enemy.portrait + ')'
+              }"
               :class="{ 
                 'enemy-picture': true, 
                 'enemy-hover-active': battle.status === 'enemySelect',
                 'enemy-boss-picture': enemy.is_boss == true
                 }"
             >
-              <!-- {{ enemy.name }} / {{ enemy.value_hp }} -->
             </div>
           </div>
         </div>

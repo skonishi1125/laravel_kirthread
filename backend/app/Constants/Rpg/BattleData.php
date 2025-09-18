@@ -61,6 +61,7 @@ class BattleData
         'value_spd' => 0,
         'value_luc' => 0,
         'portrait' => null,
+        'aspect_ratio' => null,
         'skills' => null, // buffと同じく、配列を格納するための親配列が入る。 ただしこれは= Skill::generateSkillCollection($enemy);みたいな感じでそのまま上書きされる
         'selected_skill_id' => null, // exec時に格納する、選択したスキルのID
         'buffs' => [], // '[ [バフ1], [バフ2], [バフ3], ... ]'というように、配列を格納するための親配列を空で定義しておく

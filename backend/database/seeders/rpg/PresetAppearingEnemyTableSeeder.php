@@ -26,6 +26,12 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Srara,
                 'number' => 1,
             ],
+            // [
+            //     'field_id' => FieldData::Grassland,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::FlareDrago,
+            //     'number' => 1,
+            // ],
             // 1-2
             [
                 'field_id' => FieldData::Grassland,
@@ -218,6 +224,182 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::Coast,
                 'stage_id' => 4,
                 'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
+
+            // 氷雪地帯
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'number' => 1,
+            ],
+
+            // 湿霧の地
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Nepenthos,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Dionaea,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::HazardBerry,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::WetFog,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::WandEater,
+                'number' => 1,
+            ],
+
+            // 常夜の樹海
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::HoshiHotaru,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Gyao,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ShadowWeed,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Twilight,
+                'number' => 1,
+            ],
+
+            // 退廃
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::ZombieClion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Narehate,
+                'number' => 1,
+            ],
+
+            // 門前雀羅
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::DarkSrara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::BazaarRizard,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Anima,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::StoneGolem,
+                'number' => 1,
+            ],
+
+            // 古城
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::GaiaHand,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::DeathScorpio,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::MetalGecko,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Stinger,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::PlasmaBook,
+                'number' => 1,
+            ],
+
+            // 茫洋の地
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Celavie,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::GrandCube,
                 'number' => 1,
             ],
 

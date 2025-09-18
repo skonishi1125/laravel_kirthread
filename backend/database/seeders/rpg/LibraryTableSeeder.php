@@ -17,6 +17,8 @@ class LibraryTableSeeder extends Seeder
     {
         Library::truncate();
 
+        $caution = '<p>※本地域はギルド未調査のため、魔物に関する情報を有していません。</p>';
+
         // 魔物図譜 草原
         $grassland_preface = '<p>ここで述べる草原とは、本街周辺に広がる平坦な地帯を指す。<br>陽光に恵まれ、風通しも良く、冒険者にとって最初の修練場として相応しい環境である。魔物の数は少なく、特筆すべき脅威は見られないが、それでも油断は禁物である。<br>とりわけ群れを成す小型種や、俊敏な個体は初心者にとって手強い相手となり得る。<br>ゆえに決して無害を意味しないことは忘れてはならない。</p>';
         $grassland_content = $this->buildEnemyHTMLElement(
@@ -43,6 +45,55 @@ class LibraryTableSeeder extends Seeder
         $coast_content = $this->buildEnemyHTMLElement(
             EnemyData::coastAppearingEnemies(),
             $coast_preface
+        );
+
+        // 氷雪地帯
+        $iceandsnow_preface = '<p>厳寒の大地に広がるとされる氷雪地帯は、氷結の甲殻や凍りついた筋肉を備え、物理的な攻撃に対して顕著な耐性を示す個体が多いと言われている。<br>氷雪の怪物に挑む際は、環境対策と共に魔法攻撃の準備を怠らぬことが肝要である。白銀の静寂は美しくも、油断する者にとっては永遠の眠りを意味するだろう。</p>';
+        $iceandsnow_content = $this->buildEnemyHTMLElement(
+            EnemyData::iceAndSnowAppearingEnemies(),
+            $iceandsnow_preface
+        );
+
+        // 湿霧の地
+        $wetfog_preface = '<p>しつむ</p>';
+        $wetfog_content = $this->buildEnemyHTMLElement(
+            EnemyData::wetFogAppearingEnemies(),
+            $wetfog_preface
+        );
+
+        // 常夜の樹海
+        $nightforest_preface = '<p>長夜の樹海</p>';
+        $nightforest_content = $this->buildEnemyHTMLElement(
+            EnemyData::nightForestAppearingEnemies(),
+            $nightforest_preface
+        );
+
+        // 退廃した耕作地
+        $decayedfarmland_preface = '<p>退廃</p>';
+        $decayedfarmland_content = $this->buildEnemyHTMLElement(
+            EnemyData::decayedFarmlandAppearingEnemies(),
+            $decayedfarmland_preface
+        );
+
+        // 門前雀羅
+        $castletown_preface = '<p>門前雀羅</p>';
+        $castletown_content = $this->buildEnemyHTMLElement(
+            EnemyData::castleTownAppearingEnemies(),
+            $castletown_preface
+        );
+
+        // 古城
+        $ancientcastle_preface = '<p>古城</p>';
+        $ancientcastle_content = $this->buildEnemyHTMLElement(
+            EnemyData::ancientCastleAppearingEnemies(),
+            $ancientcastle_preface
+        );
+
+        // 茫洋の地
+        $vastexpanse_preface = '<p>茫洋の地</p>';
+        $vastexpanse_content = $this->buildEnemyHTMLElement(
+            EnemyData::vastExpanseAppearingEnemies(),
+            $vastexpanse_preface
         );
 
         $seeds = [
@@ -132,37 +183,198 @@ class LibraryTableSeeder extends Seeder
                 'name' => '魔物図譜: '.FieldData::Desert->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $desert_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
             ],
             [
                 'id' => 203,
                 'name' => '魔物図譜: '.FieldData::Volcano->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $volcano_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
             ],
             [
                 'id' => 204,
                 'name' => '魔物図譜: '.FieldData::Coast->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $coast_content,
-                'required_clears' => 0,
+                'required_clears' => 1,
+            ],
+            [
+                'id' => 205,
+                'name' => '(未完成)魔物図譜: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 206,
+                'name' => '魔物図譜: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::IceAndSnow,
+            ],
+            [
+                'id' => 207,
+                'name' => '(未完成)魔物図譜: '.FieldData::WetFog->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $wetfog_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 208,
+                'name' => '魔物図譜: '.FieldData::WetFog->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $wetfog_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::WetFog,
+            ],
+            [
+                'id' => 209,
+                'name' => '(未完成)魔物図譜: '.FieldData::NightForest->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $nightforest_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 210,
+                'name' => '魔物図譜: '.FieldData::NightForest->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $nightforest_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::NightForest,
+            ],
+            [
+                'id' => 211,
+                'name' => '(未完成)魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $decayedfarmland_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 212,
+                'name' => '魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $decayedfarmland_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::DecayedFarmland,
+            ],
+            [
+                'id' => 213,
+                'name' => '(未完成)魔物図譜: '.FieldData::CastleTown->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $castletown_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 214,
+                'name' => '魔物図譜: '.FieldData::CastleTown->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $castletown_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::CastleTown,
+            ],
+            [
+                'id' => 215,
+                'name' => '(未完成)魔物図譜: '.FieldData::AncientCastle->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $ancientcastle_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 216,
+                'name' => '魔物図譜: '.FieldData::AncientCastle->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $ancientcastle_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::AncientCastle,
+            ],
+            [
+                'id' => 217,
+                'name' => '(未完成)魔物図譜: '.FieldData::VastExpanse->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $vastexpanse_preface.$caution,
+                'required_clears' => 5,
+            ],
+            [
+                'id' => 218,
+                'name' => '魔物図譜: '.FieldData::VastExpanse->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $vastexpanse_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::VastExpanse,
             ],
 
             // 神話歴史学
             [
                 'id' => 301,
-                'name' => '民話1: 伝説の英雄たち',
+                'name' => '民話I',
                 'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>昔、この国はモンスターが蔓延っていた。そこに3人の冒険者が現れ、人々のためにモンスターを討伐し続けたのだ。</p><br><p>彼らはのちに伝説と呼ばれる存在となった。</p>',
+                'content' => '<p>かつて、魔物が蔓延る大陸があった。<br>そこは噴煙を噴き上げる火山、凍てつく氷雪の地、陽光の届かぬ闇の領域。苛烈なる自然は、魔物の気配に呼応するかのごとくだった。<br>とある日、その地を無名の冒険者たちが踏みしめることとなる。</p><p>この伝承は、まさしくその瞬間より幕を開けたのであった。</p>',
                 'required_clears' => 0,
             ],
             [
                 'id' => 302,
-                'name' => '民話2: 英雄たちのその後',
+                'name' => '民話II',
                 'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>やがてこの国は人々で集まり、その人混みに紛れて英雄たちもいつの間にか姿を消した。</p>',
-                'required_clears' => 0,
+                'content' => '<p>この大陸には、比類なき力を誇る魔物の住まう集落があるとされている。<br>個別での踏破は難しいと考えた冒険者たちは、三人一組の徒党を結成した。</p><p>拳を振るう者、魔術を操る者、そして仲間を支える者。<br>彼らはまず小さな拠点を築き、そこを起点として旅路を始めた。<br>やがて草原を抜け、灼熱の火山を越え、深き沼地を踏み分けるーー。<br></p><p>ついに彼らの眼前に現れたのは、人の手で築かれたとは到底思えぬ石の城だった。</p>',
+                'required_clears' => 1,
+            ],
+            [
+                'id' => 303,
+                'name' => '民話III',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>「ここは、大陸に蔓延る魔物の根城に違いない。」<br>冒険者たちは城へ乗り込み、数多の魔物の群れへと立ち向かう。<br>邪悪を退け、ついには、城を支配する主をも討ち果たした。<br></p><p>この偉業は大陸中に鳴り響き、人々は彼らを英雄として崇め讃えた。</p><p>魔物の残党は退き、そして城の周囲には人が集い、富と秩序が築かれた。<br>かつて魔物の根城と恐れられた地周辺は、大陸随一の都へと変貌した。</p><p>こうして大陸は新たな時代を迎えたのであった。</p>',
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 304,
+                'name' => '民話IV',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>繁栄の時代は幾十年にも及び、都は大陸の中心として栄華を誇った。</p><p>だがある日、英雄たちは誰に知られることもなく、忽然と姿を消した。<br>その理由を知る者はなく、人々はただ静かな不安を胸に抱えたという。<br></p><p>やがてその懸念は現実となり、忘れられたはずの魔物が再び大陸を侵した。<br>英雄たち無き世代では抗うことはできず、城は再び魔の手へと堕ちていった。<br>かくして繁栄の時代は幕を閉じ、大陸は再び魔物が蔓延ることとなったのである。<br>ただひとつ、今もなお語り継がれる言葉がある。</p><p>"かつて王国に住んでいた英雄の財宝は、未だ古城の奥深くに眠っているーー。"</p><p>この言葉は、人々を再び魔物に立ち向かわせるには充分な理由となった。<br></p><p>そしてこの時代は、今日へと続いているのである。</p>',
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 305,
+                'name' => '書き殴られた本I',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>（...棚の隅に、本が挟み込まれている。図書館で管轄されていない書物だ。）</p><span style="color:red"><p>古き書物は声高に語る。<br>「魔物は人を脅かし、英雄はそれを討った」と。<br>しかし、私はその記述に疑念を抱かずにはいられぬ。</p><p>果たして、魔物が人の暮らしをどれほど脅かしていたというのか。<br>火を吹く竜が村を焼いた記録も、氷の魔物が街を凍らせた証も、どこにも残されてはいない。<br>書物の多くは「討伐」という結末のみを声高に語り、始まりを曖昧にしている。<br>まるで誰かが都合のよい物語を編んだかのようではないか。<br></p><p>むしろ魔物は、人を避けるように山に籠り、沼に沈み、光の届かぬ地に棲んでいたのでないだろうか。<br>彼らが本当に人を害として扱うのであれば、なぜ今日までこの街は平穏に保たれているのか。<br></p><p>英雄たちが武器を振るった理由は何か。<br>正義か、使命か、それとも……ただ己が力を誇示したかっただけなのか。<br></p><p>「伝承」と呼ばれるものは、果たして真実か。<br>私はそうは思わない。</p></span>',
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 306,
+                'name' => '書き殴られた本II',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>（...棚の隅に、本が挟み込まれている。図書館で管轄されていない書物だ。）</p><span style="color: red"><p>かつての英雄のように、ついに古城を踏破する冒険者が現れた。<br>その報せに街は沸き立ち、ギルドも徐々に地形の調査を進めている。<br>ただし、愚かにも奴らの関心は上層階に積まれた財宝にばかり向けられ、周辺の探索など意にも介していない。<br></p><p>私はひとり、城から少し離れた寂れた耕作地を調べてみた。<br>崩れ落ちた瓦礫の下に、地下へと続く階段を見つけたのである。<br>降りてゆくと、そこは牢獄として使われていたらしく、壁や床には乾ききった血痕のような汚れが点々と残っていた。<br>その陰惨たる場所の中央に薄青く輝く不気味な光。<br>まるで異界へ通じるかのようなポータルが存在していたのだ。<br></p><p>このポータルは、伝承の欺瞞を解き明かす手掛かりになるに違いない。<br>ギルドの連中が夢中になっている金銀財宝など、真実に比べれば塵芥に等しい。</p><p>私はこのポータルに入ることを決めた。この足で、歴史の虚飾を打ち砕くのだ。</p></span>',
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 307,
+                'name' => '不気味な日記',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>（茫洋の地で拾った、日記帳だ。）</p><span style="color: red"><p>【一日目】<br>ポータルを潜ると、そこは地平が続く虚無の大地であった。<br>恐ろしく広大で、振り返っても先ほど入ったはずの門は影も形もない。<br>どうやら先に進み、出口を探すしかないようだ。<br>私は今、求め続けていた正史を開拓している。武者震いが止まらない。<br></p><p>【三日目】<br>違和感に気づいた。<br>寝食を忘れるほど調査に没頭していたことは認めるが、言葉通りこの世界に入ってから腹の虫は鳴かず、喉の渇きすら感じない。<br>どうやら魔力が大気に満ちており、活動に必要なエネルギーを自然に取り込むことができているようだ。<br></p><p>【五日目】<br>生命体を発見した。<br>遠目でしか見ていないが、それは魔物とは似ても似つかぬ、おぞましい生命体だった。<br>是非とも観察したいと心が疼いたが、絶対的な直感が近づくなと叫んだ。</p><p>【七日目】<br>恐ろしいこと、そして奇妙なことが起きた。<br>私は例の生命体と鉢合わせ、襲われた。<br>全ての終わりを覚悟したその刹那、私を救ったのは魔物であった。<br>それは人間である私よりか弱き存在に見えたが、驚くほどの俊敏さを持ち、私を背中に乗せて退避してくれた。<br>親切心を持ち合わせているのか、その魔物は無の世界の片隅にあった光るポータルまで私を運んでくれ、そして去っていった。<br></p><p>ポータルには奇妙な呪文が施されていた。特定の存在のみを拒み通さぬよう細工されている。<br>ここは、あの生命体を封じ込める監獄なのではないだろうか。</p><p>この文章を書いている今も、襲われた事実に震えが止まらず、正直帰りたい。<br>ただし、自分の探究心がそれを許してはくれない。</p><p>あの生命体の正体は？<br>自分を救ってくれた魔物の種は？</p><p>出口を横目に、私は探索を辞めぬ事を決意する。<br>あの生命体の謎を、必ず解き明かしてみせようではないか。</p><p>【？日目】<br>ついに、例の生命体の観察に成功した。<br>腕は六本にも及び、驚くべき身体能力を誇るのみならず、魔法すら自在に操る様子を見せた。<br>魔物が特殊な能力を持つことはあるが、あれほど多様な技を併せ持つ存在は聞いたことがない。<br></p><p>そして私は決定的な違和感を覚えた。<br>生命体が操っていたものは、間違いなく冒険者たちの「スキル」そのものだった。<br>まさか、この生命体はかつて__<br></p></span><br><br><p>（黒ずんだ滲みとともに、文章はここで途切れている...。）</p>',
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 397,
+                'name' => '草原クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>草原</p>',
+                'required_clear_field_id' => FieldData::Grassland,
+            ],
+            [
+                'id' => 398,
+                'name' => '砂クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>砂漠</p>',
+                'required_clear_field_id' => FieldData::Desert,
+            ],
+            [
+                'id' => 399,
+                'name' => '氷雪地帯クリア後に出る本',
+                'book_category' => Library::CATEGORY_HISTORY,
+                'content' => '<p>氷雪</p>',
+                'required_clear_field_id' => FieldData::IceAndSnow,
             ],
         ];
 

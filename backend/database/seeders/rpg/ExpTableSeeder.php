@@ -16,7 +16,7 @@ class ExpTableSeeder extends Seeder
 
         $seeds = [
             ['level' => 1, 'total_exp' => 0],
-            ['level' => 2, 'total_exp' => 20], // スララを2回倒せば、パーティ全員上がる感じ
+            ['level' => 2, 'total_exp' => 15], // スララを2回倒せば、パーティ全員上がる感じ
             ['level' => 3, 'total_exp' => 80],
             ['level' => 4, 'total_exp' => 200],
             ['level' => 5, 'total_exp' => 350],
