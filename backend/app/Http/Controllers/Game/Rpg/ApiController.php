@@ -1116,6 +1116,33 @@ class ApiController extends Controller
     }
 
     /**
+     * 本を読み終えた時、既読テーブルに値を格納する。
+     */
+    public function markFinishedBook(Request $request)
+    {
+        Debugbar::debug('markFinishedBook(): ---------------------');
+        $book_id = $request->book_id;
+        Debugbar::debug($book_id);
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // 重複チェックし、存在しなければ読んだ本を保存。
+        if (! $savedata->savedata_read_libraries()->where('library_id', $book_id)->exists()) {
+            $savedata->savedata_read_libraries()->firstOrCreate([
+                'library_id' => $book_id,
+            ]);
+        }
+
+        return response()->noContent(); // 204
+
+    }
+
+    /**
      * 冒険者掲示板で表示する投稿の情報を取得する。
      */
     public function fetchBbsPost()

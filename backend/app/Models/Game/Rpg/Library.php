@@ -5,6 +5,9 @@ namespace App\Models\Game\Rpg;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property bool $is_read
+ */
 class Library extends Model
 {
     use HasFactory;
@@ -29,6 +32,7 @@ class Library extends Model
 
         $cleared_count = $savedata->savedata_cleared_fields()->count();
         $cleared_field_ids = $savedata->savedata_cleared_fields()->pluck('field_id');
+        $read_library_ids = $savedata->savedata_read_libraries->pluck('library_id')->toArray();
 
         return self::where('book_category', $book_category)
             ->where(function ($q) use ($cleared_count, $cleared_field_ids) {
@@ -39,7 +43,13 @@ class Library extends Model
                     });
             })
             ->orderBy('id', 'asc')
-            ->get();
+            ->get()
+            // is_read という、既読済みかどうかの判定値の追加
+            ->map(function ($book) use ($read_library_ids) {
+                $book->is_read = in_array($book->id, $read_library_ids, true);
+
+                return $book;
+            });
 
     }
 }
