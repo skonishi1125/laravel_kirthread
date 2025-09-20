@@ -25,7 +25,7 @@ enum FieldData: int
             self::Coast => '海岸',
             self::IceAndSnow => '氷雪地帯',
             self::WetFog => '湿霧の地',
-            self::NightForest => '常夜の樹海',
+            self::NightForest => '常夜の森',
             self::DecayedFarmland => '退廃した耕作地',
             self::CastleTown => '門前雀羅の城下街',
             self::AncientCastle => '古城',

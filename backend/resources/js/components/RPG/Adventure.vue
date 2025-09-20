@@ -20,6 +20,13 @@
     font-style: italic;
 }
 
+.color-red {
+    color: red;
+}
+
+.color-blue {
+    color: blue;
+}
 </style>
 
 <template>
@@ -62,7 +69,7 @@
             </thead>
             <tbody>
               <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }" @click="showConfirmModal(field)">
-                <td class="weight-bold">{{ field.name }}</td>
+                <td class="weight-bold" :class="{ 'color-blue':field.id == 11, 'color-red':field.id == 10 }">{{ field.name }}</td>
                 <td>{{ field.difficulty }}</td>
               </tr>
             </tbody>
@@ -82,26 +89,52 @@
               <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-              <!-- error message -->
-              <div v-if="error_message">
-                  <p style="color:red;">{{ error_message }}</p>
-              </div>
   
-              <!-- Edit purchase form -->
               <form class="form-horizontal" role="form">
-                  <!-- Date -->
                   <div class="form-group">
-                    <label class="control-label">
-                        {{ confirmModalFIeld.name }}に向かいます。<br>
+
+                    <!-- ステージごとに個別の文章を出す -->
+                    <div v-if="confirmModalFIeld.id == 11">
+                      <label class="control-label">
+                        <p style="color: gray;">
+                          怪しい書物通りに耕作地の地下を探索したところ、青白く光るポータルを見つけた...
+                        </p>
+                        入ってみますか？
+                        <br>
                         <br>
                         <small>
-                          <b>
-                            ※戦闘画面に遷移します。<br>
-                            準備ができている場合、「出発する」を選択してください。
+                          <b>※戦闘画面に遷移します。<br>準備ができている場合、「出発する」を選択してください。
                           </b>
                         </small>
-                        
-                    </label>
+                      </label>
+                    </div>
+
+                    <div v-else-if="confirmModalFIeld.id == 10">
+                      <label class="control-label">
+                        <p style="color: gray;">
+                          長い旅の末に、とうとう伝承にまつわる城に辿り着いた。
+                        </p>
+                        探索を開始しますか？
+                        <br>
+                        <br>
+                        <small>
+                          <b>※戦闘画面に遷移します。<br>準備ができている場合、「出発する」を選択してください。
+                          </b>
+                        </small>
+                      </label>
+                    </div>
+
+                    <div v-else>
+                      <label class="control-label">
+                        {{ confirmModalFIeld.name }}に向かいます。
+                        <br>
+                        <br>
+                        <small>
+                          <b>※戦闘画面に遷移します。<br>準備ができている場合、「出発する」を選択してください。
+                          </b>
+                        </small>
+                      </label>
+                    </div>
                   </div>
               </form>
             </div>
@@ -125,7 +158,6 @@
     data() {
       return {
         fieldList:[],
-        error_message: '',
         confirmModalFIeld:{
           id: null,
           name: '',

@@ -273,7 +273,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 常夜の樹海
+            // 常夜の森
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 1,

@@ -43,6 +43,7 @@ class Savedata extends Model
             $savedata->battle_state()->delete();
             $savedata->savedata_has_items()->delete();
             $savedata->savedata_cleared_Fields()->delete();
+            $savedata->savedata_read_libraries()->delete();
             $savedata->job()->delete();
         });
     }
@@ -92,6 +93,11 @@ class Savedata extends Model
          *   $s->savedata_cleared_fields->first()->field;
          */
         return $this->hasMany(SavedataClearedField::class, 'savedata_id');
+    }
+
+    public function savedata_read_libraries(): HasMany
+    {
+        return $this->hasMany(SavedataReadLibrary::class, 'savedata_id');
     }
 
     // savedataの持つアイテムの所持数を確認したいとき、$s->items[0]->pivot->possession_number で実現ができる

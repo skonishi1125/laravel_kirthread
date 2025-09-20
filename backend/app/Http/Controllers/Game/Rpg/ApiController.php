@@ -515,14 +515,27 @@ class ApiController extends Controller
         return $field_json_data;
     }
 
-    // 戦闘
-    // 戦闘開始
+    /**
+     * 戦闘画面時にはじめに叩かれる関数
+     *
+     * まずそのフィールドが開放されているかどうか確認。
+     * その後、戦闘中か初回戦闘かを判断してjsonとして戦闘に関するデータを返す。
+     */
     public function setEncountElement(Request $request)
     {
         $field_id = $request->field_id;
         $stage_id = $request->stage_id;
         Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
         $savedata = Savedata::getLoginUserCurrentSavedata();
+
+        // そのフィールドが開放されているかどうかの確認 (URLベタ打ち対策)
+        $selectable_fields = Field::acquireCurrentSelectableFieldList($savedata)->pluck('id');
+        if (! $selectable_fields->contains($field_id)) {
+            // 存在を隠したいなら 404、正直にアクセス不可なら 403
+            return response()->json([
+                'message' => '予期しない形でステージ遷移が行われました。',
+            ], 422);
+        }
 
         $current_turn = 1;
 
@@ -1113,6 +1126,33 @@ class ApiController extends Controller
             ->push($readable_history_libraries);
 
         return $all_data;
+    }
+
+    /**
+     * 本を読み終えた時、既読テーブルに値を格納する。
+     */
+    public function markFinishedBook(Request $request)
+    {
+        Debugbar::debug('markFinishedBook(): ---------------------');
+        $book_id = $request->book_id;
+        Debugbar::debug($book_id);
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // 重複チェックし、存在しなければ読んだ本を保存。
+        if (! $savedata->savedata_read_libraries()->where('library_id', $book_id)->exists()) {
+            $savedata->savedata_read_libraries()->firstOrCreate([
+                'library_id' => $book_id,
+            ]);
+        }
+
+        return response()->noContent(); // 204
+
     }
 
     /**

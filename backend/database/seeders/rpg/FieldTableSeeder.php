@@ -82,7 +82,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::DecayedFarmland,
                 'name' => FieldData::DecayedFarmland->label(),
                 'background_image_path' => FieldData::DecayedFarmland->image_path(),
-                'difficulty' => 4,
+                'difficulty' => 5,
                 'required_clears' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -110,7 +110,11 @@ class FieldTableSeeder extends Seeder
                 'name' => FieldData::VastExpanse->label(),
                 'background_image_path' => FieldData::VastExpanse->image_path(),
                 'difficulty' => 6,
-                'required_clears' => 10,
+                /**
+                 * ステージ全てをクリアしても開放されないように、11としておく。
+                 * 詳細には古城クリア && 耕作地クリア && 書籍を読んだら、という感じ。
+                 */
+                'required_clears' => 11,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
