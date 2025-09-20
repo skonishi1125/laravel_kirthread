@@ -82,7 +82,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::DecayedFarmland,
                 'name' => FieldData::DecayedFarmland->label(),
                 'background_image_path' => FieldData::DecayedFarmland->image_path(),
-                'difficulty' => 4,
+                'difficulty' => 5,
                 'required_clears' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),

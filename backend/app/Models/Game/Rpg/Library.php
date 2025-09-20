@@ -22,6 +22,9 @@ class Library extends Model
 
     public const CATEGORY_HISTORY = 3;
 
+    // 茫洋の地 出現のために必要な本
+    public const VAST_EXPANSE_FLAG_BOOK_ID = 306;
+
     /**
      * セーブデータ進行度に応じて、閲覧可能な書籍を取得
      *

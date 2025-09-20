@@ -2,6 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
+use App\Enums\Rpg\FieldData;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +18,6 @@ class Field extends Model
 
     // 難易度の幅。最大5
     private const DIFFICULTY_RANGE = 5;
-
-    // 裏面のID
-    private const OTHER_SIDE_FIELD_ID = 11;
 
     public function savedata_cleared_fields()
     {
@@ -40,7 +38,7 @@ class Field extends Model
     public function convertDifficultyStars(): string
     {
         // 裏面
-        if ($this->id === self::OTHER_SIDE_FIELD_ID) {
+        if ($this->id === FieldData::VastExpanse->value) {
             return '？';
         }
         $filled_stars = str_repeat('★', $this->difficulty);
@@ -62,11 +60,16 @@ class Field extends Model
         $cleared_count = $savedata->savedata_cleared_fields()->count();
         $cleared_field_ids = $savedata->savedata_cleared_fields->pluck('field_id')->toArray();
 
+        // 茫洋の地 フラグ
+        $is_okay_to_go_vast_expanse = $savedata->savedata_read_libraries->contains('library_id', Library::VAST_EXPANSE_FLAG_BOOK_ID);
+
         $fields = self::where('required_clears', '<=', $cleared_count)
+            ->when($is_okay_to_go_vast_expanse, function ($q) {
+                $q->orWhere('id', FieldData::VastExpanse->value);
+            })
             ->orderBy('id', 'desc')
             ->get()
             ->map(function ($field) use ($cleared_field_ids) {
-                // クリア済みかどうかを判定するカラムを追加。
                 $field->is_cleared = in_array($field->id, $cleared_field_ids, true);
 
                 return $field;
