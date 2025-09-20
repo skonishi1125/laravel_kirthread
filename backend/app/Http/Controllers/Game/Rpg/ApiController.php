@@ -515,10 +515,9 @@ class ApiController extends Controller
         return $field_json_data;
     }
 
-
     /**
      * 戦闘画面時にはじめに叩かれる関数
-     * 
+     *
      * まずそのフィールドが開放されているかどうか確認。
      * その後、戦闘中か初回戦闘かを判断してjsonとして戦闘に関するデータを返す。
      */
@@ -531,9 +530,9 @@ class ApiController extends Controller
 
         // そのフィールドが開放されているかどうかの確認 (URLベタ打ち対策)
         $selectable_fields = Field::acquireCurrentSelectableFieldList($savedata)->pluck('id');
-        if (!$selectable_fields->contains($field_id)) {
+        if (! $selectable_fields->contains($field_id)) {
             // 存在を隠したいなら 404、正直にアクセス不可なら 403
-              return response()->json([
+            return response()->json([
                 'message' => '予期しない形でステージ遷移が行われました。',
             ], 422);
         }
