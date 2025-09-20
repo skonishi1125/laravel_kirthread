@@ -111,13 +111,10 @@ class FieldTableSeeder extends Seeder
                 'background_image_path' => FieldData::VastExpanse->image_path(),
                 'difficulty' => 6,
                 /**
-                 * 厳密には、
-                 * 古城クリア && 耕作地クリア && 書籍を読んだら、という感じ。
-                 * * 耕作地ステージのクリア
-                 * * 書き殴られた本IIが、古城をクリアすると表示される
-                 * * その本を読み終えると書籍を読む。
+                 * ステージ全てをクリアしても開放されないように、11としておく。
+                 * 詳細には古城クリア && 耕作地クリア && 書籍を読んだら、という感じ。
                  */
-                'required_clears' => 10,
+                'required_clears' => 11,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

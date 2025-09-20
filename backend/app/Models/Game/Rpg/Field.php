@@ -61,7 +61,18 @@ class Field extends Model
         $cleared_field_ids = $savedata->savedata_cleared_fields->pluck('field_id')->toArray();
 
         // 茫洋の地 フラグ
-        $is_okay_to_go_vast_expanse = $savedata->savedata_read_libraries->contains('library_id', Library::VAST_EXPANSE_FLAG_BOOK_ID);
+        $is_okay_to_go_vast_expanse = false;
+        // 耕作地, 古城のクリア && 特定の書籍を読んでいること
+        $required_field_ids = [
+            FieldData::DecayedFarmland->value,
+            FieldData::AncientCastle->value,
+        ];
+        $has_read_book = $savedata->savedata_read_libraries->contains('library_id', Library::VAST_EXPANSE_FLAG_BOOK_ID);
+        // $cleared_field_ids と$required_field_idsを比較して、耕作地, 古城どちらもクリアしていたら空配列が返りtrueとなる
+        $has_required_clears = empty(array_diff($required_field_ids, $cleared_field_ids));
+        $is_okay_to_go_vast_expanse = $has_read_book && $has_required_clears;
+
+        // dd($is_okay_to_go_vast_expanse, $required_field_ids, $has_read_book, $has_required_clears, $cleared_field_ids, array_diff($required_field_ids, $cleared_field_ids));
 
         $fields = self::where('required_clears', '<=', $cleared_count)
             ->when($is_okay_to_go_vast_expanse, function ($q) {
