@@ -129,8 +129,8 @@
                     <small>
                       【{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class }}:{{ partiesInformation[status.currentSelectedPartyMemberIndex].role_class_japanese }}】
                       <span class="badge badge-primary">Lv.{{ partiesInformation[status.currentSelectedPartyMemberIndex].level }}</span>
-                      / Next: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> Exp
-                      / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> Exp
+                      / Next: <small><b style="color: blue">{{ partiesInformation[status.currentSelectedPartyMemberIndex].next_level_up_exp }}</b></small> EXP
+                      / Total: <small><b>{{ partiesInformation[status.currentSelectedPartyMemberIndex].total_exp }}</b></small> EXP
                     </small>
                   </span>
                 </h6>

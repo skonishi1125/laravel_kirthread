@@ -398,7 +398,7 @@ class ApiController extends Controller
                 'freely_skill_point' => $party->freely_skill_point,
                 'freely_status_point' => $party->freely_status_point,
                 'total_exp' => $party->total_exp,
-                'next_level_up_exp' => $party->getNextLevelUpExp(), // 次のレベルアップまでの経験値
+                'next_level_up_exp' => $party->fetchNextLevelUpExp(), // 次のレベルアップまでの経験値
                 'status' => [
                     'level' => $party->level,
                     'value_hp' => $party->value_hp + $party->allocated_hp,
@@ -768,8 +768,8 @@ class ApiController extends Controller
 
         // 一人当たりの経験値(切り上げ)
         $per_exp = (int) ceil($total_acquire_exp / $cleared_no_defeated_players_collection->count());
-        Debugbar::debug("獲得経験値:{$total_acquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_acquire_money} ");
-        $battle_logs_collection->push("敵を倒した！{$total_acquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
+        Debugbar::debug("獲得EXP:{$total_acquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_acquire_money} ");
+        $battle_logs_collection->push("敵を倒した！{$total_acquire_money}Gとそれぞれ{$per_exp}ポイントのEXPを獲得。");
 
         // 戦闘後のアイテム状況
         $cleared_items_collection = collect(json_decode($battle_state['items_json_data']));
@@ -864,7 +864,7 @@ class ApiController extends Controller
                         $battle_logs_collection->push("{$player_data->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']} ステータスポイント+{$total_growth['status_point']}");
 
                         if ($increase_values['growth_skill_point'] !== 0) {
-                            $battle_logs_collection->push('スキルポイントを獲得！');
+                            $battle_logs_collection->push("{$player_data->name}はスキルポイントを獲得！");
                         }
 
                         // レベルが上がった時、減っているHP/APも回復させてあげたい
@@ -942,6 +942,19 @@ class ApiController extends Controller
                 ]);
             }
             Debugbar::debug("ボス討伐処理完了。savedata_id: {$savedata->id} field_id: {$battle_state->current_field_id}");
+        } else {
+            // 次の経験値を表示させる処理
+            Debugbar::debug('経験値表示処理');
+            $exp_table = Exp::all()->keyBy('level'); // level => Exp 行
+
+            $parts = $cleared_players_collection->map(function ($player) use ($exp_table) {
+                $next = $exp_table->get($player->level + 1);
+                $next_exp = $next ? ($next->total_exp - $player->total_exp) : '-';
+
+                return "{$player->name}の次のLvまで: {$next_exp} pt";
+            });
+            $exp_text = '【'.$parts->implode(' | ').'】';
+            $battle_logs_collection->push($exp_text);
         }
 
         // vueに渡すデータ
