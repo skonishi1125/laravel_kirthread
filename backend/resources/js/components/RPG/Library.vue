@@ -167,7 +167,7 @@
   </div>
 
   <teleport to="body">
-    <div class="modal fade" id="book-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="book-modal" tabindex="-1" role="dialog" aria-hidden="true" @click.self="finishReading">
       <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
         <div class="modal-content book-modal-content"
           :class="{'book-modal-color-adventure': status.status === 'adventure'},
@@ -264,7 +264,13 @@
           const el = this.$refs.bookBody; // ref="bookBody"をつけた、modalのbodyを対象にする
           if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
         });
-        $modal.modal('show');
+
+        // ESCでは閉じない
+        // ただし@click.self="finishReading"を付与しているので,灰色の背景クリック時は既読処理が走る
+        $modal.modal({
+          keyboard: false,
+          show: true,
+        });
       },
 
       // 手動で閉じる（×ボタン用）
