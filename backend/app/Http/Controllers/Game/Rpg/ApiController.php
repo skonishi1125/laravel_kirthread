@@ -398,7 +398,7 @@ class ApiController extends Controller
                 'freely_skill_point' => $party->freely_skill_point,
                 'freely_status_point' => $party->freely_status_point,
                 'total_exp' => $party->total_exp,
-                'next_level_up_exp' => $party->getNextLevelUpExp(), // 次のレベルアップまでの経験値
+                'next_level_up_exp' => $party->fetchNextLevelUpExp(), // 次のレベルアップまでの経験値
                 'status' => [
                     'level' => $party->level,
                     'value_hp' => $party->value_hp + $party->allocated_hp,
@@ -515,14 +515,27 @@ class ApiController extends Controller
         return $field_json_data;
     }
 
-    // 戦闘
-    // 戦闘開始
+    /**
+     * 戦闘画面時にはじめに叩かれる関数
+     *
+     * まずそのフィールドが開放されているかどうか確認。
+     * その後、戦闘中か初回戦闘かを判断してjsonとして戦闘に関するデータを返す。
+     */
     public function setEncountElement(Request $request)
     {
         $field_id = $request->field_id;
         $stage_id = $request->stage_id;
         Debugbar::debug("setEncountElement(). field_id: {$field_id}, stage_id: {$stage_id}  ---------------");
         $savedata = Savedata::getLoginUserCurrentSavedata();
+
+        // そのフィールドが開放されているかどうかの確認 (URLベタ打ち対策)
+        $selectable_fields = Field::acquireCurrentSelectableFieldList($savedata)->pluck('id');
+        if (! $selectable_fields->contains($field_id)) {
+            // 存在を隠したいなら 404、正直にアクセス不可なら 403
+            return response()->json([
+                'message' => '予期しない形でステージ遷移が行われました。',
+            ], 422);
+        }
 
         $current_turn = 1;
 
@@ -755,8 +768,8 @@ class ApiController extends Controller
 
         // 一人当たりの経験値(切り上げ)
         $per_exp = (int) ceil($total_acquire_exp / $cleared_no_defeated_players_collection->count());
-        Debugbar::debug("獲得経験値:{$total_acquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_acquire_money} ");
-        $battle_logs_collection->push("敵を倒した！{$total_acquire_money}Gとそれぞれ経験値{$per_exp}を獲得。");
+        Debugbar::debug("獲得EXP:{$total_acquire_exp}(一人当たり:{$per_exp}) 獲得ゴールド:{$total_acquire_money} ");
+        $battle_logs_collection->push("敵を倒した！{$total_acquire_money}Gとそれぞれ{$per_exp}ポイントのEXPを獲得。");
 
         // 戦闘後のアイテム状況
         $cleared_items_collection = collect(json_decode($battle_state['items_json_data']));
@@ -851,7 +864,7 @@ class ApiController extends Controller
                         $battle_logs_collection->push("{$player_data->name}はレベルが{$current_party_level}から{$new_level}にアップ！  HP +{$total_growth['hp']} AP +{$total_growth['ap']} STR +{$total_growth['str']} DEF +{$total_growth['def']} INT +{$total_growth['int']} SPD +{$total_growth['spd']} LUC +{$total_growth['luc']} ステータスポイント+{$total_growth['status_point']}");
 
                         if ($increase_values['growth_skill_point'] !== 0) {
-                            $battle_logs_collection->push('スキルポイントを獲得！');
+                            $battle_logs_collection->push("{$player_data->name}はスキルポイントを獲得！");
                         }
 
                         // レベルが上がった時、減っているHP/APも回復させてあげたい
@@ -929,6 +942,19 @@ class ApiController extends Controller
                 ]);
             }
             Debugbar::debug("ボス討伐処理完了。savedata_id: {$savedata->id} field_id: {$battle_state->current_field_id}");
+        } else {
+            // 次の経験値を表示させる処理
+            Debugbar::debug('経験値表示処理');
+            $exp_table = Exp::all()->keyBy('level'); // level => Exp 行
+
+            $parts = $cleared_players_collection->map(function ($player) use ($exp_table) {
+                $next = $exp_table->get($player->level + 1);
+                $next_exp = $next ? ($next->total_exp - $player->total_exp) : '-';
+
+                return "{$player->name}の次のLvまで: {$next_exp} pt";
+            });
+            $exp_text = '【'.$parts->implode(' | ').'】';
+            $battle_logs_collection->push($exp_text);
         }
 
         // vueに渡すデータ
@@ -1113,6 +1139,33 @@ class ApiController extends Controller
             ->push($readable_history_libraries);
 
         return $all_data;
+    }
+
+    /**
+     * 本を読み終えた時、既読テーブルに値を格納する。
+     */
+    public function markFinishedBook(Request $request)
+    {
+        Debugbar::debug('markFinishedBook(): ---------------------');
+        $book_id = $request->book_id;
+        Debugbar::debug($book_id);
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // 重複チェックし、存在しなければ読んだ本を保存。
+        if (! $savedata->savedata_read_libraries()->where('library_id', $book_id)->exists()) {
+            $savedata->savedata_read_libraries()->firstOrCreate([
+                'library_id' => $book_id,
+            ]);
+        }
+
+        return response()->noContent(); // 204
+
     }
 
     /**

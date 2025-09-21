@@ -61,7 +61,7 @@ class Party extends Model
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function getNextLevelUpExp()
+    public function fetchNextLevelUpExp()
     {
         // 次に必要なEXPを取得
         $exp_model = Exp::where('level', $this->level + 1)->first();

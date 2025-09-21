@@ -148,7 +148,9 @@
                     </tr>
                   </thead>
                   <tbody v-for="currentBook in currentBooks">
-                    <tr class="weight-bold" @click="openBookModal(currentBook)"><td>{{ currentBook.name }}</td></tr>
+                    <tr class="weight-bold" @click="openBookModal(currentBook)" :class="{ 'cleared-row': currentBook.is_read }">
+                      <td>{{ currentBook.name }}</td>
+                    </tr>
                   </tbody>
 
                 </table>
@@ -165,7 +167,7 @@
   </div>
 
   <teleport to="body">
-    <div class="modal fade" id="book-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="book-modal" tabindex="-1" role="dialog" aria-hidden="true" @click.self="finishReading">
       <div class="modal-dialog modal-lg modal-backdrop-adjust" role="document">
         <div class="modal-content book-modal-content"
           :class="{'book-modal-color-adventure': status.status === 'adventure'},
@@ -174,12 +176,14 @@
           >
           <div class="modal-header">
             <h6 class="modal-title book-modal-title"><b>{{ modalBook.name }}</b></h6>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <!-- 既読処理を付与するため、xボタンはコメントアウトしておく -->
+            <!-- <button type="button" class="close" :disabled="isMarkingRead" @click="hideBookModal">
+              <span>&times;</span>
+            </button> -->
           </div>
 
           <div class="modal-body book-modal-body" ref="bookBody">
+            <div v-if="readError" style="color:red" class="py-3">{{ readError }}</div>
             <div v-html="modalBook.content"></div>
               <!-- <div>
               <p></p>
@@ -188,7 +192,10 @@
           </div>
 
           <div class="modal-footer book-modal-footer">
-            <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">読み終える</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" :disabled="isMarkingRead" @click="finishReading">
+              <span v-if="isMarkingRead" class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                既読をつける
+            </button>
           </div>
         </div>
       </div>
@@ -209,7 +216,9 @@
         enemyBooks: {},
         historyBooks: {},
         currentBooks: {}, // 現在の状態で表示する本の配列をそのまま入れる
-        modalBook: {}
+        modalBook: {},
+        isMarkingRead: false,  // 既読処理中かどうかのフラグ
+        readError: null,
       }
     },
     // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -255,7 +264,43 @@
           const el = this.$refs.bookBody; // ref="bookBody"をつけた、modalのbodyを対象にする
           if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
         });
-        $modal.modal('show');
+
+        // ESCでは閉じない
+        // ただし@click.self="finishReading"を付与しているので,灰色の背景クリック時は既読処理が走る
+        $modal.modal({
+          keyboard: false,
+          show: true,
+        });
+      },
+
+      // 手動で閉じる（×ボタン用）
+      hideBookModal() {
+        $('#book-modal').modal('hide');
+      },
+
+      // 「既読をつける」押下 → 既読POST → 成功で閉じる
+      async finishReading() {
+        if (!this.modalBook?.id || this.isMarkingRead) return;
+
+        this.isMarkingRead = true;
+        this.readError = null;
+
+        try {
+          await axios.post('/api/game/rpg/menu/plaza/library/mark/finished', {
+            book_id: this.modalBook.id,
+          });
+
+          // ローカル状態を即時反映したい場合（任意）
+          this.modalBook.is_read = true;
+
+          // 成功したらモーダルを閉じる
+          $('#book-modal').modal('hide');
+        } catch (e) {
+          console.error(e);
+          this.readError = '通信が失敗しました。ページの再リロードをお試しください。';
+        } finally {
+          this.isMarkingRead = false;
+        }
       },
 
       changeCurrentBookCategory(category) {

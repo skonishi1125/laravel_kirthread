@@ -45,10 +45,10 @@ class Job extends Model
     // グレード達成のクリック基準値
     public const GRADE_COUNT_REFERENCE_VALUE = [
         self::GRADE_BEGINNER => 0,
-        self::GRADE_GENERAL => 200,
-        self::GRADE_EXPERT => 1000,
-        self::GRADE_PROFESSIONAL => 3000,
-        self::GRADE_HERO => 10000,
+        self::GRADE_GENERAL => 100,
+        self::GRADE_EXPERT => 300,
+        self::GRADE_PROFESSIONAL => 800,
+        self::GRADE_HERO => 1500,
     ];
 
     public function savedata()
