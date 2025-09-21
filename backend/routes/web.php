@@ -56,6 +56,8 @@ if (config('app.env') === 'local') {
     Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');
     Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
 
+    Route::get('/api/game/rpg/menu/can_be_clear', 'Game\Rpg\ApiController@canBeClear')->name('api_game_rpg_menu_can_be_clear');
+
     // 中心広場関連
     Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
     Route::get('/api/game/rpg/menu/plaza/library/fetch_book', 'Game\Rpg\ApiController@fetchLibraryBook')->name('api_game_rpg_menu_plaza_library_fetch_book');

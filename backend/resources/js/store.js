@@ -1,6 +1,5 @@
 import { createStore } from 'vuex';
 
-// 戦闘状態の管理
 export default createStore({
   state: {
     // メイン画面
@@ -14,6 +13,9 @@ export default createStore({
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
     },
     menu: {
+      // メニュー自体のステータス
+      view: 'start', // 'start', 'loaded'
+
       // フィールド選択画面
       adventure: {
         status: 'start',  // 'start', 'selectable'
@@ -97,6 +99,11 @@ export default createStore({
     },
 
     // menu 
+    // menuそのものの画面
+    setMenuView(state, status) {
+      state.menu.view = status;
+    },
+
     // ------------- フィールド選択画面 -------------
     setMenuAdventureStatus(state, status) {
       state.menu.adventure.status = status;
@@ -266,6 +273,10 @@ export default createStore({
     },
 
     // menu
+    setMenuView({ commit }, status) {
+      commit('setMenuView', status)
+    },
+
     // ------------- 冒険画面 -------------
     setMenuAdventureStatus({ commit }, status) {
       commit('setMenuAdventureStatus', status);

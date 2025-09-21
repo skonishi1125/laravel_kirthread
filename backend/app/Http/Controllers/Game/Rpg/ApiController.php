@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Game\Rpg;
 
 use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\AfterCleared;
+use App\Enums\Rpg\FieldData;
 use App\Http\Controllers\Controller;
 use App\Models\Game\Rpg\BattleState;
 use App\Models\Game\Rpg\Board;
@@ -1085,6 +1086,31 @@ class ApiController extends Controller
         }
 
         Debugbar::debug('敗北または戦闘エラー処理対応。戦闘セッションをデータとして保存せず削除しました。');
+    }
+
+    /**
+     * メニュー画面
+     *
+     * 古城クリア済み(財宝ボタンの表示）かどうかの判定値を返す
+     */
+    public function canBeClear()
+    {
+        Debugbar::debug('canBeClear(): ---------------------');
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $is_cleared = $savedata->savedata_cleared_fields()
+            ->where('field_id', FieldData::AncientCastle->value)
+            ->exists();
+
+        return response()->json([
+            'is_cleared' => $is_cleared,
+        ], 200);
     }
 
     /**
