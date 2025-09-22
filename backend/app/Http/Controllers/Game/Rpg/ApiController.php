@@ -1107,9 +1107,13 @@ class ApiController extends Controller
         $is_cleared = $savedata->savedata_cleared_fields()
             ->where('field_id', FieldData::AncientCastle->value)
             ->exists();
+        $is_cleared_vast_expanse = $savedata->savedata_cleared_fields()
+            ->where('field_id', FieldData::VastExpanse->value)
+            ->exists();
 
         return response()->json([
             'is_cleared' => $is_cleared,
+            'is_cleared_vast_expanse' => $is_cleared_vast_expanse,
         ], 200);
     }
 

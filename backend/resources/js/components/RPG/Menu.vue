@@ -100,9 +100,14 @@
         <div><button class="btn btn-info btn-menu my-4" @click="$router.push({ name: 'menu_status'})">ステータス</button></div>
         <div><button class="btn btn-secondary btn-menu my-4" @click="$router.push({ name: 'menu_other'})">マニュアル</button></div>
 
-        <div v-if="this.is_cleared == true">
+        <div v-if="this.is_cleared == true && this.is_cleared_vast_expanse == true">
           <div>
             <button class="btn btn-menu my-4 btn-ending-style" @click="openConfirmEndingModal">財宝の確認</button>
+          </div>
+        </div>
+        <div v-else-if="this.is_cleared == true">
+          <div>
+            <button class="btn btn-menu my-4 btn-primary" @click="openConfirmEndingModal">財宝の確認</button>
           </div>
         </div>
 
@@ -172,7 +177,12 @@
           </div>
           <!-- Modal Actions -->
           <div class="modal-footer">
-            <button type="button" class="btn btn-ending-style" @click="transitionEnding">すすめる</button>
+            <div v-if="this.is_cleared == true && this.is_cleared_vast_expanse == true">
+              <button type="button" class="btn btn-ending-style" @click="transitionEnding">すすめる</button>
+            </div>
+            <div v-else-if="this.is_cleared == true">
+              <button type="button" class="btn btn-primary" @click="transitionEnding">すすめる</button>
+            </div>
           </div>
         </div>
       </div>
@@ -189,6 +199,7 @@
     data() { // script内で使用する変数を定義する。
       return {
         is_cleared: false,
+        is_cleared_vast_expanse: false,
       }
     },
     computed: {
@@ -221,6 +232,7 @@
           .then(response => {
             console.log(`response.data: ${response.data['is_cleared']}`);
             this.is_cleared = response.data['is_cleared'];
+            this.is_cleared_vast_expanse = response.data['is_cleared_vast_expanse'];
             this.$store.dispatch('setMenuView', 'loaded');
         });
       },
