@@ -27,13 +27,20 @@
 }
 
 .btn-ending-style {
+  color: white;
   background-color: #e879e5;
   border-color: #be52bb;
 }
 
 .btn-ending-style:hover {
+  color: white;
   background-color: #8e448b;
   border-color: #943991;
+}
+
+.btn-ending-style:active {
+  background-color: #8e448b !important;
+  border-color: #943991 !important;
 }
 
 /* モーダル関連。スマホ版で開いた時の挙動を調整する */
@@ -95,7 +102,7 @@
 
         <div v-if="this.is_cleared == true">
           <div>
-            <button class="btn btn-success btn-menu my-4 btn-ending-style" @click="$router.push({ name: 'menu_other'})">財宝の確認</button>
+            <button class="btn btn-menu my-4 btn-ending-style" @click="openConfirmEndingModal">財宝の確認</button>
           </div>
         </div>
 
@@ -138,6 +145,39 @@
     </div>
   </div>
 
+  <!-- 確認モーダル -->
+  <teleport to="body">
+    <div class="modal fade" id="modal-confirm-ending" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title"><b>確認画面</b></h6>
+            <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <p>
+                      あなたたちは古城を制圧し、伝承にまつわる金銀財宝を手にしました。<br>
+                      このことを街中に知らせますか？
+                    </p>
+                    <small>
+                      <b style="color: blue">
+                        ※エンディングに移動します。<br>
+                        （このデータで遊べなくなる等の要素は特に存在しないため、気軽に選択してください。）
+                      </b>
+                    </small>
+                </div>
+            </form>
+          </div>
+          <!-- Modal Actions -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ending-style" @click="transitionEnding">すすめる</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </teleport>
 
 </template>
 
@@ -172,7 +212,9 @@
       console.log('Menu.vue', this.menu_view, this.isMenuRoute) ;
     },
     methods: {
-      // クリアできるか確認
+      /**
+       * ログイン中のユーザーのセーブデータがクリア条件を満たしているのかを確認する
+       */
       loadCanBeClear() {
         console.log('loadCanBeClear');
         axios.get('/api/game/rpg/menu/can_be_clear')
@@ -181,6 +223,19 @@
             this.is_cleared = response.data['is_cleared'];
             this.$store.dispatch('setMenuView', 'loaded');
         });
+      },
+
+      openConfirmEndingModal() {
+        $('#modal-confirm-ending').modal('show');
+      },
+
+      /**
+       * エンディングに遷移する
+       */
+      transitionEnding() {
+        // 画面遷移前に、モーダルを閉じておく
+        $('#modal-confirm-ending').modal('hide');
+        this.$router.push(`/game/rpg/ending`);
       },
 
       endGame() {

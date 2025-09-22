@@ -6,6 +6,7 @@ const BASE_URL = '';
 // ベースとなるコンポーネントに組み込むパーツとルーティングを定義
 import Title from './components/RPG/Title.vue';
 import Beginning from './components/RPG/Beginning.vue';
+import Ending from './components/RPG/Ending.vue';
 import Menu from './components/RPG/Menu.vue';
 import Adventure from './components/RPG/Adventure.vue';
 import Shop from './components/RPG/Shop.vue';
@@ -30,6 +31,10 @@ const routes = [
   { 
       path: '/game/rpg/beginning',
       component: Beginning
+  },
+  { 
+      path: '/game/rpg/ending',
+      component: Ending
   },
   { 
       path: '/game/rpg/menu',

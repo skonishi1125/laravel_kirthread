@@ -4,13 +4,17 @@ export default createStore({
   state: {
     // メイン画面
     screen: {
-      current: 'title', // 'title', 'beginning', 'menu', 'battle'
+      current: 'title', // 'title', 'beginning', 'menu', 'battle', 'ending'
     },
     beginning: {
       status: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
       currentDisplayRoleIndex: 0, // 0-5. +1した値がrole_idになる。6になったら0に戻す。 -1になったら5に調整する。
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
+    },
+    ending: {
+      status: 'start', // 'start', 'loaded'
+      view: 'end_monologue_1', // 'end_monologue1', 'end_monologue2', 'ending_1', 'ending_2', 'ending_3', 'ending_4'
     },
     menu: {
       // メニュー自体のステータス
@@ -96,6 +100,14 @@ export default createStore({
     resetBeginningDecidedData(state) {
       state.beginning.selectedRoleInformations = [];
       state.beginning.currentDecidedMemberIndex = 0;
+    },
+
+    // ending
+    setEndingStatus(state, status) {
+      state.ending.status = status;
+    },
+    setEndingView(state, view) {
+      state.ending.view = view;
     },
 
     // menu 
@@ -270,6 +282,14 @@ export default createStore({
     },
     resetBeginningDecidedData({ commit }) {
       commit('resetBeginningDecidedData');
+    },
+
+    // ending
+    setEndingStatus({ commit }, status) {
+      commit('setEndingStatus', status);
+    },
+    setEndingView({ commit }, view) {
+      commit('setEndingView', view);
     },
 
     // menu

@@ -70,6 +70,10 @@ if (config('app.env') === 'local') {
     Route::get('/api/game/rpg/menu/plaza/refresh/fetch_parties_info', 'Game\Rpg\ApiController@fetchRefreshPartiesInfo')->name('api_game_rpg_menu_plaza_refresh_fetch_parties_info');
     Route::post('/api/game/rpg/menu/plaza/refresh/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
 
+    // Ending
+    Route::get('/api/game/rpg/ending/can_be_clear_vast_expanse', 'Game\Rpg\ApiController@canBeClearVastExpanse')->name('api_game_rpg_ending_can_be_clear_vast_expanse');
+    Route::post('/api/game/rpg/ending/store/clear', 'Game\Rpg\ApiController@storeEndingClear')->name('api_game_rpg_ending_store_clear');
+
 }
 
 if (config('app.env') === 'production') {

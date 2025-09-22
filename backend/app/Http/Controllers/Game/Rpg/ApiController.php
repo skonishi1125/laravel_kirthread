@@ -1114,6 +1114,64 @@ class ApiController extends Controller
     }
 
     /**
+     * エンディング時、初めに呼ばれる関数
+     *
+     * 隠し面をクリアしているかどうかを判定してjsonで返す。
+     */
+    public function canBeClearVastExpanse()
+    {
+        Debugbar::debug('canBeClearVastExpanse(): ---------------------');
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        // URLベタ打ち対策
+        $check_is_cleared_ancient_castle = $savedata->savedata_cleared_fields()
+            ->where('field_id', FieldData::AncientCastle->value)
+            ->exists();
+        if ($check_is_cleared_ancient_castle === false) {
+            return response()->json([
+                'message' => '未クリアのデータが参照されています。',
+            ], 409);
+        }
+
+        $is_cleared_vast_expanse = $savedata->savedata_cleared_fields()
+            ->where('field_id', FieldData::VastExpanse->value)
+            ->exists();
+
+        return response()->json([
+            'is_cleared_vast_expanse' => $is_cleared_vast_expanse,
+        ], 200);
+    }
+
+    /**
+     * セーブデータにクリアしたことを格納する
+     */
+    public function storeEndingClear()
+    {
+        Debugbar::debug('storeEndingClear(): ---------------------');
+
+        $savedata = Savedata::getLoginUserCurrentSavedata();
+        if (is_null($savedata)) {
+            return response()->json([
+                'message' => 'セーブデータが存在しません。再度ログインをお試しください。',
+            ], 409);
+        }
+
+        $savedata->is_game_cleared = true;
+        $savedata->save();
+
+        return response()->json([
+            'is_game_cleared' => true,
+        ], 200);
+
+    }
+
+    /**
      * 中心広場 アクセス時のチェック処理
      *
      * 癒しの館など、クリアステージによって解放される施設のフラグを返す
