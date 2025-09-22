@@ -105,7 +105,8 @@
           },
           {
             title: "クレジット",
-            content: "<ul style='list-style: none; padding-left: 0;'> <li> UI・ゲーム・レベルデザインなど：降諏かあ</li> <li>DBテーブル設計・実装など：降諏かあ</li> <li>背景・キャラクター・敵イラストなど：降諏かあ</li> <li>デバッグ・テストプレイ他：降諏かあ</li></ul><p class='text-muted' style='font-size: 0.9em;'>© 2025 <a href='https://x.com/skirplus' target='_blank'>降諏かあ</a>. All rights reserved.<br><br>本作の権利はすべて作者に帰属します。自作発言や、作者を偽る形での利用・転載はお控えください。<br>All rights to this game and its content are reserved by the creator.<br>Unauthorized reproduction, redistribution, or misrepresentation of authorship is strictly prohibited.</p>" },
+            content: "<ul style='list-style: none; padding-left: 0;'> <li> UI・ゲーム・レベルデザインなど：降諏かあ</li> <li>DBテーブル設計・実装など：降諏かあ</li> <li>背景・キャラクター・敵イラストなど：降諏かあ</li> <li>デバッグ・テストプレイ他：降諏かあ</li></ul><p class='text-muted' style='font-size: 0.9em;'>© 2025 <a href='https://x.com/skirplus' target='_blank'>降諏かあ</a>. All rights reserved.<br><br>本作の権利はすべて作者に帰属します。自作発言や、作者を偽る形での利用・転載はお控えください。<br>All rights to this game and its content are reserved by the creator.<br>Unauthorized reproduction, redistribution, or misrepresentation of authorship is strictly prohibited.</p>" 
+          },
         ],
         modalItem: {
           title: '',
