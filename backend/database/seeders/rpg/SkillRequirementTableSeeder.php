@@ -18,99 +18,119 @@ class SkillRequirementTableSeeder extends Seeder
 
         $seeds = [
             // -------------------- 格闘家 --------------------
-            // ヘビーナックル pLv6以上
+            // ヘビーナックル pLv8以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavyKnuckle->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 6,
+                'requirement_party_level' => 8,
             ],
-            // ラピッドフィスト ヘビーナックルLv1以上, pLv15以上
+            // ラピッドフィスト ミドルブロウLv1以上, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::RapidFist->value,
-                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
+                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 15,
             ],
-            // タイタンブレイク ヘビーナックルLv1以上, pLv15以上
+            // アックスシュート スピンキックLv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::AxeShoot->value,
+                'requirement_skill_id' => SkillDefinition::SpinKick->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 15,
+            ],
+            // タイタンブレイク ミドルブロウLv1以上, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::TitanBreak->value,
-                'requirement_skill_id' => SkillDefinition::HeavyKnuckle->value,
+                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
-            // トランスフォーム pLv15以上
+            // トランスフォーム ファイトソウルLv1以上, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::Transform->value,
-                'requirement_skill_id' => null,
+                'requirement_skill_id' => SkillDefinition::FightSoul->value,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
             // -------------------- 治療師 --------------------
-            // オールヒーリング ヒーリング Lv1以上, pLv6以上
-            [
-                'acquired_skill_id' => SkillDefinition::AllHealing->value,
-                'requirement_skill_id' => SkillDefinition::Healing->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 7,
-            ],
-            // クイックヒール ヒーリング Lv1以上
+            // クイックヒール Lv4以上
             [
                 'acquired_skill_id' => SkillDefinition::QuickHeal->value,
-                'requirement_skill_id' => SkillDefinition::Healing->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 1,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 4,
             ],
-            // ホーリーアロー ミニボルト Lv2以上, pLv6以上
+            // ホーリーアロー ミニボルト Lv1以上, pLv10以上
             [
                 'acquired_skill_id' => SkillDefinition::HolyArrow->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 6,
+                'requirement_party_level' => 10,
             ],
-            // ヘヴンレイ ミニボルト Lv2以上, pLv10以上
-            // さらに入れ子にすることはできないので、ミニボルトを前提条件にする。
+            // ヘヴンレイ ミニボルト Lv2以上, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 2,
+                'requirement_party_level' => 15,
+            ],
+            // ルミナスリリーヴ ヒーリング Lv1以上, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::LuminousRelieve->value,
+                'requirement_skill_id' => SkillDefinition::Healing->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 10,
             ],
-            // リザレクション pLv15以上
+            // オールリリーヴ オールヒーリング Lv1以上, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::AllRelieve->value,
+                'requirement_skill_id' => SkillDefinition::AllHealing->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 10,
+            ],
+            // リザレクション pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::Resurrection->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
             // -------------------- 重騎士 --------------------
-            // カースエッジ Lv9以上
+            // アドバンスドガード ワイドガードLv3, pLv6以上
+            [
+                'acquired_skill_id' => SkillDefinition::AdvancedGuard->value,
+                'requirement_skill_id' => SkillDefinition::WideGuard->value,
+                'requirement_skill_level' => 3,
+                'requirement_party_level' => 6,
+            ],
+            // カースエッジ Lv6以上
             [
                 'acquired_skill_id' => SkillDefinition::CurseEdge->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 9,
+                'requirement_party_level' => 6,
             ],
-            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv12以上
-            [
-                'acquired_skill_id' => SkillDefinition::BraveSlash->value,
-                'requirement_skill_id' => SkillDefinition::WideThrust->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 12,
-            ],
-            // オーバープロテクト プロテクションSLv1, pLv12以上
+            // オーバープロテクト プロテクションSLv1, pLv10以上
             [
                 'acquired_skill_id' => SkillDefinition::OverProtect->value,
                 'requirement_skill_id' => SkillDefinition::Protection->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 12,
+                'requirement_party_level' => 10,
             ],
-            // ブラッドムーン pLv15以上
+            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::BraveSlash->value,
+                'requirement_skill_id' => SkillDefinition::WideThrust->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 15,
+            ],
+            // ブラッドムーン pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::BloodMoon->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
             // -------------------- 魔導師 --------------------
             // ポップヒール ミニヒールLv2, pLv12以上

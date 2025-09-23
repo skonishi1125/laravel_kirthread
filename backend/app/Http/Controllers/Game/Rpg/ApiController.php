@@ -837,9 +837,9 @@ class ApiController extends Controller
                             $increase_values['growth_skill_point'] = 0;
                             $player_data->freely_status_point += $increase_values['growth_status_point'];
                             Debugbar::debug('ステータスポイント付与OK');
-                            // Lvが３の倍数の時(3,6,9,12,15,18,21,24,27,30), スキルポイント付与
-                            if ($i % 3 === 0) {
-                                Debugbar::debug('Lvが3の倍数のため、スキルポイントを付与します。');
+                            // Lvが2の倍数の時, スキルポイント付与
+                            if ($i % 2 === 0) {
+                                Debugbar::debug('Lvが2の倍数のため、スキルポイントを付与します。');
                                 $increase_values['growth_skill_point'] = 1;
                                 $player_data->freely_skill_point += $increase_values['growth_skill_point'];
                             }

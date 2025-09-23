@@ -1949,6 +1949,12 @@ class BattleState extends Model
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
                 break;
+            case SkillDefinition::AdvancedGuard: // アドバンスドガード
+                foreach ($battle_state_opponents_collection as $opponent_data) {
+                    Debugbar::debug("付与対象:{$opponent_data->name}");
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
+                }
+                break;
             case SkillDefinition::CurseEdge : // カースエッジ
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);

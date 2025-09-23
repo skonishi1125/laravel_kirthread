@@ -6,11 +6,13 @@ enum SkillDefinition: int
 {
     // -------------------- 格闘家 --------------------
     case MiddleBlow = 10;
-    case HeavyKnuckle = 11;
-    case SpinKick = 12;
-    case RapidFist = 13;
-    case TitanBreak = 14;
-    case Transform = 15;
+    case SpinKick = 11;
+    case FightSoul = 12;
+    case HeavyKnuckle = 13;
+    case RapidFist = 14;
+    case AxeShoot = 15;
+    case TitanBreak = 16;
+    case Transform = 17;
 
     // -------------------- 治療師 --------------------
     case Healing = 20;
@@ -19,16 +21,19 @@ enum SkillDefinition: int
     case MiniVolt = 23;
     case HolyArrow = 24;
     case HeavenRay = 25;
-    case Resurrection = 26;
+    case LuminousRelieve = 26;
+    case AllRelieve = 27;
+    case Resurrection = 28;
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 30;
-    case WideThrust = 31;
-    case BraveSlash = 32;
-    case CurseEdge = 33;
-    case Protection = 34;
-    case OverProtect = 35;
-    case BloodMoon = 36;
+    case AdvancedGuard = 31;
+    case CurseEdge = 32;
+    case WideThrust = 33;
+    case BraveSlash = 34;
+    case Protection = 35;
+    case OverProtect = 36;
+    case BloodMoon = 37;
 
     // -------------------- 魔導師 --------------------
     case PetitBlast = 40;
@@ -84,8 +89,10 @@ enum SkillDefinition: int
         return match ($this) {
             self::MiddleBlow => 'ミドルブロウ',
             self::SpinKick => 'スピンキック',
+            self::FightSoul => 'ファイトソウル',
             self::HeavyKnuckle => 'ヘビーナックル',
             self::RapidFist => 'ラピッドフィスト',
+            self::AxeShoot => 'アックスシュート',
             self::TitanBreak => 'タイタンブレイク',
             self::Transform => 'トランスフォーム',
 
@@ -95,12 +102,15 @@ enum SkillDefinition: int
             self::MiniVolt => 'ミニボルト',
             self::HolyArrow => 'ホーリーアロー',
             self::HeavenRay => 'ヘヴンレイ',
+            self::LuminousRelieve => 'ルミナスリリーヴ',
+            self::AllRelieve => 'オールリリーヴ',
             self::Resurrection => 'リザレクション',
 
-            self::WideThrust => 'ワイドスラスト',
             self::WideGuard => 'ワイドガード',
-            self::BraveSlash => 'ブレイヴスラッシュ',
+            self::AdvancedGuard => 'アドバンスドガード',
             self::CurseEdge => 'カースエッジ',
+            self::WideThrust => 'ワイドスラスト',
+            self::BraveSlash => 'ブレイヴスラッシュ',
             self::Protection => 'プロテクション',
             self::OverProtect => 'オーバープロテクト',
             self::BloodMoon => 'ブラッドムーン',
@@ -158,26 +168,31 @@ enum SkillDefinition: int
         return match ($this) {
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
-            self::HeavyKnuckle => '敵単体に強烈な一撃を撃ち込み、対象の相手に固定ダメージを与える。',
+            self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
+            self::HeavyKnuckle => '敵単体に重い拳を撃ち込む。敵単体手に固定のダメージを与える。',
             self::RapidFist => '目にも止まらぬ速さで、敵単体に高速の六連攻撃！',
+            self::AxeShoot => '横凪ぎの踵落とし。敵全体に高いダメージを与える。',
             self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
-            self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。',
+            self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
 
-            self::Healing => '治療師の基礎回復魔法。味方1人のHPを回復する呪文を唱える。',
+            self::Healing => '治療師の基礎回復魔法。味方単体のHPを回復する呪文を唱える。',
             self::AllHealing => '癒しのマナを広範囲に拡散し、味方全体のHPを回復する。',
-            self::QuickHeal => '先制発動する。迅速な詠唱で味方1人のHPを回復する。',
-            self::MiniVolt => '魔力を敵単体に放つ、治療師の扱う護身用攻撃魔法。',
-            self::HolyArrow => '聖なる力を込め、具現化した光の矢を敵単体に撃ち込む。',
-            self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体にダメージを与える。',
-            self::Resurrection => '聖なる力を分け与え、戦闘不能の味方を復活させる。',
+            self::QuickHeal => '先制発動する。迅速な詠唱で味方単体のHPを回復する。',
+            self::MiniVolt => 'マナを敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
+            self::HolyArrow => '光の弓矢を聖なるマナで具現化し、敵単体に射出する。',
+            self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
+            self::LuminousRelieve => '聖なる力を込めたマナを呪文に込める。味方1人のHPを大きく回復させる。',
+            self::AllRelieve => 'マナを大きく消費し、味方全体のHPを大きく回復させる。',
+            self::Resurrection => '聖なる力を戦闘不能の味方に分け与え、戦闘不能状態から復活させる。',
 
-            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
-            self::WideGuard => '先制発動する。使用ターンの味方全員のダメージを軽減する。',
-            self::BraveSlash => '敵単体に攻撃する。自分の防御力に依存して威力が上昇する。',
+            self::WideGuard => '先制発動する。使用ターン中の味方全員のダメージを軽減する。',
+            self::AdvancedGuard => '先制発動する。魔力を纏い、使用ターン中の味方全員のダメージを大きく軽減。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
-            self::Protection => '守護魔法を味方1人に付与し、暫くの間DEFをアップさせる。',
-            self::OverProtect => '広範囲に拡大した守護魔法を唱え、暫くの間味方全員のDEFをアップさせる。',
-            self::BloodMoon => '暫くの間自身の防御力を0にし、その値を攻撃力に還元する。',
+            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
+            self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分の防御力に依存して威力が上昇する。',
+            self::Protection => '守護魔法を味方単体に付与し、DEFを暫くの間アップさせる。',
+            self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
+            self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',
 
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
