@@ -133,44 +133,51 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 20,
             ],
             // -------------------- 魔導師 --------------------
-            // ポップヒール ミニヒールLv2, pLv12以上
+            // ポップヒール ミニヒールLv2, pLv1以上
             [
                 'acquired_skill_id' => SkillDefinition::PopHeal->value,
                 'requirement_skill_id' => SkillDefinition::MiniHeal->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 12,
+                'requirement_party_level' => 1,
             ],
-            // クラッシュボルト プチブラストLv1, pLv1以上
+            // エイルカリバー, pLv10以上
             [
-                'acquired_skill_id' => SkillDefinition::CrashBolt->value,
-                'requirement_skill_id' => SkillDefinition::PetitBlast->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 5,
+                'acquired_skill_id' => SkillDefinition::AileCaliber->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 10,
             ],
-            // マナエクスプロージョン プチブラストLv1, pLv12以上
+            // クラッシュブラスト プチボルトLv1, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::CrashBlast->value,
+                'requirement_skill_id' => SkillDefinition::PetitBolt->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 10,
+            ],
+            // マナエクスプロージョン ボルトストームLv1, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::ManaExplosion->value,
-                'requirement_skill_id' => SkillDefinition::PetitBlast->value,
+                'requirement_skill_id' => SkillDefinition::BoltStorm->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 12,
+                'requirement_party_level' => 15,
             ],
             // バトルメイジ 該当スキルなし, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::BattleMage->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
 
             // -------------------- 弓馭者 --------------------
-            // フェアリーフォグ ファーストエイドLv2, pLv9以上
+            // フェアリーフォグ ファーストエイドLv2, pLv10以上
             [
                 'acquired_skill_id' => SkillDefinition::FairyFog->value,
                 'requirement_skill_id' => SkillDefinition::FirstAid->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 9,
+                'requirement_party_level' => 10,
             ],
-            // バリスタショット pLv9以上
+            // バリスタショット pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::BallistaShot->value,
                 'requirement_skill_id' => null,
@@ -192,6 +199,20 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 15,
             ],
             // -------------------- 理術師 --------------------
+            // アクシオムストライク ブックスマッシュLv1, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::AxiomStrike->value,
+                'requirement_skill_id' => SkillDefinition::BookSmash->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 10,
+            ],
+            // ロゴスレイ マジックミサイルLv1, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::LogosRay->value,
+                'requirement_skill_id' => SkillDefinition::MagicMissile->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 10,
+            ],
             // ブレードフォース pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::BladeForce->value,

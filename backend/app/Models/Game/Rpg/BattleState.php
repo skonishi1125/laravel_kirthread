@@ -1981,9 +1981,14 @@ class BattleState extends Model
                 } else {
                     Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
                 }
-
                 break;
             case SkillDefinition::BreakBowGun : // ブレイクボウガン
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 単体に物理攻撃し、その後デバフをかける。
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+                break;
+            case SkillDefinition::EdgeFold : // エッジフォールド
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 単体に物理攻撃し、その後デバフをかける。
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);

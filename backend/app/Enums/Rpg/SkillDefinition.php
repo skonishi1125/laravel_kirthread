@@ -36,36 +36,42 @@ enum SkillDefinition: int
     case BloodMoon = 37;
 
     // -------------------- 魔導師 --------------------
-    case PetitBlast = 40;
-    case CrashBolt = 41;
-    case ManaExplosion = 42;
-    case MiniHeal = 43;
-    case PopHeal = 44;
-    case MagicalSmash = 45;
-    case BattleMage = 46;
+    case PetitBolt = 40;
+    case BoltStorm = 41;
+    case MagicalSmash = 42;
+    case AileCaliber = 43;
+    case MiniHeal = 44;
+    case PopHeal = 45;
+    case CrashBlast = 46;
+    case ManaExplosion = 47;
+    case Meditation = 48;
+    case BattleMage = 49;
 
     // -------------------- 弓馭者 --------------------
     case FirstAid = 50;
     case FairyFog = 51;
     case BreakBowGun = 52;
-    case WindAccel = 53;
-    case BallistaShot = 54;
-    case CerberusForce = 55;
-    case SirenAura = 56;
+    case EdgeFold = 53;
+    case WindAccel = 54;
+    case BallistaShot = 55;
+    case CerberusForce = 56;
+    case SirenAura = 57;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
-    case MagicMissile = 61;
-    case PowerEnt = 62;
-    case BladeForce = 63;
-    case ShieldEnt = 64;
-    case DefendThreat = 65;
-    case MagicEnt = 66;
-    case ArcWisdom = 67;
-    case SpeedEnt = 68;
-    case SonicTrimming = 69;
-    case LuckEnt = 70;
-    case FortuneStar = 71;
+    case AxiomStrike = 61;
+    case MagicMissile = 62;
+    case LogosRay = 63;
+    case PowerEnt = 64;
+    case BladeForce = 65;
+    case ShieldEnt = 66;
+    case DefendThreat = 67;
+    case MagicEnt = 68;
+    case ArcWisdom = 69;
+    case SpeedEnt = 70;
+    case SonicTrimming = 71;
+    case LuckEnt = 72;
+    case FortuneStar = 73;
 
     // -------------------- 敵 --------------------
     case Bite = 100;
@@ -115,24 +121,30 @@ enum SkillDefinition: int
             self::OverProtect => 'オーバープロテクト',
             self::BloodMoon => 'ブラッドムーン',
 
+            self::PetitBolt => 'プチボルト',
+            self::BoltStorm => 'ボルトストーム',
+            self::MagicalSmash => 'マジカルスマッシュ',
+            self::AileCaliber => 'エイルカリバー',
             self::MiniHeal => 'ミニヒール',
             self::PopHeal => 'ポップヒール',
-            self::PetitBlast => 'プチブラスト',
-            self::CrashBolt => 'クラッシュボルト',
+            self::CrashBlast => 'クラッシュブラスト',
             self::ManaExplosion => 'マナエクスプロージョン',
-            self::MagicalSmash => 'マジカルスマッシュ',
+            self::Meditation => 'メディテーション',
             self::BattleMage => 'バトルメイジ',
 
             self::FirstAid => 'ファーストエイド',
             self::FairyFog => 'フェアリーフォグ',
             self::BreakBowGun => 'ブレイクボウガン',
+            self::EdgeFold => 'エッジフォールド',
             self::WindAccel => 'ウインドアクセル',
             self::BallistaShot => 'バリスタショット',
             self::CerberusForce => 'ケルベロスフォース',
             self::SirenAura => 'セイレーンオーラ',
 
             self::BookSmash => 'ブックスマッシュ',
+            self::AxiomStrike => 'アクシオムストライク',
             self::MagicMissile => 'マジックミサイル',
+            self::LogosRay => 'ロゴスレイ',
             self::PowerEnt => 'パワーエント',
             self::BladeForce => 'ブレードフォース',
             self::ShieldEnt => 'シールドエント',
@@ -194,24 +206,30 @@ enum SkillDefinition: int
             self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
             self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',
 
+            self::PetitBolt => '小さな魔力弾を放ち敵単体に攻撃。低コストな攻撃手段。',
+            self::BoltStorm => '魔力弾を周囲に生成し敵全体に打ち込み、ダメージを与える。',
+            self::MagicalSmash => '魔法少女必携？敵単体を手持ちの杖で思いっきりぶん殴る！',
+            self::AileCaliber => '魔道の刃で敵単体を切り裂く。自分のINTに依存した物理ダメージを与える。',
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
-            self::PetitBlast => '小さな魔力弾を敵単体に放つ、低コストな攻撃手段。',
-            self::CrashBolt => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
+            self::CrashBlast => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
             self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
-            self::MagicalSmash => '魔法少女必携。敵単体を手持ちの杖で思いっきりぶん殴る！',
-            self::BattleMage => '自分の知力を全て力に変換し、STRを飛躍的に上昇させる。',
+            self::Meditation => '深く瞑想することで心を落ち着かせ、暫くの間自身のINTを高める。',
+            self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、STRが飛躍的に上昇。',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
-            self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、DEFを低下させる。',
+            self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、短時間DEFを下げる。',
+            self::EdgeFold => '敵の持つ攻撃手段に狙いを定めて弓を放つ。ダメージを与え、暫くの間STRを下げる。',
             self::WindAccel => '敵全体に弓を放ちつつ、風の力を纏うことで次のターンのSPDを上げる。',
-            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に攻撃。',
+            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
             self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
             self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
 
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
+            self::AxiomStrike => '絶対の理を衝撃波に変え、敵単体にダメージを与える。',
             self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
+            self::LogosRay => '公理に基づきマナを用いて光線を生成し、敵単体にダメージを与える。',
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
