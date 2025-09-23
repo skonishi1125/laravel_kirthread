@@ -1,11 +1,10 @@
 import { createStore } from 'vuex';
 
-// 戦闘状態の管理
 export default createStore({
   state: {
     // メイン画面
     screen: {
-      current: 'title', // 'title', 'beginning', 'menu', 'battle'
+      current: 'title', // 'title', 'beginning', 'menu', 'battle', 'ending'
     },
     beginning: {
       status: 'start', // 'beginning状態のサブステータス 'start', 'prologue', 'setCharacter', 'monologue'
@@ -13,7 +12,14 @@ export default createStore({
       currentDecidedMemberIndex: 0, // 現在パーティのロールを選択しているかのindex
       selectedRoleInformations: [], // キャラ選択時に設定したパーティメンバーの情報
     },
+    ending: {
+      status: 'start', // 'start', 'loaded'
+      view: 'end_monologue_1', // 'end_monologue1', 'end_monologue2', 'ending_1', 'ending_2', 'ending_3', 'ending_4'
+    },
     menu: {
+      // メニュー自体のステータス
+      view: 'start', // 'start', 'loaded'
+
       // フィールド選択画面
       adventure: {
         status: 'start',  // 'start', 'selectable'
@@ -96,7 +102,20 @@ export default createStore({
       state.beginning.currentDecidedMemberIndex = 0;
     },
 
+    // ending
+    setEndingStatus(state, status) {
+      state.ending.status = status;
+    },
+    setEndingView(state, view) {
+      state.ending.view = view;
+    },
+
     // menu 
+    // menuそのものの画面
+    setMenuView(state, status) {
+      state.menu.view = status;
+    },
+
     // ------------- フィールド選択画面 -------------
     setMenuAdventureStatus(state, status) {
       state.menu.adventure.status = status;
@@ -265,7 +284,19 @@ export default createStore({
       commit('resetBeginningDecidedData');
     },
 
+    // ending
+    setEndingStatus({ commit }, status) {
+      commit('setEndingStatus', status);
+    },
+    setEndingView({ commit }, view) {
+      commit('setEndingView', view);
+    },
+
     // menu
+    setMenuView({ commit }, status) {
+      commit('setMenuView', status)
+    },
+
     // ------------- 冒険画面 -------------
     setMenuAdventureStatus({ commit }, status) {
       commit('setMenuAdventureStatus', status);

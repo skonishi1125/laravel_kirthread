@@ -56,6 +56,8 @@ if (config('app.env') === 'local') {
     Route::get('/api/game/rpg/parties/information', 'Game\Rpg\ApiController@getPartiesInfo')->name('api_game_rpg_parties_information');
     Route::get('/api/game/rpg/savedata', 'Game\Rpg\ApiController@loginUserCurrentSavedata')->name('api_game_rpg_save_data');
 
+    Route::get('/api/game/rpg/menu/can_be_clear', 'Game\Rpg\ApiController@canBeClear')->name('api_game_rpg_menu_can_be_clear');
+
     // 中心広場関連
     Route::get('/api/game/rpg/menu/plaza/check_status', 'Game\Rpg\ApiController@checkPlazaStatus')->name('api_game_rpg_menu_plaza_check_status');
     Route::get('/api/game/rpg/menu/plaza/library/fetch_book', 'Game\Rpg\ApiController@fetchLibraryBook')->name('api_game_rpg_menu_plaza_library_fetch_book');
@@ -67,6 +69,10 @@ if (config('app.env') === 'local') {
     Route::post('/api/game/rpg/menu/plaza/job/calculate', 'Game\Rpg\ApiController@calculateJobResult')->name('api_game_rpg_menu_plaza_job_calculate');
     Route::get('/api/game/rpg/menu/plaza/refresh/fetch_parties_info', 'Game\Rpg\ApiController@fetchRefreshPartiesInfo')->name('api_game_rpg_menu_plaza_refresh_fetch_parties_info');
     Route::post('/api/game/rpg/menu/plaza/refresh/reset_status_and_skill_point', 'Game\Rpg\ApiController@resetStatusAndSkillPoint')->name('api_game_rpg_status_reset_status_and_skill_point');
+
+    // Ending
+    Route::get('/api/game/rpg/ending/can_be_clear_vast_expanse', 'Game\Rpg\ApiController@canBeClearVastExpanse')->name('api_game_rpg_ending_can_be_clear_vast_expanse');
+    Route::post('/api/game/rpg/ending/store/clear', 'Game\Rpg\ApiController@storeEndingClear')->name('api_game_rpg_ending_store_clear');
 
 }
 
