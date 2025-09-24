@@ -126,7 +126,7 @@
     <div v-if="ending.view == 'ending_1'">
       <div class="row">
         <div class="col-12" style="font-weight: bold; font-size: 0.95em;">
-          <div style="padding: 0px 20px; background-color: #e1e8eb;;">
+          <div style="padding: 0px 20px; background-color: #e1e8eb;">
             <hr>
             <p>
               我々が得た富は三人で分け合ったとしても、一生を贅沢に暮らすには余りあるほどだった。 <br>
