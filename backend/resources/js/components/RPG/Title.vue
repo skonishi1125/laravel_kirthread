@@ -1,18 +1,35 @@
+<style>
+.title-select-btn {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.title-button {
+  text-align: center;
+  width: 300px;
+}
+</style>
+
 <template>
   <div class="container">
     <div class="row" style="margin-top: 100px; text-align: center;">
       <div class="col-sm-12">
-        <p class="mb-5">Title.vue(ゲーム_仮称)</p>
+        <p class="mb-5">
+          <b>Epic Liquidation</b>
+        </p>
         <span v-if="status == 'ready'">
-          <div>
-            <button class="btn btn-success" @click="switchMenuScreen">街に戻る</button>
-          </div>
-          <div class="mt-5">
-            <button class="btn btn-danger" @click="displayDeleteModal">セーブデータの削除</button>
+          <div class="title-select-btn">
+            <button class="btn btn-info title-button" @click="switchMenuScreen">街に戻る</button>
+            <button class="btn btn-danger title-button" @click="displayDeleteModal">セーブデータの削除</button>
           </div>
         </span>
         <span v-if="status == 'signed'">
-          <button class="btn btn-primary" @click="switchBeginningScreen">最初からはじめる</button>
+          <div class="title-select-btn">
+            <button class="btn btn-primary title-button" @click="switchBeginningScreen">最初からはじめる</button>
+          </div>
         </span>
       </div>
     </div>
@@ -24,7 +41,7 @@
         <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h4 class="modal-title">セーブデータの削除</h4>
+            <h6 class="modal-title"><b>セーブデータの削除</b></h6>
             <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
@@ -43,7 +60,7 @@
             </div>
 
             <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal" @click="resetData">やめる</button>
+            <button type="button" class="btn btn-outline-info" data-dismiss="modal" @click="resetData">やめる</button>
             <button type="button" class="btn btn-danger" @click="deleteSavedata">削除</button>
             </div>
 

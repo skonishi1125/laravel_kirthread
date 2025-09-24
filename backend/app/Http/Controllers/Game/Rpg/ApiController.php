@@ -701,6 +701,15 @@ class ApiController extends Controller
         // ターン数更新
         $next_turn = $battle_state->current_turn + 1;
 
+        // 選択したコマンド、スキルなどをデフォルト状態に
+        // (これをしないと、蘇生後に最後に使った行動が実行されてしまう)
+        // TODO: 敵も必要な場合(蘇生とかで)、この値が必要かチェックする
+        Debugbar::debug('コマンドデフォルト設定対応 ------------------------');
+        foreach ($battle_state_players_collection as $player) {
+            $player->selected_skill_id = null;
+            $player->command = '';
+        }
+
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
             'players_json_data' => json_encode($battle_state_players_collection),
@@ -837,9 +846,9 @@ class ApiController extends Controller
                             $increase_values['growth_skill_point'] = 0;
                             $player_data->freely_status_point += $increase_values['growth_status_point'];
                             Debugbar::debug('ステータスポイント付与OK');
-                            // Lvが３の倍数の時(3,6,9,12,15,18,21,24,27,30), スキルポイント付与
-                            if ($i % 3 === 0) {
-                                Debugbar::debug('Lvが3の倍数のため、スキルポイントを付与します。');
+                            // Lvが2の倍数の時, スキルポイント付与
+                            if ($i % 2 === 0) {
+                                Debugbar::debug('Lvが2の倍数のため、スキルポイントを付与します。');
                                 $increase_values['growth_skill_point'] = 1;
                                 $player_data->freely_skill_point += $increase_values['growth_skill_point'];
                             }

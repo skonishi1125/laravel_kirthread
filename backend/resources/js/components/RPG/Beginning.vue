@@ -1,4 +1,17 @@
 <style>
+.next-page-form {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.next-page-button {
+  text-align: center;
+  width: 300px;
+}
+
 /* ベースの7角形 */
 .parameter-base-wrapper {
   width: 200px;
@@ -67,25 +80,41 @@
 
   <div v-if="beginning.status == 'prologue'">
     <div class="row">
-      <div class="col-12">
-        <p>
+      <div class="col-12" style="font-weight: bold; font-size: 0.95em;">
+        <div style="padding: 0px 20px; background-color: #e1e8eb;">
           <hr>
-          かつて栄華を誇った王国があった。<br>
-          王国にそびえ立つ壮麗なる城は、いつからか魔物の巣窟と化し、凋落した古城と成り果てた。<br>
-          時は流れ、人々は魔物の手の届かぬ地に集落を築きつつも、ひとつの伝承が語り継がれている。<br>
-          <br>
-          "かつて王国に住んでいた英雄の財宝は、未だ古城の奥深くに眠っているーー。"<br>
-          <br>
-          伝承に命を賭し、未だ開拓されていない地へ足を踏み入れる者たちを「冒険者」と呼ぶ。<br>
-          <br>
+          <p>
+            かつて栄華を誇った王国があった。<br>
+            国は人々の笑い声が絶えず、城下町は昼も夜も賑わいに包まれていた。<br>
+            王国にそびえ立つ壮麗なる城は、その繁栄の象徴であった。<br>
+          </p>
+          <p>
+            しかし時が流れ、いつからかその城は魔物の巣窟と化した。<br>
+            かつての誇りは失われ、石壁は苔に覆われ、ついには凋落した古城と成り果てた。<br>
+            人々は魔物の手の届かぬ地に身を寄せ新たな集落を築き、ひとつの伝承を語り継いでいる。
+          </p>
+          <p>
+            <span style="font-style: italic; color: gray;">
+              "かつて王国を築きし英雄の財宝は、未だ古城の奥深くに眠っているーー。"</span>
+          </p>
+          <p>
+            その言葉は時を越えて人々の心を捉え、命を賭して未開の地へ挑む者たちを生み出した。<br>
+            財宝を求めし者、伝承の真実を求める探究をする者。<br>
+            伝承に命を賭し、未開拓の地へ足を踏み入れる者たちを「冒険者」と呼んだ。
+          </p>
           <hr>
-          <br>
-          ...あなたも今まさに冒険者として旅立つ意志を強く持っています。同じ志を持つ仲間を募り、冒険へ向かいましょう。<br>
+        </div>
+      </div>
+      <div class="col-12 my-3">
+        <p style="text-align: center;">
+          あなたも今まさに冒険者として旅立つ意志を強く持っています。<br>
+          同じ志を持つ仲間を募り、この世界の冒険へ向かいましょう。
         </p>
       </div>
-      <br>
-      <div class="col-12" style="text-align:right; margin-top: 30px;">
-        <button class="btn btn-info" @click="switchSetCharacter">→進む</button>
+      <div class="col-12">
+        <div class="next-page-form">
+          <button class="btn btn-outline-info next-page-button" @click="switchSetCharacter">進む</button>
+        </div>
       </div>
     </div>
   </div>
@@ -130,8 +159,8 @@
 
                 </div>
                 <div style="margin-top: 10px;">
-                  <span @click="displayStatusDetailModal()" style="border-bottom: 1px solid black; cursor: pointer">
-                    <small>ステータスについて</small>
+                  <span @click="displayStatusDetailModal()" style="border-bottom: 1px solid blue; cursor: pointer">
+                    <small style="color: blue">※ステータスについて</small>
                   </span>
                 </div>
               </div>
@@ -149,7 +178,7 @@
       <!-- beginning.currentDisplayRoleIndexを調整するボタン -->
       <button class="btn btn-secondary btn-lg" style="position: absolute; top: 50%; right: 3%; z-index: 10;" @click="adjustDisplayRole('increment')">→</button>
       <button class="btn btn-secondary btn-lg" style="position: absolute; top: 50%; left : 3%; z-index: 10;" @click="adjustDisplayRole('decrement')">←</button>
-      <button class="btn btn-danger" style="position: absolute; bottom: 3%; right: 3%; z-index: 10;;" @click="resetData">選択をやり直す</button>
+      <button class="btn btn-danger" style="position: absolute; bottom: 3%; right: 3%; z-index: 10;;" @click="resetData">リセットする</button>
     </div>
     
     <!-- パラメータ -->
@@ -213,7 +242,7 @@
             </div>
 
             <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal" @click="resetData">選択をやり直す</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" @click="resetData">リセットする</button>
             <button type="button" class="btn btn-success" @click="postPlayerData">確定</button>
             </div>
 
@@ -224,27 +253,39 @@
 
   <div v-if="beginning.status == 'monologue'">
     <div class="row">
-      <div class="col-12">
-        <p>
+      <div class="col-12" style="font-weight: bold; font-size: 0.95em;">
+        <div style="padding: 0px 20px; background-color: #e1e8eb;">
           <hr>
-          {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}の三人は同じ目的を持つもの同士と認識し、ここにひとつのパーティを結成した。<br>
-          <br>
-          これから幾多の危険が彼らの前に立ちはだかることとなる。<br>
-          凶暴な魔物は我々の力を試し、荒れ果てた未開の大地は彼らの心をも試す。<br>
-          見通しの困難な樹海には、想像を絶する困難が隠れているかもしれない。<br>
-          <br>
-          経験に乏しく、思わぬ苦境に立たされることもあるだろう。<br>
-          しかしながら、冒険者として最も必要な素養はとうの昔から持ち合わせている。<br>
-          <br>
-          彼らは強き意志を掲げ、命を賭してこの世界の伝承を解き明かすこととした。<br>
+          <p>
+            {{createdPartyMembers[0]['nickname']}}、{{createdPartyMembers[1]['nickname']}}、そして{{createdPartyMembers[2]['nickname']}}。<br>
+            三人は互いを認め合い、同じ目的を抱く者としてひとつのパーティを結成した。 
+          </p>
+          <p>
+            これから幾多の危険が、容赦なく彼らの前に立ちはだかるだろう。  <br>
+            凶暴なる魔物はその力を試し、荒れ果てた未踏の大地は彼らの心をも揺さぶる。<br>
+            見通しの利かぬ深き樹海には、想像を絶する困難が待ち受けているかもしれない。
+          </p>
+          <p>
+            経験に乏しく、思わぬ苦境に立たされることもある。<br>
+            しかしながら冒険者として最も大切な素養である、折れぬ意志と仲間を信じる心は、すぐに彼らの中に芽生えていくだろう。
+          </p>
+          <p>
+            今まさに三人は、強き意志を掲げ、命を賭してこの世界の伝承へと挑もうとしている。<br>
+            彼らの旅路がいかなる物語を紡ぐことになるのかは、まだ誰も知らない。
+          </p>
           <hr>
-          <br>
-          ...あなた達の冒険はたった今から始まります。<br>
-          まずは冒険者達が拠点とする街に向かい、旅の支度を整えましょう。<br>
+        </div>
+      </div>
+      <div class="col-12 my-3">
+        <p style="text-align: center;">
+          あなた達の冒険はたった今から始まります。<br>
+          まずは冒険者達が拠点とする集落に向かい、旅の支度を整えましょう。
         </p>
       </div>
-      <div class="col-12" style="text-align:right; margin-top: 10px;">
-        <button class="btn btn-success" @click="switchMenuScreen">→街へ向かう</button>
+      <div class="col-12">
+        <div class="next-page-form">
+          <button class="btn btn-outline-info next-page-button" @click="switchMenuScreen">集落へ向かう</button>
+        </div>
       </div>
     </div>
   </div>
@@ -260,15 +301,21 @@
           </div>
           <div class="modal-body">
             <div>
-              <p style="font-size: 14px">
-                <small><b>HP</b></small>: 生命力であり、0になると戦闘不能となります。<br>
-                <small><b>AP</b></small>: 使用することで強力なスキルが使用できます。<br>
-                <small><b>STR</b></small>: 物理攻撃力に影響します。<br>
-                <small><b>DEF</b></small>: 物理防御力及び、魔法防御力に影響します。<br>
-                <small><b>INT</b></small>: 魔法攻撃力及び、魔法防御力に影響します。<br>
-                <small><b>SPD</b></small>: 行動速度及び、戦闘からの逃走率に影響します。<br>
-                <small><b>LUC</b></small>: いいことが沢山起こりやすくなります。<br>
+              <p>【HP】: Hit Point (体力)<br>0になると戦闘不能になり、その戦闘中では原則戦えなくなります。</p>
+              <p>【AP】: Ability Point (AP)<br>スキルを使う時に必要になるポイントで、多いほど豊富な手段で立ち回れます。</p>
+              <p>【STR】: Strength (物理攻撃力)<br>高いほど通常攻撃、物理スキルのダメージが上昇します。</p>
+              <p>
+                【DEF】: Defence (物理防御力)<br>高いほど、相手から受ける物理防御力のダメージが低下します。<br>
+                多少ですが敵の使用する魔法への耐性にも影響します。
               </p>
+              <p>【INT】: Intelligence (知力)<br>高いほど、魔法攻撃スキルの威力が上昇します。<br>
+                また、敵の使用する魔法への耐性にも大きく影響します。
+              </p>
+              <p>
+                【SPD】: Speed(素早さ)<br>戦闘中に行動できる順番に影響します。<br>
+                また、戦闘から逃走出来る確率にも影響します。
+              </p>
+              <p>【LUC】: Luck(運の良さ)<br>良いことが色々起こりやすくなります。</p>
             </div>
           </div>
         </div>
@@ -362,7 +409,9 @@
         this.partyName = this.roleData[this.beginning.currentDisplayRoleIndex]['default_name'];
       },
       isRoleAlreadySelected(roleId) {
-        return this.beginning.selectedRoleInformations.some(selected => selected.roleId === roleId);
+        // 数値/文字列の差で取りこぼさない
+        const target = String(roleId);
+        return this.beginning.selectedRoleInformations.some(s => String(s.roleId) === target);
       },
       roleInformationSetup() {
         console.log('roleInformationSetup(): -----------------');
@@ -374,20 +423,64 @@
           this.displayConfirmModal();
         }
       },
+      advanceToNextUnpicked() {
+        const total = this.roleData?.length ?? 0;
+        if (!total) return;
+
+        let next = (this.beginning.currentDisplayRoleIndex + 1) % total;
+        let hop = 0;
+
+        while (hop < total && this.isRoleAlreadySelected(this.roleData[next]['id'])) {
+          next = (next + 1) % total;
+          hop++;
+        }
+
+        // store に setter が無いので「必要回数だけ +1」する
+        const current = this.beginning.currentDisplayRoleIndex;
+        const steps = (next - current + total) % total;
+        for (let i = 0; i < steps; i++) {
+          this.$store.dispatch('incrementCurrentDisplayRoleIndex');
+        }
+      },
       setPlayerData(roleId, roleClassJapanese, partyName) {
         console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
-        this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
 
-        // WARN: メディ > スト と選択すると、incrementCurrentDecidedMemberIndexが繰り上がり、再びメディが選べるようになってしまう
-        // これは明らかにバグなので直す必要あり
+        // すでに選択済みなら決定を無効化して、未選択の次候補へスキップ
+        if (this.isRoleAlreadySelected(roleId)) {
+          this.advanceToNextUnpicked();
+          this.roleInformationSetup();
+          return;
+        }
 
+        // 1) 選択を確定（roleIdの型ゆらぎを抑えたいなら Number(roleId) にしてもOK）
+        this.$store.dispatch('setSelectedRoleInformation', { roleId, roleClassJapanese, partyName });
+
+        // 2) 決定人数をカウント
         this.$store.dispatch('incrementCurrentDecidedMemberIndex');
-        this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
-        this.displayCurrentDecidedMemberNumber++;
-        if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
+
+        // 3) 表示カーソルを「未選択のロール」まで進める
+        this.advanceToNextUnpicked();
+
+        // 4) 表示用の “n人目” を更新（上限3）
+        this.displayCurrentDecidedMemberNumber = Math.min(this.displayCurrentDecidedMemberNumber + 1, 3);
         console.log(`${this.beginning.currentDecidedMemberIndex}`);
         this.roleInformationSetup();
       },
+      // setPlayerData(roleId, roleClassJapanese, partyName) {
+      //   console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
+
+      //   // 選択したロールの情報を格納
+      //   this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
+
+      //   // 決定人数のカウント
+      //   this.$store.dispatch('incrementCurrentDecidedMemberIndex');
+
+      //   this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
+      //   this.displayCurrentDecidedMemberNumber++;
+      //   if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
+      //   console.log(`${this.beginning.currentDecidedMemberIndex}`);
+      //   this.roleInformationSetup();
+      // },
       displayConfirmModal() {
         // このメンバーでいいですか？というダイアログを出す。 OKならpostPlayerData()を実行する。
         console.log(`displayConfirmModal(): -----------------`);
