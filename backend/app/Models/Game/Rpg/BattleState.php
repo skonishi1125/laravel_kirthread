@@ -932,7 +932,7 @@ class BattleState extends Model
 
         // 味方の場合
         // ※ただし、アイテムを使えるのは現状味方だけの想定であるが。
-        if ($is_enemy == false) {
+        if (! $is_enemy) {
 
             // 戦闘不能かつ, それが敵である場合は別の相手を指定する
             // 攻撃: 敵が常に対象となるので、別の相手を指定する。
@@ -971,7 +971,31 @@ class BattleState extends Model
 
             switch ($selected_item_data->effect_type) {
                 case EffectType::Special->value:
-                    Debugbar::debug('特殊系※現状考えていない。');
+                    Debugbar::debug('特殊系');
+                    Debugbar::debug($selected_item_data);
+                    switch ($selected_item_data->id) {
+                        case ItemData::ResurrectElement->value : // リザレクトエレメント
+                            Debugbar::debug('リザレクトエレメント');
+                            $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                            // 戦闘不能でなければスキップ
+                            if ($opponent_data->is_defeated_flag == false) {
+                                $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能ではないため、効果が無かった！");
+                                break;
+                            } else {
+                                // HPの最大値を100%として、パーセント分だけHPを回復
+                                $opponent_data->value_hp = (int) ($opponent_data->max_value_hp * $selected_item_data->percent);
+                                // 戦闘不能フラグを解除
+                                $opponent_data->is_defeated_flag = false;
+                                if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                                    $opponent_data->value_hp = $opponent_data->max_value_hp;
+                                }
+                                $battle_logs_collection->push("{$opponent_data->name}は気力を取り戻し、戦線に復帰した！");
+                            }
+                            break;
+                        default:
+                            Debugbar::debug('その他');
+                            break;
+                    }
                     break;
                 case EffectType::Damage->value:
                     Debugbar::debug('攻撃系アイテム');

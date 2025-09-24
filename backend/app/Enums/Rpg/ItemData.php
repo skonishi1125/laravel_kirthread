@@ -9,6 +9,7 @@ enum ItemData: int
     case LifeElixir = 3;
     case AllPotion = 4;
     case AllLifeElixir = 5;
+    case ResurrectElement = 6;
 
     case ManaDrop = 11;
     case ManaElixir = 12;
@@ -35,6 +36,7 @@ enum ItemData: int
             self::LifeElixir => 'ライフエリクサ',
             self::AllPotion => 'オールポーション',
             self::AllLifeElixir => 'オールライフエリクサ',
+            self::ResurrectElement => 'リザレクトエレメント',
 
             self::ManaDrop => 'マナドロップ',
             self::ManaElixir => 'マナエリクサ',
@@ -63,6 +65,7 @@ enum ItemData: int
             self::LifeElixir => '服用者の生命力に効果が依存する薬。仲間1人のHPを50パーセント回復。',
             self::AllPotion => '全体効果のあるポーション。仲間全員のHPを40回復。',
             self::AllLifeElixir => '仲間全員のHPを全回復。',
+            self::ResurrectElement => '戦闘不能の味方に使用すると50パーセントの体力で復活させる。',
 
             self::ManaDrop => '小さなマナの雫。仲間1人のAPを20回復。',
             self::ManaElixir => '高純度のマナの液体。仲間1人のAPを50パーセント回復。',
