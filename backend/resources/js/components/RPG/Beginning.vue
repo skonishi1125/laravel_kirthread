@@ -267,7 +267,7 @@
           </p>
           <p>
             経験に乏しく、思わぬ苦境に立たされることもある。<br>
-            しかしながら冒険者として最も大切な素養である、折れぬ意志と仲間を信じる心は、徐々に彼らの中に芽生えていくだろう。
+            しかしながら冒険者として最も大切な素養である、折れぬ意志と仲間を信じる心は、すぐに彼らの中に芽生えていくだろう。
           </p>
           <p>
             今まさに三人は、強き意志を掲げ、命を賭してこの世界の伝承へと挑もうとしている。<br>
@@ -409,7 +409,9 @@
         this.partyName = this.roleData[this.beginning.currentDisplayRoleIndex]['default_name'];
       },
       isRoleAlreadySelected(roleId) {
-        return this.beginning.selectedRoleInformations.some(selected => selected.roleId === roleId);
+        // 数値/文字列の差で取りこぼさない
+        const target = String(roleId);
+        return this.beginning.selectedRoleInformations.some(s => String(s.roleId) === target);
       },
       roleInformationSetup() {
         console.log('roleInformationSetup(): -----------------');
@@ -421,20 +423,64 @@
           this.displayConfirmModal();
         }
       },
+      advanceToNextUnpicked() {
+        const total = this.roleData?.length ?? 0;
+        if (!total) return;
+
+        let next = (this.beginning.currentDisplayRoleIndex + 1) % total;
+        let hop = 0;
+
+        while (hop < total && this.isRoleAlreadySelected(this.roleData[next]['id'])) {
+          next = (next + 1) % total;
+          hop++;
+        }
+
+        // store に setter が無いので「必要回数だけ +1」する
+        const current = this.beginning.currentDisplayRoleIndex;
+        const steps = (next - current + total) % total;
+        for (let i = 0; i < steps; i++) {
+          this.$store.dispatch('incrementCurrentDisplayRoleIndex');
+        }
+      },
       setPlayerData(roleId, roleClassJapanese, partyName) {
         console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
-        this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
 
-        // WARN: メディ > スト と選択すると、incrementCurrentDecidedMemberIndexが繰り上がり、再びメディが選べるようになってしまう
-        // これは明らかにバグなので直す必要あり
+        // すでに選択済みなら決定を無効化して、未選択の次候補へスキップ
+        if (this.isRoleAlreadySelected(roleId)) {
+          this.advanceToNextUnpicked();
+          this.roleInformationSetup();
+          return;
+        }
 
+        // 1) 選択を確定（roleIdの型ゆらぎを抑えたいなら Number(roleId) にしてもOK）
+        this.$store.dispatch('setSelectedRoleInformation', { roleId, roleClassJapanese, partyName });
+
+        // 2) 決定人数をカウント
         this.$store.dispatch('incrementCurrentDecidedMemberIndex');
-        this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
-        this.displayCurrentDecidedMemberNumber++;
-        if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
+
+        // 3) 表示カーソルを「未選択のロール」まで進める
+        this.advanceToNextUnpicked();
+
+        // 4) 表示用の “n人目” を更新（上限3）
+        this.displayCurrentDecidedMemberNumber = Math.min(this.displayCurrentDecidedMemberNumber + 1, 3);
         console.log(`${this.beginning.currentDecidedMemberIndex}`);
         this.roleInformationSetup();
       },
+      // setPlayerData(roleId, roleClassJapanese, partyName) {
+      //   console.log(`setPlayerData(): ${roleId}, ${roleClassJapanese}, ${partyName} -----------------`);
+
+      //   // 選択したロールの情報を格納
+      //   this.$store.dispatch('setSelectedRoleInformation', {roleId, roleClassJapanese, partyName} );
+
+      //   // 決定人数のカウント
+      //   this.$store.dispatch('incrementCurrentDecidedMemberIndex');
+
+      //   this.$store.dispatch('incrementCurrentDisplayRoleIndex'); // 選択後は画面には次のロール情報を映す
+      //   this.displayCurrentDecidedMemberNumber++;
+      //   if (this.displayCurrentDecidedMemberNumber > 3) this.displayCurrentDecidedMemberNumber = 3;
+      //   console.log(`${this.beginning.currentDecidedMemberIndex}`);
+      //   this.roleInformationSetup();
+      // },
       displayConfirmModal() {
         // このメンバーでいいですか？というダイアログを出す。 OKならpostPlayerData()を実行する。
         console.log(`displayConfirmModal(): -----------------`);
