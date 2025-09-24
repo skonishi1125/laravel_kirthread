@@ -323,8 +323,8 @@
       <div style="display: flex; flex-flow: column; justify-content: space-between;">
 
         <!-- command 普段は非表示で、battle.statusがcommandの場合のみ出す。 -->
-         <div v-if="battle.status == 'command'">
-           <div class="command-list">
+        <div v-if="battle.status == 'command'">
+          <div class="command-list">
             <div class="command-list-row" @click="handleCommandSelection('ATTACK')" @mouseover="showCommandDescription('ATTACK')" @mouseleave="clearAllDescription">ATTACK</div>
 
             <div class="btn-group dropright">
@@ -334,7 +334,7 @@
               <div class="dropdown-menu dropdown-menu-skill-and-items-size">
                 <div 
                   v-for="skill in partyData[battle.currentPartyMemberIndex].skills"
-                   @mouseover="showSkillAndItemDescription(skill.description)" @mouseleave="clearAllDescription"
+                  @mouseover="showSkillAndItemDescription(skill.description)" @mouseleave="clearAllDescription"
                 >
                   <div v-if="partyData[battle.currentPartyMemberIndex].value_ap < skill.ap_cost">
                     <div class="command-list-row-skills-and-items_not_enough_ap">
