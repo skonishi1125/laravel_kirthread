@@ -227,9 +227,9 @@ enum SkillDefinition: int
             self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
 
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
-            self::AxiomStrike => '絶対の理を衝撃波に変え、敵単体にダメージを与える。',
+            self::AxiomStrike => 'マナの理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',
             self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
-            self::LogosRay => '公理に基づきマナを用いて光線を生成し、敵単体にダメージを与える。',
+            self::LogosRay => 'マナの理を解析し光線を生成。敵単体に高威力の魔法ダメージ。',
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',

@@ -513,7 +513,8 @@ class BattleState extends Model
                         }
                         break;
                     default:
-                        $battle_logs_collection->push("【debug】{$actor_data->name} 無効なコマンドです。");
+                        Debugbar::debug("★★{$actor_data->name} 蘇生後の行動でコマンド未設定 もしくは定義されていない行動です。★★");
+                        // $battle_logs_collection->push("【debug】{$actor_data->name} 無効なコマンドもしくは、コマンドが設定されていません。");
                         break;
                 }
             } else {

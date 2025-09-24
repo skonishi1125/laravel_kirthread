@@ -701,6 +701,15 @@ class ApiController extends Controller
         // ターン数更新
         $next_turn = $battle_state->current_turn + 1;
 
+        // 選択したコマンド、スキルなどをデフォルト状態に
+        // (これをしないと、蘇生後に最後に使った行動が実行されてしまう)
+        // TODO: 敵も必要な場合(蘇生とかで)、この値が必要かチェックする
+        Debugbar::debug('コマンドデフォルト設定対応 ------------------------');
+        foreach ($battle_state_players_collection as $player) {
+            $player->selected_skill_id = null;
+            $player->command = '';
+        }
+
         // rpg_battle_states更新
         $updated_battle_state = $battle_state->update([
             'players_json_data' => json_encode($battle_state_players_collection),
