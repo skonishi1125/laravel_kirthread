@@ -1023,12 +1023,28 @@ class BattleState extends Model
                     // バフは個別に処理
                     switch ($selected_item_data->id) {
                         case ItemData::AttackGummy->value:
-                            Debugbar::debug('アタックドロップ');
+                            Debugbar::debug('AttackGummy');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
                             break;
                         case ItemData::AttackMist->value:
-                            Debugbar::debug('アタックミスト');
+                            Debugbar::debug('AttackMist');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::DefenceGummy->value:
+                            Debugbar::debug('DefenceGummy');
+                            $new_buff['buffed_def'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::DefenceMist->value:
+                            Debugbar::debug('DefenceMist');
+                            $new_buff['buffed_def'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::IntGummy->value:
+                            Debugbar::debug('IntGummy');
+                            $new_buff['buffed_int'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::IntMist->value:
+                            Debugbar::debug('IntMist');
+                            $new_buff['buffed_int'] = $selected_item_data->fixed_value;
                             break;
                     }
 

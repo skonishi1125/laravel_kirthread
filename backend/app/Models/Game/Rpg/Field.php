@@ -16,8 +16,8 @@ class Field extends Model
 
     protected $table = 'rpg_fields';
 
-    // 難易度の幅。最大5
-    private const DIFFICULTY_RANGE = 5;
+    // 難易度の幅
+    private const DIFFICULTY_RANGE = 7;
 
     public function savedata_cleared_fields()
     {
