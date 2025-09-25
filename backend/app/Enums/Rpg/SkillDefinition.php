@@ -220,7 +220,7 @@ enum SkillDefinition: int
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
             self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、短時間DEFを下げる。',
-            self::EdgeFold => '敵全体に弱体の魔力を込めた弓矢を放つ。ダメージを与え、暫くの間STRとINTを下げる。',
+            self::EdgeFold => '敵単体に弱体の魔力を込めた弓矢を放つ。ダメージを与え、そのターン中のSTRとINTを下げる。',
             self::WindAccel => '風の魔力を込めた鋭い弓矢を敵単体に放つ。ダメージを与え、次のターンのSPDを上げる。',
             self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
             self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',

@@ -256,6 +256,7 @@ enum EnemyData: int
     public static function desertAppearingEnemies(): array
     {
         return [
+            self::Srara->value,
             self::Gao->value,
             self::Rizard->value,
             self::Scorpio->value,

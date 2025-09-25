@@ -2030,8 +2030,15 @@ class BattleState extends Model
                 self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
                 break;
             case SkillDefinition::EdgeFold : // EdgeFold
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 単体に物理攻撃し、その後デバフをかける。
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+
                 // 全体に物理攻撃し、その後デバフをかける。
                 // TODO: 他に似た処理を使う場合は共通化する。
+                // 強すぎたので単体に...
+                /*
                 Debugbar::debug('EdgeFold: 全体攻撃ループ開始。#########');
                 $base_damage = $pure_damage;
                 foreach ($battle_state_opponents_collection as $opponent_data) {
@@ -2091,6 +2098,8 @@ class BattleState extends Model
 
                     }
                 }
+                */
+
                 break;
             case SkillDefinition::WindAccel : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
