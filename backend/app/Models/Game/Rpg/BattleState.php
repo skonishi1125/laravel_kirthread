@@ -2013,11 +2013,68 @@ class BattleState extends Model
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
                 self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
                 break;
-            case SkillDefinition::EdgeFold : // エッジフォールド
-                $opponent_data = $battle_state_opponents_collection[$opponents_index];
-                // 単体に物理攻撃し、その後デバフをかける。
-                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
-                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+            case SkillDefinition::EdgeFold : // EdgeFold
+                // 全体に物理攻撃し、その後デバフをかける。
+                // TODO: 他に似た処理を使う場合は共通化する。
+                Debugbar::debug('EdgeFold: 全体攻撃ループ開始。#########');
+                $base_damage = $pure_damage;
+                foreach ($battle_state_opponents_collection as $opponent_data) {
+                    // 討伐判定チェック
+                    if ($opponent_data->is_defeated_flag == true) {
+                        Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+
+                        // returnにした場合は、foreach自体が終了する
+                        // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
+                        continue;
+                    }
+
+                    // ダメージ計算 物理
+                    Debugbar::debug('物理。');
+                    $result = self::calculatePhysicalDamage(
+                        $base_damage,
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+
+                    $calculated_damage = $result['damage'] ?? 0;
+                    $is_critical = $result['is_critical'] ?? false;
+
+                    if ($calculated_damage > 0) {
+                        Debugbar::debug("【SKILL】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
+                        $opponent_data->value_hp -= $calculated_damage;
+                        Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                        // クリティカル メッセージ分岐
+                        if ($is_critical) {
+                            $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        } else {
+                            $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                        }
+
+                        // デバフ付与
+                        self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+                        $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
+
+                        // 敵を倒した場合
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                            Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                        }
+
+                    } else {
+                        // ダメージを与えられなかった場合
+                        $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
+                        Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+
+                        // デバフ付与
+                        self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+                        $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
+
+                    }
+                }
                 break;
             case SkillDefinition::WindAccel : // ウインドアクセル
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
