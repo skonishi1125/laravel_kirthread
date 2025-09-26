@@ -26,12 +26,6 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Srara,
                 'number' => 1,
             ],
-            // [
-            //     'field_id' => FieldData::Grassland,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::FlareDrago,
-            //     'number' => 1,
-            // ],
             // 1-2
             [
                 'field_id' => FieldData::Grassland,
@@ -72,37 +66,46 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
             // --------- 砂漠 ---------
+            // stage 1
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::Gao,
-                'number' => 2,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
+            // stage 2
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 2,
                 'enemy_id' => EnemyData::Rizard,
+                'number' => 1,
+            ],
+            //  stage 3
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Scorpio,
                 'number' => 2,
             ],
-            //  スコーピオ, ガオー, スコーピオ
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Scorpio,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Gao,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Scorpio,
-                'number' => 1,
-            ],
+            // stage 4
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
@@ -112,12 +115,31 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::RockRizard,
+                'enemy_id' => EnemyData::Scorpio,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
+                'enemy_id' => EnemyData::Rizard,
+                'number' => 1,
+            ],
+            // stage 5
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Rizard,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::RockRizard,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::Scorpio,
                 'number' => 1,
             ],
