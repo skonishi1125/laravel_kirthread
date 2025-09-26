@@ -23,6 +23,10 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // ボウ
             ['enemy_id' => EnemyData::Bou, 'skill_id' => SkillDefinition::Fire, 'skill_level' => 1],
 
+            // ノラワニ
+            ['enemy_id' => EnemyData::Norawani, 'skill_id' => SkillDefinition::Roar, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Norawani, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
+
             // マグマダイル
             ['enemy_id' => EnemyData::MagmaDile, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
             ['enemy_id' => EnemyData::MagmaDile, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],

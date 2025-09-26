@@ -17,6 +17,32 @@ class EnemyActionPatternTableSeeder extends Seeder
         EnemyActionPattern::truncate();
 
         $seeds = [
+            // ノラワニ
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Roar,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+                'skill_id' => null,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+                'skill_id' => null,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Bite,
+            ],
+
             // オヤダマワニ
             [
                 'enemy_id' => EnemyData::MagmaDile,

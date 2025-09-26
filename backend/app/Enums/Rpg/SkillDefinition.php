@@ -54,8 +54,8 @@ enum SkillDefinition: int
     case EdgeFold = 53;
     case WindAccel = 54;
     case BallistaShot = 55;
-    case CerberusForce = 56;
-    case SirenAura = 57;
+    case SirenAura = 56;
+    case CerberusForce = 57;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
@@ -138,8 +138,8 @@ enum SkillDefinition: int
             self::EdgeFold => 'エッジフォールド',
             self::WindAccel => 'ウインドアクセル',
             self::BallistaShot => 'バリスタショット',
-            self::CerberusForce => 'ケルベロスフォース',
             self::SirenAura => 'セイレーンオーラ',
+            self::CerberusForce => 'ケルベロスフォース',
 
             self::BookSmash => 'ブックスマッシュ',
             self::AxiomStrike => 'アクシオムストライク',
@@ -223,8 +223,8 @@ enum SkillDefinition: int
             self::EdgeFold => '敵単体に弱体の魔力を込めた弓矢を放つ。ダメージを与え、そのターン中のSTRとINTを下げる。',
             self::WindAccel => '風の魔力を込めた鋭い弓矢を敵単体に放つ。ダメージを与え、次のターンのSPDを上げる。',
             self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
-            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
             self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
+            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
 
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
             self::AxiomStrike => '魔力の理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',

@@ -692,7 +692,7 @@ class BattleState extends Model
                 });
 
                 if (is_null($selected_skill)) {
-                    Debugbar::warning('指定されたスキルID {$skill_id} が敵のスキル一覧に存在しません。ATTACKを格納しますが、管理者側で確認が必要です。');
+                    Debugbar::warning("指定されたスキルID {$skill_id} が敵のスキル一覧に存在しません。ATTACKを格納しますが、管理者側で確認が必要です。");
                     $enemy_data->command = 'ATTACK';
 
                     return;

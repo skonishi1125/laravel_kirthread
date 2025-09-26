@@ -562,7 +562,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::EdgeFold :
                     Debugbar::debug(SkillDefinition::EdgeFold->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！弱体の力を込めた弓矢を相手全体へ撃ち込む！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！弱体の力を込めた弓矢を相手に撃ち込む！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     // マイナスの値にして、相手にデバフとして付与する
                     //  例: 自身のDEFが100 SLv1の場合、-(100) * (1.0 / 2) = -50
@@ -776,7 +776,7 @@ class Skill extends Model
                 case SkillDefinition::Roar :
                     Debugbar::debug(SkillDefinition::Roar->label());
                     $battle_logs_collection->push("{$actor_data->name}は咆哮し、自分自身を奮い立たせた！");
-                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::DigestiveFluid :
                     Debugbar::debug(SkillDefinition::DigestiveFluid->label());

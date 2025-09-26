@@ -144,57 +144,56 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
             // --------- 火山 ---------
+            // stage 1
             [
                 'field_id' => FieldData::Volcano,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Bou,
-                'number' => 4,
+                'enemy_id' => EnemyData::Norawani,
+                'number' => 1,
             ],
+            // stage 2
             [
                 'field_id' => FieldData::Volcano,
                 'stage_id' => 2,
+                'enemy_id' => EnemyData::Bou,
+                'number' => 5,
+            ],
+            // stage 3
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Bou,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Volcano,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::IwaMet,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Volcano,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::Norawani,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Volcano,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::Bou,
                 'number' => 1,
             ],
+            // stage 4
             [
                 'field_id' => FieldData::Volcano,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Norawani,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::IwaMet,
                 'number' => 2,
             ],
+            // stage 5
             [
                 'field_id' => FieldData::Volcano,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Bou,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Volcano,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Norawani,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Volcano,
-                'stage_id' => 4,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::MagmaDile,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Volcano,
-                'stage_id' => 4,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::Norawani,
                 'number' => 1,
             ],

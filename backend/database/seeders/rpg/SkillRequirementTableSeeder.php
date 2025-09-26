@@ -161,7 +161,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 15,
             ],
-            // バトルメイジ 該当スキルなし, pLv15以上
+            // バトルメイジ 該当スキルなし, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::BattleMage->value,
                 'requirement_skill_id' => null,
@@ -182,13 +182,6 @@ class SkillRequirementTableSeeder extends Seeder
                 'acquired_skill_id' => SkillDefinition::BallistaShot->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 9,
-            ],
-            // ケルベロスフォース pLv15以上
-            [
-                'acquired_skill_id' => SkillDefinition::CerberusForce->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
             // セイレーンオーラ pLv15以上
@@ -198,20 +191,27 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
+            // ケルベロスフォース pLv20以上
+            [
+                'acquired_skill_id' => SkillDefinition::CerberusForce->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 20,
+            ],
             // -------------------- 理術師 --------------------
-            // アクシオムストライク ブックスマッシュLv1, pLv10以上
+            // アクシオムストライク ブックスマッシュLv2, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::AxiomStrike->value,
                 'requirement_skill_id' => SkillDefinition::BookSmash->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 10,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 15,
             ],
-            // ロゴスレイ マジックミサイルLv1, pLv10以上
+            // ロゴスレイ マジックミサイルLv2, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::LogosRay->value,
                 'requirement_skill_id' => SkillDefinition::MagicMissile->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 10,
+                'requirement_skill_level' => 2,
+                'requirement_party_level' => 15,
             ],
             // ブレードフォース pLv15以上
             [
@@ -220,12 +220,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
-            // ディフェンドスリート pLv15以上
+            // ディフェンドスリート pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::DefendThreat->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
             // アークウィズダム pLv15以上
             [
@@ -234,12 +234,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
-            // ソニックトリミング pLv15以上
+            // ソニックトリミング pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::SonicTrimming->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 20,
             ],
             // フォーチュンスター pLv15以上
             [
