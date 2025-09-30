@@ -17,7 +17,7 @@ class LibraryTableSeeder extends Seeder
     {
         Library::truncate();
 
-        $caution = '<p>※本地域はギルド未調査のため、魔物に関する情報を有していません。</p>';
+        $caution = '<p><b>本地域は調査ギルド未開拓のため、魔物情報を有しておりません。<br>探索の成功した冒険者様がたのご報告を心よりお待ちしております。</b></p>';
 
         // 魔物図譜 草原
         $grassland_preface = '<p>本図譜で述べる草原とは、人間の集落周辺に広がる平坦な地帯そのものを指す。<br>陽光に恵まれ風通しも良く、冒険者にとって最初の修練場として相応しい環境である。<br>魔物の数は少なく、特筆すべき脅威は見られないが、それでも油断は禁物である。<br>とりわけ群れを成す小型種や、俊敏な個体は初心者にとって手強い相手となり得る。<br>ゆえに決して無害を意味しないことは忘れてはならない。</p><p>以下、調査ギルドが保有している魔物情報を記載する。</p>';
@@ -115,14 +115,14 @@ class LibraryTableSeeder extends Seeder
                 'id' => 3,
                 'name' => '優しく解説！戦闘術〜プチ回復編〜',
                 'book_category' => Library::CATEGORY_ADVENTURE,
-                'content' => '<p>初学者の方に向けて、戦闘の技術について優しく解説します。<br>ずっと使える知識なので、覚えておくとためになりますよ。</p><p>街からフィールドに出ると、モンスターとの戦いが連続して発生する形となります。<br>モンスターを全員倒すとEXP(経験値)が貰えますが、同時にHPとAPも少量回復します。<br>また、レベルが上がるとHPとAPが全回復します！</p><p>つまり戦闘では毎回APを使ってしまっても問題は無いですし、<br>レベルアップ手前のメンバーがいた場合は、戦闘でガンガンAPを使ってしまって良いということです！<br>次のレベルアップまでのEXPはステータス画面や戦闘終了画面で確認ができますよ。</p><p>次回は逃亡時、全滅時について解説します。</p>',
+                'content' => '<p>初学者の方に向けて、戦闘の技術について優しく解説します。<br>ずっと使える知識なので、覚えておくとためになりますよ。</p><p>街からフィールドに出ると、モンスターとの戦いが連続して発生する形となります。<br>モンスターを全員倒すとEXP(経験値)が貰えますが、<b>同時にHPとAPも少量回復</b>します。<br><b>また、レベルが上がるとHPとAPが全回復します！</b></p><p>つまり戦闘では毎回APを使ってしまっても問題は無いですし、<br>レベルアップ手前のメンバーがいた場合は、戦闘でガンガンAPを使ってしまって良いということです！<br>次のレベルアップまでのEXPはステータス画面や戦闘終了画面で確認ができますよ。</p><p>次回は逃亡時、全滅時について解説します。</p>',
                 'required_clears' => 1,
             ],
             [
                 'id' => 4,
                 'name' => '優しく解説！戦闘術〜逃亡・全滅編〜',
                 'book_category' => Library::CATEGORY_ADVENTURE,
-                'content' => '<p>初学者の方に向けて、戦闘の技術について優しく解説します。<br>今回は逃走時、全滅時の違いについてです。<br>あまり考えたいことではありませんが、もしもの時に役立ちますよ。</p><p></p><p>逃走した時は、「使ったアイテム」、「今まで獲得したEXPやレベル」が現時点の状態で街に戻ることになります。探索の中断と同じですね。<br>また全滅してしまった時は、「使ったアイテム」、「今まで獲得したEXPやレベル」が冒険前の状態にリセットされた状態で街に戻ることになります。<br></p><p>全滅は大変なことのように見えますが、アイテムをたくさん使ってもフィールドの探索が失敗した時にアイテムを消費してしまうことを防いでくれます。</p><p>反省して、もう一度トライしてみましょう！</p>',
+                'content' => '<p>初学者の方に向けて、戦闘の技術について優しく解説します。<br>今回は逃走時、全滅時の違いについてです。<br>あまり考えたいことではありませんが、もしもの時に役立ちますよ。</p><p></p><p>逃走した時は、<b>「使ったアイテム」、<br>「今まで獲得したEXPやレベル」が現時点の状態</b>で街に戻ることになります。探索の中断と同じですね。<br>また全滅してしまった時は、<b>「使ったアイテム」、<br>「今まで獲得したEXPやレベル」が冒険前の状態にリセットされた状態</b>で街に戻ることになります。<br></p><p>全滅は大変なことのように見えますが、アイテムをたくさん使ってもフィールドの探索が失敗した時にアイテムを消費してしまうことを防いでくれます。</p><p>反省して、もう一度トライしてみましょう！</p>',
                 'required_clears' => 1,
             ],
             [
@@ -186,42 +186,42 @@ class LibraryTableSeeder extends Seeder
             // 魔物図譜
             [
                 'id' => 201,
-                'name' => '魔物図譜: '.FieldData::Grassland->label(),
+                'name' => '調査報告書: '.FieldData::Grassland->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $grassland_content,
                 'required_clears' => 0,
             ],
             [
                 'id' => 202,
-                'name' => '魔物図譜: '.FieldData::Desert->label(),
+                'name' => '調査報告書: '.FieldData::Desert->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $desert_content,
                 'required_clears' => 1,
             ],
             [
                 'id' => 203,
-                'name' => '魔物図譜: '.FieldData::Volcano->label(),
+                'name' => '調査報告書: '.FieldData::Volcano->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $volcano_content,
                 'required_clears' => 1,
             ],
             [
                 'id' => 204,
-                'name' => '魔物図譜: '.FieldData::Coast->label(),
+                'name' => '調査報告書: '.FieldData::Coast->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $coast_content,
                 'required_clears' => 1,
             ],
             [
                 'id' => 205,
-                'name' => '(未完成)魔物図譜: '.FieldData::IceAndSnow->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::IceAndSnow->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $iceandsnow_preface.$caution,
                 'required_clears' => 3,
             ],
             [
                 'id' => 206,
-                'name' => '魔物図譜: '.FieldData::IceAndSnow->label(),
+                'name' => '調査報告書: '.FieldData::IceAndSnow->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $iceandsnow_content,
                 'required_clears' => null,
@@ -229,14 +229,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 207,
-                'name' => '(未完成)魔物図譜: '.FieldData::WetFog->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::WetFog->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $wetfog_preface.$caution,
                 'required_clears' => 3,
             ],
             [
                 'id' => 208,
-                'name' => '魔物図譜: '.FieldData::WetFog->label(),
+                'name' => '調査報告書: '.FieldData::WetFog->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $wetfog_content,
                 'required_clears' => null,
@@ -244,14 +244,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 209,
-                'name' => '(未完成)魔物図譜: '.FieldData::NightForest->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::NightForest->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $nightforest_preface.$caution,
                 'required_clears' => 3,
             ],
             [
                 'id' => 210,
-                'name' => '魔物図譜: '.FieldData::NightForest->label(),
+                'name' => '調査報告書: '.FieldData::NightForest->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $nightforest_content,
                 'required_clears' => null,
@@ -259,14 +259,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 211,
-                'name' => '(未完成)魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::DecayedFarmland->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $decayedfarmland_preface.$caution,
                 'required_clears' => 5,
             ],
             [
                 'id' => 212,
-                'name' => '魔物図譜: '.FieldData::DecayedFarmland->label(),
+                'name' => '調査報告書: '.FieldData::DecayedFarmland->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $decayedfarmland_content,
                 'required_clears' => null,
@@ -274,14 +274,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 213,
-                'name' => '(未完成)魔物図譜: '.FieldData::CastleTown->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::CastleTown->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $castletown_preface.$caution,
                 'required_clears' => 5,
             ],
             [
                 'id' => 214,
-                'name' => '魔物図譜: '.FieldData::CastleTown->label(),
+                'name' => '調査報告書: '.FieldData::CastleTown->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $castletown_content,
                 'required_clears' => null,
@@ -289,14 +289,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 215,
-                'name' => '(未完成)魔物図譜: '.FieldData::AncientCastle->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::AncientCastle->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastle_preface.$caution,
                 'required_clears' => 5,
             ],
             [
                 'id' => 216,
-                'name' => '魔物図譜: '.FieldData::AncientCastle->label(),
+                'name' => '調査報告書: '.FieldData::AncientCastle->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastle_content,
                 'required_clears' => null,
@@ -304,14 +304,14 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 217,
-                'name' => '(未完成)魔物図譜: '.FieldData::VastExpanse->label(),
+                'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $vastexpanse_preface.$caution,
                 'required_clears' => 5,
             ],
             [
                 'id' => 218,
-                'name' => '魔物図譜: '.FieldData::VastExpanse->label(),
+                'name' => '調査報告書: '.FieldData::VastExpanse->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $vastexpanse_content,
                 'required_clears' => null,
