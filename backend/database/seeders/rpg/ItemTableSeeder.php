@@ -99,7 +99,7 @@ class ItemTableSeeder extends Seeder
                 'description' => ItemData::HighPotion->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
-                'required_clears' => 3,
+                'required_clears' => 5,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -119,7 +119,7 @@ class ItemTableSeeder extends Seeder
                 'description' => ItemData::AllHighPotion->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
-                'required_clears' => 4,
+                'required_clears' => 6,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [
@@ -220,7 +220,7 @@ class ItemTableSeeder extends Seeder
                 'description' => ItemData::AllManaDrop->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
-                'required_clears' => 3,
+                'required_clears' => 5,
                 'created_at' => $now, 'updated_at' => $now,
             ],
             [

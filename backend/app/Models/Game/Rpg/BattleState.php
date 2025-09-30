@@ -40,6 +40,10 @@ class BattleState extends Model
 
     private const BASE_ESCAPE_CHANCE = 0.2; // 逃走の基礎成功率 （SPD 1ごとに、2%ずつ変化していく）
 
+    private const DEFENCE_MIN_DEF = 70; // DEFENCE選択時、付与されるDEFの最低値
+
+    private const DEFENCE_MIN_INT = 70; // DEFENCE選択時、付与されるINTの最低値
+
     /**
      * 戦闘初回時のplayers_json_dataに格納する値を作成して返す。
      *
@@ -459,9 +463,20 @@ class BattleState extends Model
                         // 魔法攻撃も緩和できようにintも補正をかける。
                         // 例: value_defが60の場合、バフは30となり合計DEFは90となる intも同様。
                         Debugbar::debug("【防御】使用者: {$actor_data->name} ");
+
+                        // ステータスが低すぎると、防御の意味を持たないので、最低 DEF / INT は70をバフ値として担保する
+                        $buffed_def = (int) ceil($actor_data->value_def * 0.5);
+                        if ($buffed_def <= self::DEFENCE_MIN_DEF) {
+                            $buffed_def = self::DEFENCE_MIN_DEF;
+                        }
+                        $buffed_int = (int) ceil($actor_data->value_int * 0.5);
+                        if ($buffed_int <= self::DEFENCE_MIN_INT) {
+                            $buffed_int = self::DEFENCE_MIN_INT;
+                        }
+
                         $new_buff = BattleData::BUFF_TEMPLATE;
-                        $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * 0.5);
-                        $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * 0.5);
+                        $new_buff['buffed_def'] = $buffed_def;
+                        $new_buff['buffed_int'] = $buffed_int;
                         $new_buff['remaining_turn'] = 1;
                         $new_buff['buffed_from'] = 'DEFENCE';
 

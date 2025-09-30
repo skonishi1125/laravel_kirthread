@@ -52,6 +52,10 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
 
+            // ScissorFlipper
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

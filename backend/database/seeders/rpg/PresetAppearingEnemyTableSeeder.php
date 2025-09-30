@@ -311,6 +311,32 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Eripen,
                 'number' => 1,
             ],
+            // stage4
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 3,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
 
             // [
             //     'field_id' => FieldData::IceAndSnow,
