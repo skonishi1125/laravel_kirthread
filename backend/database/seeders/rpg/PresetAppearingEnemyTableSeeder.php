@@ -198,12 +198,14 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
             // --------- 海岸 ---------
+            // stage1
             [
                 'field_id' => FieldData::Coast,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::MageSrara,
                 'number' => 2,
             ],
+            // stage2
             // クリオン、メイジスララ、クリオン
             [
                 'field_id' => FieldData::Coast,
@@ -223,27 +225,54 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::Clion,
                 'number' => 1,
             ],
+            // stage3
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::MageSrara,
+                'number' => 1,
+            ],
             [
                 'field_id' => FieldData::Coast,
                 'stage_id' => 3,
                 'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::MageSrara,
+                'number' => 1,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Clion,
                 'number' => 2,
             ],
             [
                 'field_id' => FieldData::Coast,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::Clion,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 2,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::Coast,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Ikkaku,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Coast,
-                'stage_id' => 4,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::SpikeWhale,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Coast,
-                'stage_id' => 4,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::Ikkaku,
                 'number' => 1,
             ],

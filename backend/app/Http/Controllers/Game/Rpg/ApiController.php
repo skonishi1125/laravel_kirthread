@@ -28,8 +28,8 @@ use Illuminate\Support\Facades\DB;
 
 class ApiController extends Controller
 {
-    // 4つ以上クリアすることが条件
-    public const PLAZA_ENABLE_CLEAR_FIELD = 4;
+    // 5つ以上クリアすることが条件
+    public const PLAZA_ENABLE_CLEAR_FIELD = 5;
 
     // TODO:
     // * constructなどでログインしているユーザーがアクセスできる前提とする
@@ -1426,7 +1426,9 @@ class ApiController extends Controller
         // URLをベタ打ちして遷移していないか。
         $cleared_count = $savedata->savedata_cleared_fields()->count();
         if ($cleared_count < self::PLAZA_ENABLE_CLEAR_FIELD) {
-            return response()->json(['403: Forbidden'], 403); // 403: Forbidden などでOK
+            return response()->json([
+                'message' => '癒しの館を使用する条件を満たしていません。',
+            ], 403); // 403: Forbidden などでOK
         }
 
         $money = $savedata->money;

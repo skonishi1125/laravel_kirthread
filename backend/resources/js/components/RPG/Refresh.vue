@@ -329,6 +329,7 @@
             this.$store.dispatch('setMenuPlazaRefreshStatus', 'loaded');
           }
         ).catch(error => {
+            console.log('ERROR');
             this.$router.push({ name: 'menu_plaza'});
         });
       },
