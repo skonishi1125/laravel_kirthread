@@ -267,7 +267,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-info btn-sm"
-            :disabled="currentMoney < modalPartyInformation.level * baseMoney"
+            :disabled="currentMoney < baseMoney"
             @click="paymentRefresh"
             >
               リセットする
