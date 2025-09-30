@@ -421,10 +421,10 @@
                     <li>
                       <button class="btn btn-sm"
                         :class="{
-                          'btn-outline-secondary': parentSkill.effect_type === 0,
-                          'btn-outline-primary': parentSkill.effect_type === 1,
-                          'btn-outline-success': parentSkill.effect_type === 2,
-                          'btn-outline-warning': parentSkill.effect_type === 3,
+                          'btn-outline-secondary': childSkill.effect_type === 0,
+                          'btn-outline-primary': childSkill.effect_type === 1,
+                          'btn-outline-success': childSkill.effect_type === 2,
+                          'btn-outline-warning': childSkill.effect_type === 3,
                         }"
                         @click="displaySkillConfirmModal(childSkill)"
                         @mouseover="showSkillInformation(childSkill)"
