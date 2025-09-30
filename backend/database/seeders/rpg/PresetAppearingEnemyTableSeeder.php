@@ -278,24 +278,58 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
 
             // 氷雪地帯
+            // stage1 最初きつめ
             [
                 'field_id' => FieldData::IceAndSnow,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Eripen,
+                'enemy_id' => EnemyData::IwaMet,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::IceAndSnow,
                 'stage_id' => 1,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            // stage2 同じくきつめ
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::IceFairy,
                 'number' => 1,
             ],
+            // stage3 ちょっと優しい設計(ペンギンのレクチャー)
             [
                 'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::ScissorFlipper,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Eripen,
                 'number' => 1,
             ],
+
+            // [
+            //     'field_id' => FieldData::IceAndSnow,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Eripen,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::IceAndSnow,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::IceFairy,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::IceAndSnow,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::ScissorFlipper,
+            //     'number' => 1,
+            // ],
 
             // 湿霧の地
             [

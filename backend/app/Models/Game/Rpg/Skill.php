@@ -549,7 +549,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の持つ癒しの霧が味方の傷を包み込む...");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の有する癒しの霧が味方の傷を包み込む...");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                     break;
                 case SkillDefinition::BreakBowGun :
@@ -823,6 +823,20 @@ class Skill extends Model
                     Debugbar::warning(SkillDefinition::Fire->label());
                     $battle_logs_collection->push("{$actor_data->name}はファイアを唱えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::HailShot :
+                    Debugbar::warning(SkillDefinition::HailShot->label());
+                    $battle_logs_collection->push("{$actor_data->name}はあられを生成し、こちら側に勢いよく放ってきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Prepare :
+                    Debugbar::debug(SkillDefinition::Prepare->label());
+                    $battle_logs_collection->push("{$actor_data->name}は次の行動に向けて、準備をしている！");
+                    break;
+                case SkillDefinition::Rush :
+                    Debugbar::debug(SkillDefinition::Rush->label());
+                    $battle_logs_collection->push("{$actor_data->name}は自慢のお腹で滑りながら、思いっきり突進してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');

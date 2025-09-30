@@ -2238,6 +2238,9 @@ class BattleState extends Model
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
                 self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, $is_debuff, $is_enemy);
                 break;
+            case SkillDefinition::Prepare : // 準備
+                // 何もしない (ログpushなども、すでにSkillモデル側で済ませている
+                break;
             default:
                 break;
         }

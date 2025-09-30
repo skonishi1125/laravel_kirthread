@@ -143,9 +143,9 @@ enum EnemyData: int
             self::Ikkaku => '立派なツノから呼ばれる雷魔法は単体攻撃、全体攻撃の2種類があるため注意。ツルツルした見た目だが、ガラスのように脆い。',
             self::SpikeWhale => '海岸のボス。一定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
 
-            self::Eripen => 'エリペン',
-            self::IceFairy => 'アイスフェアリー',
-            self::ScissorFlipper => 'シザーフリッパー',
+            self::Eripen => '首回りの氷が襟に見えることからこの名前をつけられた。準備をしたのち、滑って突進してくるので身構えること。',
+            self::IceFairy => '冷たい大気が魔法の残り香によって生命体となった。見た目に反して打たれ強くすばしっこい。全体攻撃を得意とする。',
+            self::ScissorFlipper => 'エリペンの群れを連ねるリーダー。エリペン種の強烈な突進が鋭い刃物のような腕を持ったことでより強烈な一撃となった。同じく、準備をしたのちに突進をしてくる。',
 
             self::Nepenthos => 'ネペントス',
             self::Dionaea => 'ディオネア',
@@ -287,6 +287,7 @@ enum EnemyData: int
     public static function iceAndSnowAppearingEnemies(): array
     {
         return [
+            self::IwaMet->value,
             self::Ikkaku->value,
             self::Eripen->value,
             self::IceFairy->value,

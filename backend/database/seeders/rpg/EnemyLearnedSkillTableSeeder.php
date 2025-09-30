@@ -17,44 +17,47 @@ class EnemyLearnedSkillTableSeeder extends Seeder
         EnemyLearnedSkill::truncate();
 
         $seeds = [
-            // ビッグスララ
+            // BigSrara
             ['enemy_id' => EnemyData::BigSrara, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
 
-            // ボウ
+            // Bou
             ['enemy_id' => EnemyData::Bou, 'skill_id' => SkillDefinition::Fire, 'skill_level' => 1],
 
-            // ノラワニ
+            // Norawani
             ['enemy_id' => EnemyData::Norawani, 'skill_id' => SkillDefinition::Roar, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Norawani, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
 
-            // マグマダイル
+            // MagmaDile
             ['enemy_id' => EnemyData::MagmaDile, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
             ['enemy_id' => EnemyData::MagmaDile, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
             ['enemy_id' => EnemyData::MagmaDile, 'skill_id' => SkillDefinition::Roar, 'skill_level' => 1],
 
-            // 敵バフ系 検証用 オヤダマワニ
-            // ['enemy_id' => 5, 'skill_id' => SkillDefinition::EnemyGuardSpell, 'skill_level' => 1],
-            // ['enemy_id' => 5, 'skill_id' => SkillDefinition::EnemyAllGuardSpell, 'skill_level' => 1],
-
-            // 検証系
-            // 敵回復系 検証用 ハイスララ
-            ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyAllHealing, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::Regeneration, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
-
-            // メイジスララ
+            // MageSrara
             ['enemy_id' => EnemyData::MageSrara, 'skill_id' => SkillDefinition::Freeze, 'skill_level' => 1],
 
-            // クリオン
+            // Clion
             ['enemy_id' => EnemyData::Clion, 'skill_id' => SkillDefinition::Bubble, 'skill_level' => 1],
 
-            // イッカク
+            // Ikkaku
             ['enemy_id' => EnemyData::Ikkaku, 'skill_id' => SkillDefinition::Biribiri, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Ikkaku, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 1],
 
-            // スパイクホエール
+            // SpikeWhale
             ['enemy_id' => EnemyData::SpikeWhale, 'skill_id' => SkillDefinition::Wave, 'skill_level' => 1],
+
+            // IceFairy
+            ['enemy_id' => EnemyData::IceFairy, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
+
+            // Eripen
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
+
+            // 検証系
+            // 敵回復系 検証用 ハイスララ
+            // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
+            // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyAllHealing, 'skill_level' => 1],
+            // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::Regeneration, 'skill_level' => 1],
+            // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
 
         ];
 

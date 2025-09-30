@@ -98,6 +98,25 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'turn_count' => 3,
                 'is_use_skill' => false,
             ],
+
+            // Eripen
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rush,
+            ],
         ];
 
         foreach ($seeds as $seed) {

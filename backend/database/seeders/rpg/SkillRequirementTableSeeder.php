@@ -227,11 +227,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
-            // ディフェンドスリート pLv20以上
+            // ディフェンドスリート ShieldEnt SLv1, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::DefendThreat->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
+                'requirement_skill_id' => SkillDefinition::ShieldEnt->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
             // アークウィズダム pLv15以上
@@ -241,11 +241,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 15,
             ],
-            // ソニックトリミング pLv20以上
+            // ソニックトリミング SpeedEnt SLv1, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::SonicTrimming->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
+                'requirement_skill_id' => SkillDefinition::SpeedEnt->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
             // フォーチュンスター pLv15以上

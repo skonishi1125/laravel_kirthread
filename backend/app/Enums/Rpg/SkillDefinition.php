@@ -90,6 +90,9 @@ enum SkillDefinition: int
     case Bubble = 112;
     case Wave = 113;
     case Fire = 114;
+    case HailShot = 115;
+    case Prepare = 116; // 大技に噛ませるとよい
+    case Rush = 117;
 
     public function label(): string
     {
@@ -173,6 +176,9 @@ enum SkillDefinition: int
             self::Bubble => 'バブル', // 攻撃魔法全体
             self::Wave => '大波', // 攻撃魔法全体
             self::Fire => 'ファイアー', // 攻撃魔法単体
+            self::HailShot => 'ヘイルショット', // 物理 全体
+            self::Prepare => '準備',
+            self::Rush => '突進', // 物理 全体
 
         };
     }
@@ -259,6 +265,9 @@ enum SkillDefinition: int
             self::Bubble => '相手全体に泡を撒き散らし、魔法攻撃。',
             self::Wave => '大波を呼び寄せ、相手全体に魔法攻撃。',
             self::Fire => '炎の呪文で相手単体に魔法攻撃。',
+            self::HailShot => '霰の粒を撒き散らし、相手全体に物理攻撃。',
+            self::Prepare => '次の攻撃の準備をする。',
+            self::Rush => '思いっきり突撃して相手全体に物理攻撃。',
         };
     }
 }
