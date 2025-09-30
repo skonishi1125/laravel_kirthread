@@ -549,7 +549,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の力を借りて味方の傷を包み込む...");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の持つ癒しの霧が味方の傷を包み込む...");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                     break;
                 case SkillDefinition::BreakBowGun :

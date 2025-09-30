@@ -152,7 +152,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'acquired_skill_id' => SkillDefinition::CrashBlast->value,
                 'requirement_skill_id' => SkillDefinition::PetitBolt->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 15,
             ],
             // マナエクスプロージョン ボルトストームLv1, pLv15以上
             [

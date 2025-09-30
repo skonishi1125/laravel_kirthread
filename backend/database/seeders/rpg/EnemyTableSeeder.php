@@ -185,7 +185,7 @@ class EnemyTableSeeder extends Seeder
                 'name' => EnemyData::MagmaDile->label(),
                 'value_hp' => 700,
                 'value_ap' => 40,
-                'value_str' => 70,
+                'value_str' => 55,
                 'value_def' => 70,
                 'value_int' => 40,
                 'value_spd' => 40,
