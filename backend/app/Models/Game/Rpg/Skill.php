@@ -575,6 +575,25 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * (($selected_skill_data->skill_percent) / 2));
                     break;
+                case SkillDefinition::GaleStrike :
+                    Debugbar::debug(SkillDefinition::GaleStrike->label());
+
+                    $has_wind_accel = false;
+                    foreach ($actor_data->buffs as $buff) {
+                        $buff = (object) $buff; // 配列・オブジェクトどちらにも対応させるためキャスト
+                        if ($buff->buffed_skill_id == SkillDefinition::WindAccel->value) {
+                            $has_wind_accel = true;
+                        }
+                    }
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 20;
+                    // WindAccelが付与されている場合、25%ダメージアップ
+                    if ($has_wind_accel) {
+                        $damage = (int) ceil($damage + ($damage * ($selected_skill_data->skill_percent) * 0.25));
+                        $battle_logs_collection->push("{$actor_data->name}は暴風の力を身に纏い、そのまま敵に猛烈に突進して引き裂いた！");
+                    } else {
+                        $battle_logs_collection->push("{$actor_data->name}は風の力を纏い、そのまま敵に突進し打撃を与えた！");
+                    }
+                    break;
                 case SkillDefinition::BallistaShot :
                     Debugbar::debug(SkillDefinition::BallistaShot->label());
                     $battle_logs_collection->push("{$actor_data->name}は敵目掛けて、引き絞り続けた弩を射出した！");

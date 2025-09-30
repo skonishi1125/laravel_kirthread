@@ -177,6 +177,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 10,
             ],
+            // ゲイルストライク ウインドアクセルLv1, pLv10以上
+            [
+                'acquired_skill_id' => SkillDefinition::GaleStrike->value,
+                'requirement_skill_id' => SkillDefinition::WindAccel->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 10,
+            ],
             // バリスタショット pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::BallistaShot->value,
