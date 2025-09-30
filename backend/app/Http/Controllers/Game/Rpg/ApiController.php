@@ -1477,7 +1477,7 @@ class ApiController extends Controller
         $savedata = Savedata::getLoginUserCurrentSavedata();
         $payment_money = $request->payment_money;
         $party_id = $request->party_id;
-        Debugbar::debug("reallocatedPoint(): {$party_id} ------------------------");
+        Debugbar::debug("resetStatusAndSkillPoint(): {$party_id} ------------------------");
         $party = Party::find($party_id);
 
         try {
@@ -1490,7 +1490,7 @@ class ApiController extends Controller
                 $savedata->save();
             });
         } catch (\Exception $e) {
-            Debugbar::debug('reallocatedPoint でエラーが発生しました。');
+            Debugbar::debug('resetStatusAndSkillPoint でエラーが発生しました。');
 
             return response()->json([
                 'message' => $e->getMessage(),
