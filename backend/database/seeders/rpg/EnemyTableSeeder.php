@@ -189,7 +189,7 @@ class EnemyTableSeeder extends Seeder
                 'value_def' => 70,
                 'value_int' => 40,
                 'value_spd' => 40,
-                'value_luc' => 200,
+                'value_luc' => 0,
                 'exp' => 85,
                 'drop_money' => 60,
                 'portrait_image_path' => EnemyData::MagmaDile->image_path(),

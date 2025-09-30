@@ -43,7 +43,7 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::Bite,
             ],
 
-            // オヤダマワニ
+            // マグマダイル
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 1,
@@ -59,8 +59,8 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 3,
-                'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Bite,
+                'is_use_skill' => false,
+                'skill_id' => null,
             ],
             [
                 'enemy_id' => EnemyData::MagmaDile,
@@ -71,8 +71,8 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 5,
-                'is_use_skill' => false,
-                'skill_id' => null,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Bite,
             ],
             [
                 'enemy_id' => EnemyData::MagmaDile,
