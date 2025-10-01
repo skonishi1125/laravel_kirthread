@@ -855,6 +855,22 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}はしなる鞭を大きく振りおろし、こちらに力強く叩きつけた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::StellarBlink :
+                    Debugbar::warning(SkillDefinition::StellarBlink->label());
+                    $battle_logs_collection->push("{$actor_data->name}は星を輝かせ、その魔力をこちらにぶつけてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_spd'] = (int) (-($actor_data->value_spd) * (($selected_skill_data->skill_percent)));
+                    break;
+                case SkillDefinition::Blink :
+                    Debugbar::warning(SkillDefinition::Blink->label());
+                    $battle_logs_collection->push("{$actor_data->name}はキラキラと輝いている。");
+                    $damage = 0;
+                    break;
+                case SkillDefinition::MagicTackle :
+                    Debugbar::warning(SkillDefinition::MagicTackle->label());
+                    $battle_logs_collection->push("{$actor_data->name}は魔力を纏って、そのまま突進してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

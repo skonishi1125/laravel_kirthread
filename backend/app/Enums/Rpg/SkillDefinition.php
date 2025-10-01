@@ -96,6 +96,9 @@ enum SkillDefinition: int
     case FreeToEat = 118;
     case WeakPollen = 119;
     case GrassWhip = 120;
+    case StellarBlink = 121;
+    case Blink = 122;
+    case MagicTackle = 123;
 
     public function label(): string
     {
@@ -185,7 +188,9 @@ enum SkillDefinition: int
             self::FreeToEat => 'かじられる', // 回復 単体
             self::WeakPollen => '弱体の花粉', // 特殊 魔法 全体 STR・INTデバフ
             self::GrassWhip => 'グラスウィップ', // 物理 全体
-
+            self::StellarBlink => 'ステラブリンク', // 魔法 単体 SPDデバフ
+            self::Blink => 'きらめく', // 何もしない行動
+            self::MagicTackle => 'マジックタックル', // 魔法 単体
         };
     }
 
@@ -277,6 +282,9 @@ enum SkillDefinition: int
             self::FreeToEat => '自身をかじってもらい、味方単体の体力を回復。',
             self::WeakPollen => '弱体の花粉を振り撒き、相手全体に魔法ダメージ + STR, INTを下げる。',
             self::GrassWhip => 'しなる鞭を相手全体に思いっきり叩きつける。',
+            self::StellarBlink => '星の光を瞬かせ、それを魔力として相手単体にぶつける。SPDを下げる。',
+            self::Blink => 'キラキラかがやき、何もしない。',
+            self::MagicTackle => '魔法のタックル。理屈じゃない！相手に魔法単体攻撃。',
         };
     }
 }

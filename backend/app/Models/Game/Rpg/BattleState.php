@@ -2322,7 +2322,16 @@ class BattleState extends Model
                     }
                 }
                 Debugbar::warning('全体攻撃ループ完了。#########');
-
+                break;
+            case SkillDefinition::StellarBlink :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                $is_debuff = true;
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, $is_debuff, $is_enemy);
+                // 何もしない
+                break;
+            case SkillDefinition::Blink : // きらめく
+                // 何もしない
                 break;
             default:
                 break;

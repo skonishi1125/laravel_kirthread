@@ -72,6 +72,13 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::GrassWhip, 'skill_level' => 1],
 
+            // HoshiHotaru
+            ['enemy_id' => EnemyData::HoshiHotaru, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::HoshiHotaru, 'skill_id' => SkillDefinition::Blink, 'skill_level' => 1],
+
+            // Gyao
+            ['enemy_id' => EnemyData::Gyao, 'skill_id' => SkillDefinition::MagicTackle, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
