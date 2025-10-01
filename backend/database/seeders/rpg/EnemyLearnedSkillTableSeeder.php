@@ -67,6 +67,11 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::Dionaea, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Dionaea, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
 
+            // Dionaea
+            ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::GrassWhip, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

@@ -549,7 +549,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精の有する癒しの霧が味方の傷を包み込む...");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精たちの発する癒しの霧が味方の傷を包み込む...");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
                     break;
                 case SkillDefinition::BreakBowGun :
@@ -849,6 +849,11 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_str'] = (int) (-($actor_data->value_str) * (($selected_skill_data->skill_percent)));
                     $new_buff['buffed_int'] = (int) (-($actor_data->value_int) * (($selected_skill_data->skill_percent)));
+                    break;
+                case SkillDefinition::GrassWhip :
+                    Debugbar::warning(SkillDefinition::GrassWhip->label());
+                    $battle_logs_collection->push("{$actor_data->name}はしなる鞭を大きく振りおろし、こちらに力強く叩きつけた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');

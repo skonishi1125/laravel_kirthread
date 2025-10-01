@@ -95,6 +95,7 @@ enum SkillDefinition: int
     case Rush = 117;
     case FreeToEat = 118;
     case WeakPollen = 119;
+    case GrassWhip = 120;
 
     public function label(): string
     {
@@ -182,7 +183,8 @@ enum SkillDefinition: int
             self::Prepare => '準備',
             self::Rush => '突進', // 物理 全体
             self::FreeToEat => 'かじられる', // 回復 単体
-            self::WeakPollen => '弱体の花粉', // 特殊 攻撃・魔法デバフ + ダメージ
+            self::WeakPollen => '弱体の花粉', // 特殊 魔法 全体 STR・INTデバフ
+            self::GrassWhip => 'グラスウィップ', // 物理 全体
 
         };
     }
@@ -246,11 +248,11 @@ enum SkillDefinition: int
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
-            self::DefendThreat => '脅威を感知して自動で保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
+            self::DefendThreat => '脅威を感知してオートで保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
             self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
             self::ArcWisdom => '自身の知見を魔法を通じて仲間に分け与える。味方全員のINTを暫くの間向上させる。',
             self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
-            self::SonicTrimming => '行動をアルゴリズム化して無駄を省き最適化する呪文。味方全員のSPDを暫くの間向上させる。',
+            self::SonicTrimming => '行動をアルゴリズム化して動きを最適化する呪文。味方全員のSPDを暫くの間向上させる。',
             self::LuckEnt => '味方1人のLUCを暫くの間大幅に向上させる。',
             self::FortuneStar => 'なんだかいい日になるような気がする。味方全員のLUCが大幅に向上する。',
 
@@ -274,6 +276,7 @@ enum SkillDefinition: int
             self::Rush => '思いっきり突撃して相手全体に物理攻撃。',
             self::FreeToEat => '自身をかじってもらい、味方単体の体力を回復。',
             self::WeakPollen => '弱体の花粉を振り撒き、相手全体に魔法ダメージ + STR, INTを下げる。',
+            self::GrassWhip => 'しなる鞭を相手全体に思いっきり叩きつける。',
         };
     }
 }

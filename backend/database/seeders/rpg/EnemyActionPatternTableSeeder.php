@@ -153,6 +153,27 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::Rush,
             ],
+
+            // WandEater
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::WeakPollen,
+            ],
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DigestiveFluid,
+            ],
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::GrassWhip,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

@@ -1228,7 +1228,7 @@ class ApiController extends Controller
         $readable_history_libraries = Library::fetchReadableLibraryList($savedata, Library::CATEGORY_HISTORY);
 
         // vueに渡すデータ
-        // [0]戦術学論 [1]職能編纂 [2]魔物図譜 [3]歴史神話学
+        // [0]冒険指南 [1]職能編纂 [2]魔物図譜 [3]歴史神話学
         $all_data = collect()
             ->push($readable_adventure_libraries)
             ->push($readable_job_libraries)
