@@ -340,34 +340,47 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // WetFog
             // stage1
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Norawani,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Rizard,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Norawani,
+            //     'number' => 1,
+            // ],
+            // // stage 2
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 2,
+            //     'enemy_id' => EnemyData::Nepenthos,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 2,
+            //     'enemy_id' => EnemyData::HazardBerry,
+            //     'number' => 1,
+            // ],
+            // stage 3
             [
                 'field_id' => FieldData::WetFog,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Norawani,
+                'enemy_id' => EnemyData::Dionaea,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::WetFog,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Rizard,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::WetFog,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Norawani,
-                'number' => 1,
-            ],
-            // stage 2
-            [
-                'field_id' => FieldData::WetFog,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::Nepenthos,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::WetFog,
-                'stage_id' => 2,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::HazardBerry,
                 'number' => 1,
             ],

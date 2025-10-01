@@ -94,6 +94,7 @@ enum SkillDefinition: int
     case Prepare = 116; // 大技に噛ませるとよい
     case Rush = 117;
     case FreeToEat = 118;
+    case WeakPollen = 119;
 
     public function label(): string
     {
@@ -181,6 +182,7 @@ enum SkillDefinition: int
             self::Prepare => '準備',
             self::Rush => '突進', // 物理 全体
             self::FreeToEat => 'かじられる', // 回復 単体
+            self::WeakPollen => '弱体の花粉', // 特殊 攻撃・魔法デバフ + ダメージ
 
         };
     }
@@ -271,6 +273,7 @@ enum SkillDefinition: int
             self::Prepare => '次の攻撃の準備をする。',
             self::Rush => '思いっきり突撃して相手全体に物理攻撃。',
             self::FreeToEat => '自身をかじってもらい、味方単体の体力を回復。',
+            self::WeakPollen => '弱体の花粉を振り撒き、相手全体に魔法ダメージ + STR, INTを下げる。',
         };
     }
 }

@@ -1400,6 +1400,25 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::FreeToEat->description(),
             ],
+            [
+                'id' => SkillDefinition::WeakPollen->value,
+                'name' => SkillDefinition::WeakPollen->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Special->value,
+                'target_range' => TargetRange::All->value,
+                'lv1_percent' => 0.3,
+                'lv1_ap_cost' => 10,
+                'lv1_buff_turn' => 2,
+                'lv2_percent' => 0.6,
+                'lv2_ap_cost' => 10,
+                'lv2_buff_turn' => 2,
+                'lv3_percent' => 0.9,
+                'lv3_ap_cost' => 10,
+                'lv3_buff_turn' => 2,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::WeakPollen->description(),
+            ],
 
         ];
 

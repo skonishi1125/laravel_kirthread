@@ -843,6 +843,13 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は果実をばら撒き、栄養の補給を試みた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::WeakPollen :
+                    Debugbar::warning(SkillDefinition::WeakPollen->label());
+                    $battle_logs_collection->push("{$actor_data->name}は周囲に弱体の花粉を振り撒いた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_str'] = (int) (-($actor_data->value_str) * (($selected_skill_data->skill_percent)));
+                    $new_buff['buffed_int'] = (int) (-($actor_data->value_int) * (($selected_skill_data->skill_percent)));
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
