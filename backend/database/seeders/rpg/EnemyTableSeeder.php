@@ -310,7 +310,7 @@ class EnemyTableSeeder extends Seeder
                 'name' => EnemyData::ScissorFlipper->label(),
                 'value_hp' => 1100,
                 'value_ap' => 100,
-                'value_str' => 90,
+                'value_str' => 77,
                 'value_def' => 120,
                 'value_int' => 20,
                 'value_spd' => 70,

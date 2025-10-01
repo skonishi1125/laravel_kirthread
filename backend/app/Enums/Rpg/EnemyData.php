@@ -298,7 +298,7 @@ enum EnemyData: int
     public static function wetFogAppearingEnemies(): array
     {
         return [
-            self::Rizard->value,
+            self::Norawani->value,
             self::Nepenthos->value,
             self::Dionaea->value,
             self::HazardBerry->value,
