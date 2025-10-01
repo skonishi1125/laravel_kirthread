@@ -338,26 +338,27 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
+            // WetFog
+            // stage1
             // [
-            //     'field_id' => FieldData::IceAndSnow,
+            //     'field_id' => FieldData::WetFog,
             //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::Eripen,
+            //     'enemy_id' => EnemyData::Norawani,
             //     'number' => 1,
             // ],
             // [
-            //     'field_id' => FieldData::IceAndSnow,
+            //     'field_id' => FieldData::WetFog,
             //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::IceFairy,
+            //     'enemy_id' => EnemyData::Rizard,
             //     'number' => 1,
             // ],
             // [
-            //     'field_id' => FieldData::IceAndSnow,
+            //     'field_id' => FieldData::WetFog,
             //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::ScissorFlipper,
+            //     'enemy_id' => EnemyData::Norawani,
             //     'number' => 1,
             // ],
-
-            // 湿霧の地
+            // stage 2
             [
                 'field_id' => FieldData::WetFog,
                 'stage_id' => 1,
@@ -366,22 +367,35 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
             [
                 'field_id' => FieldData::WetFog,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Dionaea,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::WetFog,
-                'stage_id' => 1,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::HazardBerry,
                 'number' => 1,
             ],
-            [
-                'field_id' => FieldData::WetFog,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::WandEater,
-                'number' => 1,
-            ],
+
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Nepenthos,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Dionaea,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::HazardBerry,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::WetFog,
+            //     'stage_id' => 2,
+            //     'enemy_id' => EnemyData::WandEater,
+            //     'number' => 1,
+            // ],
 
             // 常夜の森
             [

@@ -802,7 +802,7 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は消化液を吐き出した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     // マイナスの値にして、相手にデバフとして付与する
-                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent));
+                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * ($selected_skill_data->skill_percent * 0.5));
                     break;
                 case SkillDefinition::Freeze :
                     Debugbar::warning(SkillDefinition::Freeze->label());

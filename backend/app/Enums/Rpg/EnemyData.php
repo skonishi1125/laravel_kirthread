@@ -147,10 +147,10 @@ enum EnemyData: int
             self::IceFairy => '冷たい大気が魔法の残り香によって生命体となった。見た目に反して打たれ強くすばしっこい。あられを操る全体攻撃「ヘイルショット」を得意とする。APが少なく、2回しか撃つことができないためやり過ごしてから攻撃したい。',
             self::ScissorFlipper => 'エリペンの群れを連ねるリーダー。エリペン種の強烈な突進が鋭い刃物のような腕を持ったことでより強烈な一撃となった。同じく、準備をしたのちに突進をしてくる。',
 
-            self::Nepenthos => 'ネペントス',
-            self::Dionaea => 'ディオネア',
-            self::HazardBerry => 'ハザードベリー',
-            self::WandEater => 'ワンドイーター',
+            self::Nepenthos => '沼地に住み着いているウツボカズラ。獲物に消化液を吐きかけ、捕食を試みる。',
+            self::Dionaea => '沼地に住む植物。人間・魔物問わず獲物を挟んで消化する。獲物の攻撃を弱める手段を得意とし、抵抗できなくなったところを捕食する。',
+            self::HazardBerry => '自身を魔物にかじらせて回復させる果実の魔物。かじってもらう理由は種の分布を広げるため。人間が食べてもおいしくないので、優先的に倒してしまおう。',
+            self::WandEater => '古くから沼地に住み着く大型の魔物。魔物の中でも顕著に人間に襲いかかる。様々な弱体効果を持つムチを操り獲物の自由を奪ったのち、強烈な打撃を叩き込む。',
 
             self::HoshiHotaru => 'ホシホタル',
             self::Gyao => 'ギャオー',
@@ -298,6 +298,7 @@ enum EnemyData: int
     public static function wetFogAppearingEnemies(): array
     {
         return [
+            self::Rizard->value,
             self::Norawani->value,
             self::Nepenthos->value,
             self::Dionaea->value,

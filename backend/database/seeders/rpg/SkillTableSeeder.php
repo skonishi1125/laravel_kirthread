@@ -1253,7 +1253,7 @@ class SkillTableSeeder extends Seeder
                 'id' => SkillDefinition::DigestiveFluid->value,
                 'name' => SkillDefinition::DigestiveFluid->label(),
                 'available_role_id' => Role::ROLE_NONE,
-                'attack_type' => AttackType::Physical->value,
+                'attack_type' => AttackType::Magic->value,
                 'effect_type' => EffectType::Special->value,
                 'target_range' => TargetRange::Single->value,
                 'is_target_enemy' => true,
