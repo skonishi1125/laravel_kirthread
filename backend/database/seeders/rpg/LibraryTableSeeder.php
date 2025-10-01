@@ -129,7 +129,7 @@ class LibraryTableSeeder extends Seeder
                 'id' => 5,
                 'name' => '固定行動をもつ魔物【月刊トリップ】',
                 'book_category' => Library::CATEGORY_ADVENTURE,
-                'content' => '<p>月刊トリップだ。</p><p>体力が青く表示されている敵を見かけたことはないか？<br>そいつは特定の習性を持つ、「固定行動」を持った魔物だ。</p><p>代表的なのはワニ系統の敵だ。<br>必ず戦闘開始時に「咆哮」をあげて、自身のステータスを高めてくるんだ。<br>その間にボコっちまうかもしくは戦闘体制を整えるかはあんたの自由だ。</p><p>ワニ系統以外にも特定の習性を持つ魔物はたくさんいるから、<br>体力が青く表示される敵を見かけた時は<b>ターン数と行動</b>を気に留めておくといいぜ。</p>',
+                'content' => '<p>月刊トリップだ。</p><p><span style="color:blue">体力が青く表示されている魔物</span>を見かけたことはないか？<br>そいつは特定の習性を持つ、「固定行動」を持った魔物だ。</p><p>代表的なのはワニ系統の敵だ。<br>必ず戦闘開始時に「咆哮」をあげて、自身のステータスを高めてくるんだ。<br>その間にボコっちまうかもしくは戦闘体制を整えるかはあんたの自由だ。</p><p>ワニ系統以外にも特定の習性を持つ魔物はたくさんいるから、<br>体力が青く表示される敵を見かけた時は<b>ターン数と行動</b>を気に留めておくといいぜ。</p>',
                 'required_clears' => 2,
             ],
             [
@@ -276,7 +276,7 @@ class LibraryTableSeeder extends Seeder
                 'name' => '(未完成)調査報告書: '.FieldData::DecayedFarmland->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $decayedfarmland_preface.$caution,
-                'required_clears' => 5,
+                'required_clears' => 6,
             ],
             [
                 'id' => 212,
@@ -291,7 +291,7 @@ class LibraryTableSeeder extends Seeder
                 'name' => '(未完成)調査報告書: '.FieldData::CastleTown->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $castletown_preface.$caution,
-                'required_clears' => 5,
+                'required_clears' => 6,
             ],
             [
                 'id' => 214,
@@ -306,7 +306,7 @@ class LibraryTableSeeder extends Seeder
                 'name' => '(未完成)調査報告書: '.FieldData::AncientCastle->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastle_preface.$caution,
-                'required_clears' => 5,
+                'required_clears' => 7,
             ],
             [
                 'id' => 216,
@@ -316,13 +316,13 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastle,
             ],
-            [
-                'id' => 217,
-                'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-                'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $vastexpanse_preface.$caution,
-                'required_clears' => 5,
-            ],
+            // [
+            //     'id' => 217,
+            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
+            //     'book_category' => Library::CATEGORY_ENEMY,
+            //     'content' => $vastexpanse_preface.$caution,
+            //     'required_clears' => 11,
+            // ],
             [
                 'id' => 218,
                 'name' => '調査報告書: '.FieldData::VastExpanse->label(),
