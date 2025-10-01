@@ -138,7 +138,7 @@ class EnemyTableSeeder extends Seeder
                 'value_int' => 60,
                 'value_spd' => 40,
                 'value_luc' => 0,
-                'exp' => 100,
+                'exp' => 90,
                 'drop_money' => 25,
                 'portrait_image_path' => EnemyData::Norawani->image_path(),
                 'description' => EnemyData::Norawani->description(),
@@ -361,7 +361,7 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::HazardBerry,
                 'name' => EnemyData::HazardBerry->label(),
-                'value_hp' => 350,
+                'value_hp' => 400,
                 'value_ap' => 100,
                 'value_str' => 50,
                 'value_def' => 20,

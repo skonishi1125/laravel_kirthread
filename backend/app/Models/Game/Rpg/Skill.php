@@ -838,6 +838,11 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は自慢のお腹で滑りながら、思いっきり突進してきた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::FreeToEat :
+                    Debugbar::debug(SkillDefinition::FreeToEat->label());
+                    $battle_logs_collection->push("{$actor_data->name}は果実をばら撒き、栄養の補給を試みた！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

@@ -1383,6 +1383,23 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::Rush->description(),
             ],
+            [
+                'id' => SkillDefinition::FreeToEat->value,
+                'name' => SkillDefinition::FreeToEat->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Heal->value,
+                'target_range' => TargetRange::Single->value,
+                'is_target_enemy' => false,
+                'lv1_percent' => 5,
+                'lv1_ap_cost' => 5,
+                'lv2_percent' => 10,
+                'lv2_ap_cost' => 5,
+                'lv3_percent' => 15,
+                'lv3_ap_cost' => 5,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::FreeToEat->description(),
+            ],
 
         ];
 

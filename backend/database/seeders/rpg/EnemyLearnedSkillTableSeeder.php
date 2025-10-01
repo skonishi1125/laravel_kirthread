@@ -60,6 +60,8 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
 
+            // HazardBerry
+            ['enemy_id' => EnemyData::HazardBerry, 'skill_id' => SkillDefinition::FreeToEat, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ
