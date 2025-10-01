@@ -400,30 +400,71 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
 
             // 常夜の森
-            // [
-            //     'field_id' => FieldData::NightForest,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::HoshiHotaru,
-            //     'number' => 1,
-            // ],
+            // stage1
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 1,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 6,
+            ],
+            // stage2
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::Gyao,
                 'number' => 1,
             ],
-            // [
-            //     'field_id' => FieldData::NightForest,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::ShadowWeed,
-            //     'number' => 1,
-            // ],
-            // [
-            //     'field_id' => FieldData::NightForest,
-            //     'stage_id' => 2,
-            //     'enemy_id' => EnemyData::Twilight,
-            //     'number' => 1,
-            // ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 2,
+            ],
+            // stage3
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::HoshiHotaru,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Gyao,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::HoshiHotaru,
+                'number' => 1,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::ShadowWeed,
+                'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Gyao,
+                'number' => 1,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Twilight,
+                'number' => 1,
+            ],
 
             // 退廃
             [

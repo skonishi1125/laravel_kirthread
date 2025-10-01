@@ -174,6 +174,37 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::GrassWhip,
             ],
 
+            // Twilight
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Blink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StellarBlink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StellarBlink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Discharge,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 5,
+                'is_use_skill' => false,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

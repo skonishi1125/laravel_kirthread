@@ -79,6 +79,14 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // Gyao
             ['enemy_id' => EnemyData::Gyao, 'skill_id' => SkillDefinition::MagicTackle, 'skill_level' => 1],
 
+            // ShadowWeed
+            ['enemy_id' => EnemyData::ShadowWeed, 'skill_id' => SkillDefinition::GrassWhip, 'skill_level' => 1],
+
+            // Twilight
+            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Blink, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 3],
+            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 3],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

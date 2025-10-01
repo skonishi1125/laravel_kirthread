@@ -25,19 +25,19 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 8,
             ],
-            // ラピッドフィスト ミドルブロウLv1以上, pLv15以上
+            // ラピッドフィスト ミドルブロウLv1以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::RapidFist->value,
                 'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // アックスシュート スピンキックLv1以上, pLv15以上
+            // アックスシュート スピンキックLv1以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::AxeShoot->value,
                 'requirement_skill_id' => SkillDefinition::SpinKick->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // タイタンブレイク ミドルブロウLv1以上, pLv20以上
             [
@@ -68,12 +68,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 10,
             ],
-            // ヘヴンレイ ミニボルト Lv2以上, pLv15以上
+            // ヘヴンレイ ミニボルト Lv2以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ルミナスリリーヴ ヒーリング Lv1以上, pLv10以上
             [
@@ -118,12 +118,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 10,
             ],
-            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv15以上
+            // ブレイヴスラッシュ ワイドスラッシュ Lv1以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::BraveSlash->value,
                 'requirement_skill_id' => SkillDefinition::WideThrust->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ブラッドムーン pLv20以上
             [
@@ -147,19 +147,19 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 10,
             ],
-            // クラッシュブラスト プチボルトLv1, pLv15以上
+            // クラッシュブラスト プチボルトLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::CrashBlast->value,
                 'requirement_skill_id' => SkillDefinition::PetitBolt->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // マナエクスプロージョン ボルトストームLv1, pLv15以上
+            // マナエクスプロージョン ボルトストームLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::ManaExplosion->value,
                 'requirement_skill_id' => SkillDefinition::BoltStorm->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // バトルメイジ 該当スキルなし, pLv20以上
             [
@@ -184,19 +184,19 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 10,
             ],
-            // バリスタショット pLv15以上
+            // バリスタショット pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::BallistaShot->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // セイレーンオーラ pLv15以上
+            // セイレーンオーラ pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::SirenAura->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ケルベロスフォース pLv20以上
             [
@@ -206,26 +206,26 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_party_level' => 20,
             ],
             // -------------------- 理術師 --------------------
-            // アクシオムストライク ブックスマッシュLv2, pLv15以上
+            // アクシオムストライク ブックスマッシュLv2, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::AxiomStrike->value,
                 'requirement_skill_id' => SkillDefinition::BookSmash->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // ロゴスレイ マジックミサイルLv2, pLv15以上
+            // ロゴスレイ マジックミサイルLv2, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::LogosRay->value,
                 'requirement_skill_id' => SkillDefinition::MagicMissile->value,
                 'requirement_skill_level' => 2,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // ブレードフォース pLv15以上
+            // ブレードフォース pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::BladeForce->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ディフェンドスリート ShieldEnt SLv1, pLv20以上
             [
@@ -234,12 +234,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
-            // アークウィズダム pLv15以上
+            // アークウィズダム pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::ArcWisdom->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ソニックトリミング SpeedEnt SLv1, pLv20以上
             [
@@ -248,12 +248,12 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
-            // フォーチュンスター pLv15以上
+            // フォーチュンスター pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::FortuneStar->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
 
         ];
