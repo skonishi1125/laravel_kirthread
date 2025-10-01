@@ -405,7 +405,19 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::Gao,
-                'number' => 6,
+                'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Srara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 2,
             ],
             // stage2
             [

@@ -62,7 +62,7 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 常夜の森
-        $nightforest_preface = '<p>長夜の樹海</p>';
+        $nightforest_preface = '<p>夜が支配するこの森には、陽光が差し込むことは一切なく、あらゆる時刻が闇に包まれている。唯一の光源となるのは、群生するホシホタルと呼ばれる生物であり、その微光によって生物たちはわずかな視界を得ることが可能である。森に棲息する魔物の多くは高い知能を有しており、魔法による攻撃は効果を感じにくいということが報告されている。したがって探索には物理的な火力が不可欠となる。</p><p>一方で、この地にも僅かな安らぎが存在する。ホシホタルたちが飛翔するとき、漆黒の天に光が瞬き、銀河を想わせる幻想的な光景が現れるという。この美景は、本地帯の脅威を承知の上でなお足を運ぶ者を惹きつけてやまない。</p>';
         $nightforest_content = $this->buildEnemyHTMLElement(
             EnemyData::nightForestAppearingEnemies(),
             $nightforest_preface
