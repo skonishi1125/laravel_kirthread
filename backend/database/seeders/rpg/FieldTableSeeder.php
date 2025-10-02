@@ -101,7 +101,11 @@ class FieldTableSeeder extends Seeder
                 'name' => FieldData::AncientCastle->label(),
                 'background_image_path' => FieldData::AncientCastle->image_path(),
                 'difficulty' => 6,
-                'required_clears' => 7,
+                /**
+                 * ステージをクリアしても開放されないように、11としておく。
+                 * 詳細には城下町クリア、で開放。
+                 */
+                'required_clears' => 11,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
