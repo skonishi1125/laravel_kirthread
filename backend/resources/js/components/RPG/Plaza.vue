@@ -109,7 +109,7 @@
           <!-- 癒しの館 -->
           <div v-if="isEnableRefresh == true">
             <div class="clickable-marker" 
-              style="top: 30%; left: 76%;" 
+              style="top: 30%; left: 76%; background-color: blue;" 
               @click="selectDestination('Refresh')"
               @mouseover="showFacilityInfo('Refresh')"
             ></div>

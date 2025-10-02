@@ -53,9 +53,10 @@ enum SkillDefinition: int
     case BreakBowGun = 52;
     case EdgeFold = 53;
     case WindAccel = 54;
-    case BallistaShot = 55;
-    case CerberusForce = 56;
+    case GaleStrike = 55;
+    case BallistaShot = 56;
     case SirenAura = 57;
+    case CerberusForce = 58;
 
     // -------------------- 理術師 --------------------
     case BookSmash = 60;
@@ -89,6 +90,15 @@ enum SkillDefinition: int
     case Bubble = 112;
     case Wave = 113;
     case Fire = 114;
+    case HailShot = 115;
+    case Prepare = 116; // 大技に噛ませるとよい
+    case Rush = 117;
+    case FreeToEat = 118;
+    case WeakPollen = 119;
+    case GrassWhip = 120;
+    case StellarBlink = 121;
+    case Blink = 122;
+    case MagicTackle = 123;
 
     public function label(): string
     {
@@ -137,9 +147,10 @@ enum SkillDefinition: int
             self::BreakBowGun => 'ブレイクボウガン',
             self::EdgeFold => 'エッジフォールド',
             self::WindAccel => 'ウインドアクセル',
+            self::GaleStrike => 'ゲイルストライク',
             self::BallistaShot => 'バリスタショット',
-            self::CerberusForce => 'ケルベロスフォース',
             self::SirenAura => 'セイレーンオーラ',
+            self::CerberusForce => 'ケルベロスフォース',
 
             self::BookSmash => 'ブックスマッシュ',
             self::AxiomStrike => 'アクシオムストライク',
@@ -171,7 +182,15 @@ enum SkillDefinition: int
             self::Bubble => 'バブル', // 攻撃魔法全体
             self::Wave => '大波', // 攻撃魔法全体
             self::Fire => 'ファイアー', // 攻撃魔法単体
-
+            self::HailShot => 'ヘイルショット', // 物理 全体
+            self::Prepare => '準備',
+            self::Rush => '突進', // 物理 全体
+            self::FreeToEat => 'かじられる', // 回復 単体
+            self::WeakPollen => '弱体の花粉', // 特殊 魔法 全体 STR・INTデバフ
+            self::GrassWhip => 'グラスウィップ', // 物理 全体
+            self::StellarBlink => 'ステラブリンク', // 魔法 単体 SPDデバフ
+            self::Blink => 'きらめく', // 何もしない行動
+            self::MagicTackle => 'マジックタックル', // 魔法 単体
         };
     }
 
@@ -188,13 +207,13 @@ enum SkillDefinition: int
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
 
             self::Healing => '治療師の基礎回復魔法。味方単体のHPを回復する呪文を唱える。',
-            self::AllHealing => '癒しのマナを広範囲に拡散し、味方全体のHPを回復する。',
+            self::AllHealing => '癒しの魔力を広範囲に拡散し、味方全体のHPを回復する。',
             self::QuickHeal => '先制発動する。迅速な詠唱で味方単体のHPを回復する。',
-            self::MiniVolt => 'マナを敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
-            self::HolyArrow => '光の弓矢を聖なるマナで具現化し、敵単体に射出する。',
+            self::MiniVolt => '魔力を敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
+            self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に射出する。',
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
-            self::LuminousRelieve => '聖なる力を込めたマナを呪文に込める。味方1人のHPを大きく回復させる。',
-            self::AllRelieve => 'マナを大きく消費し、味方全体のHPを大きく回復させる。',
+            self::LuminousRelieve => '聖なる力を込めた魔力を呪文に込める。味方1人のHPを大きく回復させる。',
+            self::AllRelieve => '魔力を大きく消費し、味方全体のHPを大きく回復させる。',
             self::Resurrection => '聖なる力を戦闘不能の味方に分け与え、戦闘不能状態から復活させる。',
 
             self::WideGuard => '先制発動する。使用ターン中の味方全員のダメージを軽減する。',
@@ -212,32 +231,33 @@ enum SkillDefinition: int
             self::AileCaliber => '魔道の刃で敵単体を切り裂く。自分のINTに依存した物理ダメージを与える。',
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
-            self::CrashBlast => 'マナで生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
-            self::ManaExplosion => '巨大なマナの塊を大爆発させ、敵全体に大ダメージを与える。',
+            self::CrashBlast => '魔力で生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
+            self::ManaExplosion => '巨大な魔力の塊を大爆発させ、敵全体に大ダメージを与える。',
             self::Meditation => '深く瞑想することで心を落ち着かせ、暫くの間自身のINTを高める。',
             self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、STRが飛躍的に上昇。',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
-            self::BreakBowGun => '敵単体に弩を打ち込みダメージを与え、短時間DEFを下げる。',
-            self::EdgeFold => '敵の持つ攻撃手段に狙いを定めて弓を放つ。ダメージを与え、暫くの間STRを下げる。',
-            self::WindAccel => '敵全体に弓を放ちつつ、風の力を纏うことで次のターンのSPDを上げる。',
+            self::BreakBowGun => '敵単体に重量のある弩を打ち込む。ダメージを与え、短時間DEFを下げる。',
+            self::EdgeFold => '敵単体に弱体の魔力を込めた弓矢を放つ。ダメージを与え、そのターン中のSTRとINTを下げる。',
+            self::WindAccel => '風の魔力を込めた鋭い弓矢を敵単体に放つ。ダメージを与え、次のターンのSPDを上げる。',
+            self::GaleStrike => '暴風を身に纏い、敵単体に攻撃を叩き込む。ウインドアクセルが付与されていた場合は威力が上昇。',
             self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
-            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
             self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
+            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
 
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
-            self::AxiomStrike => 'マナの理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',
+            self::AxiomStrike => '魔力の理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',
             self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
-            self::LogosRay => 'マナの理を解析し光線を生成。敵単体に高威力の魔法ダメージ。',
+            self::LogosRay => '魔力の理を解析し光線を生成。敵単体に高威力の魔法ダメージ。',
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
-            self::DefendThreat => '脅威を感知して自動で保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
+            self::DefendThreat => '脅威を感知してオートで保護する呪文を付与する。味方全員のDEFを暫くの間向上させる。',
             self::MagicEnt => '味方1人のINTを暫くの間向上させる。',
             self::ArcWisdom => '自身の知見を魔法を通じて仲間に分け与える。味方全員のINTを暫くの間向上させる。',
             self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
-            self::SonicTrimming => '行動をアルゴリズム化して無駄を省き最適化する呪文。味方全員のSPDを暫くの間向上させる。',
+            self::SonicTrimming => '行動をアルゴリズム化して動きを最適化する呪文。味方全員のSPDを暫くの間向上させる。',
             self::LuckEnt => '味方1人のLUCを暫くの間大幅に向上させる。',
             self::FortuneStar => 'なんだかいい日になるような気がする。味方全員のLUCが大幅に向上する。',
 
@@ -256,6 +276,15 @@ enum SkillDefinition: int
             self::Bubble => '相手全体に泡を撒き散らし、魔法攻撃。',
             self::Wave => '大波を呼び寄せ、相手全体に魔法攻撃。',
             self::Fire => '炎の呪文で相手単体に魔法攻撃。',
+            self::HailShot => '霰の粒を撒き散らし、相手全体に物理攻撃。',
+            self::Prepare => '次の攻撃の準備をする。',
+            self::Rush => '思いっきり突撃して相手全体に物理攻撃。',
+            self::FreeToEat => '自身をかじってもらい、味方単体の体力を回復。',
+            self::WeakPollen => '弱体の花粉を振り撒き、相手全体に魔法ダメージ + STR, INTを下げる。',
+            self::GrassWhip => 'しなる鞭を相手全体に思いっきり叩きつける。',
+            self::StellarBlink => '星の光を瞬かせ、それを魔力として相手単体にぶつける。SPDを下げる。',
+            self::Blink => 'キラキラかがやき、何もしない。',
+            self::MagicTackle => '魔法のタックル。理屈じゃない！相手に魔法単体攻撃。',
         };
     }
 }

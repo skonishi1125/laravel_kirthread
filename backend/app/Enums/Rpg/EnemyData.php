@@ -126,36 +126,36 @@ enum EnemyData: int
     {
         return match ($this) {
             self::Srara => '冒険者の前に立ちはだかる最初の敵。油断禁物！',
-            self::Gao => '素早い動きが特徴。攻撃力が高いため、優先的に倒そう。',
-            self::BigSrara => 'スララが偶然合体した生物。消化液で防御力を落としてくるのがいやらしい。',
+            self::Gao => '素早い動きが特徴。攻撃力が高いため優先的に倒そう。',
+            self::BigSrara => 'スララが偶然ぶつかり合体した生命体。消化液でDEFを落としてくるのがいやらしい。',
 
             self::Rizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
-            self::Scorpio => '致命の一撃を得意とするサソリ。魔法に弱いので、早めに倒してしまおう。',
+            self::Scorpio => '致命の一撃を得意とするサソリ。魔法耐性が非常に低いので魔法で攻めよう。',
             self::RockRizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
-            self::Bou => '炎のマナが集まってできた生命体。集団で出てくるため、全体攻撃でさっさと倒そう。',
-            self::IwaMet => '防御が自慢のカメ。魔法での攻撃が有効。',
-            self::Norawani => '火山を彷徨く野良のワニ。生命力が高くバランスの良いステータスが特徴。',
-            self::MagmaDile => 'ノラワニ達を仕切るボス。咆哮で攻撃力を上げてから、最後に暴れ回る。',
+            self::Bou => '炎魔法の残り香が集まってできた生命体。集団で出てきてファイアの魔法で攻め立てられる。物理防御力が低いので全体攻撃で攻めると吉。',
+            self::IwaMet => '防御が自慢のカメ（？）。魔法での攻撃が有効。',
+            self::Norawani => 'そこらを彷徨く野良のワニ（おそらく）。バランスの良いステータスが特徴。必ず戦闘前に咆哮を上げてステータスを高める。',
+            self::MagmaDile => 'ノラワニ達を仕切るボス。必ず戦闘前に咆哮を上げてステータスを高める。咆哮がおさまったのちしばらくすると噛みつきそして強烈に暴れ回るのでタイミングを見て防御を選択できると戦いやすいだろう。暴れ回ったのちは再び咆哮で士気を高める。',
 
-            self::MageSrara => 'スララの変異体。冒険者の杖を振り回して簡易的な魔法を使う。',
-            self::Clion => 'ふよふよと浮遊する生命体。吐き出す泡は強力なので、吐かれる前にさっさと倒してしまおう。',
-            self::Ikkaku => '頑丈な甲殻を持つ。立派なツノから呼ばれる雷攻撃には要注意。',
-            self::SpikeWhale => '海岸のボス。特定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
+            self::MageSrara => 'スララの変異体。冒険者の落とした杖を振り回して簡易的な魔法を覚えた。',
+            self::Clion => 'ふよふよと浮遊する生命体。鈍足だが吐き出す泡は強力なので、使われる前に各個撃破しよう。',
+            self::Ikkaku => '立派なツノから呼ばれる雷魔法は単体攻撃、全体攻撃の2種類があるため注意。ツルツルした見た目だが、ガラスのように脆い。',
+            self::SpikeWhale => '海岸のボス。一定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
 
-            self::Eripen => 'エリペン',
-            self::IceFairy => 'アイスフェアリー',
-            self::ScissorFlipper => 'シザーフリッパー',
+            self::Eripen => '首回りの氷が襟に見えることからこの名前をつけられた。準備をしたのち、滑って突進してくるので身構えること。',
+            self::IceFairy => '冷たい大気が魔法の残り香によって生命体となった。見た目に反して打たれ強くすばしっこい。あられを操る全体攻撃「ヘイルショット」を得意とする。APが少なく、2回しか撃つことができないためやり過ごしてから攻撃したい。',
+            self::ScissorFlipper => 'エリペンの群れを連ねるリーダー。エリペン種の強烈な突進が鋭い刃物のような腕を持ったことでより強烈な一撃となった。同じく、準備をしたのちに突進をしてくる。',
 
-            self::Nepenthos => 'ネペントス',
-            self::Dionaea => 'ディオネア',
-            self::HazardBerry => 'ハザードベリー',
-            self::WandEater => 'ワンドイーター',
+            self::Nepenthos => '沼地に住み着いているウツボカズラ。獲物に消化液を吐きかけ、捕食を試みる。',
+            self::Dionaea => '沼地に住む植物。人間・魔物問わず獲物を挟んで消化する。獲物の攻撃を弱める手段を得意とし、抵抗できなくなったところを捕食する。',
+            self::HazardBerry => '自身を魔物にかじらせて回復させる果実の魔物。かじってもらう理由は種の分布を広げるため。人間が食べてもおいしくないので、優先的に倒してしまおう。',
+            self::WandEater => '古くから沼地に住み着く大型の魔物。魔物の中でも顕著に人間に襲いかかる。様々な弱体効果を持つ技を操り獲物の自由を奪ったのち、強靭なツルのムチで痛い打撃を叩き込む。',
 
-            self::HoshiHotaru => 'ホシホタル',
-            self::Gyao => 'ギャオー',
-            self::ShadowWeed => 'シャドウウィード',
-            self::Twilight => 'トワイライト',
+            self::HoshiHotaru => '夜の森に生息するホタルで、幻想的な光は時に冒険者を惑わせる。SPDを下げる攻撃魔法を使う。',
+            self::Gyao => '常夜の森に棲み付くガオーが変化した姿。ガオーと違って魔法攻撃が得意。変わらず素早く火力も高いので優先的に倒そう。',
+            self::ShadowWeed => '草木に擬態した影が本体の魔物。光が基本的に存在しない常夜の森ではその姿を捉えることは難しいが、ホシホタルだけは例外のため天敵。物理的な攻撃を得意としており、魔法への耐性も極めて高い。強力な全体攻撃は一度しか使えないので、やり過ごせば戦いやすいだろう。',
+            self::Twilight => '常夜の森のヌシ。豊富な魔法攻撃を使用して冒険者を苦しめる。性格自体はおっとりとしているようだ。巨大だがその姿を表すことは滅多になく、かつては幸運の象徴だったとも言われている。',
 
             self::CurseScareCrow => '呪いのカカシ',
             self::DustBomb => 'ダストボム',
@@ -256,6 +256,7 @@ enum EnemyData: int
     public static function desertAppearingEnemies(): array
     {
         return [
+            self::Srara->value,
             self::Gao->value,
             self::Rizard->value,
             self::Scorpio->value,
@@ -286,6 +287,7 @@ enum EnemyData: int
     public static function iceAndSnowAppearingEnemies(): array
     {
         return [
+            self::IwaMet->value,
             self::Ikkaku->value,
             self::Eripen->value,
             self::IceFairy->value,
@@ -297,6 +299,7 @@ enum EnemyData: int
     {
         return [
             self::Rizard->value,
+            self::Norawani->value,
             self::Nepenthos->value,
             self::Dionaea->value,
             self::HazardBerry->value,
@@ -307,6 +310,8 @@ enum EnemyData: int
     public static function nightForestAppearingEnemies(): array
     {
         return [
+            self::Srara->value,
+            self::Gao->value,
             self::HoshiHotaru->value,
             self::Gyao->value,
             self::ShadowWeed->value,

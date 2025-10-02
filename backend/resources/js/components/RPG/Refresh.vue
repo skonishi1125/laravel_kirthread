@@ -255,10 +255,11 @@
               {{ modalPartyInformation.nickname }}に割り振ったポイントをリセットします。(所持金: <b>{{ currentMoney }}</b> G)<br>
             </p>
             <div style="text-align: right;">
-              <span>必要代金: {{ modalPartyInformation.level * 100 }} G <small>(※ Lv x 100 G)</small></span>
+              <!-- <span>必要代金: {{ modalPartyInformation.level * baseMoney }} G <small>(※ Lv x {{ baseMoney }} G)</small></span> -->
+              <span>必要代金: {{ baseMoney }} G</span>
             </div>
             <div style="min-height: 50px;">
-              <span style="color:red" v-if="currentMoney < modalPartyInformation.level * 100">
+              <span style="color:red" v-if="currentMoney < baseMoney">
                 所持金が不足しています。
               </span>
             </div>
@@ -266,7 +267,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-info btn-sm"
-            :disabled="currentMoney < modalPartyInformation.level * 100"
+            :disabled="currentMoney < baseMoney"
             @click="paymentRefresh"
             >
               リセットする
@@ -292,6 +293,7 @@
         modalPartyInformation: {},
         modalErrorMessage: null,
         refreshSuccessMessage: null,
+        baseMoney: 1000, // この数値が金額
       }
     },
     // メソッドを定義できる(算出プロパティ)。キャッシュが効くので頻繁に再利用する処理を書く
@@ -329,20 +331,21 @@
             this.$store.dispatch('setMenuPlazaRefreshStatus', 'loaded');
           }
         ).catch(error => {
+            console.log('ERROR');
             this.$router.push({ name: 'menu_plaza'});
         });
       },
 
       paymentRefresh(){
         console.log(`paymentRefresh`);
-        if (this.currentMoney < this.modalPartyInformation.level * 100) {
+        if (this.currentMoney < this.baseMoney) {
           this.modalErrorMessage = '所持金が不足しています。'
           return;
         }
 
         axios.post('/api/game/rpg/menu/plaza/refresh/reset_status_and_skill_point', {
           party_id: this.modalPartyInformation.party_id,
-          payment_money: this.modalPartyInformation.level * 100
+          payment_money: this.baseMoney
         })
         .then(response => {
           this.fetchPartiesInfo();

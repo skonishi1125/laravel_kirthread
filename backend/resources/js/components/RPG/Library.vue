@@ -107,7 +107,7 @@
                   <button class="btn btn-sm btn-outline-info"
                   :class="{'active': status.status === 'adventure'}"
                   @click="changeCurrentBookCategory('adventure')">
-                  戦術学論</button>
+                  冒険指南</button>
                 </div> <!-- デフォルト -->
                 <div>
                   <button class="btn btn-sm btn-outline-info"
@@ -141,7 +141,7 @@
                 <table class="table table-borderless table-hoverable">
                   <thead>
                     <tr style="border-bottom: 1px dotted;">
-                      <th v-if="status.status === 'adventure'">戦術学論 書籍一覧</th>
+                      <th v-if="status.status === 'adventure'">冒険指南 書籍一覧</th>
                       <th v-if="status.status === 'job'">職能編纂 書籍一覧</th>
                       <th v-if="status.status === 'enemy'">魔物図譜 書籍一覧</th>
                       <th v-if="status.status === 'history'">歴史神話学 書籍一覧</th>

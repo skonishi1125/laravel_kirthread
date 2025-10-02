@@ -17,7 +17,33 @@ class EnemyActionPatternTableSeeder extends Seeder
         EnemyActionPattern::truncate();
 
         $seeds = [
-            // オヤダマワニ
+            // ノラワニ
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Roar,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+                'skill_id' => null,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+                'skill_id' => null,
+            ],
+            [
+                'enemy_id' => EnemyData::Norawani,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Bite,
+            ],
+
+            // マグマダイル
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 1,
@@ -33,8 +59,8 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 3,
-                'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Bite,
+                'is_use_skill' => false,
+                'skill_id' => null,
             ],
             [
                 'enemy_id' => EnemyData::MagmaDile,
@@ -45,8 +71,8 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::MagmaDile,
                 'turn_count' => 5,
-                'is_use_skill' => false,
-                'skill_id' => null,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Bite,
             ],
             [
                 'enemy_id' => EnemyData::MagmaDile,
@@ -59,19 +85,126 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::SpikeWhale,
                 'turn_count' => 1,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Wave,
             ],
             [
                 'enemy_id' => EnemyData::SpikeWhale,
                 'turn_count' => 2,
-                'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Wave,
+                'is_use_skill' => false,
             ],
             [
                 'enemy_id' => EnemyData::SpikeWhale,
                 'turn_count' => 3,
                 'is_use_skill' => false,
             ],
+
+            // Eripen
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::Eripen,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rush,
+            ],
+
+            // ScissorFlipper
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rush,
+            ],
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'turn_count' => 6,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rush,
+            ],
+
+            // WandEater
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::WeakPollen,
+            ],
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DigestiveFluid,
+            ],
+            [
+                'enemy_id' => EnemyData::WandEater,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::GrassWhip,
+            ],
+
+            // Twilight
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Blink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StellarBlink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StellarBlink,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Discharge,
+            ],
+            [
+                'enemy_id' => EnemyData::Twilight,
+                'turn_count' => 5,
+                'is_use_skill' => false,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {
