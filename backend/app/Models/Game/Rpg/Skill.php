@@ -623,7 +623,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::MagicMissile :
                     Debugbar::debug(SkillDefinition::MagicMissile->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}の！生成されたミサイルが敵目掛けて狙撃される！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！魔導のミサイルを敵目掛けて射出する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::LogosRay :
