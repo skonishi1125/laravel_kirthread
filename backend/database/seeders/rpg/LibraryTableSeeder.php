@@ -366,7 +366,8 @@ class LibraryTableSeeder extends Seeder
                 'name' => '書き殴られた本I',
                 'book_category' => Library::CATEGORY_HISTORY,
                 'content' => '<p>（...棚の隅に、本が挟み込まれている。図書館で管轄されていない書物だ。）</p><span style="color:red"><p>古き書物は声高に語る。<br>「魔物は人を脅かし、英雄はそれを討った」と。<br>しかし、私はその記述に疑念を抱かずにはいられぬ。</p><p>果たして、魔物が人の暮らしをどれほど脅かしていたというのか。<br>火を吹く竜が村を焼いた記録も、氷の魔物が街を凍らせた記録もどこにも残されてはいない。<br>書物の多くは「討伐」という結末のみを声高に語り、始まりを曖昧にしている。<br>まるで誰かが都合のよい物語を編んだかのようではないか。<br></p><p>むしろ魔物は、人を避けるように山に籠り、沼に沈み、光の届かぬ地に棲んでいたのでないだろうか。<br>彼らが本当に人と敵対しているのであれば、なぜ今日までこの街は平穏に保たれているのか。<br></p><p>英雄たちが武器を振るった理由は何か。<br>正義か、使命か、それとも……ただ己が力を誇示したかっただけなのか。<br></p><p>「伝承」と呼ばれるものは、果たして真実か。<br>私はそうは思わない。</p></span>',
-                'required_clears' => 7,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::CastleTown,
             ],
             [
                 'id' => Library::VAST_EXPANSE_FLAG_BOOK_ID,
@@ -382,27 +383,27 @@ class LibraryTableSeeder extends Seeder
                 'content' => '<p>（茫洋の地で拾った、日記帳だ。）</p><span style="color: red"><p>【一日目】<br>ポータルを潜ると、そこは地平が続く虚無の大地であった。<br>恐ろしく広大で、振り返っても先ほど入ったはずの門は影も形もない。<br>どうやら先に進み、出口を探すしかないようだ。<br>私は今、求め続けていた正史を開拓している。武者震いが止まらない。<br></p><p>【三日目】<br>違和感に気づいた。<br>寝食を忘れるほど調査に没頭していたことは認めるが、言葉通りこの世界に入ってから腹の虫は鳴かず、喉の渇きすら感じない。<br>どうやら魔力が大気に満ちており、活動に必要なエネルギーを自然に取り込むことができているようだ。<br></p><p>【五日目】<br>生命体を発見した。<br>遠目でしか見ていないが、それは魔物とは似ても似つかぬ、おぞましい生命体だった。<br>是非とも観察したいと心が疼いたが、絶対的な直感が近づくなと叫んだ。</p><p>【七日目】<br>恐ろしいこと、そして奇妙なことが起きた。<br>私は例の生命体と鉢合わせ、襲われた。<br>全ての終わりを覚悟したその刹那、私を救ったのは魔物であった。<br>それは人間である私よりか弱き存在に見えたが、驚くほどの俊敏さを持ち、私を背中に乗せて退避してくれた。<br>親切心を持ち合わせているのか、その魔物は無の世界の片隅にあった光るポータルまで私を運んでくれ、そして去っていった。<br></p><p>ポータルには奇妙な呪文が施されていた。特定の存在のみを拒み通さぬよう細工されている。<br>ここは、あの生命体を封じ込める監獄なのではないだろうか。</p><p>この文章を書いている今も、襲われた事実に震えが止まらず、正直帰りたい。<br>ただし、自分の探究心がそれを許してはくれない。</p><p>あの生命体の正体は？<br>自分を救ってくれた魔物の種は？</p><p>出口を横目に、私は探索を辞めぬ事を決意する。<br>あの生命体の謎を、必ず解き明かしてみせようではないか。</p><p>【？日目】<br>ついに、例の生命体の観察に成功した。<br>腕は六本にも及び、驚くべき身体能力を誇るのみならず、魔法すら自在に操る様子を見せた。<br>魔物が特殊な能力を持つことはあるが、あれほど多様な技を併せ持つ存在は聞いたことがない。<br></p><p>そして私は決定的な違和感を覚えた。<br>生命体が操っていたものは、間違いなく冒険者たちの「スキル」そのものだった。<br>まさか、この生命体はかつて__<br></p></span><br><br><p>（黒ずんだ滲みとともに、文章はここで途切れている...。）</p>',
                 'required_clear_field_id' => FieldData::VastExpanse,
             ],
-            [
-                'id' => 397,
-                'name' => '草原クリア後に出る本',
-                'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>草原</p>',
-                'required_clear_field_id' => FieldData::Grassland,
-            ],
-            [
-                'id' => 398,
-                'name' => '砂クリア後に出る本',
-                'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>砂漠</p>',
-                'required_clear_field_id' => FieldData::Desert,
-            ],
-            [
-                'id' => 399,
-                'name' => '氷雪地帯クリア後に出る本',
-                'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>氷雪</p>',
-                'required_clear_field_id' => FieldData::IceAndSnow,
-            ],
+            // [
+            //     'id' => 397,
+            //     'name' => '草原クリア後に出る本',
+            //     'book_category' => Library::CATEGORY_HISTORY,
+            //     'content' => '<p>草原</p>',
+            //     'required_clear_field_id' => FieldData::Grassland,
+            // ],
+            // [
+            //     'id' => 398,
+            //     'name' => '砂クリア後に出る本',
+            //     'book_category' => Library::CATEGORY_HISTORY,
+            //     'content' => '<p>砂漠</p>',
+            //     'required_clear_field_id' => FieldData::Desert,
+            // ],
+            // [
+            //     'id' => 399,
+            //     'name' => '氷雪地帯クリア後に出る本',
+            //     'book_category' => Library::CATEGORY_HISTORY,
+            //     'content' => '<p>氷雪</p>',
+            //     'required_clear_field_id' => FieldData::IceAndSnow,
+            // ],
         ];
 
         foreach ($seeds as $seed) {

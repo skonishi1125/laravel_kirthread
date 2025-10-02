@@ -502,7 +502,12 @@
                           </div>
                           <ul class="list-group list-group-flush">
                             <li v-for="(buff, index) in member.buffs" :key="index" class="list-group-item py-1 px-2">
-                              <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              <span v-if="buff.buffed_skill_id == null">
+                                <small><span class="font-weight-bold">{{ buff.buffed_item_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              </span>
+                              <span v-else>
+                                <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              </span>
                               <br>
                               <small>(
                                 STR <span v-if="buff.buffed_str > 0 || buff.buffed_str == null">+</span>{{ buff.buffed_str ?? 0 }} 
