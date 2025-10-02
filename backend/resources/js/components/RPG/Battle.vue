@@ -469,14 +469,15 @@
         </div>
 
         <!-- バフ状況などをチェックするボタン -->
-        <div v-if="battle.status == 'command'" class="status-actions">
-            <!-- 新ボタン（例） -->
+        <div v-if="battle.status == 'command'" >
+          <div class="status-actions">
             <button type="button" class="status-btn" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">
-                やり直す
+              やり直す
             </button>
             <button class="status-btn"  @click="displayStatusModal()" @mouseover="showCommandDescription('BUFF')" @mouseleave="clearAllDescription">
-                バフの確認
+              バフの確認
             </button>
+          </div>
 
           <!-- バフ詳細モーダル -->
           <teleport to="body">
