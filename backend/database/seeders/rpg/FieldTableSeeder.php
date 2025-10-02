@@ -52,15 +52,6 @@ class FieldTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'id' => FieldData::IceAndSnow,
-                'name' => FieldData::IceAndSnow->label(),
-                'background_image_path' => FieldData::IceAndSnow->image_path(),
-                'difficulty' => 4,
-                'required_clears' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
                 'id' => FieldData::WetFog,
                 'name' => FieldData::WetFog->label(),
                 'background_image_path' => FieldData::WetFog->image_path(),
@@ -70,10 +61,20 @@ class FieldTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'id' => FieldData::IceAndSnow,
+                'name' => FieldData::IceAndSnow->label(),
+                'background_image_path' => FieldData::IceAndSnow->image_path(),
+                'difficulty' => 5,
+                'required_clears' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            [
                 'id' => FieldData::NightForest,
                 'name' => FieldData::NightForest->label(),
                 'background_image_path' => FieldData::NightForest->image_path(),
-                'difficulty' => 4,
+                'difficulty' => 5,
                 'required_clears' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -82,8 +83,8 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::DecayedFarmland,
                 'name' => FieldData::DecayedFarmland->label(),
                 'background_image_path' => FieldData::DecayedFarmland->image_path(),
-                'difficulty' => 6,
-                'required_clears' => 6,
+                'difficulty' => 7,
+                'required_clears' => 7,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -91,7 +92,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::CastleTown,
                 'name' => FieldData::CastleTown->label(),
                 'background_image_path' => FieldData::CastleTown->image_path(),
-                'difficulty' => 5,
+                'difficulty' => 6,
                 'required_clears' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -100,7 +101,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::AncientCastle,
                 'name' => FieldData::AncientCastle->label(),
                 'background_image_path' => FieldData::AncientCastle->image_path(),
-                'difficulty' => 6,
+                'difficulty' => 7,
                 /**
                  * ステージをクリアしても開放されないように、11としておく。
                  * 詳細には城下町クリア、で開放。

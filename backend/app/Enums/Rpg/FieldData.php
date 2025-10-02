@@ -8,8 +8,8 @@ enum FieldData: int
     case Desert = 2;
     case Volcano = 3;
     case Coast = 4;
-    case IceAndSnow = 5;
-    case WetFog = 6;
+    case WetFog = 5;
+    case IceAndSnow = 6;
     case NightForest = 7;
     case DecayedFarmland = 8;
     case CastleTown = 9;
@@ -23,8 +23,8 @@ enum FieldData: int
             self::Desert => '砂漠',
             self::Volcano => '火山',
             self::Coast => '海岸',
-            self::IceAndSnow => '氷雪地帯',
             self::WetFog => '湿霧の地',
+            self::IceAndSnow => '氷雪地帯',
             self::NightForest => '常夜の森',
             self::DecayedFarmland => '退廃した耕作地',
             self::CastleTown => '門前雀羅の城下街',
@@ -40,8 +40,8 @@ enum FieldData: int
             self::Desert => 'desert.png',
             self::Volcano => 'volcano.png',
             self::Coast => 'coast.png',
-            self::IceAndSnow => 'iceandsnow.png',
             self::WetFog => 'wetfog.png',
+            self::IceAndSnow => 'iceandsnow.png',
             self::NightForest => 'nightforest.png',
             self::DecayedFarmland => 'decayedfarmland.png',
             self::CastleTown => 'castletown.png',

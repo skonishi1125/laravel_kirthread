@@ -47,18 +47,18 @@ class LibraryTableSeeder extends Seeder
             $coast_preface
         );
 
-        // 氷雪地帯
-        $iceandsnow_preface = '<p>厳寒の大地に広がるとされる氷雪地帯は鍛え上げられた肉体を備え、<br>物理的な攻撃に対して耐性を示す個体が多いと言われている。<br>氷雪の怪物に挑む際は、環境対策と共に魔法攻撃の準備を怠らぬことが肝要である。</p><p>この地帯にはペンギン種の魔物が多く生息しており、<br>お腹を整える一定のしぐさをしたのちに突進してくる習性を持つ。</p><p>また、時折見かける妖精の放つ攻撃は非常に強力である。<br>打ち込まれる回数には限りがあるようなので、防御でやり過ごすことが有効か。</p>';
-        $iceandsnow_content = $this->buildEnemyHTMLElement(
-            EnemyData::iceAndSnowAppearingEnemies(),
-            $iceandsnow_preface
-        );
-
         // 湿霧の地
         $wetfog_preface = '<p>絶えず湿気を含んだ霧に覆われる本地帯は、視界が不明瞭であり冒険者の行動を鈍らせる不快な環境として知られる。当地には多種多様な植物型の魔物が繁茂し、根や蔓を操って侵入者を絡め取り力を削ぐ技に長けている。獲物を弱体させたのち、じわじわと仕留める戦法を常とするため油断は命取りである。</p><p>物理攻撃と魔法攻撃を兼ね備えた均衡の取れた編成で挑むことが推奨されるが、それでもなお危険は尽きない。古くからの記録には、濃霧の奥に棲まう巨影の存在が記されている。</p><p>真偽は定かでないが、挑む者は覚悟が必要である。</p>';
         $wetfog_content = $this->buildEnemyHTMLElement(
             EnemyData::wetFogAppearingEnemies(),
             $wetfog_preface
+        );
+
+        // 氷雪地帯
+        $iceandsnow_preface = '<p>厳寒の大地に広がるとされる氷雪地帯は鍛え上げられた肉体を備え、<br>物理的な攻撃に対して耐性を示す個体が多いと言われている。<br>氷雪の怪物に挑む際は、環境対策と共に魔法攻撃の準備を怠らぬことが肝要である。</p><p>この地帯にはペンギン種の魔物が多く生息しており、<br>お腹を整える一定のしぐさをしたのちに突進してくる習性を持つ。</p><p>また、時折見かける妖精の放つ攻撃は非常に強力である。<br>打ち込まれる回数には限りがあるようなので、防御でやり過ごすことが有効か。</p>';
+        $iceandsnow_content = $this->buildEnemyHTMLElement(
+            EnemyData::iceAndSnowAppearingEnemies(),
+            $iceandsnow_preface
         );
 
         // 常夜の森
@@ -235,33 +235,33 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 205,
-                'name' => '(未完成)調査報告書: '.FieldData::IceAndSnow->label(),
-                'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $iceandsnow_preface.$caution,
-                'required_clears' => 3,
-            ],
-            [
-                'id' => 206,
-                'name' => '調査報告書: '.FieldData::IceAndSnow->label(),
-                'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $iceandsnow_content,
-                'required_clears' => null,
-                'required_clear_field_id' => FieldData::IceAndSnow,
-            ],
-            [
-                'id' => 207,
                 'name' => '(未完成)調査報告書: '.FieldData::WetFog->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $wetfog_preface.$caution,
                 'required_clears' => 3,
             ],
             [
-                'id' => 208,
+                'id' => 206,
                 'name' => '調査報告書: '.FieldData::WetFog->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $wetfog_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::WetFog,
+            ],
+            [
+                'id' => 207,
+                'name' => '(未完成)調査報告書: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_preface.$caution,
+                'required_clears' => 3,
+            ],
+            [
+                'id' => 208,
+                'name' => '調査報告書: '.FieldData::IceAndSnow->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $iceandsnow_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::IceAndSnow,
             ],
             [
                 'id' => 209,
