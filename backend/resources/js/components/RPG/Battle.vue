@@ -31,7 +31,7 @@
   left: 5%;
   top: 25%;
   width: 300px;
-  height: 300px;
+  height: 250px;
   text-align: center;
 }
 
@@ -274,29 +274,36 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.status_modalButton {
-  position: absolute;
-  bottom: 136px;
-  left: 16.7%;
-  transform: translateX(-50%);
-  font-size: 15px;
-  padding: 10px 114px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.15s ease;
+/* RETURN, バフ確認を包むコンテナ：中央寄せ＋横並び */
+.status-actions {
+    position: absolute;
+    bottom: 160px;
+    left: 16.7%;
+    transform: translateX(-50%);      /* 中央寄せは親で行う */
+    display: flex;
+    align-items: center;
+    gap: 12px;                        /* ボタン間の余白 */
+    flex-wrap: wrap;                  /* スマホで折り返し */
+    z-index: 10;
 }
-
-.status_modalButton:hover {
-  background-color: #fdf6e3;
-  /* transform: translateX(-50%) scale(1.03); 大きくなる処理 */
+/* 汎用ボタン */
+.status-btn {
+    font-size: 15px;
+    width: 143px;
+    padding: 12px 22px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background-color .2s ease;
 }
-
-.status_modalButton:active {
-  transform: translateX(-50%) scale(0.97);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+.status-btn:hover {
+    background-color: #fdf6e3;
+    /* transform: scale(1.03); */
+}
+.status-btn:active {
+    /* transform: scale(0.97); */
+    box-shadow: 0 1px 2px rgba(0,0,0,.1);
 }
 
 </style>
@@ -384,7 +391,6 @@
               </div>
             </div>
 
-            <div class="command-list-row" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">RETURN</div>
             <div class="command-list-row" @click="handleCommandSelection('ESCAPE')" @mouseover="showCommandDescription('ESCAPE')" @mouseleave="clearAllDescription">ESCAPE</div>
            </div>
            <!-- 味方の立ち絵を出す -->
@@ -463,9 +469,14 @@
         </div>
 
         <!-- バフ状況などをチェックするボタン -->
-        <div v-if="battle.status == 'command'">
-          <div class="status_modalButton" @click="displayStatusModal()">
-              <a>バフの確認</a>
+        <div v-if="battle.status == 'command'" >
+          <div class="status-actions">
+            <button type="button" class="status-btn" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">
+              やり直す
+            </button>
+            <button class="status-btn"  @click="displayStatusModal()" @mouseover="showCommandDescription('BUFF')" @mouseleave="clearAllDescription">
+              バフの確認
+            </button>
           </div>
 
           <!-- バフ詳細モーダル -->
@@ -491,7 +502,12 @@
                           </div>
                           <ul class="list-group list-group-flush">
                             <li v-for="(buff, index) in member.buffs" :key="index" class="list-group-item py-1 px-2">
-                              <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              <span v-if="buff.buffed_skill_id == null">
+                                <small><span class="font-weight-bold">{{ buff.buffed_item_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              </span>
+                              <span v-else>
+                                <small><span class="font-weight-bold">{{ buff.buffed_skill_name }}</span>: 残り<span class="font-weight-bold">{{ buff.remaining_turn }}</span>ターン</small>
+                              </span>
                               <br>
                               <small>(
                                 STR <span v-if="buff.buffed_str > 0 || buff.buffed_str == null">+</span>{{ buff.buffed_str ?? 0 }} 
@@ -690,10 +706,13 @@ export default {
           description = '所持中のアイテムを使用します。'
           break;
         case 'RETURN': 
-          description = 'コマンド選択状態をリセットし、最初からやり直します。'
+          description = '全員のコマンド選択状態をリセットし、最初からコマンドを選択し直します。'
           break;
         case 'ESCAPE': 
           description = '戦闘から逃走を試み、成功すると街に戻ります。'
+          break;
+        case 'BUFF': 
+          description = '敵・味方に付与されているバフの状況を確認します。'
           break;
       }
       this.hoveredDescription = description;

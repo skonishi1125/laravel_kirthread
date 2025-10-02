@@ -17,7 +17,7 @@ class Field extends Model
     protected $table = 'rpg_fields';
 
     // 難易度の幅
-    private const DIFFICULTY_RANGE = 6;
+    private const DIFFICULTY_RANGE = 7;
 
     public function savedata_cleared_fields()
     {
@@ -60,21 +60,32 @@ class Field extends Model
         $cleared_count = $savedata->savedata_cleared_fields()->count();
         $cleared_field_ids = $savedata->savedata_cleared_fields->pluck('field_id')->toArray();
 
-        // 茫洋の地 フラグ
-        $is_okay_to_go_vast_expanse = false;
+        // 古城 出現フラグ
+        // 城下町をクリアしていること
+        $is_okay_to_go_ancient_castle = false;
+        $ancient_castle_required_field_ids = [
+            FieldData::CastleTown->value,
+        ];
+        $is_okay_to_go_ancient_castle = empty(array_diff($ancient_castle_required_field_ids, $cleared_field_ids));
+
+        // 茫洋の地 出現フラグ
         // 耕作地, 古城のクリア && 特定の書籍を読んでいること
-        $required_field_ids = [
+        $is_okay_to_go_vast_expanse = false;
+        $vast_expanse_required_field_ids = [
             FieldData::DecayedFarmland->value,
             FieldData::AncientCastle->value,
         ];
         $has_read_book = $savedata->savedata_read_libraries->contains('library_id', Library::VAST_EXPANSE_FLAG_BOOK_ID);
         // $cleared_field_ids と$required_field_idsを比較して、耕作地, 古城どちらもクリアしていたら空配列が返りtrueとなる
-        $has_required_clears = empty(array_diff($required_field_ids, $cleared_field_ids));
+        $has_required_clears = empty(array_diff($vast_expanse_required_field_ids, $cleared_field_ids));
         $is_okay_to_go_vast_expanse = $has_read_book && $has_required_clears;
 
         // dd($is_okay_to_go_vast_expanse, $required_field_ids, $has_read_book, $has_required_clears, $cleared_field_ids, array_diff($required_field_ids, $cleared_field_ids));
 
         $fields = self::where('required_clears', '<=', $cleared_count)
+            ->when($is_okay_to_go_ancient_castle, function ($q) {
+                $q->orWhere('id', FieldData::AncientCastle->value);
+            })
             ->when($is_okay_to_go_vast_expanse, function ($q) {
                 $q->orWhere('id', FieldData::VastExpanse->value);
             })

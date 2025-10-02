@@ -487,7 +487,7 @@ class Skill extends Model
                 case SkillDefinition::AileCaliber :
                     Debugbar::debug(SkillDefinition::AileCaliber->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔導の刃が相手を斬り裂く！");
-                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 20;
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::MiniHeal :
                     // 回復量 = (INT * ダメージ%)
@@ -513,7 +513,7 @@ class Skill extends Model
                     Debugbar::debug(SkillDefinition::ManaExplosion->label());
                     // (独り言)レベルごとに文章を変えられたら熱いけど
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！解放したマナエネルギーが大爆発を起こす！");
-                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 40;
                     break;
                 case SkillDefinition::Meditation :
                     Debugbar::debug(SkillDefinition::Meditation->label());
