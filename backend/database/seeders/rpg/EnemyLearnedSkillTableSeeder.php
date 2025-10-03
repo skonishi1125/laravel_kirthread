@@ -85,7 +85,7 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // Twilight
             ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Blink, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 3],
-            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 3],
+            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 2],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ

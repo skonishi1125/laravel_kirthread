@@ -431,7 +431,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::AdvancedGuard :
                     Debugbar::debug(SkillDefinition::AdvancedGuard->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは魔法の防壁に包まれた！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは堅牢な防壁に包まれた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::CurseEdge :
@@ -607,7 +607,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::SirenAura :
                     Debugbar::debug(SkillDefinition::SirenAura->label());
-                    $battle_logs_collection->push("{$actor_data->name}は何処からか聞こえてくる歌声に耳を傾け、その身を委ねる...");
+                    $battle_logs_collection->push("{$actor_data->name}は何処からか聞こえてくる歌声に耳を傾け、その魔力を身に宿した...");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     break;
                     // -------------------- 理術師 --------------------
@@ -618,17 +618,17 @@ class Skill extends Model
                     break;
                 case SkillDefinition::AxiomStrike :
                     Debugbar::debug(SkillDefinition::AxiomStrike->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！理の衝撃波が敵を貫く！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！理の衝撃波が敵を貫く！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::MagicMissile :
                     Debugbar::debug(SkillDefinition::MagicMissile->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！魔導のミサイルを敵目掛けて射出する！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔導のミサイルを敵目掛けて射出する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::LogosRay :
                     Debugbar::debug(SkillDefinition::LogosRay->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！魔法の紋章が輝き、そこから光線が敵に射出される！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔法の紋章が輝き、そこから光線が敵に射出される！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::PowerEnt :
@@ -638,7 +638,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::BladeForce :
                     Debugbar::debug(SkillDefinition::BladeForce->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方の武具が魔法の刃で強化される！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！味方の武具が魔法の刃で強化される！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::ShieldEnt :
@@ -648,7 +648,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::DefendThreat :
                     Debugbar::debug(SkillDefinition::DefendThreat->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方に魔法の衣が施される...");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！味方に魔法の衣が施される...");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::MagicEnt :
@@ -658,7 +658,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::ArcWisdom :
                     Debugbar::debug(SkillDefinition::ArcWisdom->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！自身の積み続けてきた叡智を味方に分け与えた！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！自身の積み続けてきた叡智を味方に分け与えた！");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::SpeedEnt :
@@ -668,7 +668,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::SonicTrimming :
                     Debugbar::debug(SkillDefinition::SonicTrimming->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！思考が冴え渡り、明瞭になっていく...");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！思考が冴え渡り、明瞭になっていく...");
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::LuckEnt :
@@ -678,7 +678,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::FortuneStar :
                     Debugbar::debug(SkillDefinition::FortuneStar->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！心が弾み、なんだかすごくご機嫌になった！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！心が弾み、いいことが起こりそうな気がしてきた。");
                     $new_buff['buffed_luc'] = (int) ceil($actor_data->value_luc * $selected_skill_data->skill_percent);
                     break;
                 default:

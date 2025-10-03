@@ -220,11 +220,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 2,
                 'requirement_party_level' => 16,
             ],
-            // ブレードフォース pLv16以上
+            // ブレードフォース PowerEnt SLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::BladeForce->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
+                'requirement_skill_id' => SkillDefinition::PowerEnt->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
             // ディフェンドスリート ShieldEnt SLv1, pLv20以上
@@ -234,11 +234,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
-            // アークウィズダム pLv16以上
+            // アークウィズダム MagicEnt SLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::ArcWisdom->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
+                'requirement_skill_id' => SkillDefinition::MagicEnt->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
             // ソニックトリミング SpeedEnt SLv1, pLv20以上
@@ -248,11 +248,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
-            // フォーチュンスター pLv16以上
+            // フォーチュンスター LuckEnt SLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::FortuneStar->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
+                'requirement_skill_id' => SkillDefinition::LuckEnt->value,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
 
