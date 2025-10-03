@@ -8,9 +8,9 @@ enum EnemyData: int
     case Gao = 11;
     case BigSrara = 12;
 
-    case Rizard = 20;
+    case Lizard = 20;
     case Scorpio = 21;
-    case RockRizard = 22;
+    case RockLizard = 22;
 
     case Bou = 30;
     case IwaMet = 31;
@@ -42,10 +42,13 @@ enum EnemyData: int
     case Narehate = 83;
 
     case DarkSrara = 90;
-    case BazaarRizard = 91;
+    case BazaarLizard = 91;
     case Anima = 92;
-    case GolemBall = 94;
-    case StoneGolem = 95;
+    case WitherNepenthos = 93;
+    case PotDio = 94;
+    case GolemBall = 95;
+    case Eliminator = 96;
+    case StoneGolem = 97;
 
     case GaiaHand = 100;
     case DeathScorpio = 101;
@@ -67,9 +70,9 @@ enum EnemyData: int
             self::Gao => 'ガオー',
             self::BigSrara => 'ビッグスララ',
 
-            self::Rizard => 'リザード',
+            self::Lizard => 'リザード',
             self::Scorpio => 'スコーピオ',
-            self::RockRizard => 'ロックリザード',
+            self::RockLizard => 'ロックリザード',
 
             self::Bou => 'ボウ',
             self::IwaMet => 'イワメット',
@@ -96,16 +99,19 @@ enum EnemyData: int
             self::Twilight => 'トワイライト',
 
             self::CurseScareCrow => '呪いのカカシ',
-            self::DustBomb => 'ダストボム',
             self::ZombieClion => 'ゾンビクリオン',
             self::Narehate => 'ナレハテ',
 
-            self::DarkSrara => 'ダークスララ',
-            self::BazaarRizard => 'バザールリザード',
-            self::Anima => 'アニマ',
+            self::BazaarLizard => 'バザールリザード',
+            self::DustBomb => 'ダストボム',
+            self::WitherNepenthos => '枯れたネペントス',
+            self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
+            self::Eliminator => 'エリミネーター',
             self::StoneGolem => 'ストーンゴーレム',
 
+            self::DarkSrara => 'ダークスララ',
+            self::Anima => 'アニマ',
             self::GaiaHand => 'ガイアハンド',
             self::DeathScorpio => 'デススコーピオ',
             self::MetalGecko => 'メタルゲッコー',
@@ -129,14 +135,14 @@ enum EnemyData: int
             self::Gao => '素早い動きが特徴。攻撃力が高いため優先的に倒そう。',
             self::BigSrara => 'スララが偶然ぶつかり合体した生命体。消化液でDEFを落としてくるのがいやらしい。',
 
-            self::Rizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
+            self::Lizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
             self::Scorpio => '致命の一撃を得意とするサソリ。魔法耐性が非常に低いので魔法で攻めよう。',
-            self::RockRizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
+            self::RockLizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
             self::Bou => '炎魔法の残り香が集まってできた生命体。集団で出てきてファイアの魔法で攻め立てられる。物理防御力が低いので全体攻撃で攻めると吉。',
             self::IwaMet => '防御が自慢のカメ（？）。魔法での攻撃が有効。',
             self::Norawani => 'そこらを彷徨く野良のワニ（おそらく）。バランスの良いステータスが特徴。必ず戦闘前に咆哮を上げてステータスを高める。',
-            self::MagmaDile => 'ノラワニ達を仕切るボス。必ず戦闘前に咆哮を上げてステータスを高める。咆哮がおさまったのちしばらくすると噛みつきそして強烈に暴れ回るのでタイミングを見て防御を選択できると戦いやすいだろう。暴れ回ったのちは再び咆哮で士気を高める。',
+            self::MagmaDile => 'ノラワニ達を仕切るボス。必ず戦闘前に咆哮を上げてステータスを高める。咆哮がおさまったのちしばらくすると噛みつきそして強烈に暴れ回る。噛みつきのタイミングで防御を選択できると戦いやすいだろう。',
 
             self::MageSrara => 'スララの変異体。冒険者の落とした杖を振り回して簡易的な魔法を覚えた。',
             self::Clion => 'ふよふよと浮遊する生命体。鈍足だが吐き出す泡は強力なので、使われる前に各個撃破しよう。',
@@ -144,8 +150,8 @@ enum EnemyData: int
             self::SpikeWhale => '海岸のボス。一定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
 
             self::Eripen => '首回りの氷が襟に見えることからこの名前をつけられた。準備をしたのち、滑って突進してくるので身構えること。',
-            self::IceFairy => '冷たい大気が魔法の残り香によって生命体となった。見た目に反して打たれ強くすばしっこい。あられを操る全体攻撃「ヘイルショット」を得意とする。APが少なく、2回しか撃つことができないためやり過ごしてから攻撃したい。',
-            self::ScissorFlipper => 'エリペンの群れを連ねるリーダー。エリペン種の強烈な突進が鋭い刃物のような腕を持ったことでより強烈な一撃となった。同じく、準備をしたのちに突進をしてくる。',
+            self::IceFairy => '冷たい大気と魔法の残り香が混ざり合ってできた物体。見た目に反して打たれ強くすばしっこい。あられを飛ばす全体攻撃を得意とする。APが少なく2回しか撃つことができないため、防御や弱体スキルでやり過ごしてから迎撃しよう。',
+            self::ScissorFlipper => 'エリペンの群れを連ねるリーダー。エリペン種の習性である突進攻撃が鋭い刃物のような腕を持ったことでより殺傷性を増した一撃となった。同じく準備をしたのちに突進してくるため身構えること。',
 
             self::Nepenthos => '沼地に住み着いているウツボカズラ。獲物に消化液を吐きかけ、捕食を試みる。',
             self::Dionaea => '沼地に住む植物。人間・魔物問わず獲物を挟んで消化する。獲物の攻撃を弱める手段を得意とし、抵抗できなくなったところを捕食する。',
@@ -158,16 +164,19 @@ enum EnemyData: int
             self::Twilight => '常夜の森のヌシ。豊富な魔法攻撃を使用して冒険者を苦しめる。性格自体はおっとりとしているようだ。巨大だがその姿を表すことは滅多になく、かつては幸運の象徴だったとも言われている。',
 
             self::CurseScareCrow => '呪いのカカシ',
-            self::DustBomb => 'ダストボム',
             self::ZombieClion => 'ゾンビクリオン',
             self::Narehate => 'ナレハテ',
 
-            self::DarkSrara => 'ダークスララ',
-            self::BazaarRizard => 'バザールリザード',
-            self::Anima => 'アニマ',
+            self::BazaarLizard => '商魂逞しいトカゲの魔物。物理攻撃に耐性があり、アイテムを取り出して使ってくる。アイテムの手持ちはそれぞれ1つだけのため使ったらそれっきり。',
+            self::DustBomb => 'ごみ袋のような魔物。ターン数を重ねるごとにぶくぶくと膨れ上がっていき、大爆発を起こす。早めに倒してしまうか、もしくは爆発のタイミングで防御しよう。尖ったもので袋に穴が空いているように見えるが、身体の一部らしく問題なく膨らむことができるようだ。',
+            self::WitherNepenthos => '枯れたネペントス',
+            self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
+            self::Eliminator => 'エリミネーター',
             self::StoneGolem => 'ストーンゴーレム',
 
+            self::DarkSrara => 'ダークスララ',
+            self::Anima => 'アニマ',
             self::GaiaHand => 'ガイアハンド',
             self::DeathScorpio => 'デススコーピオ',
             self::MetalGecko => 'メタルゲッコー',
@@ -190,9 +199,9 @@ enum EnemyData: int
             self::Gao => 'gao.png',
             self::BigSrara => 'bigsrara.png',
 
-            self::Rizard => 'rizard.png',
+            self::Lizard => 'lizard.png',
             self::Scorpio => 'scorpio.png',
-            self::RockRizard => 'rockrizard.png',
+            self::RockLizard => 'rocklizard.png',
 
             self::Bou => 'bou.png',
             self::IwaMet => 'iwamet.png',
@@ -224,9 +233,12 @@ enum EnemyData: int
             self::Narehate => 'narehate.png',
 
             self::DarkSrara => 'darksrara.png',
-            self::BazaarRizard => 'bazaarrizard.png',
+            self::BazaarLizard => 'bazaarlizard.png',
             self::Anima => 'anima.png',
+            self::WitherNepenthos => 'withernepenthos.png',
+            self::PotDio => 'potdio.png',
             self::GolemBall => 'golemball.png',
+            self::Eliminator => 'eliminator.png',
             self::StoneGolem => 'stonegolem.png',
 
             self::GaiaHand => 'gaiahand.png',
@@ -258,9 +270,9 @@ enum EnemyData: int
         return [
             self::Srara->value,
             self::Gao->value,
-            self::Rizard->value,
+            self::Lizard->value,
             self::Scorpio->value,
-            self::RockRizard->value,
+            self::RockLizard->value,
         ];
     }
 
@@ -298,7 +310,7 @@ enum EnemyData: int
     public static function wetFogAppearingEnemies(): array
     {
         return [
-            self::Rizard->value,
+            self::Lizard->value,
             self::Norawani->value,
             self::Nepenthos->value,
             self::Dionaea->value,
@@ -323,7 +335,6 @@ enum EnemyData: int
     {
         return [
             self::CurseScareCrow->value,
-            self::DustBomb->value,
             self::ZombieClion->value,
             self::Narehate->value,
         ];
@@ -332,10 +343,13 @@ enum EnemyData: int
     public static function castleTownAppearingEnemies(): array
     {
         return [
-            self::DarkSrara->value,
-            self::BazaarRizard->value,
-            self::Anima->value,
+            self::BazaarLizard->value,
+            self::DustBomb->value,
+            self::HazardBerry->value,
+            self::WitherNepenthos->value,
+            self::PotDio->value,
             self::GolemBall->value,
+            self::Eliminator->value,
             self::StoneGolem->value,
         ];
     }
@@ -343,6 +357,8 @@ enum EnemyData: int
     public static function ancientCastleAppearingEnemies(): array
     {
         return [
+            self::DarkSrara->value,
+            self::Anima->value,
             self::GaiaHand->value,
             self::DeathScorpio->value,
             self::MetalGecko->value,

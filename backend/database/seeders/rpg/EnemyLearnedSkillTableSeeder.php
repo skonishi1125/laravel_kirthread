@@ -45,17 +45,6 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // SpikeWhale
             ['enemy_id' => EnemyData::SpikeWhale, 'skill_id' => SkillDefinition::Wave, 'skill_level' => 1],
 
-            // IceFairy
-            ['enemy_id' => EnemyData::IceFairy, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
-
-            // Eripen
-            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
-
-            // ScissorFlipper
-            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
-
             // Nepenthos
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
@@ -67,10 +56,21 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::Dionaea, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Dionaea, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
 
-            // Dionaea
+            // WandEater
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::GrassWhip, 'skill_level' => 1],
+
+            // IceFairy
+            ['enemy_id' => EnemyData::IceFairy, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
+
+            // Eripen
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
+
+            // ScissorFlipper
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
 
             // HoshiHotaru
             ['enemy_id' => EnemyData::HoshiHotaru, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 1],
@@ -85,7 +85,28 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // Twilight
             ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Blink, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 3],
-            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 3],
+            ['enemy_id' => EnemyData::Twilight, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 2],
+
+            // BazaarLizard
+            ['enemy_id' => EnemyData::BazaarLizard, 'skill_id' => SkillDefinition::UseAllPotion, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::BazaarLizard, 'skill_id' => SkillDefinition::UseMiniBomb, 'skill_level' => 1],
+
+            // DustBomb
+            ['enemy_id' => EnemyData::DustBomb, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::DustBomb, 'skill_id' => SkillDefinition::SwellUp, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::DustBomb, 'skill_id' => SkillDefinition::Explosion, 'skill_level' => 1],
+
+            // WitherNepenthos
+            ['enemy_id' => EnemyData::WitherNepenthos, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::WitherNepenthos, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
+
+            // PotDio
+            ['enemy_id' => EnemyData::PotDio, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::PotDio, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
+
+            // GolemBall
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ

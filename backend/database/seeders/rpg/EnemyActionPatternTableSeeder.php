@@ -99,6 +99,14 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'is_use_skill' => false,
             ],
 
+            // IceFairy
+            [
+                'enemy_id' => EnemyData::IceFairy,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::HailShot,
+            ],
+
             // Eripen
             [
                 'enemy_id' => EnemyData::Eripen,
@@ -202,6 +210,99 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::Twilight,
                 'turn_count' => 5,
+                'is_use_skill' => false,
+            ],
+
+            // BazaarLizard
+            [
+                'enemy_id' => EnemyData::BazaarLizard,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::BazaarLizard,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::UseAllPotion,
+            ],
+            [
+                'enemy_id' => EnemyData::BazaarLizard,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::BazaarLizard,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::UseMiniBomb,
+            ],
+
+            // DustBomb
+            [
+                'enemy_id' => EnemyData::DustBomb,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::DustBomb,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SwellUp,
+            ],
+            [
+                'enemy_id' => EnemyData::DustBomb,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Explosion,
+            ],
+
+            // WitherNepenthos
+            [
+                'enemy_id' => EnemyData::WitherNepenthos,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::WitherNepenthos,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DigestiveFluid,
+            ],
+            [
+                'enemy_id' => EnemyData::WitherNepenthos,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::WitherNepenthos,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rampage,
+            ],
+
+            // PotDio
+            [
+                'enemy_id' => EnemyData::PotDio,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::WeakPollen,
+
+            ],
+            [
+                'enemy_id' => EnemyData::PotDio,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::PotDio,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Rampage,
+            ],
+            [
+                'enemy_id' => EnemyData::PotDio,
+                'turn_count' => 4,
                 'is_use_skill' => false,
             ],
 

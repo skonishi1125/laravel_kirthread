@@ -95,7 +95,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 2,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             //  stage 3
@@ -109,7 +109,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
@@ -121,20 +121,20 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             // stage 5
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::RockRizard,
+                'enemy_id' => EnemyData::RockLizard,
                 'number' => 1,
             ],
             [
@@ -277,67 +277,6 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 氷雪地帯
-            // stage1 最初きつめ
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::IwaMet,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Ikkaku,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::IwaMet,
-                'number' => 1,
-            ],
-            // stage2 同じくきつめ
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::IceFairy,
-                'number' => 1,
-            ],
-            // stage3 ちょっと優しい設計(ペンギンのレクチャー)
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-            // stage4
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 3,
-            ],
-            // stage5
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::ScissorFlipper,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-
             // WetFog
             // stage1
             [
@@ -349,7 +288,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::WetFog,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
@@ -399,7 +338,81 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 常夜の森
+            // 氷雪地帯
+            // stage1
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            // stage2 強敵
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            // stage3 ちょっと優しい(ペンギン種 レクチャー)
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 2,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            // stage6
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+
+            // NightForest
             // stage1
             [
                 'field_id' => FieldData::NightForest,
@@ -424,19 +437,19 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 2,
                 'enemy_id' => EnemyData::Gao,
-                'number' => 2,
-            ],
-            [
-                'field_id' => FieldData::NightForest,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::Gyao,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 2,
-                'enemy_id' => EnemyData::Gao,
+                'enemy_id' => EnemyData::Gyao,
                 'number' => 2,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Gao,
+                'number' => 1,
             ],
             // stage3
             [
@@ -461,8 +474,14 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 4,
+                'enemy_id' => EnemyData::Gyao,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 4,
                 'enemy_id' => EnemyData::ShadowWeed,
-                'number' => 2,
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::NightForest,
@@ -474,6 +493,25 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::NightForest,
                 'stage_id' => 5,
+                'enemy_id' => EnemyData::ShadowWeed,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::HoshiHotaru,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::ShadowWeed,
+                'number' => 1,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::NightForest,
+                'stage_id' => 6,
                 'enemy_id' => EnemyData::Twilight,
                 'number' => 1,
             ],
@@ -504,37 +542,79 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 門前雀羅
+            // CastleTown
+            // stage1
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::DarkSrara,
+                'enemy_id' => EnemyData::DustBomb,
                 'number' => 1,
             ],
+            // stage2
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::BazaarRizard,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Anima,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::GolemBall,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::BazaarLizard,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 2,
-                'enemy_id' => EnemyData::StoneGolem,
+                'enemy_id' => EnemyData::DustBomb,
                 'number' => 1,
             ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::BazaarLizard,
+                'number' => 1,
+            ],
+            // stage3
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::WitherNepenthos,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::HazardBerry,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::PotDio,
+                'number' => 1,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 3,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 2,
+            ],
+
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::GolemBall,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 2,
+            //     'enemy_id' => EnemyData::StoneGolem,
+            //     'number' => 1,
+            // ],
 
             // 古城
             [
