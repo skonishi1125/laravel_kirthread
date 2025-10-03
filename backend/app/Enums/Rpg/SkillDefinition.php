@@ -231,7 +231,7 @@ enum SkillDefinition: int
             self::AileCaliber => '魔道の刃で敵単体を切り裂く。自分のINTに依存した物理ダメージを与える。',
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
-            self::CrashBlast => '魔力で生成したエネルギー弾を敵単体に撃ち、ダメージを与える。',
+            self::CrashBlast => '魔力の塊を生成し、敵単体にぶつけて爆発させて大ダメージを与える。',
             self::ManaExplosion => '巨大な魔力の塊を大爆発させ、敵全体に大ダメージを与える。',
             self::Meditation => '深く瞑想することで心を落ち着かせ、暫くの間自身のINTを高める。',
             self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、STRが飛躍的に上昇。',

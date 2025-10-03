@@ -498,7 +498,7 @@ class Skill extends Model
                 case SkillDefinition::PopHeal :
                     // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PopHeal->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方を包む！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方に気力を与える！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
                     break;
                 case SkillDefinition::CrashBlast :
@@ -573,7 +573,7 @@ class Skill extends Model
                     Debugbar::debug(SkillDefinition::WindAccel->label());
                     $battle_logs_collection->push("{$actor_data->name}は風の力を使役し、そのまま鋭く攻撃した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
-                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * (($selected_skill_data->skill_percent) / 2));
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * (($selected_skill_data->skill_percent)));
                     break;
                 case SkillDefinition::GaleStrike :
                     Debugbar::debug(SkillDefinition::GaleStrike->label());
@@ -628,7 +628,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::LogosRay :
                     Debugbar::debug(SkillDefinition::LogosRay->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！魔法の紋章が輝き、光線が敵に射出された！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！魔法の紋章が輝き、そこから光線が敵に射出される！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::PowerEnt :

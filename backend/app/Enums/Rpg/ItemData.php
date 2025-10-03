@@ -85,7 +85,7 @@ enum ItemData: int
 
             self::ManaDrop => 'マナの詰まった小さな雫。仲間1人のAPを20回復。',
             self::AllManaDrop => 'マナドロップを広く拡散できるようにしたアイテム。仲間全員のAPを20回復。',
-            self::ManaWater => '雫を集め多く摂取できるように設計されたアイテム。仲間1人のAPを50回復。',
+            self::ManaWater => '雫を集め多くAPを摂取できるように設計されたもの。仲間1人のAPを50回復。',
             self::ManaElixir => 'マナの液体を高純度に抽出したもの。仲間1人のAPを50パーセント回復。',
             self::FullManaElixir => 'マナの液体をさらに高純度に抽出。仲間1人のAPを全回復。',
 

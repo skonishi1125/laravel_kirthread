@@ -45,17 +45,6 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // SpikeWhale
             ['enemy_id' => EnemyData::SpikeWhale, 'skill_id' => SkillDefinition::Wave, 'skill_level' => 1],
 
-            // IceFairy
-            ['enemy_id' => EnemyData::IceFairy, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
-
-            // Eripen
-            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
-
-            // ScissorFlipper
-            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
-
             // Nepenthos
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Nepenthos, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
@@ -71,6 +60,17 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WandEater, 'skill_id' => SkillDefinition::GrassWhip, 'skill_level' => 1],
+
+            // IceFairy
+            ['enemy_id' => EnemyData::IceFairy, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
+
+            // Eripen
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eripen, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
+
+            // ScissorFlipper
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::ScissorFlipper, 'skill_id' => SkillDefinition::Rush, 'skill_level' => 1],
 
             // HoshiHotaru
             ['enemy_id' => EnemyData::HoshiHotaru, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 1],

@@ -277,67 +277,6 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 氷雪地帯
-            // stage1 最初きつめ
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::IwaMet,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Ikkaku,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::IwaMet,
-                'number' => 1,
-            ],
-            // stage2 同じくきつめ
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::IceFairy,
-                'number' => 1,
-            ],
-            // stage3 ちょっと優しい設計(ペンギンのレクチャー)
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 3,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-            // stage4
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 3,
-            ],
-            // stage5
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::ScissorFlipper,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::IceAndSnow,
-                'stage_id' => 5,
-                'enemy_id' => EnemyData::Eripen,
-                'number' => 1,
-            ],
-
             // WetFog
             // stage1
             [
@@ -399,7 +338,81 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 常夜の森
+            // 氷雪地帯
+            // stage1
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::Ikkaku,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::IwaMet,
+                'number' => 1,
+            ],
+            // stage2 強敵
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            // stage3 ちょっと優しい(ペンギン種 レクチャー)
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 2,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::IceFairy,
+                'number' => 1,
+            ],
+            // stage6
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::ScissorFlipper,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::IceAndSnow,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::Eripen,
+                'number' => 1,
+            ],
+
+            // NightForest
             // stage1
             [
                 'field_id' => FieldData::NightForest,

@@ -99,6 +99,14 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'is_use_skill' => false,
             ],
 
+            // IceFairy
+            [
+                'enemy_id' => EnemyData::IceFairy,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::HailShot,
+            ],
+
             // Eripen
             [
                 'enemy_id' => EnemyData::Eripen,
