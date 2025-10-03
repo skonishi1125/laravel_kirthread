@@ -103,6 +103,8 @@ enum SkillDefinition: int
     case UseMiniBomb = 125;
     case SwellUp = 126;
     case Explosion = 127;
+    case RazerBeam = 128;
+    case RazerSweep = 129;
 
     public function label(): string
     {
@@ -199,6 +201,8 @@ enum SkillDefinition: int
             self::UseMiniBomb => 'ミニボム使用', // 攻撃 単体 BazaarLizard
             self::SwellUp => '膨れ上がる', // 何もしない
             self::Explosion => '爆発', // 物理 全体
+            self::RazerBeam => 'レーザービーム', // 魔法 単体
+            self::RazerSweep => 'レーザースイープ', // 魔法 全体
         };
     }
 
@@ -239,10 +243,10 @@ enum SkillDefinition: int
             self::AileCaliber => '魔道の刃で敵単体を切り裂く。自分のINTに依存した物理ダメージを与える。',
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
-            self::CrashBlast => '魔力の塊を生成し、敵単体にぶつけて爆発させて大ダメージを与える。',
-            self::ManaExplosion => '巨大な魔力の塊を大爆発させ、敵全体に大ダメージを与える。',
+            self::CrashBlast => '魔力の塊を生成し、敵単体にぶつけて爆発させる。大きなダメージを与える。',
+            self::ManaExplosion => '巨大な魔力を糧としたマナの塊を大爆発させることで、敵全体に大ダメージ。',
             self::Meditation => '深く瞑想することで心を落ち着かせ、暫くの間自身のINTを高める。',
-            self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、STRが飛躍的に上昇。',
+            self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、その分だけSTRが上昇する。',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
@@ -297,6 +301,8 @@ enum SkillDefinition: int
             self::UseMiniBomb => 'ミニボムを使って、単体に攻撃。',
             self::SwellUp => 'ぷくぷくと膨れ上がる。',
             self::Explosion => '自身を大爆発させ、相手全体に物理ダメージ。',
+            self::RazerBeam => 'レーザーを射出し、単体に魔法ダメージ。',
+            self::RazerSweep => 'レーザーを射出し薙ぎ払う。相手全体に魔法ダメージ。倍率が高い。',
         };
     }
 }

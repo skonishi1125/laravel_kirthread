@@ -890,6 +890,16 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の膨れ切った身体がはち切れ、大爆発を起こした！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::RazerBeam :
+                    Debugbar::warning(SkillDefinition::RazerBeam->label());
+                    $battle_logs_collection->push("{$actor_data->name}はレーザーを射出した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::RazerSweep :
+                    Debugbar::warning(SkillDefinition::RazerSweep->label());
+                    $battle_logs_collection->push("{$actor_data->name}はレーザーを射出し、周囲を薙ぎ払った！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

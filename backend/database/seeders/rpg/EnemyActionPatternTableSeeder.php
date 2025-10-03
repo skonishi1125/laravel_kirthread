@@ -287,7 +287,7 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'turn_count' => 1,
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::WeakPollen,
-                
+
             ],
             [
                 'enemy_id' => EnemyData::PotDio,

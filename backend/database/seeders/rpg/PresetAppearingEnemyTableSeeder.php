@@ -547,15 +547,9 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::GolemBall,
-                'number' => 2,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 1,
             ],
-            // [
-            //     'field_id' => FieldData::CastleTown,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::DustBomb,
-            //     'number' => 2,
-            // ],
             // stage2
             [
                 'field_id' => FieldData::CastleTown,
@@ -567,7 +561,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 2,
                 'enemy_id' => EnemyData::DustBomb,
-                'number' => 2,
+                'number' => 1,
             ],
             [
                 'field_id' => FieldData::CastleTown,
@@ -602,6 +596,12 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 3,
             ],
             // stage5
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 2,
+            ],
 
             // [
             //     'field_id' => FieldData::CastleTown,

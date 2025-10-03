@@ -100,9 +100,13 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::WitherNepenthos, 'skill_id' => SkillDefinition::DigestiveFluid, 'skill_level' => 1],
             ['enemy_id' => EnemyData::WitherNepenthos, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
 
-            // Dionaea
+            // PotDio
             ['enemy_id' => EnemyData::PotDio, 'skill_id' => SkillDefinition::WeakPollen, 'skill_level' => 1],
             ['enemy_id' => EnemyData::PotDio, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
+
+            // GolemBall
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ
