@@ -542,49 +542,79 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 門前雀羅
+            // CastleTown
+            // stage1
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::DarkSrara,
-                'number' => 1,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 2,
             ],
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::DustBomb,
+            //     'number' => 2,
+            // ],
+            // stage2
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::BazaarLizard,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::Anima,
-                'number' => 1,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 2,
             ],
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::BazaarLizard,
+                'number' => 1,
+            ],
+            // stage3
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::WitherNepenthos,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::HazardBerry,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::PotDio,
                 'number' => 1,
             ],
+            // stage4
             [
                 'field_id' => FieldData::CastleTown,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::GolemBall,
-                'number' => 1,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::DustBomb,
+                'number' => 3,
             ],
-            [
-                'field_id' => FieldData::CastleTown,
-                'stage_id' => 2,
-                'enemy_id' => EnemyData::StoneGolem,
-                'number' => 1,
-            ],
+            // stage5
+
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::GolemBall,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 2,
+            //     'enemy_id' => EnemyData::StoneGolem,
+            //     'number' => 1,
+            // ],
 
             // 古城
             [

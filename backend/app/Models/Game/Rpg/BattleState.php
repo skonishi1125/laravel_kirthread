@@ -2333,6 +2333,9 @@ class BattleState extends Model
             case SkillDefinition::Blink : // きらめく
                 // 何もしない
                 break;
+            case SkillDefinition::SwellUp :
+                // 何もしない (ログpushなども、すでにSkillモデル側で済ませている
+                break;
             default:
                 break;
         }

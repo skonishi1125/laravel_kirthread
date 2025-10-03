@@ -47,7 +47,8 @@ enum EnemyData: int
     case WitherNepenthos = 93;
     case PotDio = 94;
     case GolemBall = 95;
-    case StoneGolem = 96;
+    case Eliminator = 96;
+    case StoneGolem = 97;
 
     case GaiaHand = 100;
     case DeathScorpio = 101;
@@ -98,18 +99,19 @@ enum EnemyData: int
             self::Twilight => 'トワイライト',
 
             self::CurseScareCrow => '呪いのカカシ',
-            self::DustBomb => 'ダストボム',
             self::ZombieClion => 'ゾンビクリオン',
             self::Narehate => 'ナレハテ',
 
-            self::DarkSrara => 'ダークスララ',
             self::BazaarLizard => 'バザールリザード',
-            self::Anima => 'アニマ',
+            self::DustBomb => 'ダストボム',
             self::WitherNepenthos => '枯れたネペントス',
             self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
+            self::Eliminator => 'エリミネーター',
             self::StoneGolem => 'ストーンゴーレム',
 
+            self::DarkSrara => 'ダークスララ',
+            self::Anima => 'アニマ',
             self::GaiaHand => 'ガイアハンド',
             self::DeathScorpio => 'デススコーピオ',
             self::MetalGecko => 'メタルゲッコー',
@@ -162,18 +164,19 @@ enum EnemyData: int
             self::Twilight => '常夜の森のヌシ。豊富な魔法攻撃を使用して冒険者を苦しめる。性格自体はおっとりとしているようだ。巨大だがその姿を表すことは滅多になく、かつては幸運の象徴だったとも言われている。',
 
             self::CurseScareCrow => '呪いのカカシ',
-            self::DustBomb => 'ダストボム',
             self::ZombieClion => 'ゾンビクリオン',
             self::Narehate => 'ナレハテ',
 
-            self::DarkSrara => 'ダークスララ',
-            self::BazaarLizard => 'バザールリザード',
-            self::Anima => 'アニマ',
+            self::BazaarLizard => '商魂逞しいトカゲの魔物。物理攻撃に耐性があり、アイテムを取り出して使ってくる。アイテムの手持ちはそれぞれ1つだけのため使ったらそれっきり。',
+            self::DustBomb => 'ごみ袋のような魔物。ターン数を重ねるごとにぶくぶくと膨れ上がっていき、大爆発を起こす。早めに倒してしまうか、もしくは爆発のタイミングで防御しよう。尖ったもので袋に穴が空いているように見えるが、身体の一部らしく問題なく膨らむことができるようだ。',
             self::WitherNepenthos => '枯れたネペントス',
             self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
+            self::Eliminator => 'エリミネーター',
             self::StoneGolem => 'ストーンゴーレム',
 
+            self::DarkSrara => 'ダークスララ',
+            self::Anima => 'アニマ',
             self::GaiaHand => 'ガイアハンド',
             self::DeathScorpio => 'デススコーピオ',
             self::MetalGecko => 'メタルゲッコー',
@@ -235,6 +238,7 @@ enum EnemyData: int
             self::WitherNepenthos => 'withernepenthos.png',
             self::PotDio => 'potdio.png',
             self::GolemBall => 'golemball.png',
+            self::Eliminator => 'eliminator.png',
             self::StoneGolem => 'stonegolem.png',
 
             self::GaiaHand => 'gaiahand.png',
@@ -331,7 +335,6 @@ enum EnemyData: int
     {
         return [
             self::CurseScareCrow->value,
-            self::DustBomb->value,
             self::ZombieClion->value,
             self::Narehate->value,
         ];
@@ -340,12 +343,13 @@ enum EnemyData: int
     public static function castleTownAppearingEnemies(): array
     {
         return [
-            self::DarkSrara->value,
             self::BazaarLizard->value,
-            self::Anima->value,
+            self::DustBomb->value,
+            self::HazardBerry->value,
             self::WitherNepenthos->value,
             self::PotDio->value,
             self::GolemBall->value,
+            self::Eliminator->value,
             self::StoneGolem->value,
         ];
     }
@@ -353,6 +357,8 @@ enum EnemyData: int
     public static function ancientCastleAppearingEnemies(): array
     {
         return [
+            self::DarkSrara->value,
+            self::Anima->value,
             self::GaiaHand->value,
             self::DeathScorpio->value,
             self::MetalGecko->value,

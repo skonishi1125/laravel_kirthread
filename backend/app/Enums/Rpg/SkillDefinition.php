@@ -99,6 +99,10 @@ enum SkillDefinition: int
     case StellarBlink = 121;
     case Blink = 122;
     case MagicTackle = 123;
+    case UseAllPotion = 124;
+    case UseMiniBomb = 125;
+    case SwellUp = 126;
+    case Explosion = 127;
 
     public function label(): string
     {
@@ -191,6 +195,10 @@ enum SkillDefinition: int
             self::StellarBlink => 'ステラブリンク', // 魔法 単体 SPDデバフ
             self::Blink => 'きらめく', // 何もしない行動
             self::MagicTackle => 'マジックタックル', // 魔法 単体
+            self::UseAllPotion => 'オールポーション使用', // 回復 全体 BazaarLizard
+            self::UseMiniBomb => 'ミニボム使用', // 攻撃 単体 BazaarLizard
+            self::SwellUp => '膨れ上がる', // 何もしない
+            self::Explosion => '爆発', // 物理 全体
         };
     }
 
@@ -285,6 +293,10 @@ enum SkillDefinition: int
             self::StellarBlink => '星の光を瞬かせ、それを魔力として相手単体にぶつける。SPDを下げる。',
             self::Blink => 'キラキラかがやき、何もしない。',
             self::MagicTackle => '魔法のタックル。理屈じゃない！相手に魔法単体攻撃。',
+            self::UseAllPotion => 'オールポーションを使って、全員の体力回復。',
+            self::UseMiniBomb => 'ミニボムを使って、単体に攻撃。',
+            self::SwellUp => 'ぷくぷくと膨れ上がる。',
+            self::Explosion => '自身を大爆発させ、相手全体に物理ダメージ。',
         };
     }
 }

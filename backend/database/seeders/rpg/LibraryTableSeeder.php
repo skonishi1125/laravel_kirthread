@@ -162,9 +162,9 @@ class LibraryTableSeeder extends Seeder
             ],
             [
                 'id' => 10,
-                'name' => '7クリア【月刊トリップ】',
+                'name' => 'バトルログを活用しよう【月刊トリップ】',
                 'book_category' => Library::CATEGORY_ADVENTURE,
-                'content' => '<p>7クリア</p>',
+                'content' => '<p>バトルログを活用しよう</p>',
                 'required_clears' => 7,
             ],
             // 職能編纂
@@ -320,7 +320,8 @@ class LibraryTableSeeder extends Seeder
                 'name' => '(未完成)調査報告書: '.FieldData::AncientCastle->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastle_preface.$caution,
-                'required_clears' => 7,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::CastleTown,
             ],
             [
                 'id' => 216,

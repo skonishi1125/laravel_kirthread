@@ -871,6 +871,25 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は魔力を纏って、そのまま突進してきた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::UseAllPotion :
+                    Debugbar::warning(SkillDefinition::UseAllPotion->label());
+                    $battle_logs_collection->push("{$actor_data->name}は荷物からオールポーションを取り出し、使用した！");
+                    $heal_point = 50;
+                    break;
+                case SkillDefinition::UseMiniBomb :
+                    Debugbar::warning(SkillDefinition::UseMiniBomb->label());
+                    $battle_logs_collection->push("{$actor_data->name}は荷物からミニボムを取り出し、使用した！");
+                    $damage = 100; // 本当は200だけど、弱くしておこう
+                    break;
+                case SkillDefinition::SwellUp :
+                    Debugbar::debug(SkillDefinition::SwellUp->label());
+                    $battle_logs_collection->push("{$actor_data->name}はぷくぷくと膨らみはじめた！");
+                    break;
+                case SkillDefinition::Explosion :
+                    Debugbar::warning(SkillDefinition::Explosion->label());
+                    $battle_logs_collection->push("{$actor_data->name}の膨れ切った身体がはち切れ、大爆発を起こした！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
