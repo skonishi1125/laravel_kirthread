@@ -44,8 +44,10 @@ enum EnemyData: int
     case DarkSrara = 90;
     case BazaarLizard = 91;
     case Anima = 92;
-    case GolemBall = 94;
-    case StoneGolem = 95;
+    case WitherNepenthos = 93;
+    case PotDio = 94;
+    case GolemBall = 95;
+    case StoneGolem = 96;
 
     case GaiaHand = 100;
     case DeathScorpio = 101;
@@ -103,6 +105,8 @@ enum EnemyData: int
             self::DarkSrara => 'ダークスララ',
             self::BazaarLizard => 'バザールリザード',
             self::Anima => 'アニマ',
+            self::WitherNepenthos => '枯れたネペントス',
+            self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
             self::StoneGolem => 'ストーンゴーレム',
 
@@ -165,6 +169,8 @@ enum EnemyData: int
             self::DarkSrara => 'ダークスララ',
             self::BazaarLizard => 'バザールリザード',
             self::Anima => 'アニマ',
+            self::WitherNepenthos => '枯れたネペントス',
+            self::PotDio => 'ポットディオ',
             self::GolemBall => 'ゴーレムボール',
             self::StoneGolem => 'ストーンゴーレム',
 
@@ -226,6 +232,8 @@ enum EnemyData: int
             self::DarkSrara => 'darksrara.png',
             self::BazaarLizard => 'bazaarlizard.png',
             self::Anima => 'anima.png',
+            self::WitherNepenthos => 'withernepenthos.png',
+            self::PotDio => 'potdio.png',
             self::GolemBall => 'golemball.png',
             self::StoneGolem => 'stonegolem.png',
 
@@ -335,6 +343,8 @@ enum EnemyData: int
             self::DarkSrara->value,
             self::BazaarLizard->value,
             self::Anima->value,
+            self::WitherNepenthos->value,
+            self::PotDio->value,
             self::GolemBall->value,
             self::StoneGolem->value,
         ];
