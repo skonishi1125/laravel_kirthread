@@ -8,9 +8,9 @@ enum EnemyData: int
     case Gao = 11;
     case BigSrara = 12;
 
-    case Rizard = 20;
+    case Lizard = 20;
     case Scorpio = 21;
-    case RockRizard = 22;
+    case RockLizard = 22;
 
     case Bou = 30;
     case IwaMet = 31;
@@ -42,7 +42,7 @@ enum EnemyData: int
     case Narehate = 83;
 
     case DarkSrara = 90;
-    case BazaarRizard = 91;
+    case BazaarLizard = 91;
     case Anima = 92;
     case GolemBall = 94;
     case StoneGolem = 95;
@@ -67,9 +67,9 @@ enum EnemyData: int
             self::Gao => 'ガオー',
             self::BigSrara => 'ビッグスララ',
 
-            self::Rizard => 'リザード',
+            self::Lizard => 'リザード',
             self::Scorpio => 'スコーピオ',
-            self::RockRizard => 'ロックリザード',
+            self::RockLizard => 'ロックリザード',
 
             self::Bou => 'ボウ',
             self::IwaMet => 'イワメット',
@@ -101,7 +101,7 @@ enum EnemyData: int
             self::Narehate => 'ナレハテ',
 
             self::DarkSrara => 'ダークスララ',
-            self::BazaarRizard => 'バザールリザード',
+            self::BazaarLizard => 'バザールリザード',
             self::Anima => 'アニマ',
             self::GolemBall => 'ゴーレムボール',
             self::StoneGolem => 'ストーンゴーレム',
@@ -129,9 +129,9 @@ enum EnemyData: int
             self::Gao => '素早い動きが特徴。攻撃力が高いため優先的に倒そう。',
             self::BigSrara => 'スララが偶然ぶつかり合体した生命体。消化液でDEFを落としてくるのがいやらしい。',
 
-            self::Rizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
+            self::Lizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
             self::Scorpio => '致命の一撃を得意とするサソリ。魔法耐性が非常に低いので魔法で攻めよう。',
-            self::RockRizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
+            self::RockLizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
             self::Bou => '炎魔法の残り香が集まってできた生命体。集団で出てきてファイアの魔法で攻め立てられる。物理防御力が低いので全体攻撃で攻めると吉。',
             self::IwaMet => '防御が自慢のカメ（？）。魔法での攻撃が有効。',
@@ -163,7 +163,7 @@ enum EnemyData: int
             self::Narehate => 'ナレハテ',
 
             self::DarkSrara => 'ダークスララ',
-            self::BazaarRizard => 'バザールリザード',
+            self::BazaarLizard => 'バザールリザード',
             self::Anima => 'アニマ',
             self::GolemBall => 'ゴーレムボール',
             self::StoneGolem => 'ストーンゴーレム',
@@ -190,9 +190,9 @@ enum EnemyData: int
             self::Gao => 'gao.png',
             self::BigSrara => 'bigsrara.png',
 
-            self::Rizard => 'rizard.png',
+            self::Lizard => 'lizard.png',
             self::Scorpio => 'scorpio.png',
-            self::RockRizard => 'rockrizard.png',
+            self::RockLizard => 'rocklizard.png',
 
             self::Bou => 'bou.png',
             self::IwaMet => 'iwamet.png',
@@ -224,7 +224,7 @@ enum EnemyData: int
             self::Narehate => 'narehate.png',
 
             self::DarkSrara => 'darksrara.png',
-            self::BazaarRizard => 'bazaarrizard.png',
+            self::BazaarLizard => 'bazaarlizard.png',
             self::Anima => 'anima.png',
             self::GolemBall => 'golemball.png',
             self::StoneGolem => 'stonegolem.png',
@@ -258,9 +258,9 @@ enum EnemyData: int
         return [
             self::Srara->value,
             self::Gao->value,
-            self::Rizard->value,
+            self::Lizard->value,
             self::Scorpio->value,
-            self::RockRizard->value,
+            self::RockLizard->value,
         ];
     }
 
@@ -298,7 +298,7 @@ enum EnemyData: int
     public static function wetFogAppearingEnemies(): array
     {
         return [
-            self::Rizard->value,
+            self::Lizard->value,
             self::Norawani->value,
             self::Nepenthos->value,
             self::Dionaea->value,
@@ -333,7 +333,7 @@ enum EnemyData: int
     {
         return [
             self::DarkSrara->value,
-            self::BazaarRizard->value,
+            self::BazaarLizard->value,
             self::Anima->value,
             self::GolemBall->value,
             self::StoneGolem->value,

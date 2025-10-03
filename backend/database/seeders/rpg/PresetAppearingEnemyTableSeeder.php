@@ -95,7 +95,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 2,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             //  stage 3
@@ -109,7 +109,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
@@ -121,20 +121,20 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             // stage 5
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::RockRizard,
+                'enemy_id' => EnemyData::RockLizard,
                 'number' => 1,
             ],
             [
@@ -288,7 +288,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::WetFog,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Rizard,
+                'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
             [
@@ -552,7 +552,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::BazaarRizard,
+                'enemy_id' => EnemyData::BazaarLizard,
                 'number' => 1,
             ],
             [
