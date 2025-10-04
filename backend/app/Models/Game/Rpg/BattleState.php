@@ -2227,6 +2227,164 @@ class BattleState extends Model
     }
 
     /**
+     * storePartySpecialSkill()の、物理 / 魔法攻撃 + デバフのログ格納処理
+     */
+    private static function applyDebuffAllAttackAndLog(
+        object $actor_data,
+        Collection $battle_state_opponents_collection,
+        int $pure_damage,
+        Collection $battle_logs_collection,
+        int $attack_type,
+        array $new_buff,
+        bool $is_enemy
+    ) {
+        if (! $is_enemy) {
+            // パーティの場合のログ
+            Debugbar::debug('applyDebuffAllAttackAndLog: パーティ側 全体攻撃ループ開始。#########');
+            foreach ($battle_state_opponents_collection as $opponent_data) {
+                // 討伐判定チェック
+                if ($opponent_data->is_defeated_flag == true) {
+                    Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+
+                    // returnにした場合は、foreach自体が終了する
+                    // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
+                    continue;
+                }
+
+                // ダメージ計算 物理か魔法攻撃かで変える
+                if ($attack_type === AttackType::Physical->value) {
+                    Debugbar::debug('applyDebuffAllAttackAndLog():: 物理。');
+                    $result = self::calculatePhysicalDamage(
+                        $pure_damage,
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                } elseif ($attack_type === AttackType::Magic->value) {
+                    Debugbar::debug('applyDebuffAllAttackAndLog():: 魔法。');
+                    $opponent_mdef = self::calculateMagicDefenceValue(
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($opponent_data, 'int')
+                    );
+                    $result = self::calculateMagicDamage(
+                        $pure_damage,
+                        $opponent_mdef,
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                }
+
+                $calculated_damage = $result['damage'] ?? 0;
+                $is_critical = $result['is_critical'] ?? false;
+
+                if ($calculated_damage > 0) {
+                    Debugbar::debug("【applyDebuffAllAttackAndLog】ダメージが1以上。敵の現在体力: {$opponent_data->value_hp}");
+                    $opponent_data->value_hp -= $calculated_damage;
+                    Debugbar::debug("攻撃した。敵の残り体力: {$opponent_data->value_hp}");
+
+                    // クリティカル メッセージ分岐
+                    if ($is_critical) {
+                        $battle_logs_collection->push("クリティカル！{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                    } else {
+                        $battle_logs_collection->push("{$opponent_data->name}に{$calculated_damage}のダメージ！");
+                    }
+
+                    // デバフ付与 foreach中のため、TargetRangeはsingleを指定する
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, TargetRange::Single->value, true, $is_enemy);
+
+                    // 敵を倒した場合
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$opponent_data->name}を倒した！");
+                        Debugbar::debug("{$opponent_data->name}を倒した。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+                    }
+
+                } else {
+                    // ダメージを与えられなかった場合
+                    $battle_logs_collection->push("しかし{$opponent_data->name}にダメージは与えられなかった！");
+                    Debugbar::debug("攻撃が通らなかった。{$opponent_data->name}は当然生存している。敵の残り体力: {$opponent_data->value_hp} 敵討伐フラグ: {$opponent_data->is_defeated_flag} ");
+
+                    // ダメージを与えられなくてもデバフ付与 foreach中のため、TargetRangeはsingleを指定する
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, TargetRange::Single->value, true, $is_enemy);
+
+                }
+            }
+        } else {
+            // 敵の場合
+            Debugbar::warning('applyDebuffAllAttackAndLog: enemy側 全体攻撃ループ開始。#########');
+            foreach ($battle_state_opponents_collection as $opponent_data) {
+                // 討伐判定チェック
+                if ($opponent_data->is_defeated_flag == true) {
+                    Debugbar::warning("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+
+                    // returnにした場合は、foreach自体が終了する
+                    // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
+                    continue;
+                }
+
+                // ダメージ計算 物理か魔法攻撃かで変える
+                if ($attack_type === AttackType::Physical->value) {
+                    Debugbar::warning('applyDebuffAllAttackAndLog():: 物理。');
+                    $result = self::calculatePhysicalDamage(
+                        $pure_damage,
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                } elseif ($attack_type === AttackType::Magic->value) {
+                    Debugbar::warning('applyDebuffAllAttackAndLog():: 魔法。');
+                    $opponent_mdef = self::calculateMagicDefenceValue(
+                        self::calculateActualStatusValue($opponent_data, 'def'),
+                        self::calculateActualStatusValue($opponent_data, 'int')
+                    );
+                    $result = self::calculateMagicDamage(
+                        $pure_damage,
+                        $opponent_mdef,
+                        self::calculateActualStatusValue($actor_data, 'luc')
+                    );
+                }
+
+                $calculated_damage = $result['damage'] ?? 0;
+                $is_critical = $result['is_critical'] ?? false;
+
+                if ($calculated_damage > 0) {
+                    Debugbar::warning("【applyDebuffAllAttackAndLog】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
+                    $opponent_data->value_hp -= $calculated_damage;
+                    Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+
+                    // クリティカル メッセージ分岐
+                    if ($is_critical) {
+                        $battle_logs_collection->push("致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    } else {
+                        $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    }
+
+                    // デバフ付与 foreach中のため、TargetRangeはsingleを指定する
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, TargetRange::Single->value, true, $is_enemy);
+
+                    // 敵を倒した場合
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                        Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                    }
+                } else {
+                    // 防御などが高く、ダメージを受けなかった場合
+                    $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
+                    Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+
+                    // ダメージを与えられなくてもデバフ付与 foreach中のため、TargetRangeはsingleを指定する
+                    self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, TargetRange::Single->value, true, $is_enemy);
+                }
+            }
+            Debugbar::warning('全体攻撃ループ完了。#########');
+
+        }
+
+    }
+
+    /**
      * 敵スキル 特殊系スキルの処理メソッド。
      *
      * ビッグスララ の 消化液など、使いまわせない固有スキルの処理をswitch文で対応する。
@@ -2257,71 +2415,7 @@ class BattleState extends Model
                 // 何もしない (ログpushなども、すでにSkillモデル側で済ませている
                 break;
             case SkillDefinition::WeakPollen : // 弱体の花粉
-                // TODO: 敵の全体攻撃のコピペ。他のスキルにもデバフ + 全体攻撃のものがあった場合は共通化する。
-                Debugbar::debug('WeakPollen: 全体攻撃ループ開始。#########');
-
-                // ループ内で書くと攻撃のたびに威力が弱まってしまうので、個別で防御などを改めて取得して処理する。
-                $base_damage = $pure_damage;
-                foreach ($battle_state_opponents_collection as $opponent_data) {
-                    // 討伐判定チェック
-                    if ($opponent_data->is_defeated_flag == true) {
-                        Debugbar::debug("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
-
-                        // returnにした場合は、foreach自体が終了する
-                        // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
-                        continue;
-                    }
-
-                    // ダメージ計算 魔法
-                    Debugbar::debug('魔法。');
-                    $opponent_mdef = self::calculateMagicDefenceValue(
-                        self::calculateActualStatusValue($opponent_data, 'def'),
-                        self::calculateActualStatusValue($opponent_data, 'int')
-                    );
-                    $result = self::calculateMagicDamage(
-                        $base_damage,
-                        $opponent_mdef,
-                        self::calculateActualStatusValue($actor_data, 'luc')
-                    );
-
-                    $calculated_damage = $result['damage'] ?? 0;
-                    $is_critical = $result['is_critical'] ?? false;
-
-                    if ($calculated_damage > 0) {
-                        Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
-                        $opponent_data->value_hp -= $calculated_damage;
-                        Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
-
-                        // クリティカル メッセージ分岐
-                        if ($is_critical) {
-                            $battle_logs_collection->push("致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
-                        } else {
-                            $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
-                        }
-
-                        // デバフ付与
-                        self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
-                        $battle_logs_collection->push("{$opponent_data->name}のステータスが下がった！");
-
-                        // 敵を倒した場合
-                        if ($opponent_data->value_hp <= 0) {
-                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
-                            $opponent_data->is_defeated_flag = true;
-                            self::clearBuff($opponent_data);
-                            $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
-                            Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
-                        }
-                    } else {
-                        // 防御などが高く、ダメージを受けなかった場合
-                        $battle_logs_collection->push("しかし{$opponent_data->name}は攻撃を防いだ！");
-                        Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
-
-                        // 0の場合でも、デバフは付与
-                        self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
-                        $battle_logs_collection->push("{$opponent_data->name}のステータスが下がった！");
-                    }
-                }
-                Debugbar::warning('全体攻撃ループ完了。#########');
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
                 break;
             case SkillDefinition::StellarBlink :
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
