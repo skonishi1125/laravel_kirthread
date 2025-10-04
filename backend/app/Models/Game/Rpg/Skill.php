@@ -945,6 +945,17 @@ class Skill extends Model
                     $damage = 20;
                     $new_buff['buffed_luc'] = (int) (-20);
                     break;
+                case SkillDefinition::PhysicalMode :
+                    Debugbar::warning(SkillDefinition::PhysicalMode->label());
+                    $battle_logs_collection->push("{$actor_data->name}は変形し、物理攻撃モードとなった！");
+                    $new_buff['buffed_str'] = (int) 100;
+                    $new_buff['buffed_def'] = (int) 100;
+                    break;
+                case SkillDefinition::MagicMode :
+                    Debugbar::warning(SkillDefinition::MagicMode->label());
+                    $battle_logs_collection->push("{$actor_data->name}は変形し、魔法攻撃モードとなった！");
+                    $new_buff['buffed_int'] = (int) 200;
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

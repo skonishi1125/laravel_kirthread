@@ -558,7 +558,7 @@ class BattleState extends Model
 
                 // 敵コマンドの決定
                 self::determineEnemyCommand($actor_data, $current_turn);
-                Debugbar::warning("determineEnemyCommand()決定。設定後: {$actor_data->command} スキルID: {$actor_data->selected_skill_id}");
+                // Debugbar::warning("determineEnemyCommand()決定。設定後: {$actor_data->command} スキルID: {$actor_data->selected_skill_id}");
 
                 switch ($actor_data->command) {
                     case 'ATTACK':
@@ -669,7 +669,7 @@ class BattleState extends Model
      *
      * 'ATTACK'や'SKILL'など。スキルの場合はAPやバフの状況等を考慮した上で決定する。
      */
-    private static function determineEnemyCommand(object $enemy_data, int $current_turn): void
+    public static function determineEnemyCommand(object $enemy_data, int $current_turn): void
     {
 
         Debugbar::warning('determineEnemyCommand(): ------------------------');

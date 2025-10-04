@@ -115,6 +115,8 @@ enum SkillDefinition: int
     case MagicBreak = 1032;
     case SpeedBreak = 1033;
     case LuckBreak = 1034;
+    case PhysicalMode = 1035;
+    case MagicMode = 1036;
 
     public function label(): string
     {
@@ -223,6 +225,8 @@ enum SkillDefinition: int
             self::MagicBreak => 'マジックブレイク', // 特殊 魔法 全体 デバフ
             self::SpeedBreak => 'スピードブレイク', // 特殊 魔法 全体 デバフ
             self::LuckBreak => 'ラックブレイク', // 特殊 魔法 全体 デバフ
+            self::PhysicalMode => 'フィジカルモード', // 自身 最速 STR, DEF バフ
+            self::MagicMode => 'マジックモード', // 自身 最速 INT バフ
         };
     }
 
@@ -333,6 +337,8 @@ enum SkillDefinition: int
             self::MagicBreak => '相手全体にダメージを与え、INTを下げる。',
             self::SpeedBreak => '相手全体にダメージを与え、SPDを下げる。',
             self::LuckBreak => '相手全体にダメージを与え、LUCを下げる。',
+            self::PhysicalMode => '初めに発動する。自身のSTR, DEFを上昇。', // 自身 最速 STR, DEF バフ
+            self::MagicMode => '初めに発動する。自身のINTを上昇。', // 自身 最速 INT バフ
 
         };
     }
