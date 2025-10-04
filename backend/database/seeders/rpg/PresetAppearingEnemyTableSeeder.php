@@ -548,7 +548,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::DustBomb,
-                'number' => 3,
+                'number' => 2,
             ],
             // stage2
             [

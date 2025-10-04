@@ -45,7 +45,7 @@ class Library extends Model
                         $q->orWhereIn('required_clear_field_id', $cleared_field_ids);
                     });
             })
-            ->orderBy('id', 'asc')
+            ->orderBy('id', 'desc')
             ->get()
             // is_read という、既読済みかどうかの判定値の追加
             ->map(function ($book) use ($read_library_ids) {
