@@ -693,7 +693,7 @@ class BattleState extends Model
 
             // 本来nullになることはないはずだが、そうなった場合はATTACKとしてreturnする
             if (is_null($action_pattern)) {
-                Debugbar::warning('action_patternが見当たりませんでした。ATTACKを格納しますが、管理者側で確認が必要です。');
+                Debugbar::error('action_patternが見当たりませんでした。ATTACKを格納しますが、管理者側で確認が必要です。');
                 $enemy_data->command = 'ATTACK';
 
                 return;
@@ -707,7 +707,7 @@ class BattleState extends Model
                 });
 
                 if (is_null($selected_skill)) {
-                    Debugbar::warning("指定されたスキルID {$skill_id} が敵のスキル一覧に存在しません。ATTACKを格納しますが、管理者側で確認が必要です。");
+                    Debugbar::error("指定されたスキルID {$skill_id} が敵のスキル一覧に存在しません。ATTACKを格納しますが、管理者側で確認が必要です。");
                     $enemy_data->command = 'ATTACK';
 
                     return;
@@ -2370,10 +2370,40 @@ class BattleState extends Model
             case SkillDefinition::SwellUp :
                 // 何もしない (ログpushなども、すでにSkillモデル側で済ませている
                 break;
+            case SkillDefinition::PowerBreak :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = (int) ($max_value_hp * 0.1);
+                self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
             default:
                 break;
         }
 
+    }
+
+    /**
+     * 敵 自傷ダメージ計算
+     *
+     * 一旦PowerBreakなどのスキルを考慮した設計になっているので、拡張性を持たせたいときは改修すること。
+     */
+    private static function calculateEnemySelfHarmDamage(object $actor_data, int $self_harm_damage, Collection $battle_logs_collection)
+    {
+        Debugbar::debug('calculateSelfHarmDamage(): --------');
+        $actor_data->value_hp -= $self_harm_damage;
+        $battle_logs_collection->push("{$actor_data->name}は代償として、自傷ダメージを受けた！");
+        // 自身が倒れてしまった時、戦闘不能フラグを有効化し、バフをリセット
+        if ($actor_data->value_hp <= 0) {
+            $actor_data->value_hp = 0;
+            $actor_data->is_defeated_flag = true;
+            self::clearBuff($actor_data);
+            $battle_logs_collection->push("{$actor_data->name}は役目を終え、力尽きた。");
+            Debugbar::debug("{$actor_data->name}は体力がなくなった。残HP: {$actor_data->value_hp}");
+        } else {
+            Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
+        }
     }
 
     /**

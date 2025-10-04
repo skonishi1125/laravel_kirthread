@@ -108,6 +108,9 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
             ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
 
+            // Eliminator
+            ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::PowerBreak, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

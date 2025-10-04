@@ -110,6 +110,7 @@ enum SkillDefinition: int
     case Explosion = 1027;
     case RazerBeam = 1028;
     case RazerSweep = 1029;
+    case PowerBreak = 1030;
 
     public function label(): string
     {
@@ -213,6 +214,7 @@ enum SkillDefinition: int
             self::Explosion => '爆発', // 物理 全体
             self::RazerBeam => 'レーザービーム', // 魔法 単体
             self::RazerSweep => 'レーザースイープ', // 魔法 全体
+            self::PowerBreak => 'パワーブレイク', // 特殊 魔法 全体 デバフ
         };
     }
 
@@ -318,6 +320,7 @@ enum SkillDefinition: int
             self::Explosion => '自身を大爆発させ、相手全体に物理ダメージ。',
             self::RazerBeam => 'レーザーを射出し、単体に魔法ダメージ。',
             self::RazerSweep => 'レーザーを射出し薙ぎ払う。相手全体に魔法ダメージ。倍率が高い。',
+            self::PowerBreak => '相手全体にダメージを与え、STRを下げる。',
         };
     }
 }

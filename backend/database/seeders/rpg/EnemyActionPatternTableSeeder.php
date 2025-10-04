@@ -306,6 +306,14 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'is_use_skill' => false,
             ],
 
+            // Eliminator
+            [
+                'enemy_id' => EnemyData::Eliminator,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::PowerBreak,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

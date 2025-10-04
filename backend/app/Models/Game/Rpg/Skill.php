@@ -915,6 +915,12 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}はレーザーを射出し、周囲を薙ぎ払った！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::PowerBreak :
+                    Debugbar::warning(SkillDefinition::PowerBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $damage = 20;
+                    $new_buff['buffed_str'] = (int) (-20);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;
