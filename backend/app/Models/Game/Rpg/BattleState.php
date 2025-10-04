@@ -556,10 +556,6 @@ class BattleState extends Model
 
                 Debugbar::warning('敵やられ、味方全員やられチェックOK');
 
-                // 敵コマンドの決定
-                self::determineEnemyCommand($actor_data, $current_turn);
-                // Debugbar::warning("determineEnemyCommand()決定。設定後: {$actor_data->command} スキルID: {$actor_data->selected_skill_id}");
-
                 switch ($actor_data->command) {
                     case 'ATTACK':
                         Debugbar::warning("【ATTACK】{$actor_data->name} ");
