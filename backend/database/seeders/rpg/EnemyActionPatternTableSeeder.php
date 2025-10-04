@@ -331,7 +331,7 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'enemy_id' => EnemyData::StoneGolem,
                 'turn_count' => 5,
                 'is_use_skill' => true,
-                'skill_id' => SkillDefinition::LuckBreak, // TODO; ロケットパンチとか
+                'skill_id' => SkillDefinition::RocketPunch,
             ],
             [
                 'enemy_id' => EnemyData::StoneGolem,
@@ -342,22 +342,26 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::StoneGolem,
                 'turn_count' => 7,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
             ],
             [
                 'enemy_id' => EnemyData::StoneGolem,
                 'turn_count' => 8,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
             ],
             [
                 'enemy_id' => EnemyData::StoneGolem,
                 'turn_count' => 9,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
             ],
             [
                 'enemy_id' => EnemyData::StoneGolem,
                 'turn_count' => 10,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerSweep,
             ],
 
         ];

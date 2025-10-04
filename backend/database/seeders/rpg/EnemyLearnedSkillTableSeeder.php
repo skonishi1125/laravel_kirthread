@@ -105,8 +105,8 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::PotDio, 'skill_id' => SkillDefinition::Rampage, 'skill_level' => 1],
 
             // GolemBall
-            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
-            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 3],
+            ['enemy_id' => EnemyData::GolemBall, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 3],
 
             // Eliminator
             ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::PowerBreak, 'skill_level' => 1],
@@ -118,6 +118,9 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // StoneGolem
             ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::PhysicalMode, 'skill_level' => 1],
             ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::MagicMode, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::RocketPunch, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ

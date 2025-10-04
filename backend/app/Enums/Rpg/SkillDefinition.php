@@ -117,6 +117,7 @@ enum SkillDefinition: int
     case LuckBreak = 1034;
     case PhysicalMode = 1035;
     case MagicMode = 1036;
+    case RocketPunch = 1037;
 
     public function label(): string
     {
@@ -227,6 +228,7 @@ enum SkillDefinition: int
             self::LuckBreak => 'ラックブレイク', // 特殊 魔法 全体 デバフ
             self::PhysicalMode => 'フィジカルモード', // 自身 最速 STR, DEF バフ
             self::MagicMode => 'マジックモード', // 自身 最速 INT バフ
+            self::RocketPunch => 'ロケットパンチ', // 物理 単体
         };
     }
 
@@ -339,6 +341,7 @@ enum SkillDefinition: int
             self::LuckBreak => '相手全体にダメージを与え、LUCを下げる。',
             self::PhysicalMode => '初めに発動する。自身のSTR, DEFを上昇。', // 自身 最速 STR, DEF バフ
             self::MagicMode => '初めに発動する。自身のINTを上昇。', // 自身 最速 INT バフ
+            self::RocketPunch => 'パンチを飛ばして相手単体に物理ダメージ。', // 自身 最速 INT バフ
 
         };
     }

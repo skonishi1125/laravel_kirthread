@@ -683,7 +683,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::SonicTrimming :
                     Debugbar::debug(SkillDefinition::SonicTrimming->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！思考が冴え渡り、明瞭になっていく...");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！動きが洗練され、明瞭になっていく！");
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::LuckEnt :
@@ -955,6 +955,11 @@ class Skill extends Model
                     Debugbar::warning(SkillDefinition::MagicMode->label());
                     $battle_logs_collection->push("{$actor_data->name}は変形し、魔法攻撃モードとなった！");
                     $new_buff['buffed_int'] = (int) 200;
+                    break;
+                case SkillDefinition::RocketPunch :
+                    Debugbar::warning(SkillDefinition::RocketPunch->label());
+                    $battle_logs_collection->push("{$actor_data->name}は拳を突き出し、なんと発射してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
