@@ -10,11 +10,11 @@ enum ItemData: int
     case HighPotion = 4;
     case AllHighPotion = 5;
     case LifeElixir = 6;
-    case FullLifeElixir = 7;
-    case ResurrectElement = 8;
+    // case FullLifeElixir = 7;
+    case ResurrectPot = 8;
 
     case ManaDrop = 11;
-    case AllManaDrop = 12;
+    // case AllManaDrop = 12;
     case ManaWater = 13;
     case ManaElixir = 14;
     case FullManaElixir = 15;
@@ -40,15 +40,15 @@ enum ItemData: int
         return match ($this) {
             self::MiniPotion => 'ミニポーション',
             self::Potion => 'ポーション',
-            self::AllPotion => 'オールポーション',
+            self::AllPotion => 'Aポーション',
             self::HighPotion => 'ハイポーション',
-            self::AllHighPotion => 'オールハイポーション',
+            self::AllHighPotion => 'Aハイポーション',
             self::LifeElixir => 'ライフエリクサ',
-            self::FullLifeElixir => 'フルライフエリクサ',
-            self::ResurrectElement => 'リザレクトエレメント',
+            // self::FullLifeElixir => 'フルライフエリクサ',
+            self::ResurrectPot => 'リザレクトポット',
 
             self::ManaDrop => 'マナドロップ',
-            self::AllManaDrop => 'オールマナドロップ',
+            // self::AllManaDrop => 'オールマナドロップ',
             self::ManaWater => 'マナウォーター',
             self::ManaElixir => 'マナエリクサ',
             self::FullManaElixir => 'フルマナエリクサ',
@@ -79,14 +79,14 @@ enum ItemData: int
             self::AllPotion => '全体効果のあるポーション。仲間全員のHPを50回復。',
             self::HighPotion => '高い効力を持つ回復アイテム。仲間1人のHPを100回復。',
             self::AllHighPotion => '全体効果のあるハイポーション。仲間全員のHPを100回復。',
-            self::LifeElixir => '服用者の生命力に効果が依存する薬。仲間1人のHPを50パーセント分回復。',
-            self::FullLifeElixir => '服用者の生命力を最大限に活性化させる。仲間1人のHPを全回復。',
-            self::ResurrectElement => '生命力そのものが詰められた特殊なビン。戦闘不能の味方を30パーセントのHPで復活。',
+            self::LifeElixir => '服用者の生命力に効果が依存する薬。仲間1人のHPを全回復。',
+            // self::FullLifeElixir => '服用者の生命力を最大限に活性化させる。仲間1人のHPを全回復。',
+            self::ResurrectPot => '生命力そのものが詰められた特殊なビン。戦闘不能の味方を30パーセントのHPで復活。',
 
             self::ManaDrop => 'マナの詰まった小さな雫。仲間1人のAPを20回復。',
-            self::AllManaDrop => 'マナドロップを広く拡散できるようにしたアイテム。仲間全員のAPを20回復。',
+            // self::AllManaDrop => 'マナドロップを広く拡散できるようにしたアイテム。仲間全員のAPを20回復。',
             self::ManaWater => '雫を集め多くAPを摂取できるように設計されたもの。仲間1人のAPを50回復。',
-            self::ManaElixir => 'マナの液体を高純度に抽出したもの。仲間1人のAPを50パーセント回復。',
+            self::ManaElixir => 'マナの液体を高純度に抽出したもの。仲間1人のAPを100回復。',
             self::FullManaElixir => 'マナの液体をさらに高純度に抽出。仲間1人のAPを全回復。',
 
             // %のものを出すと、最後まで支えて良さそうだ

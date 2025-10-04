@@ -985,7 +985,7 @@ class BattleState extends Model
                     Debugbar::debug('特殊系');
                     Debugbar::debug($selected_item_data);
                     switch ($selected_item_data->id) {
-                        case ItemData::ResurrectElement->value : // リザレクトエレメント
+                        case ItemData::ResurrectPot->value : // リザレクトエレメント
                             Debugbar::debug('リザレクトエレメント');
                             $opponent_data = $battle_state_opponents_collection[$opponents_index];
                             // 戦闘不能でなければスキップ
