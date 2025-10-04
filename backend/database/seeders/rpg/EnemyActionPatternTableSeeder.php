@@ -287,7 +287,6 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'turn_count' => 1,
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::WeakPollen,
-
             ],
             [
                 'enemy_id' => EnemyData::PotDio,
@@ -304,6 +303,65 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'enemy_id' => EnemyData::PotDio,
                 'turn_count' => 4,
                 'is_use_skill' => false,
+            ],
+
+            // StoneGolem
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::PhysicalMode,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 4,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RocketPunch,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 6,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::MagicMode,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 7,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 8,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 9,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerBeam,
+            ],
+            [
+                'enemy_id' => EnemyData::StoneGolem,
+                'turn_count' => 10,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::RazerSweep,
             ],
 
         ];

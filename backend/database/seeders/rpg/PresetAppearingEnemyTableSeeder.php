@@ -548,7 +548,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::DustBomb,
-                'number' => 1,
+                'number' => 3,
             ],
             // stage2
             [
@@ -589,32 +589,37 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
             // stage4
+            // [
+            //     'field_id' => FieldData::CastleTown,
+            //     'stage_id' => 4,
+            //     'enemy_id' => EnemyData::DustBomb,
+            //     'number' => 3,
+            // ],
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 4,
-                'enemy_id' => EnemyData::DustBomb,
-                'number' => 3,
+                'enemy_id' => EnemyData::GolemBall,
+                'number' => 2,
             ],
             // stage5
             [
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::GolemBall,
-                'number' => 2,
+                'enemy_id' => EnemyData::Eliminator,
+                'number' => 1,
             ],
-
-            // [
-            //     'field_id' => FieldData::CastleTown,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::GolemBall,
-            //     'number' => 1,
-            // ],
-            // [
-            //     'field_id' => FieldData::CastleTown,
-            //     'stage_id' => 2,
-            //     'enemy_id' => EnemyData::StoneGolem,
-            //     'number' => 1,
-            // ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::StoneGolem,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::CastleTown,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Eliminator,
+                'number' => 1,
+            ],
 
             // 古城
             [

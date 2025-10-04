@@ -673,6 +673,25 @@ class ApiController extends Controller
             return $data;
         });
 
+        // enemy is_first, is_slow用の処理
+        foreach ($battle_state_enemies_collection as $enemy_data) {
+            // 敵コマンドを決定しておく
+            BattleState::determineEnemyCommand($enemy_data, $current_turn);
+            if (! is_null($enemy_data->selected_skill_id)) {
+                // Debugbar::debug("{$data->name}はスキルid: {$data->selected_skill_id}を選択。 ");
+                /** @var bool $selected_skill_is_first */
+                $selected_skill_is_first = collect($enemy_data->skills)->firstWhere('id', $enemy_data->selected_skill_id)->is_first; // firstWhereを使うため、Collectionに変換している
+                $enemy_data->selected_skill_is_first = $selected_skill_is_first;
+
+                /** @var bool $selected_skill_is_slow */
+                $selected_skill_is_slow = collect($enemy_data->skills)->firstWhere('id', $enemy_data->selected_skill_id)->is_slow; // firstWhereを使うため、Collectionに変換している
+                $enemy_data->selected_skill_is_slow = $selected_skill_is_slow;
+            } else {
+                $enemy_data->selected_skill_is_first = null;
+                $enemy_data->selected_skill_is_slow = null;
+            }
+        }
+
         Debugbar::debug('行動順決定処理 BattleState::sortByBattleExec() -------------');
         $battle_state_players_and_enemies_collection =
             $battle_state_players_collection->concat($battle_state_enemies_collection);
@@ -705,9 +724,13 @@ class ApiController extends Controller
         // (これをしないと、蘇生後に最後に使った行動が実行されてしまう)
         // TODO: 敵も必要な場合(蘇生とかで)、この値が必要かチェックする
         Debugbar::debug('コマンドデフォルト設定対応 ------------------------');
-        foreach ($battle_state_players_collection as $player) {
-            $player->selected_skill_id = null;
-            $player->command = '';
+        foreach ($battle_state_players_collection as $player_data) {
+            $player_data->selected_skill_id = null;
+            $player_data->command = '';
+        }
+        foreach ($battle_state_enemies_collection as $enemy_data) {
+            $enemy_data->selected_skill_id = null;
+            $enemy_data->command = '';
         }
 
         // rpg_battle_states更新
