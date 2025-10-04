@@ -110,6 +110,10 @@ class EnemyLearnedSkillTableSeeder extends Seeder
 
             // Eliminator
             ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::PowerBreak, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::DefenceBreak, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::MagicBreak, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::SpeedBreak, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Eliminator, 'skill_id' => SkillDefinition::LuckBreak, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ

@@ -921,6 +921,30 @@ class Skill extends Model
                     $damage = 20;
                     $new_buff['buffed_str'] = (int) (-20);
                     break;
+                case SkillDefinition::DefenceBreak :
+                    Debugbar::warning(SkillDefinition::DefenceBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $damage = 20;
+                    $new_buff['buffed_def'] = (int) (-20);
+                    break;
+                case SkillDefinition::MagicBreak :
+                    Debugbar::warning(SkillDefinition::MagicBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $damage = 20;
+                    $new_buff['buffed_int'] = (int) (-20);
+                    break;
+                case SkillDefinition::SpeedBreak :
+                    Debugbar::warning(SkillDefinition::SpeedBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $damage = 20;
+                    $new_buff['buffed_spd'] = (int) (-20);
+                    break;
+                case SkillDefinition::LuckBreak :
+                    Debugbar::warning(SkillDefinition::LuckBreak->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！");
+                    $damage = 20;
+                    $new_buff['buffed_luc'] = (int) (-20);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

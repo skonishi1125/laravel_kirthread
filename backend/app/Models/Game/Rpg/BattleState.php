@@ -2378,6 +2378,38 @@ class BattleState extends Model
                 $self_harm_damage = (int) ($max_value_hp * 0.1);
                 self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
                 break;
+            case SkillDefinition::DefenceBreak :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = (int) ($max_value_hp * 0.1);
+                self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
+            case SkillDefinition::MagicBreak :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = (int) ($max_value_hp * 0.1);
+                self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
+            case SkillDefinition::SpeedBreak :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = (int) ($max_value_hp * 0.1);
+                self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
+            case SkillDefinition::LuckBreak :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = (int) ($max_value_hp * 0.1);
+                self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
             default:
                 break;
         }

@@ -111,6 +111,10 @@ enum SkillDefinition: int
     case RazerBeam = 1028;
     case RazerSweep = 1029;
     case PowerBreak = 1030;
+    case DefenceBreak = 1031;
+    case MagicBreak = 1032;
+    case SpeedBreak = 1033;
+    case LuckBreak = 1034;
 
     public function label(): string
     {
@@ -215,6 +219,10 @@ enum SkillDefinition: int
             self::RazerBeam => 'レーザービーム', // 魔法 単体
             self::RazerSweep => 'レーザースイープ', // 魔法 全体
             self::PowerBreak => 'パワーブレイク', // 特殊 魔法 全体 デバフ
+            self::DefenceBreak => 'ディフェンスブレイク', // 特殊 魔法 全体 デバフ
+            self::MagicBreak => 'マジックブレイク', // 特殊 魔法 全体 デバフ
+            self::SpeedBreak => 'スピードブレイク', // 特殊 魔法 全体 デバフ
+            self::LuckBreak => 'ラックブレイク', // 特殊 魔法 全体 デバフ
         };
     }
 
@@ -321,6 +329,11 @@ enum SkillDefinition: int
             self::RazerBeam => 'レーザーを射出し、単体に魔法ダメージ。',
             self::RazerSweep => 'レーザーを射出し薙ぎ払う。相手全体に魔法ダメージ。倍率が高い。',
             self::PowerBreak => '相手全体にダメージを与え、STRを下げる。',
+            self::DefenceBreak => '相手全体にダメージを与え、DEFを下げる。',
+            self::MagicBreak => '相手全体にダメージを与え、INTを下げる。',
+            self::SpeedBreak => '相手全体にダメージを与え、SPDを下げる。',
+            self::LuckBreak => '相手全体にダメージを与え、LUCを下げる。',
+
         };
     }
 }
