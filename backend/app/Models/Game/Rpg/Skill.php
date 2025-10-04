@@ -560,12 +560,27 @@ class Skill extends Model
                     //  例: 自身のDEFが100 SLv1の場合、-(100) * (1.0 / 2) = -50
                     $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * (($selected_skill_data->skill_percent) / 2));
                     break;
+                case SkillDefinition::ArmorBreaker :
+                    Debugbar::debug(SkillDefinition::ArmorBreaker->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！鋭い観察眼で守備の綻びを見抜き、一撃を射抜いた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent) + 5;
+                    // マイナスの値にして、相手にデバフとして付与する
+                    //  例: 自身のDEFが100 SLv1の場合、-(100) * (1.0 / 2) = -50
+                    $new_buff['buffed_def'] = (int) (-($actor_data->value_def) * (($selected_skill_data->skill_percent) / 2));
+                    break;
                 case SkillDefinition::EdgeFold :
                     Debugbar::debug(SkillDefinition::EdgeFold->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！弱体の力を込めた弓矢を相手に撃ち込む！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     // マイナスの値にして、相手にデバフとして付与する
                     //  例: 自身のDEFが100 SLv1の場合、-(100) * (1.0 / 2) = -50
+                    $new_buff['buffed_str'] = (int) (-($actor_data->value_str) * (($selected_skill_data->skill_percent) / 2));
+                    $new_buff['buffed_int'] = (int) (-($actor_data->value_int) * (($selected_skill_data->skill_percent) / 2));
+                    break;
+                case SkillDefinition::WeaponDemolish :
+                    Debugbar::debug(SkillDefinition::WeaponDemolish->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！攻撃の急所を穿ち、相手の技の威力をを鈍らせる！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_str'] = (int) (-($actor_data->value_str) * (($selected_skill_data->skill_percent) / 2));
                     $new_buff['buffed_int'] = (int) (-($actor_data->value_int) * (($selected_skill_data->skill_percent) / 2));
                     break;

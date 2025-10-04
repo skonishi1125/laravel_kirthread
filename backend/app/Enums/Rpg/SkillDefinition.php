@@ -5,128 +5,136 @@ namespace App\Enums\Rpg;
 enum SkillDefinition: int
 {
     // -------------------- 格闘家 --------------------
-    case MiddleBlow = 10;
-    case SpinKick = 11;
-    case FightSoul = 12;
-    case HeavyKnuckle = 13;
-    case RapidFist = 14;
-    case AxeShoot = 15;
-    case TitanBreak = 16;
-    case Transform = 17;
+    case MiddleBlow = 100;
+    case RapidFist = 101;
+    case SpinKick = 102;
+    case AxeShoot = 103;
+    case HeavyKnuckle = 104;
+    case TitanBreak = 105;
+    case FightSoul = 106;
+    case Transform = 107;
 
     // -------------------- 治療師 --------------------
-    case Healing = 20;
-    case AllHealing = 21;
-    case QuickHeal = 22;
-    case MiniVolt = 23;
-    case HolyArrow = 24;
-    case HeavenRay = 25;
-    case LuminousRelieve = 26;
-    case AllRelieve = 27;
-    case Resurrection = 28;
+    case Healing = 200;
+    case QuickHeal = 201;
+    case SlowHeal = 202;
+    case AllHealing = 203;
+    case QuickAllHealing = 204;
+    case SlowAllHealing = 205;
+    case LuminousRelieve = 206; // いらんか？
+    case AllRelieve = 207; // いらんか？
+    case Resurrection = 208;
+    case MiniVolt = 209;
+    case HolyArrow = 210;
+    case HeavenRay = 211;
 
     // -------------------- 重騎士 --------------------
-    case WideGuard = 30;
-    case AdvancedGuard = 31;
-    case CurseEdge = 32;
-    case WideThrust = 33;
-    case BraveSlash = 34;
-    case Protection = 35;
-    case OverProtect = 36;
-    case BloodMoon = 37;
+    case WideGuard = 300;
+    case AdvancedGuard = 301;
+    case CurseEdge = 302;
+    case WideThrust = 303;
+    case BraveSlash = 304;
+    case Protection = 305;
+    case OverProtect = 306;
+    case BloodMoon = 307;
 
     // -------------------- 魔導師 --------------------
-    case PetitBolt = 40;
-    case BoltStorm = 41;
-    case MagicalSmash = 42;
-    case AileCaliber = 43;
-    case MiniHeal = 44;
-    case PopHeal = 45;
-    case CrashBlast = 46;
-    case ManaExplosion = 47;
-    case Meditation = 48;
-    case BattleMage = 49;
+    case PetitBolt = 400;
+    case CrashBlast = 401;
+    case BoltStorm = 402;
+    case ManaExplosion = 403;
+    case AileCaliber = 404;
+    case MiniHeal = 405;
+    case PopHeal = 406;
+    case Meditation = 407;
+    case BattleMage = 408;
+    case MagicalSmash = 409;
 
     // -------------------- 弓馭者 --------------------
-    case FirstAid = 50;
-    case FairyFog = 51;
-    case BreakBowGun = 52;
-    case EdgeFold = 53;
-    case WindAccel = 54;
-    case GaleStrike = 55;
-    case BallistaShot = 56;
-    case SirenAura = 57;
-    case CerberusForce = 58;
+    case FirstAid = 500;
+    case FairyFog = 501;
+    case BallistaShot = 502;
+    case BreakBowGun = 503;
+    case ArmorBreaker = 504;
+    case EdgeFold = 505;
+    case WeaponDemolish = 506;
+    case WindAccel = 507;
+    case GaleStrike = 508;
+    case SirenAura = 509;
+    case CerberusForce = 510;
 
     // -------------------- 理術師 --------------------
-    case BookSmash = 60;
-    case AxiomStrike = 61;
-    case MagicMissile = 62;
-    case LogosRay = 63;
-    case PowerEnt = 64;
-    case BladeForce = 65;
-    case ShieldEnt = 66;
-    case DefendThreat = 67;
-    case MagicEnt = 68;
-    case ArcWisdom = 69;
-    case SpeedEnt = 70;
-    case SonicTrimming = 71;
-    case LuckEnt = 72;
-    case FortuneStar = 73;
+    case BookSmash = 600;
+    case AxiomStrike = 601;
+    case MagicMissile = 602;
+    case LogosRay = 603;
+    case PowerEnt = 604;
+    case BladeForce = 605;
+    case ShieldEnt = 606;
+    case DefendThreat = 607;
+    case MagicEnt = 608;
+    case ArcWisdom = 609;
+    case SpeedEnt = 610;
+    case SonicTrimming = 611;
+    case LuckEnt = 612;
+    case FortuneStar = 613;
 
     // -------------------- 敵 --------------------
-    case Bite = 100;
-    case Rampage = 101;
-    case Biribiri = 102;
-    case Discharge = 103;
-    case EnemyHealing = 104;
-    case EnemyAllHealing = 105;
-    case Regeneration = 106;
-    case EnemyGuardSpell = 107;
-    case EnemyAllGuardSpell = 108;
-    case Roar = 109;
-    case DigestiveFluid = 110;
-    case Freeze = 111;
-    case Bubble = 112;
-    case Wave = 113;
-    case Fire = 114;
-    case HailShot = 115;
-    case Prepare = 116; // 大技に噛ませるとよい
-    case Rush = 117;
-    case FreeToEat = 118;
-    case WeakPollen = 119;
-    case GrassWhip = 120;
-    case StellarBlink = 121;
-    case Blink = 122;
-    case MagicTackle = 123;
-    case UseAllPotion = 124;
-    case UseMiniBomb = 125;
-    case SwellUp = 126;
-    case Explosion = 127;
-    case RazerBeam = 128;
-    case RazerSweep = 129;
+    case Bite = 1000;
+    case Rampage = 1001;
+    case Biribiri = 1002;
+    case Discharge = 1003;
+    case EnemyHealing = 1004;
+    case EnemyAllHealing = 1005;
+    case Regeneration = 1006;
+    case EnemyGuardSpell = 1007;
+    case EnemyAllGuardSpell = 1008;
+    case Roar = 1009;
+    case DigestiveFluid = 1010;
+    case Freeze = 1011;
+    case Bubble = 1012;
+    case Wave = 1013;
+    case Fire = 1014;
+    case HailShot = 1015;
+    case Prepare = 1016; // 大技に噛ませるとよい
+    case Rush = 1017;
+    case FreeToEat = 1018;
+    case WeakPollen = 1019;
+    case GrassWhip = 1020;
+    case StellarBlink = 1021;
+    case Blink = 1022;
+    case MagicTackle = 1023;
+    case UseAllPotion = 1024;
+    case UseMiniBomb = 1025;
+    case SwellUp = 1026;
+    case Explosion = 1027;
+    case RazerBeam = 1028;
+    case RazerSweep = 1029;
 
     public function label(): string
     {
         return match ($this) {
             self::MiddleBlow => 'ミドルブロウ',
-            self::SpinKick => 'スピンキック',
-            self::FightSoul => 'ファイトソウル',
-            self::HeavyKnuckle => 'ヘビーナックル',
             self::RapidFist => 'ラピッドフィスト',
+            self::SpinKick => 'スピンキック',
             self::AxeShoot => 'アックスシュート',
+            self::HeavyKnuckle => 'ヘビーナックル',
             self::TitanBreak => 'タイタンブレイク',
+            self::FightSoul => 'ファイトソウル',
             self::Transform => 'トランスフォーム',
 
             self::Healing => 'ヒーリング',
-            self::AllHealing => 'オールヒーリング',
             self::QuickHeal => 'クイックヒール',
-            self::MiniVolt => 'ミニボルト',
-            self::HolyArrow => 'ホーリーアロー',
-            self::HeavenRay => 'ヘヴンレイ',
+            self::SlowHeal => 'スロウヒール',
+            self::AllHealing => 'オールヒーリング',
+            self::QuickAllHealing => 'クイックオールヒーリング',
+            self::SlowAllHealing => 'スロウオールヒーリング',
             self::LuminousRelieve => 'ルミナスリリーヴ',
             self::AllRelieve => 'オールリリーヴ',
             self::Resurrection => 'リザレクション',
+            self::MiniVolt => 'ミニボルト',
+            self::HolyArrow => 'ホーリーアロー',
+            self::HeavenRay => 'ヘヴンレイ',
 
             self::WideGuard => 'ワイドガード',
             self::AdvancedGuard => 'アドバンスドガード',
@@ -138,23 +146,25 @@ enum SkillDefinition: int
             self::BloodMoon => 'ブラッドムーン',
 
             self::PetitBolt => 'プチボルト',
+            self::CrashBlast => 'クラッシュブラスト',
             self::BoltStorm => 'ボルトストーム',
-            self::MagicalSmash => 'マジカルスマッシュ',
+            self::ManaExplosion => 'マナエクスプロージョン',
             self::AileCaliber => 'エイルカリバー',
             self::MiniHeal => 'ミニヒール',
             self::PopHeal => 'ポップヒール',
-            self::CrashBlast => 'クラッシュブラスト',
-            self::ManaExplosion => 'マナエクスプロージョン',
             self::Meditation => 'メディテーション',
             self::BattleMage => 'バトルメイジ',
+            self::MagicalSmash => 'マジカルスマッシュ',
 
             self::FirstAid => 'ファーストエイド',
             self::FairyFog => 'フェアリーフォグ',
+            self::BallistaShot => 'バリスタショット',
             self::BreakBowGun => 'ブレイクボウガン',
+            self::ArmorBreaker => 'アーマーブレイカー',
             self::EdgeFold => 'エッジフォールド',
+            self::WeaponDemolish => 'ウェポンデモリッシュ',
             self::WindAccel => 'ウインドアクセル',
             self::GaleStrike => 'ゲイルストライク',
-            self::BallistaShot => 'バリスタショット',
             self::SirenAura => 'セイレーンオーラ',
             self::CerberusForce => 'ケルベロスフォース',
 
@@ -210,23 +220,26 @@ enum SkillDefinition: int
     {
         return match ($this) {
             self::MiddleBlow => '素早いフットワークと共に、敵単体に拳を叩き込む。',
-            self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
-            self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
-            self::HeavyKnuckle => '敵単体に重い拳を撃ち込む。敵単体手に固定のダメージを与える。',
             self::RapidFist => '目にも止まらぬ速さで、敵単体に高速の六連攻撃！',
+            self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
             self::AxeShoot => '横凪ぎの踵落とし。敵全体に高いダメージを与える。',
+            self::HeavyKnuckle => '敵単体に重い拳を撃ち込む。敵単体手に固定のダメージを与える。',
             self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
+            self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
 
             self::Healing => '治療師の基礎回復魔法。味方単体のHPを回復する呪文を唱える。',
-            self::AllHealing => '癒しの魔力を広範囲に拡散し、味方全体のHPを回復する。',
             self::QuickHeal => '先制発動する。迅速な詠唱で味方単体のHPを回復する。',
-            self::MiniVolt => '魔力を敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
-            self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に射出する。',
-            self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
+            self::SlowHeal => 'スロウヒール',
+            self::AllHealing => '癒しの魔力を広範囲に拡散し、味方全体のHPを回復する。',
+            self::QuickAllHealing => 'クイックオールヒーリング',
+            self::SlowAllHealing => 'スロウオールヒーリング',
             self::LuminousRelieve => '聖なる力を込めた魔力を呪文に込める。味方1人のHPを大きく回復させる。',
             self::AllRelieve => '魔力を大きく消費し、味方全体のHPを大きく回復させる。',
             self::Resurrection => '聖なる力を戦闘不能の味方に分け与え、戦闘不能状態から復活させる。',
+            self::MiniVolt => '魔力を敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
+            self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に射出する。',
+            self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
 
             self::WideGuard => '先制発動する。使用ターン中の味方全員のダメージを軽減する。',
             self::AdvancedGuard => '先制発動する。魔力を纏い、使用ターン中の味方全員のダメージを大きく軽減。',
@@ -238,25 +251,27 @@ enum SkillDefinition: int
             self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',
 
             self::PetitBolt => '小さな魔力弾を放ち敵単体に攻撃。低コストな攻撃手段。',
+            self::CrashBlast => '魔力の塊を生成し、敵単体にぶつけて爆発させる。大きなダメージを与える。',
             self::BoltStorm => '魔力弾を周囲に生成し敵全体に打ち込み、ダメージを与える。',
-            self::MagicalSmash => '魔法少女必携？敵単体を手持ちの杖で思いっきりぶん殴る！',
+            self::ManaExplosion => '巨大な魔力を糧としたマナの塊を大爆発させることで、敵全体に大ダメージ。',
             self::AileCaliber => '魔道の刃で敵単体を切り裂く。自分のINTに依存した物理ダメージを与える。',
             self::MiniHeal => '初歩的な回復魔法のひとつ。味方1人のHPを回復する呪文を唱える。',
             self::PopHeal => '回復魔力を周囲に浮かべ、味方全体のHPを回復する。',
-            self::CrashBlast => '魔力の塊を生成し、敵単体にぶつけて爆発させる。大きなダメージを与える。',
-            self::ManaExplosion => '巨大な魔力を糧としたマナの塊を大爆発させることで、敵全体に大ダメージ。',
             self::Meditation => '深く瞑想することで心を落ち着かせ、暫くの間自身のINTを高める。',
             self::BattleMage => '自身の智力全てを膂力に変換。暫くの間INTが0になり、その分だけSTRが上昇する。',
+            self::MagicalSmash => '魔法少女必携？敵単体を手持ちの杖で思いっきりぶん殴る！',
 
             self::FirstAid => '味方1人の救護を行い、HPを固定量回復する。回復量はSLvに依存する。',
             self::FairyFog => '妖精の力で味方全体を癒しの霧で包み込み、HPを回復する。',
+            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
             self::BreakBowGun => '敵単体に重量のある弩を打ち込む。ダメージを与え、短時間DEFを下げる。',
-            self::EdgeFold => '敵単体に弱体の魔力を込めた弓矢を放つ。ダメージを与え、そのターン中のSTRとINTを下げる。',
+            self::ArmorBreaker => '相手の防御陣形の綻びを射抜く弩撃。敵全体にダメージを与え、短時間DEFを下げる。',
+            self::EdgeFold => '敵単体に弱体の力を込めた弓矢を放つ。ダメージを与え、そのターン中のSTRとINTを下げる。',
+            self::WeaponDemolish => '攻撃器官の基点を撃ち威力を削ぐ一撃。敵全体にダメージを与え、そのターン中のSTRとINTを下げる。',
             self::WindAccel => '風の魔力を込めた鋭い弓矢を敵単体に放つ。ダメージを与え、次のターンのSPDを上げる。',
             self::GaleStrike => '暴風を身に纏い、敵単体に攻撃を叩き込む。ウインドアクセルが付与されていた場合は威力が上昇。',
-            self::BallistaShot => '最も最後に行動する。引き絞った大弩で敵単体に大ダメージ。',
-            self::SirenAura => '幻獣の力を身に宿す。暫くの間自身のINTを高め、また回復スキルの効果を上げる。',
-            self::CerberusForce => '幻獣の力を身に宿す。暫くの間自身のSTRとDEFを向上させる。',
+            self::SirenAura => '潮の歌をまとい魔力を澄ませる。暫くの間自身のINTを高め、また回復スキルの効果を強化する。',
+            self::CerberusForce => '冥犬の護勢を宿し、その身を強化する。暫くの間自身のSTRとDEFを向上させる。',
 
             self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
             self::AxiomStrike => '魔力の理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',
