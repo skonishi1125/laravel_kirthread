@@ -979,7 +979,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::SlowWave :
                     Debugbar::warning(SkillDefinition::SlowWave->label());
-                    $battle_logs_collection->push("{$actor_data->name}は奇妙な呪文を唱え、ダメージと共に冒険者たちの自由を奪う！");
+                    $battle_logs_collection->push("{$actor_data->name}は奇妙な呪文を唱え、ダメージと共に冒険者たちの素早さを奪う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_spd'] = (int) (-100);
                     break;

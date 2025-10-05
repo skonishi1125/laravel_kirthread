@@ -684,19 +684,19 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             // stage6
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 6,
                 'enemy_id' => EnemyData::PlasmaBook,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 6,
                 'enemy_id' => EnemyData::DarkSrara,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 6,
                 'enemy_id' => EnemyData::GaiaHand,
                 'number' => 1,
             ],
