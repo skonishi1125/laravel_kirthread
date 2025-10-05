@@ -364,6 +364,73 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::RazerSweep,
             ],
 
+            // GaiaHand
+            [
+                'enemy_id' => EnemyData::GaiaHand,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Roar,
+            ],
+            [
+                'enemy_id' => EnemyData::GaiaHand,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::GaiaHand,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Squeeze,
+            ],
+
+            // MetalGecko
+            [
+                'enemy_id' => EnemyData::MetalGecko,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::MetalGecko,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::MetalGecko,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::CleaveArmor,
+            ],
+            [
+                'enemy_id' => EnemyData::MetalGecko,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SlashAll,
+            ],
+
+            // PlasmaBook
+            [
+                'enemy_id' => EnemyData::PlasmaBook,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SlowWave,
+            ],
+            [
+                'enemy_id' => EnemyData::PlasmaBook,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::PlasmaBook,
+                'turn_count' => 3,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::PlasmaBook,
+                'turn_count' => 4,
+                'is_use_skill' => false,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

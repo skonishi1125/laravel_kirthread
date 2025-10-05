@@ -548,7 +548,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::CastleTown,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::DustBomb,
-                'number' => 3,
+                'number' => 2,
             ],
             // stage2
             [
@@ -622,34 +622,82 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
 
             // 古城
+            // stage1
             [
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 1,
+                'enemy_id' => EnemyData::DarkSrara,
+                'number' => 2,
+            ],
+            // stage2
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Anima,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::GaiaHand,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::DeathScorpio,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::Anima,
                 'number' => 1,
             ],
+            // stage3
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::MetalGecko,
                 'number' => 1,
             ],
+            // stage4 ちょっと優しくしてやる
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::GaiaHand,
+                'number' => 1,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 5,
                 'enemy_id' => EnemyData::Stinger,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::AncientCastle,
-                'stage_id' => 1,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::DeathScorpio,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::Stinger,
+                'number' => 1,
+            ],
+            // stage6
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 6,
                 'enemy_id' => EnemyData::PlasmaBook,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::DarkSrara,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 6,
+                'enemy_id' => EnemyData::GaiaHand,
                 'number' => 1,
             ],
 

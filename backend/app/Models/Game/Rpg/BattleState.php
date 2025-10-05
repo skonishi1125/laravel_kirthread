@@ -985,7 +985,7 @@ class BattleState extends Model
                     Debugbar::debug('特殊系');
                     Debugbar::debug($selected_item_data);
                     switch ($selected_item_data->id) {
-                        case ItemData::ResurrectElement->value : // リザレクトエレメント
+                        case ItemData::ResurrectPot->value : // リザレクトエレメント
                             Debugbar::debug('リザレクトエレメント');
                             $opponent_data = $battle_state_opponents_collection[$opponents_index];
                             // 戦闘不能でなければスキップ
@@ -2405,6 +2405,12 @@ class BattleState extends Model
                 $max_value_hp = $actor_data->max_value_hp;
                 $self_harm_damage = (int) ($max_value_hp * 0.1);
                 self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
+                break;
+            case SkillDefinition::CleaveArmor :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
+            case SkillDefinition::SlowWave :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
                 break;
             default:
                 break;

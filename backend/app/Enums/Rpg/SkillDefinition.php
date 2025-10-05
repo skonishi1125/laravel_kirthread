@@ -118,6 +118,10 @@ enum SkillDefinition: int
     case PhysicalMode = 1035;
     case MagicMode = 1036;
     case RocketPunch = 1037;
+    case Squeeze = 1038;
+    case CleaveArmor = 1039;
+    case SlashAll = 1040;
+    case SlowWave = 1041;
 
     public function label(): string
     {
@@ -229,6 +233,10 @@ enum SkillDefinition: int
             self::PhysicalMode => 'フィジカルモード', // 自身 最速 STR, DEF バフ
             self::MagicMode => 'マジックモード', // 自身 最速 INT バフ
             self::RocketPunch => 'ロケットパンチ', // 物理 単体
+            self::Squeeze => '握りつぶす', // 物理 単体
+            self::CleaveArmor => 'クリーヴアーマー', // 物理 全体 DEFデバフ
+            self::SlashAll => 'スラッシュオール', // 物理 全体
+            self::SlowWave => 'スロウウェーブ', // 魔法 全体 SPDデバフ
         };
     }
 
@@ -289,10 +297,10 @@ enum SkillDefinition: int
             self::SirenAura => '潮の歌をまとい魔力を澄ませる。暫くの間自身のINTを高め、また回復スキルの効果を強化する。',
             self::CerberusForce => '冥犬の護勢を宿し、その身を強化する。暫くの間自身のSTRとDEFを向上させる。',
 
-            self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。',
-            self::AxiomStrike => '魔力の理を解析し物理的な衝撃波に変換。敵単体に高威力の物理ダメージ。',
-            self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。',
-            self::LogosRay => '魔力の理を解析し光線を生成。敵単体に高威力の魔法ダメージ。',
+            self::BookSmash => '手持ちの魔導書を用いて敵単体を全力でぶん殴る。威力はSTRに依存する。',
+            self::AxiomStrike => '魔力の理を解析し物理的な衝撃波に変換し、敵単体に攻撃。威力はSTRに依存する。',
+            self::MagicMissile => '魔力で創り出したミサイルの弾丸を敵単体に飛ばして攻撃。威力はINTに依存する。',
+            self::LogosRay => '魔力の理を解析し光線を生成し、敵単体に放出する。威力はINTに依存する。',
             self::PowerEnt => '味方1人のSTRを暫くの間向上させる。',
             self::BladeForce => '味方の武器に魔力を使役し、全員のSTRを暫くの間向上させる。',
             self::ShieldEnt => '味方1人のDEFを暫くの間向上させる。',
@@ -342,6 +350,10 @@ enum SkillDefinition: int
             self::PhysicalMode => '初めに発動する。自身のSTR, DEFを上昇。', // 自身 最速 STR, DEF バフ
             self::MagicMode => '初めに発動する。自身のINTを上昇。', // 自身 最速 INT バフ
             self::RocketPunch => 'パンチを飛ばして相手単体に物理ダメージ。', // 自身 最速 INT バフ
+            self::Squeeze => '思いっきり相手を捻り潰す。相手単体に物理の大ダメージ。',
+            self::CleaveArmor => '相手全体の鎧を切り裂く。物理ダメージと共にDEFを下げる。',
+            self::SlashAll => '相手全体を力強く切り裂く。物理のダメージ。',
+            self::SlowWave => '相手全体に魔法の衝撃波を放つ。魔法ダメージを与え、相手のSPDを大きく下げる。',
 
         };
     }

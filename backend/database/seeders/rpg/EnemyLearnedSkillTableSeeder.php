@@ -122,6 +122,28 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::RazerBeam, 'skill_level' => 1],
             ['enemy_id' => EnemyData::StoneGolem, 'skill_id' => SkillDefinition::RazerSweep, 'skill_level' => 1],
 
+            // DarkSrara
+            ['enemy_id' => EnemyData::DarkSrara, 'skill_id' => SkillDefinition::Freeze, 'skill_level' => 2],
+
+            // Anima
+            ['enemy_id' => EnemyData::Anima, 'skill_id' => SkillDefinition::StellarBlink, 'skill_level' => 1],
+
+            // GaiaHand
+            ['enemy_id' => EnemyData::GaiaHand, 'skill_id' => SkillDefinition::Roar, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GaiaHand, 'skill_id' => SkillDefinition::Prepare, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GaiaHand, 'skill_id' => SkillDefinition::Squeeze, 'skill_level' => 1],
+
+            // MetalGecko
+            ['enemy_id' => EnemyData::MetalGecko, 'skill_id' => SkillDefinition::CleaveArmor, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::MetalGecko, 'skill_id' => SkillDefinition::SlashAll, 'skill_level' => 1],
+
+            // Stinger
+            ['enemy_id' => EnemyData::Stinger, 'skill_id' => SkillDefinition::Biribiri, 'skill_level' => 2],
+            ['enemy_id' => EnemyData::Stinger, 'skill_id' => SkillDefinition::Discharge, 'skill_level' => 2],
+
+            // PlasmaBook
+            ['enemy_id' => EnemyData::PlasmaBook, 'skill_id' => SkillDefinition::SlowWave, 'skill_level' => 2],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

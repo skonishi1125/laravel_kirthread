@@ -1137,7 +1137,7 @@ class ApiController extends Controller
         }
 
         $is_cleared = $savedata->savedata_cleared_fields()
-            ->where('field_id', FieldData::AncientCastle->value)
+            ->where('field_id', FieldData::AncientCastleAltar->value)
             ->exists();
         $is_cleared_vast_expanse = $savedata->savedata_cleared_fields()
             ->where('field_id', FieldData::VastExpanse->value)
@@ -1167,7 +1167,7 @@ class ApiController extends Controller
 
         // URLベタ打ち対策
         $check_is_cleared_ancient_castle = $savedata->savedata_cleared_fields()
-            ->where('field_id', FieldData::AncientCastle->value)
+            ->where('field_id', FieldData::AncientCastleAltar->value)
             ->exists();
         if ($check_is_cleared_ancient_castle === false) {
             return response()->json([
