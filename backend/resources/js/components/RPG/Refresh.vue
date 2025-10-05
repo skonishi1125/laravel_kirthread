@@ -31,7 +31,7 @@
   margin-bottom: 10px;
 }
 .skill-line .label {
-  width: 140px; /* スキル名の幅を揃える */
+  width: 200px; /* スキル名の幅を揃える */
   font-weight: bold
 }
 .skill-line .value {
@@ -80,7 +80,14 @@
             <!-- 左バー -->
             <div class="col-2 my-2">
               <div style="min-height: 480px;  display: flex; flex-flow: column; justify-content: space-evenly; border-right: 1px dotted black; text-align: center;">
-                <div><button class="btn btn-sm btn-outline-success my-5" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button></div>
+                <div>
+                    <button class="btn btn-sm btn-outline-info"
+                    @click="openPaymentModal(partiesInformation[status.currentSelectedPartyMemberIndex])">
+                    休息する</button>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-success my-5" @click="$router.push({ name: 'menu_plaza'})">広場に戻る</button>
+                </div>
               </div>
             </div>
 
@@ -110,7 +117,7 @@
                 </ul>
 
                 <div class="row">
-                  <div class="col-6 mt-3">
+                  <div class="col-6 mt-3" style="font-size: 0.9em;">
                     <h6 class="status-and-skills-title">現在のステータス</h6>
                     <div class="status-line">
                       <span class="label">HP:</span>
@@ -210,7 +217,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="col-6 mt-3">
+                  <div class="col-6 mt-3" style="font-size: 0.9em;">
                     <h6 class="status-and-skills-title">修得済みのスキル</h6>
                     <div v-for="skill in partiesInformation[status.currentSelectedPartyMemberIndex].skills">
                       <div class="skill-line">
@@ -222,10 +229,7 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-12 text-right mt-5 d-flex justify-content-between">
-                    <span style="color: red"><small>{{ refreshSuccessMessage }}</small></span>
-                    <button class="btn btn-outline-info btn-sm" @click="openPaymentModal(partiesInformation[status.currentSelectedPartyMemberIndex])">休息する</button>
-                  </div>
+                  <span style="color: red"><small>{{ refreshSuccessMessage }}</small></span>
                 </div>
 
               </div>
@@ -252,11 +256,12 @@
 
           <div class="modal-body">
             <p>
-              {{ modalPartyInformation.nickname }}に割り振ったポイントをリセットします。(所持金: <b>{{ currentMoney }}</b> G)<br>
+              {{ modalPartyInformation.nickname }}に割り振ったポイントをリセットします。<br>
+              (所持金: {{ currentMoney }} G)<br>
             </p>
             <div style="text-align: right;">
               <!-- <span>必要代金: {{ modalPartyInformation.level * baseMoney }} G <small>(※ Lv x {{ baseMoney }} G)</small></span> -->
-              <span>必要代金: {{ baseMoney }} G</span>
+              <span>必要代金: <b>{{ baseMoney }}</b> G</span>
             </div>
             <div style="min-height: 50px;">
               <span style="color:red" v-if="currentMoney < baseMoney">
