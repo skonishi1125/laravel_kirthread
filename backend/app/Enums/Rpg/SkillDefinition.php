@@ -118,6 +118,10 @@ enum SkillDefinition: int
     case PhysicalMode = 1035;
     case MagicMode = 1036;
     case RocketPunch = 1037;
+    case Squeeze = 1038;
+    case CleaveArmor = 1039;
+    case SlashAll = 1040;
+    case SlowWave = 1041;
 
     public function label(): string
     {
@@ -229,6 +233,10 @@ enum SkillDefinition: int
             self::PhysicalMode => 'フィジカルモード', // 自身 最速 STR, DEF バフ
             self::MagicMode => 'マジックモード', // 自身 最速 INT バフ
             self::RocketPunch => 'ロケットパンチ', // 物理 単体
+            self::Squeeze => '握りつぶす', // 物理 単体
+            self::CleaveArmor => 'クリーヴアーマー', // 物理 全体 DEFデバフ
+            self::SlashAll => 'スラッシュオール', // 物理 全体
+            self::SlowWave => 'スロウウェーブ', // 魔法 全体 SPDデバフ
         };
     }
 
@@ -342,6 +350,10 @@ enum SkillDefinition: int
             self::PhysicalMode => '初めに発動する。自身のSTR, DEFを上昇。', // 自身 最速 STR, DEF バフ
             self::MagicMode => '初めに発動する。自身のINTを上昇。', // 自身 最速 INT バフ
             self::RocketPunch => 'パンチを飛ばして相手単体に物理ダメージ。', // 自身 最速 INT バフ
+            self::Squeeze => '思いっきり相手を捻り潰す。相手単体に物理の大ダメージ。',
+            self::CleaveArmor => '相手全体の鎧を切り裂く。物理ダメージと共にDEFを下げる。',
+            self::SlashAll => '相手全体を力強く切り裂く。物理のダメージ。',
+            self::SlowWave => '相手全体に魔法の衝撃波を放つ。魔法ダメージを与え、相手のSPDを大きく下げる。',
 
         };
     }

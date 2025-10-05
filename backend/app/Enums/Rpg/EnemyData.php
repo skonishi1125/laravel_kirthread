@@ -37,24 +37,24 @@ enum EnemyData: int
     case Twilight = 73;
 
     case CurseScareCrow = 80;
-    case DustBomb = 81;
-    case ZombieClion = 82;
-    case Narehate = 83;
+    case ZombieClion = 81;
+    case Narehate = 82;
 
-    case DarkSrara = 90;
+    case DustBomb = 90;
     case BazaarLizard = 91;
-    case Anima = 92;
-    case WitherNepenthos = 93;
-    case PotDio = 94;
-    case GolemBall = 95;
-    case Eliminator = 96;
-    case StoneGolem = 97;
+    case WitherNepenthos = 92;
+    case PotDio = 93;
+    case GolemBall = 94;
+    case Eliminator = 95;
+    case StoneGolem = 96;
 
-    case GaiaHand = 100;
-    case DeathScorpio = 101;
-    case MetalGecko = 102;
-    case Stinger = 103;
-    case PlasmaBook = 104;
+    case DarkSrara = 100;
+    case Anima = 101;
+    case GaiaHand = 102;
+    case DeathScorpio = 103;
+    case MetalGecko = 104;
+    case Stinger = 105;
+    case PlasmaBook = 106;
 
     case Celavie = 110;
     case GrandCube = 111;
@@ -135,11 +135,11 @@ enum EnemyData: int
             self::Gao => '素早い動きが特徴。攻撃力が高いため優先的に倒そう。',
             self::BigSrara => 'スララが偶然ぶつかり合体した生命体。消化液でDEFを落としてくるのがいやらしい。',
 
-            self::Lizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。防御力には自信あり。',
+            self::Lizard => 'カラッとしたところもジメジメしたところも好きなトカゲ。物理耐性に自信あり。',
             self::Scorpio => '致命の一撃を得意とするサソリ。魔法耐性が非常に低いので魔法で攻めよう。',
             self::RockLizard => '頑丈な皮膚を持つトカゲの大将。魔法攻撃で攻めよう。',
 
-            self::Bou => '炎魔法の残り香が集まってできた生命体。集団で出てきてファイアの魔法で攻め立てられる。物理防御力が低いので全体攻撃で攻めると吉。',
+            self::Bou => '炎魔法の残り香が集まってできた生命体。集団で出てきてファイアの魔法で攻め立てられる。物理攻撃に弱いので全体攻撃で攻めると吉。',
             self::IwaMet => '防御が自慢のカメ（？）。魔法での攻撃が有効。',
             self::Norawani => 'そこらを彷徨く野良のワニ（おそらく）。バランスの良いステータスが特徴。必ず戦闘前に咆哮を上げてステータスを高める。',
             self::MagmaDile => 'ノラワニ達を仕切るボス。必ず戦闘前に咆哮を上げてステータスを高める。咆哮がおさまったのちしばらくすると噛みつきそして強烈に暴れ回る。噛みつきのタイミングで防御を選択できると戦いやすいだろう。',
@@ -175,20 +175,20 @@ enum EnemyData: int
             self::Eliminator => 'ゴーレムを補佐する球状の物質。サポートを専門としておりこちらの能力を鈍らせ戦力を削いでくる。内部エネルギーには上限があり尽きれば機能停止して崩れ落ちる。攻撃して停止させることも可能だが、強固なため大人しく上限が尽きるのを待つのも良いだろう。',
             self::StoneGolem => '城下町で見られる旧式の石造ゴーレムで、形態変換機構を備えており物理攻撃と魔法攻撃を使い分ける。非常にしぶといため持久戦は必須となる。かつては城の門番だったようだが役目を失った今は命令の残滓に従い彷徨っているようだ。',
 
-            self::DarkSrara => 'ダークスララ',
-            self::Anima => 'アニマ',
-            self::GaiaHand => 'ガイアハンド',
-            self::DeathScorpio => 'デススコーピオ',
-            self::MetalGecko => 'メタルゲッコー',
-            self::Stinger => 'スティンガー',
-            self::PlasmaBook => 'プラズマブック',
+            self::DarkSrara => 'スララの上位種で鋭い物理攻撃と魔法攻撃を操り、弱点らしい部分もない。ただしこのモンスターと遭遇するほどの実力を持つ冒険者なら、いなすことが出来るはずだろう。',
+            self::Anima => '古城に漂う歪んだ力の残り香が集まってできたボウ種の魔物。同じく物理攻撃に弱い。',
+            self::GaiaHand => '古城の魔物。攻防共に物理的な能力に優れており、握り潰されればひとたまりもない。滅多に見られることはないが、手のひらに口があるらしい。',
+            self::DeathScorpio => 'スコーピオ種の上位種。鋭い針を用いた致命の一撃を得意とする。防御が通用しないため、さっさと倒すのが一番良いだろう。魔法攻撃が有効だ。',
+            self::MetalGecko => 'リザードの上位種。鋭い爪は鎧すら切り裂く。自身は甲殻で覆われており打たれ強い。魔法で攻めつつ、持久戦に持ち込むと良いだろう。DEFを下げる行動をしたのち、鋭い爪で全体攻撃をしてくるので備えよう。',
+            self::Stinger => 'イッカクの上位種。鉄のような見た目をしているが非常に物理攻撃が有効。単体・全体の魔法を使用する。',
+            self::PlasmaBook => '古城の魔力が書籍にまとわりつき魔物となった。SPDを下げる全体魔法攻撃が非常に厄介だが、本体も打たれ強い。この魔物を先に討伐するというよりかは、SPDが下がった状態でどう戦況を組み立てるかを意識するのが良いだろう。',
+            self::FlareDrago => '古城に棲み着く龍。堅牢な甲殻を持つだけでなく非常に知能も高い。',
 
             self::Celavie => 'セラヴィ',
             self::GrandCube => 'グランドキューブ',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
-            self::FlareDrago => '非常に知能の高い龍で、狡猾な手口を使い冒険者を餌とする。',
         };
     }
 

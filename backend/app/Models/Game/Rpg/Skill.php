@@ -673,7 +673,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::ArcWisdom :
                     Debugbar::debug(SkillDefinition::ArcWisdom->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！自身の積み続けてきた叡智を味方に分け与えた！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！自身の積み続けてきた叡智を味方に分かち合う！");
                     $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::SpeedEnt :
@@ -683,7 +683,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::SonicTrimming :
                     Debugbar::debug(SkillDefinition::SonicTrimming->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！動きが洗練され、明瞭になっていく！");
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！味方の動きが洗練され、明瞭になっていく！");
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::LuckEnt :
@@ -960,6 +960,28 @@ class Skill extends Model
                     Debugbar::warning(SkillDefinition::RocketPunch->label());
                     $battle_logs_collection->push("{$actor_data->name}は拳を突き出し、なんと発射してきた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Squeeze :
+                    Debugbar::warning(SkillDefinition::Squeeze->label());
+                    $battle_logs_collection->push("{$actor_data->name}は広げた手で、思いっきり握りつぶしてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::CleaveArmor :
+                    Debugbar::warning(SkillDefinition::CleaveArmor->label());
+                    $battle_logs_collection->push("{$actor_data->name}は素早い動きを見せ、こちらの防具の継ぎ目に攻撃をしてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) -30;
+                    break;
+                case SkillDefinition::SlashAll :
+                    Debugbar::warning(SkillDefinition::SlashAll->label());
+                    $battle_logs_collection->push("{$actor_data->name}はこちらに向かって、長く鋭い爪を振るった！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SlowWave :
+                    Debugbar::warning(SkillDefinition::SlowWave->label());
+                    $battle_logs_collection->push("{$actor_data->name}は奇妙な呪文を唱え、ダメージと共に冒険者たちの自由を奪う！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_spd'] = (int) (-100);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');

@@ -2406,6 +2406,12 @@ class BattleState extends Model
                 $self_harm_damage = (int) ($max_value_hp * 0.1);
                 self::calculateEnemySelfHarmDamage($actor_data, $self_harm_damage, $battle_logs_collection);
                 break;
+            case SkillDefinition::CleaveArmor :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
+            case SkillDefinition::SlowWave :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
             default:
                 break;
         }
