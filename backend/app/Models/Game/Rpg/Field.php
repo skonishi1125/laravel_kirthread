@@ -68,6 +68,14 @@ class Field extends Model
         ];
         $is_okay_to_go_ancient_castle = empty(array_diff($ancient_castle_required_field_ids, $cleared_field_ids));
 
+        // 古城の祭壇 出現フラグ
+        // 古城をクリアしていること
+        $is_okay_to_go_ancient_castle_altar = false;
+        $ancient_castle_required_field_ids = [
+            FieldData::AncientCastle->value,
+        ];
+        $is_okay_to_go_ancient_castle_altar = empty(array_diff($ancient_castle_required_field_ids, $cleared_field_ids));
+
         // 茫洋の地 出現フラグ
         // 耕作地, 古城のクリア && 特定の書籍を読んでいること
         $is_okay_to_go_vast_expanse = false;
@@ -80,11 +88,12 @@ class Field extends Model
         $has_required_clears = empty(array_diff($vast_expanse_required_field_ids, $cleared_field_ids));
         $is_okay_to_go_vast_expanse = $has_read_book && $has_required_clears;
 
-        // dd($is_okay_to_go_vast_expanse, $required_field_ids, $has_read_book, $has_required_clears, $cleared_field_ids, array_diff($required_field_ids, $cleared_field_ids));
-
         $fields = self::where('required_clears', '<=', $cleared_count)
             ->when($is_okay_to_go_ancient_castle, function ($q) {
                 $q->orWhere('id', FieldData::AncientCastle->value);
+            })
+            ->when($is_okay_to_go_ancient_castle_altar, function ($q) {
+                $q->orWhere('id', FieldData::AncientCastleAltar->value);
             })
             ->when($is_okay_to_go_vast_expanse, function ($q) {
                 $q->orWhere('id', FieldData::VastExpanse->value);

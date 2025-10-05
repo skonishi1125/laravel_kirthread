@@ -14,7 +14,8 @@ enum FieldData: int
     case DecayedFarmland = 8;
     case CastleTown = 9;
     case AncientCastle = 10;
-    case VastExpanse = 11;
+    case AncientCastleAltar = 11;
+    case VastExpanse = 12;
 
     public function label(): string
     {
@@ -29,6 +30,7 @@ enum FieldData: int
             self::DecayedFarmland => '退廃した耕作地',
             self::CastleTown => '門前雀羅の城下街',
             self::AncientCastle => '古城',
+            self::AncientCastleAltar => '古城の祭壇',
             self::VastExpanse => '茫洋の地'
         };
     }
@@ -46,6 +48,7 @@ enum FieldData: int
             self::DecayedFarmland => 'decayedfarmland.png',
             self::CastleTown => 'castletown.png',
             self::AncientCastle => 'ancientcastle.png',
+            self::AncientCastleAltar => 'ancientcastlealtar.png',
             self::VastExpanse => 'vastexpanse.png',
         };
     }

@@ -103,10 +103,23 @@ class FieldTableSeeder extends Seeder
                 'background_image_path' => FieldData::AncientCastle->image_path(),
                 'difficulty' => 7,
                 /**
-                 * ステージをクリアしても開放されないように、11としておく。
+                 * ステージをクリアしても開放されないように、99としておく。
                  * 詳細には城下町クリア、で開放。
                  */
-                'required_clears' => 11,
+                'required_clears' => 99,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'id' => FieldData::AncientCastleAltar,
+                'name' => FieldData::AncientCastleAltar->label(),
+                'background_image_path' => FieldData::AncientCastleAltar->image_path(),
+                'difficulty' => 7,
+                /**
+                 * ステージをクリアしても開放されないように、99としておく。
+                 * 詳細には古城クリア、で開放。
+                 */
+                'required_clears' => 99,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -116,10 +129,10 @@ class FieldTableSeeder extends Seeder
                 'background_image_path' => FieldData::VastExpanse->image_path(),
                 'difficulty' => 7,
                 /**
-                 * ステージ全てをクリアしても開放されないように、11としておく。
+                 * ステージ全てをクリアしても開放されないように、99としておく。
                  * 詳細には古城クリア && 耕作地クリア && 書籍を読んだら、という感じ。
                  */
-                'required_clears' => 11,
+                'required_clears' => 99,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

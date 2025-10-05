@@ -367,6 +367,13 @@ enum EnemyData: int
         ];
     }
 
+    public static function ancientCastleAltarAppearingEnemies(): array
+    {
+        return [
+            self::Srara->value,
+        ];
+    }
+
     public static function vastExpanseAppearingEnemies(): array
     {
         return [

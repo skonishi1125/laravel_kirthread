@@ -69,7 +69,7 @@
             </thead>
             <tbody>
               <tr v-for="field in fieldList" :class="{ 'cleared-row': field.is_cleared }" @click="showConfirmModal(field)">
-                <td class="weight-bold" :class="{ 'color-blue':field.id == 11, 'color-red':field.id == 10 }">{{ field.name }}</td>
+                <td class="weight-bold" :class="{ 'color-blue':field.id == 12, 'color-red':field.id == 10 || field.id == 11 }">{{ field.name }}</td>
                 <td>{{ field.difficulty }}</td>
               </tr>
             </tbody>
@@ -94,12 +94,28 @@
                   <div class="form-group">
 
                     <!-- ステージごとに個別の文章を出す -->
-                    <div v-if="confirmModalFIeld.id == 11">
+                    <div v-if="confirmModalFIeld.id == 12">
                       <label class="control-label">
                         <p style="color: gray;">
                           怪しい書物通りに耕作地の地下を探索したところ、青白く光るポータルを見つけた...
                         </p>
                         入ってみますか？
+                        <br>
+                        <br>
+                        <small>
+                          <b>※戦闘画面に遷移します。<br>準備ができている場合、「出発する」を選択してください。
+                          </b>
+                        </small>
+                      </label>
+                    </div>
+
+                    <div v-else-if="confirmModalFIeld.id == 11">
+                      <label class="control-label">
+                        <p style="color: gray;">
+                          探索を進め、上層の最奥。扉の向こうから何かの気配が脈打つ。<br>
+                          祭壇と思われる室内の紋様は微かに光を帯び、空気は重く沈んでいる。
+                        </p>
+                        探索を開始しますか？
                         <br>
                         <br>
                         <small>

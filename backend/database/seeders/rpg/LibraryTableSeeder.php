@@ -89,6 +89,13 @@ class LibraryTableSeeder extends Seeder
             $ancientcastle_preface
         );
 
+        // 古城の祭壇
+        $ancientcastlealtar_preface = '<p>古城の祭壇</p>';
+        $ancientcastlealtar_content = $this->buildEnemyHTMLElement(
+            EnemyData::ancientCastleAltarAppearingEnemies(),
+            $ancientcastlealtar_preface
+        );
+
         // 茫洋の地
         $vastexpanse_preface = '<p>茫洋の地</p>';
         $vastexpanse_content = $this->buildEnemyHTMLElement(
@@ -338,15 +345,23 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastle,
             ],
-            // [
-            //     'id' => 217,
-            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-            //     'book_category' => Library::CATEGORY_ENEMY,
-            //     'content' => $vastexpanse_preface.$caution,
-            //     'required_clears' => 11,
-            // ],
+            [
+                'id' => 217,
+                'name' => '調査報告書: '.FieldData::AncientCastleAltar->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $ancientcastlealtar_content,
+                'required_clears' => null,
+                'required_clear_field_id' => FieldData::AncientCastleAltar,
+            ],
             [
                 'id' => 218,
+                'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
+                'book_category' => Library::CATEGORY_ENEMY,
+                'content' => $vastexpanse_preface.$caution,
+                'required_clears' => 11,
+            ],
+            [
+                'id' => 219,
                 'name' => '調査報告書: '.FieldData::VastExpanse->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $vastexpanse_content,
