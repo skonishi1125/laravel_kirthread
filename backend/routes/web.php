@@ -81,10 +81,10 @@ Route::post('/api/game/rpg/ending/store/clear', 'Game\Rpg\ApiController@storeEnd
 
 // if (config('app.env') === 'production') {
 // RPG関連のルーティングにアクセスしたとき、トップにリダイレクトさせる
-Route::get('/game/rpg/{any?}', function () {
-    return redirect()->route('/');
-})
-    ->where('any', '.*')->name('game_rpg_index');
+// Route::get('/game/rpg/{any?}', function () {
+//     return redirect()->route('/');
+// })
+//     ->where('any', '.*')->name('game_rpg_index');
 // }
 
 // Auth認証のかかるページ
