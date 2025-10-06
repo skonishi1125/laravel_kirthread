@@ -623,12 +623,19 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // 古城
             // stage1
+            // [
+            //     'field_id' => FieldData::AncientCastle,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::DarkSrara,
+            //     'number' => 2,
+            // ],
             [
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::DarkSrara,
-                'number' => 2,
+                'enemy_id' => EnemyData::FlareDrago,
+                'number' => 1,
             ],
+
             // stage2
             [
                 'field_id' => FieldData::AncientCastle,
@@ -698,6 +705,14 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 6,
                 'enemy_id' => EnemyData::GaiaHand,
+                'number' => 1,
+            ],
+
+            // 古城の祭壇 ボス
+            [
+                'field_id' => FieldData::AncientCastleAltar,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
                 'number' => 1,
             ],
 

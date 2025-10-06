@@ -846,6 +846,25 @@ class EnemyTableSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
+            [
+                'id' => EnemyData::TraitorLordOfDragon,
+                'name' => EnemyData::TraitorLordOfDragon->label(),
+                'value_hp' => 4000,
+                'value_ap' => 100,
+                'value_str' => 100,
+                'value_def' => 80,
+                'value_int' => 400,
+                'value_spd' => 250,
+                'value_luc' => 100,
+                'exp' => 4500,
+                'drop_money' => 2500,
+                'portrait_image_path' => EnemyData::TraitorLordOfDragon->image_path(),
+                'image_aspect_ratio' => '2/1',
+                'is_boss' => true,
+                'description' => EnemyData::TraitorLordOfDragon->description(),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ];
 
         foreach ($enemies as $enemy) {

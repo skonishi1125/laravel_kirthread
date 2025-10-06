@@ -90,8 +90,8 @@
   align-items: flex-end;
   /* ボスで画像が大きくなっても、敵wrapperのheightは300pxで固定しておく */
   max-height: 300px;
-  min-height: 300px;
-  margin-bottom: 50px;
+  min-height: 350px;
+  /* margin-bottom: 50px; */
 }
 
 .enemy-picture {
@@ -101,14 +101,14 @@
   background-position: bottom center; /* 地面に足をつけるイメージ */
 
   /* レイアウト */
-  height: var(--enemy-h, 180px);     /* 見た目の高さは固定（地面を揃えやすい） */
+  height: var(--enemy-h, 200px);     /* 見た目の高さは固定（地面を揃えやすい） */
   aspect-ratio: var(--enemy-ar, 1 / 1); /* 既定は正方形 */
   width: auto;                       /* 高さ×アスペクト比で自動計算 */
   margin-top: 20px;
 }
 
 .enemy-boss-picture {
-  height: 250px !important;
+  height: 300px !important;
 }
 
 .enemy-hp {
