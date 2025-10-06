@@ -55,13 +55,14 @@ enum EnemyData: int
     case MetalGecko = 104;
     case Stinger = 105;
     case PlasmaBook = 106;
+    case FlareDrago = 107;
 
-    case Celavie = 110;
-    case GrandCube = 111;
+    case TraitorLordOfDragon = 110;
+
+    case Celavie = 120;
+    case GrandCube = 121;
 
     case HighSrara = 900;
-
-    case FlareDrago = 901;
 
     public function label(): string
     {
@@ -117,13 +118,14 @@ enum EnemyData: int
             self::MetalGecko => 'メタルゲッコー',
             self::Stinger => 'スティンガー',
             self::PlasmaBook => 'プラズマブック',
+            self::FlareDrago => 'フレアドラゴ',
+
+            self::TraitorLordOfDragon => '龍祀の叛国卿',
 
             self::Celavie => 'セラヴィ',
             self::GrandCube => 'グランドキューブ',
 
             self::HighSrara => 'ハイスララ',
-
-            self::FlareDrago => 'フレアドラゴ',
 
         };
     }
@@ -183,6 +185,8 @@ enum EnemyData: int
             self::Stinger => 'イッカクの上位種。鉄のような見た目をしているが非常に物理攻撃が有効。単体・全体の魔法を使用する。',
             self::PlasmaBook => '古城の魔力が書籍にまとわりつき魔物となった。SPDを下げる全体魔法攻撃が非常に厄介だが、本体も打たれ強い。この魔物を先に討伐するというよりかは、SPDが下がった状態でどう戦況を組み立てるかを意識するのが良いだろう。',
             self::FlareDrago => '古城に棲み着く龍。堅牢な甲殻を持つだけでなく非常に知能も高い。',
+
+            self::TraitorLordOfDragon => '龍祀の叛国卿',
 
             self::Celavie => 'セラヴィ',
             self::GrandCube => 'グランドキューブ',
@@ -246,13 +250,15 @@ enum EnemyData: int
             self::MetalGecko => 'metalgecko.png',
             self::Stinger => 'stinger.png',
             self::PlasmaBook => 'plasmabook.png',
+            self::FlareDrago => 'flaredrago.png',
+
+            self::TraitorLordOfDragon => 'traitorlordofdragon.png',
 
             self::Celavie => 'celavie.png',
             self::GrandCube => 'grandcube.png',
 
             self::HighSrara => 'highsrara.png',
 
-            self::FlareDrago => 'flaredrago.png',
         };
     }
 
