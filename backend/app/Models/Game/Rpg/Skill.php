@@ -983,6 +983,18 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_spd'] = (int) (-100);
                     break;
+                case SkillDefinition::FireBreath :
+                    Debugbar::warning(SkillDefinition::FireBreath->label());
+                    $battle_logs_collection->push("{$actor_data->name}は燃えさかる火炎を吐き出した！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::DragonHowling :
+                    Debugbar::debug(SkillDefinition::DragonHowling->label());
+                    $battle_logs_collection->push("{$actor_data->name}はつんざくような咆哮を上げ、恐怖を与えた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_spd'] = (int) (-100);
+                    $new_buff['buffed_str'] = (int) (-100);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

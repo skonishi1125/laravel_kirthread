@@ -144,6 +144,12 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // PlasmaBook
             ['enemy_id' => EnemyData::PlasmaBook, 'skill_id' => SkillDefinition::SlowWave, 'skill_level' => 2],
 
+            // FlareDrago
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::DragonHowling, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::FireBreath, 'skill_level' => 1],
+
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

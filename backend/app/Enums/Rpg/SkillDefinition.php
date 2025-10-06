@@ -122,6 +122,8 @@ enum SkillDefinition: int
     case CleaveArmor = 1039;
     case SlashAll = 1040;
     case SlowWave = 1041;
+    case FireBreath = 1042;
+    case DragonHowling = 1043;
 
     public function label(): string
     {
@@ -237,6 +239,8 @@ enum SkillDefinition: int
             self::CleaveArmor => 'クリーヴアーマー', // 物理 全体 DEFデバフ
             self::SlashAll => 'スラッシュオール', // 物理 全体
             self::SlowWave => 'スロウウェーブ', // 魔法 全体 SPDデバフ
+            self::FireBreath => 'ファイアブレス', // 魔法 全体
+            self::DragonHowling => 'ドラゴンハウリング', // SPDデバフ 全体
         };
     }
 
@@ -354,6 +358,8 @@ enum SkillDefinition: int
             self::CleaveArmor => '相手全体の鎧を切り裂く。物理ダメージと共にDEFを下げる。',
             self::SlashAll => '相手全体を力強く切り裂く。物理のダメージ。',
             self::SlowWave => '相手全体に魔法の衝撃波を放つ。魔法ダメージを与え、相手のSPDを大きく下げる。',
+            self::FireBreath => '相手全体に炎の吐息を浴びせる。全体に魔法ダメージ。',
+            self::DragonHowling => '龍の咆哮を相手全体に浴びせ、2ターンの間SPDを大幅に下げる。',
 
         };
     }

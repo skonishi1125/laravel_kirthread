@@ -2412,6 +2412,9 @@ class BattleState extends Model
             case SkillDefinition::SlowWave :
                 self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
                 break;
+            case SkillDefinition::DragonHowling :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
             default:
                 break;
         }
