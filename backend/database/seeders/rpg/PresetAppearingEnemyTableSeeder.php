@@ -623,11 +623,17 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // 古城
             // stage1
+            // [
+            //     'field_id' => FieldData::AncientCastle,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::DarkSrara,
+            //     'number' => 2,
+            // ],
             [
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::DarkSrara,
-                'number' => 2,
+                'enemy_id' => EnemyData::FlareDrago,
+                'number' => 1,
             ],
             // stage2
             [
