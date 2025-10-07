@@ -124,6 +124,11 @@ enum SkillDefinition: int
     case SlowWave = 1041;
     case FireBreath = 1042;
     case DragonHowling = 1043;
+    case OpenPotal = 1044;
+    case BloodSlurp = 1045;
+    case AncientLightning = 1046;
+    case DragonBite = 1047;
+    case DragonTail = 1048;
 
     public function label(): string
     {
@@ -241,6 +246,11 @@ enum SkillDefinition: int
             self::SlowWave => 'スロウウェーブ', // 魔法 全体 SPDデバフ
             self::FireBreath => 'ファイアブレス', // 魔法 全体
             self::DragonHowling => 'ドラゴンハウリング', // SPDデバフ 全体
+            self::OpenPotal => 'オープンポータル', // SPDデバフ 全体
+            self::BloodSlurp => 'ブラッドスループ', // 回復 自身 DEFデバフ
+            self::AncientLightning => 'エンシェントライトニング', // 魔法 全体
+            self::DragonBite => 'ドラゴンバイト', // 物理 単体
+            self::DragonTail => 'ドラゴンテイル', // 物理 全体
         };
     }
 
@@ -360,6 +370,11 @@ enum SkillDefinition: int
             self::SlowWave => '相手全体に魔法の衝撃波を放つ。魔法ダメージを与え、相手のSPDを大きく下げる。',
             self::FireBreath => '相手全体に炎の吐息を浴びせる。全体に魔法ダメージ。',
             self::DragonHowling => '龍の咆哮を相手全体に浴びせ、2ターンの間SPDを大幅に下げる。',
+            self::OpenPotal => '異界のポータルを開く。',
+            self::BloodSlurp => '最も最後に行動する。自身の血を啜ってHPを回復する。代償としてDEFがしばらく下がる。',
+            self::AncientLightning => '先制発動する。ポータルから太古の雷を呼び出す。相手全員の体力を1にする。',
+            self::DragonBite => '最も最後に行動する。身体の一部を龍の頭に換え噛み付く。敵単体に物理ダメージ。',
+            self::DragonTail => '最も最後に行動する。身体の一部を龍の尾に換え、その尻尾で薙ぎ払い全体に物理ダメージ。',
 
         };
     }

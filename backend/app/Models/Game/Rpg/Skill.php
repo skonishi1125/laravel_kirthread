@@ -991,9 +991,34 @@ class Skill extends Model
                 case SkillDefinition::DragonHowling :
                     Debugbar::debug(SkillDefinition::DragonHowling->label());
                     $battle_logs_collection->push("{$actor_data->name}はつんざくような咆哮を上げ、恐怖を与えた！");
-                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_spd'] = (int) (-100);
                     $new_buff['buffed_str'] = (int) (-100);
+                    break;
+                case SkillDefinition::OpenPotal :
+                    Debugbar::debug(SkillDefinition::OpenPotal->label());
+                    $battle_logs_collection->push("{$actor_data->name}は呪文を唱え、空中にポータルを開いた！");
+                    break;
+                case SkillDefinition::AncientLightning :
+                    Debugbar::debug(SkillDefinition::AncientLightning->label());
+                    $damage = 0;
+                    $battle_logs_collection->push("{$actor_data->name}はポータルから古代の雷を呼び出した！降りかかる落雷が致命的な一撃を与える！");
+                    break;
+                case SkillDefinition::BloodSlurp :
+                    Debugbar::debug(SkillDefinition::BloodSlurp->label());
+                    $battle_logs_collection->push("{$actor_data->name}はなんと自身の腕に噛みつき、血を啜って回復した！");
+                    $heal_point = (int) 1000;
+                    $new_buff['buffed_def'] = (int) (-150);
+                    break;
+                case SkillDefinition::DragonBite :
+                    Debugbar::warning(SkillDefinition::DragonBite->label());
+                    $battle_logs_collection->push("{$actor_data->name}は身体の一部を龍の頭に換え、噛み砕いてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::DragonTail :
+                    Debugbar::warning(SkillDefinition::DragonTail->label());
+                    $battle_logs_collection->push("{$actor_data->name}は龍の尻尾を召喚し、周囲を薙ぎ払う！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');

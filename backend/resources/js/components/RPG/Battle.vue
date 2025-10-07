@@ -434,6 +434,12 @@
             <div v-for="(log, index) in resultLog" :key="index" class="log-item">
               <p>{{ log }}</p>
             </div>
+            <!-- field_id == AncientCastleAltar -->
+            <div v-if="treasureMessageHtml !== null">
+                <div v-html="treasureMessageHtml"></div>
+            </div>
+            
+
           </div>
           <p v-if="battle.status == 'resultLose'">全滅した...</p>
           <p v-if="battle.status == 'escaped'">{{ this.partyData[0].name }}たちは体制を立て直すため、敵から逃げ出した。</p>
@@ -645,6 +651,7 @@ export default {
     return {
       fieldId: this.$route.params.fieldId,
       stageId: this.$route.params.stageId,
+      treasureMessageHtml: null,
       partyData: {},
       itemData: {},
       currentTurn: 1,
@@ -1096,6 +1103,9 @@ export default {
                 this.resultLog = response.data[0] || [];
                 this.isFieldCleared = response.data[1] || false;
                 console.dir(response.data);
+                if (this.fieldId == 11) {
+                    this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>祭壇の奥の部屋に、無造作に散らばる財宝を見つけた。</b></p></div>'
+                }
             }
         );
     },
@@ -1147,6 +1157,7 @@ export default {
       this.battleLogHistory = [];
       this.$store.dispatch('resetAllBattleStatus');
       this.$store.dispatch('setBattleStatus', 'start');
+      this.isFieldCleared = null;
       const nextStageId = parseInt(stageId) + 1;
       this.$router.push(`/game/rpg/battle/${fieldId}/${nextStageId}`); // 任意の画面に遷移
     },

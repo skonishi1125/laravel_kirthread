@@ -149,6 +149,13 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::DragonHowling, 'skill_level' => 1],
             ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::FireBreath, 'skill_level' => 1],
 
+            // TraitorLordOfDragon
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::OpenPotal, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::AncientLightning, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonBite, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonHowling, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonTail, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::BloodSlurp, 'skill_level' => 1],
 
             // 検証系
             // 敵回復系 検証用 ハイスララ
