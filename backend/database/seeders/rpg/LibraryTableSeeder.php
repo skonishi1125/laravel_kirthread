@@ -69,7 +69,7 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 退廃した耕作地
-        $decayedfarmland_preface = '<p>退廃</p>';
+        $decayedfarmland_preface = '<p>本地帯は城下町の近郊に位置する農耕地と思われる。寂れた風景は栄華の終焉を映すかのようであり、当時の繁栄をかすかに偲ばせる。魔物自体はそこまで多くの種は見かけられない。本地には朽ちかけたカカシが自らの意思を持つかのように彷徨っており、カカシによって冒険者が負傷したという報告がギルドに複数寄せられている。十分な実力を備えていない冒険者は本地帯へ安易に立ち入らぬ方が賢明だろう。乾いた藁の匂いが荒れた風に乗って漂うが、ごく稀に血と腐敗の混じった異臭がそれに紛れて感じられることがあるという。</p>';
         $decayedfarmland_content = $this->buildEnemyHTMLElement(
             EnemyData::decayedFarmlandAppearingEnemies(),
             $decayedfarmland_preface
@@ -83,14 +83,15 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 古城
-        $ancientcastle_preface = '<p>古城</p>';
+        $ancientcastle_preface = '<p>この古き城は、元来魔物が築いたものである。伝承に語られる英雄たちがこれを制圧し拠点として利用したが、現在は再び魔の手に渡っている。出現する魔物が精鋭揃いであることは言うまでもない。己の経験を活かし、魔物の特徴を掴みつつ探索を進める必要があるだろう。遥か上層からは時折龍が何者かと対話しているかのような呻き声が響き渡る。</p>';
+
         $ancientcastle_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAppearingEnemies(),
             $ancientcastle_preface
         );
 
         // 古城の祭壇
-        $ancientcastlealtar_preface = '<p>古城の祭壇</p>';
+        $ancientcastlealtar_preface = '<p>上層の最奥、脈打つ気配の潜んだ部屋。室内にはいくつか銅像が祀られており、祭壇としての体裁を備えている。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋だろう。ここで目撃された生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p>';
         $ancientcastlealtar_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAltarAppearingEnemies(),
             $ancientcastlealtar_preface
@@ -352,6 +353,7 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastle,
             ],
+            // 未完成無し
             [
                 'id' => 217,
                 'name' => '調査報告書: '.FieldData::AncientCastleAltar->label(),
@@ -360,13 +362,14 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
-            [
-                'id' => 218,
-                'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-                'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $vastexpanse_preface.$caution,
-                'required_clears' => 11,
-            ],
+            // 未完成無し
+            // [
+            //     'id' => 218,
+            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
+            //     'book_category' => Library::CATEGORY_ENEMY,
+            //     'content' => $vastexpanse_preface.$caution,
+            //     'required_clears' => 11,
+            // ],
             [
                 'id' => 219,
                 'name' => '調査報告書: '.FieldData::VastExpanse->label(),

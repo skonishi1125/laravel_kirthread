@@ -518,16 +518,10 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // 退廃した耕作地
             // stage1
-            // [
-            //     'field_id' => FieldData::DecayedFarmland,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::CurseScareCrow,
-            //     'number' => 1,
-            // ],
             [
                 'field_id' => FieldData::DecayedFarmland,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Narehate,
+                'enemy_id' => EnemyData::CurseScareCrow,
                 'number' => 1,
             ],
             // stage2
