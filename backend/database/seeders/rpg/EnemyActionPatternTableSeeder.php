@@ -431,6 +431,132 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'is_use_skill' => false,
             ],
 
+            // FlareDrago
+            [
+                'enemy_id' => EnemyData::FlareDrago,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::FlareDrago,
+                'turn_count' => 2,
+                'is_use_skill' => false,
+            ],
+            [
+                'enemy_id' => EnemyData::FlareDrago,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Bite,
+            ],
+            [
+                'enemy_id' => EnemyData::FlareDrago,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonHowling,
+            ],
+            [
+                'enemy_id' => EnemyData::FlareDrago,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::FireBreath,
+            ],
+
+            // TraitorLordOfDragon
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::OpenPotal,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::AncientLightning,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonBite,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonHowling,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonTail,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 6,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::BloodSlurp,
+            ],
+
+            // CurseScareCrow
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::CurseBreaker,
+            ],
+
+            // Narehate
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyProtection,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyWideThrust,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyWindAccel,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyCurseEdge,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

@@ -122,6 +122,20 @@ enum SkillDefinition: int
     case CleaveArmor = 1039;
     case SlashAll = 1040;
     case SlowWave = 1041;
+    case FireBreath = 1042;
+    case DragonHowling = 1043;
+    case OpenPotal = 1044;
+    case BloodSlurp = 1045;
+    case AncientLightning = 1046;
+    case DragonBite = 1047;
+    case DragonTail = 1048;
+    case StandStill = 1049;
+    case CurseBreaker = 1050;
+    case Death = 1051;
+    case EnemyCurseEdge = 1052;
+    case EnemyWideThrust = 1053;
+    case EnemyProtection = 1054;
+    case EnemyWindAccel = 1055;
 
     public function label(): string
     {
@@ -237,6 +251,20 @@ enum SkillDefinition: int
             self::CleaveArmor => 'クリーヴアーマー', // 物理 全体 DEFデバフ
             self::SlashAll => 'スラッシュオール', // 物理 全体
             self::SlowWave => 'スロウウェーブ', // 魔法 全体 SPDデバフ
+            self::FireBreath => 'ファイアブレス', // 魔法 全体
+            self::DragonHowling => 'ドラゴンハウリング', // SPDデバフ 全体
+            self::OpenPotal => 'オープンポータル', // SPDデバフ 全体
+            self::BloodSlurp => 'ブラッドスループ', // 回復 自身 DEFデバフ
+            self::AncientLightning => 'エンシェントライトニング', // 魔法 全体
+            self::DragonBite => 'ドラゴンバイト', // 物理 単体
+            self::DragonTail => 'ドラゴンテイル', // 物理 全体
+            self::StandStill => '静かに佇む', // 何もしない
+            self::CurseBreaker => 'カースブレイカー', // 魔法 全体
+            self::Death => 'デス', // 魔法 単体
+            self::EnemyCurseEdge => 'カースエッジ',
+            self::EnemyWideThrust => 'ワイドスラスト',
+            self::EnemyProtection => 'プロテクション',
+            self::EnemyWindAccel => 'ウインドアクセル',
         };
     }
 
@@ -354,6 +382,20 @@ enum SkillDefinition: int
             self::CleaveArmor => '相手全体の鎧を切り裂く。物理ダメージと共にDEFを下げる。',
             self::SlashAll => '相手全体を力強く切り裂く。物理のダメージ。',
             self::SlowWave => '相手全体に魔法の衝撃波を放つ。魔法ダメージを与え、相手のSPDを大きく下げる。',
+            self::FireBreath => '相手全体に炎の吐息を浴びせる。全体に魔法ダメージ。',
+            self::DragonHowling => '龍の咆哮を相手全体に浴びせ、2ターンの間SPDを大幅に下げる。',
+            self::OpenPotal => '異界のポータルを開く。',
+            self::BloodSlurp => '最も最後に行動する。自身の血を啜ってHPを回復する。代償としてDEFがしばらく下がる。',
+            self::AncientLightning => '先制発動する。ポータルから太古の雷を呼び出す。相手全員の体力を1にする。',
+            self::DragonBite => '最も最後に行動する。身体の一部を龍の頭に換え噛み付く。敵単体に物理ダメージ。',
+            self::DragonTail => '最も最後に行動する。身体の一部を龍の尾に換え、その尻尾で薙ぎ払い全体に物理ダメージ。',
+            self::StandStill => '静かに佇む。',
+            self::CurseBreaker => '先制発動。自身が1ダメージでも喰らっていたら、9999ダメージを与えて反撃する。',
+            self::Death => '敵単体を戦闘不能にする。',
+            self::EnemyCurseEdge => '敵の使うカースエッジ。',
+            self::EnemyWideThrust => '敵の使うワイドスラスト。',
+            self::EnemyProtection => '敵の使うプロテクション。',
+            self::EnemyWindAccel => '敵の使うウインドアクセル。',
 
         };
     }

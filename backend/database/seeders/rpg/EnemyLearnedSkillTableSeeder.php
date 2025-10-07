@@ -144,6 +144,32 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // PlasmaBook
             ['enemy_id' => EnemyData::PlasmaBook, 'skill_id' => SkillDefinition::SlowWave, 'skill_level' => 2],
 
+            // FlareDrago
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::Bite, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::DragonHowling, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::FlareDrago, 'skill_id' => SkillDefinition::FireBreath, 'skill_level' => 1],
+
+            // TraitorLordOfDragon
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::OpenPotal, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::AncientLightning, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonBite, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonHowling, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonTail, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::BloodSlurp, 'skill_level' => 1],
+
+            // CurseScareCrow
+            ['enemy_id' => EnemyData::CurseScareCrow, 'skill_id' => SkillDefinition::StandStill, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::CurseScareCrow, 'skill_id' => SkillDefinition::CurseBreaker, 'skill_level' => 1],
+
+            // ZombieCrion
+            ['enemy_id' => EnemyData::ZombieClion, 'skill_id' => SkillDefinition::Death, 'skill_level' => 1],
+
+            // Narehate
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyCurseEdge, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyWideThrust, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyProtection, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyWindAccel, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

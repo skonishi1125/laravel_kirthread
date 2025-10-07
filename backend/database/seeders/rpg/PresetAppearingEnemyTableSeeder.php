@@ -516,28 +516,37 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'number' => 1,
             ],
 
-            // 退廃
+            // 退廃した耕作地
+            // stage1
             [
                 'field_id' => FieldData::DecayedFarmland,
                 'stage_id' => 1,
                 'enemy_id' => EnemyData::CurseScareCrow,
                 'number' => 1,
             ],
+            // stage2
             [
                 'field_id' => FieldData::DecayedFarmland,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::DustBomb,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::DecayedFarmland,
-                'stage_id' => 1,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::ZombieClion,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::DecayedFarmland,
                 'stage_id' => 2,
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::ZombieClion,
+                'number' => 1,
+            ],
+            // stage3
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::Narehate,
                 'number' => 1,
             ],
@@ -623,19 +632,12 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // 古城
             // stage1
-            // [
-            //     'field_id' => FieldData::AncientCastle,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::DarkSrara,
-            //     'number' => 2,
-            // ],
             [
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::FlareDrago,
-                'number' => 1,
+                'enemy_id' => EnemyData::DarkSrara,
+                'number' => 2,
             ],
-
             // stage2
             [
                 'field_id' => FieldData::AncientCastle,
@@ -705,6 +707,13 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'field_id' => FieldData::AncientCastle,
                 'stage_id' => 6,
                 'enemy_id' => EnemyData::GaiaHand,
+                'number' => 1,
+            ],
+            // stage7
+            [
+                'field_id' => FieldData::AncientCastle,
+                'stage_id' => 7,
+                'enemy_id' => EnemyData::FlareDrago,
                 'number' => 1,
             ],
 

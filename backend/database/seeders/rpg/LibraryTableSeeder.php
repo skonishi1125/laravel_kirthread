@@ -69,7 +69,7 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 退廃した耕作地
-        $decayedfarmland_preface = '<p>退廃</p>';
+        $decayedfarmland_preface = '<p>本地帯は城下町の近郊に位置する農耕地と思われる。寂れた風景は栄華の終焉を映すかのようであり、当時の繁栄をかすかに偲ばせる。魔物自体はそこまで多くの種は見かけられない。本地には朽ちかけたカカシが自らの意思を持つかのように彷徨っており、カカシによって冒険者が負傷したという報告がギルドに複数寄せられている。十分な実力を備えていない冒険者は本地帯へ安易に立ち入らぬ方が賢明だろう。乾いた藁の匂いが荒れた風に乗って漂うが、ごく稀に血と腐敗の混じった異臭がそれに紛れて感じられることがあるという。</p>';
         $decayedfarmland_content = $this->buildEnemyHTMLElement(
             EnemyData::decayedFarmlandAppearingEnemies(),
             $decayedfarmland_preface
@@ -83,14 +83,15 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 古城
-        $ancientcastle_preface = '<p>古城</p>';
+        $ancientcastle_preface = '<p>この古き城は、元来魔物が築いたものである。伝承に語られる英雄たちがこれを制圧し拠点として利用したが、現在は再び魔の手に渡っている。出現する魔物が精鋭揃いであることは言うまでもない。己の経験を活かし、魔物の特徴を掴みつつ探索を進める必要があるだろう。遥か上層からは時折龍が何者かと対話しているかのような呻き声が響き渡る。</p>';
+
         $ancientcastle_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAppearingEnemies(),
             $ancientcastle_preface
         );
 
         // 古城の祭壇
-        $ancientcastlealtar_preface = '<p>古城の祭壇</p>';
+        $ancientcastlealtar_preface = '<p>上層の最奥、脈打つ気配の潜んだ部屋。室内にはいくつか銅像が祀られており、祭壇としての体裁を備えている。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋だろう。ここで目撃された生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p>';
         $ancientcastlealtar_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAltarAppearingEnemies(),
             $ancientcastlealtar_preface
@@ -180,6 +181,13 @@ class LibraryTableSeeder extends Seeder
                 'book_category' => Library::CATEGORY_ADVENTURE,
                 'content' => '<p>図書館　蔵書管理係です。<br>平素は当館をご利用賜り、厚く御礼申し上げます。</p><p>このたび館内書架におきまして、当館の受入基準および管轄外に属する書籍・文書が混入していた事案を確認いたしました。該当資料は当館識別票を有しておらず、目録情報・装丁・所蔵印等に不整合が認められます。</p><p>ご来館の皆様におかれましては、当該資料を発見された際にはその場でお近くの司書まで速やかにお知らせください。</p><p>あわせて、蔵書の無断搬入・移動等の不審な行為または不審な人物をお見かけになった場合もお伝えください。安全で快適な閲覧環境維持のため、皆様のご理解とご協力を賜れますと幸甚に存じます。</p><p>引き続き当館をよろしくお願い申し上げます。</p>',
                 'required_clears' => 8,
+            ],
+            [
+                'id' => 12,
+                'name' => '奇妙なカカシ',
+                'book_category' => Library::CATEGORY_ADVENTURE,
+                'content' => '<p>(とある冒険家の、体験記のようだ。)</p><p>古城の周りが開拓されたもんだから、危険を承知でぶらついてきたんだ。</p><p>城下町の近くの、すっかり荒れた土地にさ。変なカカシがつっ立って、野良の魔物にがじがじと齧られたりして痛めつけられてやんの。するとだぜ。<b>暫くした後めちゃくちゃにキレ出して、その魔物たちをとんでもない力でぶっ飛ばしちまったんだ。</b></p><p>その後他の魔物がひょっこり出てきて、そのカカシの近くをうろついてるんだ。その魔物たちは、なんともなかったな。</p><p>ありゃあほんとに、触らぬ神に祟りなしって言葉が似合う体験だったなあ。<br>あいつと対面する時は、<b>何もせずやり過ごす</b>のが一番いいだろうな。</p>',
+                'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
             // 職能編纂
             [
@@ -345,6 +353,7 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastle,
             ],
+            // 未完成無し
             [
                 'id' => 217,
                 'name' => '調査報告書: '.FieldData::AncientCastleAltar->label(),
@@ -353,13 +362,14 @@ class LibraryTableSeeder extends Seeder
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
-            [
-                'id' => 218,
-                'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-                'book_category' => Library::CATEGORY_ENEMY,
-                'content' => $vastexpanse_preface.$caution,
-                'required_clears' => 11,
-            ],
+            // 未完成無し
+            // [
+            //     'id' => 218,
+            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
+            //     'book_category' => Library::CATEGORY_ENEMY,
+            //     'content' => $vastexpanse_preface.$caution,
+            //     'required_clears' => 11,
+            // ],
             [
                 'id' => 219,
                 'name' => '調査報告書: '.FieldData::VastExpanse->label(),
@@ -410,7 +420,7 @@ class LibraryTableSeeder extends Seeder
                 'id' => Library::VAST_EXPANSE_FLAG_BOOK_ID,
                 'name' => '書き殴られた本II',
                 'book_category' => Library::CATEGORY_HISTORY,
-                'content' => '<p>（...棚の隅に、本が挟み込まれている。図書館で管轄されていない書物だ。）</p><span style="color: red"><p>かつての英雄のように、ついに古城を踏破する冒険者が現れた。<br>その報せに街は沸き立ち、ギルドも徐々に地形の調査を進めている。<br>ただし、愚かにも奴らの関心は上層階に積まれた財宝にばかり向けられ、周辺の探索など意にも介していない。<br></p><p>私はひとり、城から少し離れた寂れた耕作地を調べてみた。<br>崩れ落ちた瓦礫の下に、地下へと続く階段を見つけたのである。<br>降りてゆくと、そこは牢獄として使われていたらしく、壁や床には乾ききった血痕のような汚れが点々と残っていた。<br>その陰惨たる場所の中央に薄青く輝く不気味な光。<br>まるで異界へ通じるかのようなポータルが存在していたのだ。<br></p><p>このポータルは、伝承の欺瞞を解き明かす手掛かりになるに違いない。<br>ギルドの連中が夢中になっている金銀財宝など、真実に比べれば塵芥に等しい。</p><p>私はこのポータルに入ることを決めた。この足で、歴史の虚飾を打ち砕くのだ。</p></span>',
+                'content' => '<p>（...棚の隅に、本が挟み込まれている。図書館で管轄されていない書物だ。）</p><span style="color: red"><p>かつての英雄のように、ついに古城を踏破する冒険者が現れた。<br>その報せに街は沸き立ち、ギルドも徐々に地形の調査を進めている。<br>ただし、愚かにも奴らの関心は無造作に散らばった財宝にばかり向けられ、周辺の探索など意にも介していない。<br></p><p>私はひとり、城から少し離れた寂れた耕作地を調べてみた。<br>崩れ落ちた瓦礫の下に、地下へと続く階段を見つけたのである。<br>降りてゆくと、そこは牢獄として使われていたらしく、壁や床には乾ききった血痕のような汚れが点々と残っていた。<br>その陰惨たる場所の中央に薄青く輝く不気味な光。<br>まるで異界へ通じるかのようなポータルが存在していたのだ。<br></p><p>このポータルは、伝承の欺瞞を解き明かす手掛かりになるやもしれない。<br>ギルドや街の奴らが夢中になっている金銀財宝など、真実に比べれば塵芥に等しい。</p><p>私はポータルに入ることを決めた。この手で、歴史の虚飾を打ち砕くのだ。</p></span>',
                 'required_clear_field_id' => FieldData::AncientCastle,
             ],
             [

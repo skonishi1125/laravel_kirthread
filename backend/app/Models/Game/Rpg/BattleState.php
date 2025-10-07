@@ -2412,6 +2412,144 @@ class BattleState extends Model
             case SkillDefinition::SlowWave :
                 self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
                 break;
+            case SkillDefinition::DragonHowling :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
+            case SkillDefinition::OpenPotal :
+                break;
+            case SkillDefinition::AncientLightning :
+                // 全員の体力を1にする
+                Debugbar::warning('AncientLightning: enemy側 全体攻撃ループ開始。#########');
+                $calculated_damage = 0;
+                foreach ($battle_state_opponents_collection as $opponent_data) {
+                    // 討伐判定チェック
+                    if ($opponent_data->is_defeated_flag == true) {
+                        Debugbar::warning("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+
+                        // returnにした場合は、foreach自体が終了する
+                        // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
+                        continue;
+                    }
+
+                    // ダメージ 相手の体力 -1
+                    $calculated_damage = (int) ($opponent_data->value_hp - 1);
+
+                    if ($calculated_damage === 0) {
+                        $calculated_damage = 100;
+                    }
+
+                    Debugbar::warning("【applyDebuffAllAttackAndLog】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
+                    $opponent_data->value_hp -= $calculated_damage;
+                    Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+
+                    // ダメージ メッセージ
+                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+
+                    // 敵を倒した場合
+                    if ($opponent_data->value_hp <= 0) {
+                        $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                        $opponent_data->is_defeated_flag = true;
+                        self::clearBuff($opponent_data);
+                        $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                        Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                    }
+
+                }
+                Debugbar::warning('AncientLightning ループ完了。#########');
+                break;
+            case SkillDefinition::BloodSlurp :
+                $opponent_data = $actor_data;
+                $opponent_data->value_hp += $heal_point;
+                if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                    $opponent_data->value_hp = $opponent_data->max_value_hp;
+                }
+                $battle_logs_collection->push("{$opponent_data->name}のHPが{$heal_point}ポイント回復した！");
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
+
+                break;
+            case SkillDefinition::StandStill :
+                // 何もしない (ログpushなども、すでにSkillモデル側で済ませている
+                break;
+            case SkillDefinition::CurseBreaker :
+                // 自身の体力が減っているかチェック
+                $is_curse_flag = false;
+                if ($actor_data->max_value_hp != $actor_data->value_hp) {
+                    $is_curse_flag = true;
+                }
+
+                if ($is_curse_flag) {
+                    $battle_logs_collection->push("{$actor_data->name}は豹変したように目つきを変え、呪いの一撃を放った！");
+                    Debugbar::warning('CurseBreaker: enemy側 全体攻撃ループ開始。#########');
+                    foreach ($battle_state_opponents_collection as $opponent_data) {
+                        // 討伐判定チェック
+                        if ($opponent_data->is_defeated_flag == true) {
+                            Debugbar::warning("{$opponent_data->name}はすでに戦闘不能フラグが立っているため、スキップ");
+
+                            // returnにした場合は、foreach自体が終了する
+                            // continueだと次のforeachのループ処理に移行する。今回の場合はスキップしたいので、continueとしておく。
+                            continue;
+                        }
+
+                        // ダメージ
+                        $calculated_damage = 9999;
+
+                        Debugbar::warning("【applyDebuffAllAttackAndLog】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
+                        $opponent_data->value_hp -= $calculated_damage;
+                        Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
+
+                        // ダメージ メッセージ
+                        $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+
+                        // 敵を倒した場合
+                        if ($opponent_data->value_hp <= 0) {
+                            $opponent_data->value_hp = 0; // マイナスになるのを防ぐ。
+                            $opponent_data->is_defeated_flag = true;
+                            self::clearBuff($opponent_data);
+                            $battle_logs_collection->push("{$opponent_data->name}はやられてしまった！");
+                            Debugbar::warning("{$opponent_data->name}がやられた。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
+                        }
+
+                    }
+
+                } else {
+                    // HPを0にして、退散
+                    $actor_data->value_hp = 0;
+                    $actor_data->is_defeated_flag = true;
+                    $battle_logs_collection->push("{$actor_data->name}は、満足げに去っていった。");
+                }
+                break;
+            case SkillDefinition::Death :
+                // 対戦相手の体力と、戦闘不能フラグを立てる
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                $opponent_data->value_hp = 0;
+                $opponent_data->is_defeated_flag = true;
+                self::clearBuff($opponent_data);
+                $battle_logs_collection->push("{$opponent_data->name}は呪文の効果により、戦闘不能となってしまった！");
+                break;
+            case SkillDefinition::EnemyCurseEdge :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = ceil($max_value_hp * 0.05);
+                $actor_data->value_hp -= $self_harm_damage;
+                $battle_logs_collection->push("{$actor_data->name}は代償として、{$self_harm_damage}の自傷ダメージを受けた！");
+                if ($actor_data->value_hp <= 0) {
+                    $actor_data->value_hp = 0;
+                    $actor_data->is_defeated_flag = true;
+                    self::clearBuff($actor_data);
+                    $battle_logs_collection->push("{$actor_data->name}はその代償で力付きた。");
+                    Debugbar::debug("{$actor_data->name}が倒れてしまった。残HP: {$actor_data->value_hp}");
+                } else {
+                    Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
+                }
+                break;
+            case SkillDefinition::EnemyWindAccel :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 単体に物理攻撃し、その後自分にバフをかける。
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
+                break;
             default:
                 break;
         }
