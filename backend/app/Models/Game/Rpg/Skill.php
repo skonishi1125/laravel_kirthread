@@ -1034,6 +1034,27 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は不気味な呪文を唱えた！");
                     $damage = 0;
                     break;
+                case SkillDefinition::EnemyCurseEdge :
+                    Debugbar::warning(SkillDefinition::EnemyCurseEdge->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！生命力を捧げその刃を奮わせてきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemyWideThrust :
+                    Debugbar::warning(SkillDefinition::EnemyWideThrust->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手持ちの装備で周囲を薙ぎ払ってきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemyProtection :
+                    Debugbar::warning(SkillDefinition::EnemyProtection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemyWindAccel :
+                    Debugbar::warning(SkillDefinition::EnemyWindAccel->label());
+                    $battle_logs_collection->push("{$actor_data->name}は吹き荒れた風の力を纏い、鋭く攻撃してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * (($selected_skill_data->skill_percent)));
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

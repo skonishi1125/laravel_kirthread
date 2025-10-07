@@ -132,6 +132,10 @@ enum SkillDefinition: int
     case StandStill = 1049;
     case CurseBreaker = 1050;
     case Death = 1051;
+    case EnemyCurseEdge = 1052;
+    case EnemyWideThrust = 1053;
+    case EnemyProtection = 1054;
+    case EnemyWindAccel = 1055;
 
     public function label(): string
     {
@@ -257,6 +261,10 @@ enum SkillDefinition: int
             self::StandStill => '静かに佇む', // 何もしない
             self::CurseBreaker => 'カースブレイカー', // 魔法 全体
             self::Death => 'デス', // 魔法 単体
+            self::EnemyCurseEdge => 'カースエッジ',
+            self::EnemyWideThrust => 'ワイドスラスト',
+            self::EnemyProtection => 'プロテクション',
+            self::EnemyWindAccel => 'ウインドアクセル',
         };
     }
 
@@ -384,6 +392,10 @@ enum SkillDefinition: int
             self::StandStill => '静かに佇む。',
             self::CurseBreaker => '先制発動。自身が1ダメージでも喰らっていたら、9999ダメージを与えて反撃する。',
             self::Death => '敵単体を戦闘不能にする。',
+            self::EnemyCurseEdge => '敵の使うカースエッジ。',
+            self::EnemyWideThrust => '敵の使うワイドスラスト。',
+            self::EnemyProtection => '敵の使うプロテクション。',
+            self::EnemyWindAccel => '敵の使うウインドアクセル。',
 
         };
     }

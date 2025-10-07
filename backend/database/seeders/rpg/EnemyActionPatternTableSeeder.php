@@ -531,6 +531,32 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::CurseBreaker,
             ],
 
+            // Narehate
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyProtection,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyWideThrust,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyWindAccel,
+            ],
+            [
+                'enemy_id' => EnemyData::Narehate,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyCurseEdge,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {

@@ -2526,6 +2526,30 @@ class BattleState extends Model
                 self::clearBuff($opponent_data);
                 $battle_logs_collection->push("{$opponent_data->name}は呪文の効果により、戦闘不能となってしまった！");
                 break;
+            case SkillDefinition::EnemyCurseEdge :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                // 自身のHPを削る
+                $max_value_hp = $actor_data->max_value_hp;
+                $self_harm_damage = ceil($max_value_hp * 0.05);
+                $actor_data->value_hp -= $self_harm_damage;
+                $battle_logs_collection->push("{$actor_data->name}は代償として、{$self_harm_damage}の自傷ダメージを受けた！");
+                if ($actor_data->value_hp <= 0) {
+                    $actor_data->value_hp = 0;
+                    $actor_data->is_defeated_flag = true;
+                    self::clearBuff($actor_data);
+                    $battle_logs_collection->push("{$actor_data->name}はその代償で力付きた。");
+                    Debugbar::debug("{$actor_data->name}が倒れてしまった。残HP: {$actor_data->value_hp}");
+                } else {
+                    Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
+                }
+                break;
+            case SkillDefinition::EnemyWindAccel :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 単体に物理攻撃し、その後自分にバフをかける。
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
+                break;
             default:
                 break;
         }

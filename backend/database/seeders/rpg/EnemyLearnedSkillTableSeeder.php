@@ -164,6 +164,12 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             // ZombieCrion
             ['enemy_id' => EnemyData::ZombieClion, 'skill_id' => SkillDefinition::Death, 'skill_level' => 1],
 
+            // Narehate
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyCurseEdge, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyWideThrust, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyProtection, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyWindAccel, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
