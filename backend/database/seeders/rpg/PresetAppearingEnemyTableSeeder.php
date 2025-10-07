@@ -738,6 +738,18 @@ class PresetAppearingEnemyTableSeeder extends Seeder
                 'enemy_id' => EnemyData::GrandCube,
                 'number' => 1,
             ],
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::OriginSlum,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 1,
+                'enemy_id' => EnemyData::OriginGwappa,
+                'number' => 1,
+            ],
 
         ];
 
