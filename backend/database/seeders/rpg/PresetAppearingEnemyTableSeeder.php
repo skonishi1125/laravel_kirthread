@@ -525,19 +525,25 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
             [
                 'field_id' => FieldData::DecayedFarmland,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::DustBomb,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::DecayedFarmland,
-                'stage_id' => 1,
+                'stage_id' => 2,
                 'enemy_id' => EnemyData::ZombieClion,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::DecayedFarmland,
                 'stage_id' => 2,
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::ZombieClion,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::DecayedFarmland,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::Narehate,
                 'number' => 1,
             ],

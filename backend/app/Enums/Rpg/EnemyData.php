@@ -184,9 +184,9 @@ enum EnemyData: int
             self::MetalGecko => 'リザードの上位種。鋭い爪は鎧すら切り裂く。自身は甲殻で覆われており打たれ強い。魔法で攻めつつ、持久戦に持ち込むと良いだろう。DEFを下げる行動をしたのち、鋭い爪で全体攻撃をしてくるので備えよう。',
             self::Stinger => 'イッカクの上位種。鉄のような見た目をしているが非常に物理攻撃が有効。単体・全体の魔法を使用する。',
             self::PlasmaBook => '古城の魔力が書籍にまとわりつき魔物となった。SPDを下げる全体魔法攻撃が非常に厄介だが、本体も打たれ強い。この魔物を先に討伐するというよりかは、SPDが下がった状態でどう戦況を組み立てるかを意識するのが良いだろう。',
-            self::FlareDrago => '古城に棲み着く龍。堅牢な甲殻を持つだけでなく非常に知能も高い。',
+            self::FlareDrago => '古城の主。鋭い爪と堅牢な甲殻を持ち、吐く息はあらゆるものを焼き尽くす。龍の咆哮は対峙者の抗戦意欲を削ぎ落とし恐怖させる、非常に危険度の高い魔物。古城から縄張りを広げようとする行動は現在のところ見られないが、何か事情があるのかもしれない。',
 
-            self::TraitorLordOfDragon => '龍祀の叛国卿',
+            self::TraitorLordOfDragon => '古城の祭壇に潜み、人とも魔物とも言い難い存在。異界の門を召喚して魔法を呼び出す。威力は驚異的であるため、どう立ち回るか考えておかなければならないだろう。自身の血を啜りHPを回復することがあるが、代償として抵抗力が下がるため反撃のチャンスでもある。宙に浮かぶ異界の門からは、時折この世のものとは思えない生命体が覗いているかのような視線が感じられる。',
 
             self::Celavie => 'セラヴィ',
             self::GrandCube => 'グランドキューブ',
@@ -370,13 +370,14 @@ enum EnemyData: int
             self::MetalGecko->value,
             self::Stinger->value,
             self::PlasmaBook->value,
+            self::FlareDrago->value,
         ];
     }
 
     public static function ancientCastleAltarAppearingEnemies(): array
     {
         return [
-            self::Srara->value,
+            self::TraitorLordOfDragon->value,
         ];
     }
 

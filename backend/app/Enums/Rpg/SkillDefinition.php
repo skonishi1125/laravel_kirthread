@@ -129,6 +129,9 @@ enum SkillDefinition: int
     case AncientLightning = 1046;
     case DragonBite = 1047;
     case DragonTail = 1048;
+    case StandStill = 1049;
+    case CurseBreaker = 1050;
+    case Death = 1051;
 
     public function label(): string
     {
@@ -251,6 +254,9 @@ enum SkillDefinition: int
             self::AncientLightning => 'エンシェントライトニング', // 魔法 全体
             self::DragonBite => 'ドラゴンバイト', // 物理 単体
             self::DragonTail => 'ドラゴンテイル', // 物理 全体
+            self::StandStill => '静かに佇む', // 何もしない
+            self::CurseBreaker => 'カースブレイカー', // 魔法 全体
+            self::Death => 'デス', // 魔法 単体
         };
     }
 
@@ -375,6 +381,9 @@ enum SkillDefinition: int
             self::AncientLightning => '先制発動する。ポータルから太古の雷を呼び出す。相手全員の体力を1にする。',
             self::DragonBite => '最も最後に行動する。身体の一部を龍の頭に換え噛み付く。敵単体に物理ダメージ。',
             self::DragonTail => '最も最後に行動する。身体の一部を龍の尾に換え、その尻尾で薙ぎ払い全体に物理ダメージ。',
+            self::StandStill => '静かに佇む。',
+            self::CurseBreaker => '先制発動。自身が1ダメージでも喰らっていたら、9999ダメージを与えて反撃する。',
+            self::Death => '敵単体を戦闘不能にする。',
 
         };
     }

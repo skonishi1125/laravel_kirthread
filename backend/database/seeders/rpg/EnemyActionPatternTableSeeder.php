@@ -461,7 +461,7 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::FireBreath,
             ],
 
-            //
+            // TraitorLordOfDragon
             [
                 'enemy_id' => EnemyData::TraitorLordOfDragon,
                 'turn_count' => 1,
@@ -497,6 +497,38 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'turn_count' => 6,
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::BloodSlurp,
+            ],
+
+            // CurseScareCrow
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::StandStill,
+            ],
+            [
+                'enemy_id' => EnemyData::CurseScareCrow,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::CurseBreaker,
             ],
 
         ];

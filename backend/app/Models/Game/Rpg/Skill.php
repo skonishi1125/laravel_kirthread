@@ -1020,6 +1020,20 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は龍の尻尾を召喚し、周囲を薙ぎ払う！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::StandStill :
+                    Debugbar::debug(SkillDefinition::StandStill->label());
+                    $battle_logs_collection->push("{$actor_data->name}は静かに佇んでいる...");
+                    break;
+                case SkillDefinition::CurseBreaker :
+                    Debugbar::debug(SkillDefinition::CurseBreaker->label());
+                    $damage = 0;
+                    // テキストも、storeEnemySpecialSkill 側で調整する
+                    break;
+                case SkillDefinition::Death :
+                    Debugbar::warning(SkillDefinition::Death->label());
+                    $battle_logs_collection->push("{$actor_data->name}は不気味な呪文を唱えた！");
+                    $damage = 0;
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

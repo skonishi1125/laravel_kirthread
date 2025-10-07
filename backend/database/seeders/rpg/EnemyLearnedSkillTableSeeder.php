@@ -157,6 +157,13 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::DragonTail, 'skill_level' => 1],
             ['enemy_id' => EnemyData::TraitorLordOfDragon, 'skill_id' => SkillDefinition::BloodSlurp, 'skill_level' => 1],
 
+            // CurseScareCrow
+            ['enemy_id' => EnemyData::CurseScareCrow, 'skill_id' => SkillDefinition::StandStill, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::CurseScareCrow, 'skill_id' => SkillDefinition::CurseBreaker, 'skill_level' => 1],
+
+            // ZombieCrion
+            ['enemy_id' => EnemyData::ZombieClion, 'skill_id' => SkillDefinition::Death, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
