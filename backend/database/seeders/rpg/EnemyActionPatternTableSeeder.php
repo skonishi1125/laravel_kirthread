@@ -557,6 +557,64 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::EnemyCurseEdge,
             ],
 
+            // OriginSlum
+            [
+                'enemy_id' => EnemyData::OriginSlum,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Puyopuyo,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginSlum,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SlumPopHeal,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginSlum,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Puyopuyo,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginSlum,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SlumEscape,
+            ],
+
+            // OriginGwappa
+            [
+                'enemy_id' => EnemyData::OriginGwappa,
+                'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Observe,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginGwappa,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Running,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginGwappa,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::GwappaHealAP,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginGwappa,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Running,
+            ],
+            [
+                'enemy_id' => EnemyData::OriginGwappa,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::GwappaEscape,
+            ],
+
             // WreckHero
             [
                 'enemy_id' => EnemyData::WreckHero,

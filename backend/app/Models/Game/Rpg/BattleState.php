@@ -2572,6 +2572,52 @@ class BattleState extends Model
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
                 self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy, true);
                 break;
+            case SkillDefinition::Puyopuyo :
+                break;
+            case SkillDefinition::Running :
+                break;
+            case SkillDefinition::Observe :
+                break;
+            case SkillDefinition::SlumEscape :
+                // HPを0にして、退散
+                $actor_data->value_hp = 0;
+                $actor_data->is_defeated_flag = true;
+                break;
+            case SkillDefinition::GwappaEscape :
+                // HPを0にして、退散
+                $actor_data->value_hp = 0;
+                $actor_data->is_defeated_flag = true;
+                break;
+            case SkillDefinition::SlumPopHeal :
+                // パーティのHPを回復
+                foreach ($battle_state_opponents_collection as $opponent_data) {
+                    // 戦闘不能ならスキップ
+                    if ($opponent_data->is_defeated_flag == true) {
+                        Debugbar::debug("{$opponent_data->name}は戦闘不能のため回復対象としません。");
+                    } else {
+                        $opponent_data->value_hp += $heal_point;
+                        if ($opponent_data->value_hp > $opponent_data->max_value_hp) {
+                            $opponent_data->value_hp = $opponent_data->max_value_hp;
+                        }
+                        Debugbar::debug("{$opponent_data->name}回復。");
+                    }
+                }
+
+                $battle_logs_collection->push("全員のHPが{$heal_point}ポイント回復した！");
+                break;
+            case SkillDefinition::GwappaHealAP :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // 戦闘不能ならスキップ
+                if ($opponent_data->is_defeated_flag == true) {
+                    $battle_logs_collection->push("しかし{$opponent_data->name}は戦闘不能のため効果が無かった！");
+                } else {
+                    $opponent_data->value_ap += $heal_point;
+                    if ($opponent_data->value_ap > $opponent_data->max_value_ap) {
+                        $opponent_data->value_ap = $opponent_data->max_value_ap;
+                    }
+                    $battle_logs_collection->push("{$opponent_data->name}のAPが{$heal_point}ポイント回復した！");
+                }
+                break;
             default:
                 break;
         }

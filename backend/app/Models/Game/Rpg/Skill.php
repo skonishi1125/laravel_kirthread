@@ -1069,6 +1069,37 @@ class Skill extends Model
                     // バフは storeEnemySpecialSkill 側で対応
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
+                case SkillDefinition::Puyopuyo :
+                    Debugbar::debug(SkillDefinition::Puyopuyo->label());
+                    $battle_logs_collection->push("{$actor_data->name}はふよふよ動いており、危害を加えてくる気配は無さそうだ。");
+                    break;
+                case SkillDefinition::Running :
+                    Debugbar::debug(SkillDefinition::Running->label());
+                    $battle_logs_collection->push("{$actor_data->name}は元気よく駆け回っている。");
+                    break;
+                case SkillDefinition::Observe :
+                    Debugbar::debug(SkillDefinition::Observe->label());
+                    $battle_logs_collection->push("{$actor_data->name}はじっとこちらを見つめている...");
+                    break;
+                case SkillDefinition::SlumEscape :
+                    Debugbar::debug(SkillDefinition::SlumEscape->label());
+                    $battle_logs_collection->push("{$actor_data->name}はのそのそと去っていった。");
+                    break;
+                case SkillDefinition::GwappaEscape :
+                    Debugbar::debug(SkillDefinition::GwappaEscape->label());
+                    $battle_logs_collection->push("{$actor_data->name}はとんでもない速度で、その場から逃げ出した。");
+                    break;
+                case SkillDefinition::SlumPopHeal :
+                    Debugbar::debug(SkillDefinition::SlumPopHeal->label());
+                    $battle_logs_collection->push("{$actor_data->name}はこちらにポップヒールを唱えてきた！癒しの力が気力を満たしてくれる。");
+                    $heal_point = 100;
+                    break;
+                case SkillDefinition::GwappaHealAP :
+                    Debugbar::debug(SkillDefinition::GwappaHealAP->label());
+                    $battle_logs_collection->push("{$actor_data->name}はこちらに自身の魔力を分け与えてきた！癒しの力が魔力を満たしてくれる。");
+                    $heal_point = 50;
+                    break;
+
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

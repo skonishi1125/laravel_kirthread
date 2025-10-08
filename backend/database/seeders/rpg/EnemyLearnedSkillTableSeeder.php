@@ -177,6 +177,17 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::GrandCube, 'skill_id' => SkillDefinition::ContraryBeam, 'skill_level' => 1],
             ['enemy_id' => EnemyData::GrandCube, 'skill_id' => SkillDefinition::InverseStrike, 'skill_level' => 1],
 
+            // OriginSlum
+            ['enemy_id' => EnemyData::OriginSlum, 'skill_id' => SkillDefinition::Puyopuyo, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::OriginSlum, 'skill_id' => SkillDefinition::SlumPopHeal, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::OriginSlum, 'skill_id' => SkillDefinition::SlumEscape, 'skill_level' => 1],
+
+            // OriginGwappa
+            ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::Running, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::Observe, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::GwappaHealAP, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::GwappaEscape, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

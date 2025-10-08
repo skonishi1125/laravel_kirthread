@@ -736,7 +736,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::VastExpanse,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::OriginSlum,
+                'enemy_id' => EnemyData::WreckHero,
                 'number' => 1,
             ],
             // stage2
