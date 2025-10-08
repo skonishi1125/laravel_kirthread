@@ -729,27 +729,33 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::VastExpanse,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::Celavie,
+                'enemy_id' => EnemyData::WreckHero,
                 'number' => 1,
             ],
-            [
-                'field_id' => FieldData::VastExpanse,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::GrandCube,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::VastExpanse,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::OriginSlum,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::VastExpanse,
-                'stage_id' => 1,
-                'enemy_id' => EnemyData::OriginGwappa,
-                'number' => 1,
-            ],
+            // [
+            //     'field_id' => FieldData::VastExpanse,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::Celavie,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::VastExpanse,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::GrandCube,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::VastExpanse,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::OriginSlum,
+            //     'number' => 1,
+            // ],
+            // [
+            //     'field_id' => FieldData::VastExpanse,
+            //     'stage_id' => 1,
+            //     'enemy_id' => EnemyData::OriginGwappa,
+            //     'number' => 1,
+            // ],
 
         ];
 

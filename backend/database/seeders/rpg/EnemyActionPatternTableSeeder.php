@@ -557,6 +557,13 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::EnemyCurseEdge,
             ],
 
+            // WreckHero
+            [
+                'enemy_id' => EnemyData::WreckHero,
+                'turn_count' => 1,
+                'is_use_skill' => false,
+            ],
+
         ];
 
         foreach ($seeds as $seed) {
