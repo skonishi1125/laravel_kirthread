@@ -136,6 +136,8 @@ enum SkillDefinition: int
     case EnemyWideThrust = 1053;
     case EnemyProtection = 1054;
     case EnemyWindAccel = 1055;
+    case ContraryBeam = 1056;
+    case InverseStrike = 1057;
 
     public function label(): string
     {
@@ -265,6 +267,8 @@ enum SkillDefinition: int
             self::EnemyWideThrust => 'ワイドスラスト',
             self::EnemyProtection => 'プロテクション',
             self::EnemyWindAccel => 'ウインドアクセル',
+            self::ContraryBeam => 'コントラリビーム', // INT依存の物理攻撃 相手のステータスを+-100
+            self::InverseStrike => 'インバースストライク', // DEF依存の魔法攻撃 相手のステータスを+-100
         };
     }
 
@@ -396,6 +400,8 @@ enum SkillDefinition: int
             self::EnemyWideThrust => '敵の使うワイドスラスト。',
             self::EnemyProtection => '敵の使うプロテクション。',
             self::EnemyWindAccel => '敵の使うウインドアクセル。',
+            self::ContraryBeam => '敵単体に、DEF依存の魔法攻撃。',
+            self::InverseStrike => '敵単体に、INT依存の物理攻撃。',
 
         };
     }

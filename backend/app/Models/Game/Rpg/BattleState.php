@@ -2550,6 +2550,28 @@ class BattleState extends Model
                 self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
                 self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 break;
+            case SkillDefinition::ContraryBeam :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // ランダム付与
+                $new_buff['buffed_str'] = (int) rand(-100, 100);
+                $new_buff['buffed_def'] = (int) rand(-100, 100);
+                $new_buff['buffed_int'] = (int) rand(-100, 100);
+                $new_buff['buffed_spd'] = (int) rand(-100, 100);
+                $new_buff['buffed_luc'] = (int) rand(-100, 100);
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy, true);
+                break;
+            case SkillDefinition::InverseStrike :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // ランダム付与
+                $new_buff['buffed_str'] = (int) rand(-100, 100);
+                $new_buff['buffed_def'] = (int) rand(-100, 100);
+                $new_buff['buffed_int'] = (int) rand(-100, 100);
+                $new_buff['buffed_spd'] = (int) rand(-100, 100);
+                $new_buff['buffed_luc'] = (int) rand(-100, 100);
+                self::applyAttackAndLog($actor_data, $opponent_data, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $is_enemy);
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy, true);
+                break;
             default:
                 break;
         }
@@ -2589,7 +2611,8 @@ class BattleState extends Model
         Collection $battle_logs_collection,
         int $target_range,
         bool $is_debuff = false,
-        bool $is_enemy = false
+        bool $is_enemy = false,
+        bool $is_special = false,
     ) {
         Debugbar::debug("adjustBuffFromSituation() {$opponent_data->name}のバフを調整します。");
         // 戦闘不能ならスキップ
@@ -2615,7 +2638,11 @@ class BattleState extends Model
             if (! $is_enemy) {
                 $battle_logs_collection->push("{$opponent_data->name}のステータスを下げた！");
             } else {
-                $battle_logs_collection->push("{$opponent_data->name}のステータスが下がった！");
+                if ($is_special == true) {
+                    $battle_logs_collection->push("{$opponent_data->name}のステータスが奇妙に変化した！");
+                } else {
+                    $battle_logs_collection->push("{$opponent_data->name}のステータスが下がった！");
+                }
             }
         }
 

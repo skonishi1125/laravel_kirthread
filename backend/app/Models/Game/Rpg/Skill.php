@@ -1055,6 +1055,20 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_spd'] = (int) ceil($actor_data->value_spd * (($selected_skill_data->skill_percent)));
                     break;
+                case SkillDefinition::ContraryBeam :
+                    Debugbar::warning(SkillDefinition::ContraryBeam->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を放った！視界が錯乱し、目の前がぐにゃぐにゃになる...");
+                    // 'attack_type' => AttackType::Physical->value だが、INTで計算する
+                    // バフは storeEnemySpecialSkill 側で対応
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::InverseStrike :
+                    Debugbar::warning(SkillDefinition::InverseStrike->label());
+                    $battle_logs_collection->push("{$actor_data->name}は頭上から落下してきた！脳震盪を起こし、目の前がぐにゃぐにゃになる...");
+                    // 'attack_type' => AttackType::Magic->value だが、STRで計算する
+                    // バフは storeEnemySpecialSkill 側で対応
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

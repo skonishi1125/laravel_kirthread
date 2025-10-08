@@ -170,6 +170,13 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyProtection, 'skill_level' => 1],
             ['enemy_id' => EnemyData::Narehate, 'skill_id' => SkillDefinition::EnemyWindAccel, 'skill_level' => 1],
 
+            // Celavie
+            ['enemy_id' => EnemyData::Celavie, 'skill_id' => SkillDefinition::HailShot, 'skill_level' => 1],
+
+            // GrandCube
+            ['enemy_id' => EnemyData::GrandCube, 'skill_id' => SkillDefinition::ContraryBeam, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::GrandCube, 'skill_id' => SkillDefinition::InverseStrike, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],
