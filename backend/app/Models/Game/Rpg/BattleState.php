@@ -2618,6 +2618,9 @@ class BattleState extends Model
                     $battle_logs_collection->push("{$opponent_data->name}のAPが{$heal_point}ポイント回復した！");
                 }
                 break;
+            case SkillDefinition::EnemyWeaponDemolish :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
             default:
                 break;
         }

@@ -788,32 +788,32 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::EnemyHealing :
-                    Debugbar::debug(SkillDefinition::EnemyHealing->label());
+                    Debugbar::warning(SkillDefinition::EnemyHealing->label());
                     $battle_logs_collection->push("{$actor_data->name}はヒーリングを唱えた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::Regeneration :
-                    Debugbar::debug(SkillDefinition::Regeneration->label());
+                    Debugbar::warning(SkillDefinition::Regeneration->label());
                     $battle_logs_collection->push("{$actor_data->name}は自身の細胞を分裂させ、再生した！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 200;
                     break;
                 case SkillDefinition::EnemyGuardSpell :
-                    Debugbar::debug(SkillDefinition::EnemyGuardSpell->label());
+                    Debugbar::warning(SkillDefinition::EnemyGuardSpell->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::EnemyAllGuardSpell :
-                    Debugbar::debug(SkillDefinition::EnemyAllGuardSpell->label());
+                    Debugbar::warning(SkillDefinition::EnemyAllGuardSpell->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::Roar :
-                    Debugbar::debug(SkillDefinition::Roar->label());
+                    Debugbar::warning(SkillDefinition::Roar->label());
                     $battle_logs_collection->push("{$actor_data->name}は咆哮し、自分自身を奮い立たせた！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::DigestiveFluid :
-                    Debugbar::debug(SkillDefinition::DigestiveFluid->label());
+                    Debugbar::warning(SkillDefinition::DigestiveFluid->label());
                     $battle_logs_collection->push("{$actor_data->name}は消化液を吐き出した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     // マイナスの値にして、相手にデバフとして付与する
@@ -845,16 +845,16 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::Prepare :
-                    Debugbar::debug(SkillDefinition::Prepare->label());
+                    Debugbar::warning(SkillDefinition::Prepare->label());
                     $battle_logs_collection->push("{$actor_data->name}は次の行動に向けて、準備をしている！");
                     break;
                 case SkillDefinition::Rush :
-                    Debugbar::debug(SkillDefinition::Rush->label());
+                    Debugbar::warning(SkillDefinition::Rush->label());
                     $battle_logs_collection->push("{$actor_data->name}は自慢のお腹で滑りながら、思いっきり突進してきた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::FreeToEat :
-                    Debugbar::debug(SkillDefinition::FreeToEat->label());
+                    Debugbar::warning(SkillDefinition::FreeToEat->label());
                     $battle_logs_collection->push("{$actor_data->name}は果実をばら撒き、栄養の補給を試みた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
@@ -897,7 +897,7 @@ class Skill extends Model
                     $damage = 100; // 本当は200だけど、弱くしておこう
                     break;
                 case SkillDefinition::SwellUp :
-                    Debugbar::debug(SkillDefinition::SwellUp->label());
+                    Debugbar::warning(SkillDefinition::SwellUp->label());
                     $battle_logs_collection->push("{$actor_data->name}はぷくぷくと膨らみはじめた！");
                     break;
                 case SkillDefinition::Explosion :
@@ -989,23 +989,23 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::DragonHowling :
-                    Debugbar::debug(SkillDefinition::DragonHowling->label());
+                    Debugbar::warning(SkillDefinition::DragonHowling->label());
                     $battle_logs_collection->push("{$actor_data->name}はつんざくような咆哮を上げ、恐怖を与えた！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     $new_buff['buffed_spd'] = (int) (-100);
                     $new_buff['buffed_str'] = (int) (-100);
                     break;
                 case SkillDefinition::OpenPotal :
-                    Debugbar::debug(SkillDefinition::OpenPotal->label());
+                    Debugbar::warning(SkillDefinition::OpenPotal->label());
                     $battle_logs_collection->push("{$actor_data->name}は呪文を唱え、空中にポータルを開いた！");
                     break;
                 case SkillDefinition::AncientLightning :
-                    Debugbar::debug(SkillDefinition::AncientLightning->label());
+                    Debugbar::warning(SkillDefinition::AncientLightning->label());
                     $damage = 0;
                     $battle_logs_collection->push("{$actor_data->name}はポータルから古代の雷を呼び出した！降りかかる落雷が致命的な一撃を与える！");
                     break;
                 case SkillDefinition::BloodSlurp :
-                    Debugbar::debug(SkillDefinition::BloodSlurp->label());
+                    Debugbar::warning(SkillDefinition::BloodSlurp->label());
                     $battle_logs_collection->push("{$actor_data->name}はなんと自身の腕に噛みつき、血を啜って回復した！");
                     $heal_point = (int) 1000;
                     $new_buff['buffed_def'] = (int) (-150);
@@ -1021,11 +1021,11 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::StandStill :
-                    Debugbar::debug(SkillDefinition::StandStill->label());
+                    Debugbar::warning(SkillDefinition::StandStill->label());
                     $battle_logs_collection->push("{$actor_data->name}は静かに佇んでいる...");
                     break;
                 case SkillDefinition::CurseBreaker :
-                    Debugbar::debug(SkillDefinition::CurseBreaker->label());
+                    Debugbar::warning(SkillDefinition::CurseBreaker->label());
                     $damage = 0;
                     // テキストも、storeEnemySpecialSkill 側で調整する
                     break;
@@ -1070,36 +1070,57 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
                     break;
                 case SkillDefinition::Puyopuyo :
-                    Debugbar::debug(SkillDefinition::Puyopuyo->label());
+                    Debugbar::warning(SkillDefinition::Puyopuyo->label());
                     $battle_logs_collection->push("{$actor_data->name}はふよふよ動いており、危害を加えてくる気配は無さそうだ。");
                     break;
                 case SkillDefinition::Running :
-                    Debugbar::debug(SkillDefinition::Running->label());
+                    Debugbar::warning(SkillDefinition::Running->label());
                     $battle_logs_collection->push("{$actor_data->name}は元気よく駆け回っている。");
                     break;
                 case SkillDefinition::Observe :
-                    Debugbar::debug(SkillDefinition::Observe->label());
+                    Debugbar::warning(SkillDefinition::Observe->label());
                     $battle_logs_collection->push("{$actor_data->name}はじっとこちらを見つめている...");
                     break;
                 case SkillDefinition::SlumEscape :
-                    Debugbar::debug(SkillDefinition::SlumEscape->label());
+                    Debugbar::warning(SkillDefinition::SlumEscape->label());
                     $battle_logs_collection->push("{$actor_data->name}はのそのそと去っていった。");
                     break;
                 case SkillDefinition::GwappaEscape :
-                    Debugbar::debug(SkillDefinition::GwappaEscape->label());
+                    Debugbar::warning(SkillDefinition::GwappaEscape->label());
                     $battle_logs_collection->push("{$actor_data->name}はとんでもない速度で、その場から逃げ出した。");
                     break;
                 case SkillDefinition::SlumPopHeal :
-                    Debugbar::debug(SkillDefinition::SlumPopHeal->label());
+                    Debugbar::warning(SkillDefinition::SlumPopHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}はこちらにポップヒールを唱えてきた！癒しの力が気力を満たしてくれる。");
                     $heal_point = 100;
                     break;
                 case SkillDefinition::GwappaHealAP :
-                    Debugbar::debug(SkillDefinition::GwappaHealAP->label());
+                    Debugbar::warning(SkillDefinition::GwappaHealAP->label());
                     $battle_logs_collection->push("{$actor_data->name}はこちらに自身の魔力を分け与えてきた！癒しの力が魔力を満たしてくれる。");
                     $heal_point = 50;
                     break;
-
+                case SkillDefinition::EnemyWeaponDemolish :
+                    Debugbar::debug(SkillDefinition::EnemyWeaponDemolish->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！攻撃の急所を穿かれ、技の威力を鈍らされてしまう。");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_str'] = (int) (-100);
+                    $new_buff['buffed_int'] = (int) (-100);
+                    break;
+                case SkillDefinition::EnemyAileCaliber :
+                    Debugbar::debug(SkillDefinition::EnemyAileCaliber->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！魔導の刃がこちらに襲い掛かる！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemyAxeShoot :
+                    Debugbar::debug(SkillDefinition::EnemyAxeShoot->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！卓越した脚技で、こちらを一蹴してきた！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'str') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::EnemySpeedEnt :
+                    Debugbar::debug(SkillDefinition::EnemySpeedEnt->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
+                    $new_buff['buffed_spd'] = (int) 50;
+                    break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');
                     break;

@@ -145,6 +145,10 @@ enum SkillDefinition: int
     case Observe = 1062;
     case GwappaHealAP = 1063;
     case GwappaEscape = 1064;
+    case EnemyWeaponDemolish = 1065;
+    case EnemyAileCaliber = 1066;
+    case EnemyAxeShoot = 1067;
+    case EnemySpeedEnt = 1068;
 
     public function label(): string
     {
@@ -283,6 +287,10 @@ enum SkillDefinition: int
             self::Observe => '観察する',
             self::GwappaHealAP => 'グワッパAPヒール',
             self::GwappaEscape => 'グワッパエスケープ',
+            self::EnemyWeaponDemolish => 'ウェポンデモリッシュ',
+            self::EnemyAileCaliber => 'エイルカリバー',
+            self::EnemyAxeShoot => 'アックスシュート',
+            self::EnemySpeedEnt => 'スピードエント',
         };
     }
 
@@ -423,6 +431,10 @@ enum SkillDefinition: int
             self::Observe => 'こちらを観察してきて、何もしない。',
             self::GwappaHealAP => '親切にもこちらのAPを回復してくれる。',
             self::GwappaEscape => 'グワッパが逃走する。',
+            self::EnemyWeaponDemolish => '敵の使うウェポンデモリッシュ。',
+            self::EnemyAileCaliber => '敵の使うエイルカリバー。',
+            self::EnemyAxeShoot => '敵の使うアックスシュート。',
+            self::EnemySpeedEnt => '敵の使うスピードエント。',
 
         };
     }

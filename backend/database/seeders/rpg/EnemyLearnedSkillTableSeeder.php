@@ -188,6 +188,12 @@ class EnemyLearnedSkillTableSeeder extends Seeder
             ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::GwappaHealAP, 'skill_level' => 1],
             ['enemy_id' => EnemyData::OriginGwappa, 'skill_id' => SkillDefinition::GwappaEscape, 'skill_level' => 1],
 
+            // HollowHero
+            ['enemy_id' => EnemyData::HollowHero, 'skill_id' => SkillDefinition::EnemyWeaponDemolish, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::HollowHero, 'skill_id' => SkillDefinition::EnemyAileCaliber, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::HollowHero, 'skill_id' => SkillDefinition::EnemyAxeShoot, 'skill_level' => 1],
+            ['enemy_id' => EnemyData::HollowHero, 'skill_id' => SkillDefinition::EnemySpeedEnt, 'skill_level' => 1],
+
             // 検証系
             // 敵回復系 検証用 ハイスララ
             // ['enemy_id' => EnemyData::HighSrara, 'skill_id' => SkillDefinition::EnemyHealing, 'skill_level' => 1],

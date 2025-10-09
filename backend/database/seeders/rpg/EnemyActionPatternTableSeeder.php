@@ -615,11 +615,30 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'skill_id' => SkillDefinition::GwappaEscape,
             ],
 
-            // WreckHero
+            // HollowHero
             [
-                'enemy_id' => EnemyData::WreckHero,
+                'enemy_id' => EnemyData::HollowHero,
                 'turn_count' => 1,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemySpeedEnt,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyWeaponDemolish,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyAileCaliber,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyAxeShoot,
             ],
 
         ];
