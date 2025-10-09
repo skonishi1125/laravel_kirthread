@@ -398,6 +398,9 @@ enum EnemyData: int
         return [
             self::Celavie->value,
             self::GrandCube->value,
+            self::OriginSlum->value,
+            self::OriginGwappa->value,
+            self::HollowHero->value,
         ];
     }
 }
