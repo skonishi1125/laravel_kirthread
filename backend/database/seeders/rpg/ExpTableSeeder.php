@@ -42,10 +42,15 @@ class ExpTableSeeder extends Seeder
             ['level' => 24, 'total_exp' => 34255],
             ['level' => 25, 'total_exp' => 42865],
             ['level' => 26, 'total_exp' => 53625],
-            ['level' => 27, 'total_exp' => 67075],
-            ['level' => 28, 'total_exp' => 83885],
-            ['level' => 29, 'total_exp' => 104895],
-            ['level' => 30, 'total_exp' => 131155],
+            // この辺からエンドコンテンツなので、1.25倍の倍率で経験値テーブルを回すのはやめる。
+            ['level' => 27, 'total_exp' => 63000],
+            ['level' => 28, 'total_exp' => 74000],
+            ['level' => 29, 'total_exp' => 86000],
+            ['level' => 30, 'total_exp' => 99999],
+            // ['level' => 27, 'total_exp' => 67075],
+            // ['level' => 28, 'total_exp' => 83885],
+            // ['level' => 29, 'total_exp' => 104895],
+            // ['level' => 30, 'total_exp' => 131155],
         ];
 
         foreach ($seeds as $seed) {

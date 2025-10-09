@@ -727,16 +727,10 @@ class PresetAppearingEnemyTableSeeder extends Seeder
 
             // 茫洋の地
             // stage1
-            // [
-            //     'field_id' => FieldData::VastExpanse,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::Celavie,
-            //     'number' => 1,
-            // ],
             [
                 'field_id' => FieldData::VastExpanse,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::HollowHero,
+                'enemy_id' => EnemyData::Celavie,
                 'number' => 1,
             ],
             // stage2

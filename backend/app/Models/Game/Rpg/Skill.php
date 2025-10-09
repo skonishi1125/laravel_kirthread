@@ -787,11 +787,6 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は身体にまとっていたエネルギーで放電した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::EnemyHealing :
-                    Debugbar::warning(SkillDefinition::EnemyHealing->label());
-                    $battle_logs_collection->push("{$actor_data->name}はヒーリングを唱えた！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
-                    break;
                 case SkillDefinition::Regeneration :
                     Debugbar::warning(SkillDefinition::Regeneration->label());
                     $battle_logs_collection->push("{$actor_data->name}は自身の細胞を分裂させ、再生した！");
@@ -1120,6 +1115,21 @@ class Skill extends Model
                     Debugbar::debug(SkillDefinition::EnemySpeedEnt->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $new_buff['buffed_spd'] = (int) 50;
+                    break;
+                case SkillDefinition::EnemyHealing :
+                    Debugbar::warning(SkillDefinition::EnemyHealing->label());
+                    $battle_logs_collection->push("{$actor_data->name}はヒーリングを唱えた！");
+                    $heal_point = (int) 1000;
+                    break;
+                case SkillDefinition::SuperNova :
+                    Debugbar::warning(SkillDefinition::SuperNova->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！小さな光が宙に見え、瞬く間に大爆発を起こす！");
+                    $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_str'] = (int) (-50);
+                    $new_buff['buffed_def'] = (int) (-50);
+                    $new_buff['buffed_int'] = (int) (-50);
+                    $new_buff['buffed_spd'] = (int) (-50);
+                    $new_buff['buffed_luc'] = (int) (-50);
                     break;
                 default:
                     Debugbar::debug('存在しないスキルが選択されました。');

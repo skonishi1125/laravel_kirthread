@@ -620,25 +620,49 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'enemy_id' => EnemyData::HollowHero,
                 'turn_count' => 1,
                 'is_use_skill' => true,
-                'skill_id' => SkillDefinition::EnemySpeedEnt,
+                'skill_id' => SkillDefinition::StandStill,
             ],
             [
                 'enemy_id' => EnemyData::HollowHero,
                 'turn_count' => 2,
                 'is_use_skill' => true,
-                'skill_id' => SkillDefinition::EnemyWeaponDemolish,
+                'skill_id' => SkillDefinition::EnemySpeedEnt,
             ],
             [
                 'enemy_id' => EnemyData::HollowHero,
                 'turn_count' => 3,
                 'is_use_skill' => true,
-                'skill_id' => SkillDefinition::EnemyAileCaliber,
+                'skill_id' => SkillDefinition::EnemyWeaponDemolish,
             ],
             [
                 'enemy_id' => EnemyData::HollowHero,
                 'turn_count' => 4,
                 'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyAileCaliber,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 5,
+                'is_use_skill' => true,
                 'skill_id' => SkillDefinition::EnemyAxeShoot,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 6,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::EnemyHealing,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 7,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Prepare,
+            ],
+            [
+                'enemy_id' => EnemyData::HollowHero,
+                'turn_count' => 8,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::SuperNova,
             ],
 
         ];

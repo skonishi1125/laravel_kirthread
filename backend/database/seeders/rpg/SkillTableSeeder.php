@@ -2324,6 +2324,25 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::EnemySpeedEnt->description(),
             ],
+            [
+                'id' => SkillDefinition::SuperNova->value,
+                'name' => SkillDefinition::SuperNova->label(),
+                'available_role_id' => Role::ROLE_NONE,
+                'attack_type' => AttackType::Magic->value,
+                'effect_type' => EffectType::Special->value,
+                'target_range' => TargetRange::All->value,
+                'lv1_percent' => 1.0,
+                'lv1_ap_cost' => 50,
+                'lv1_buff_turn' => 3,
+                'lv2_percent' => 1.2,
+                'lv2_ap_cost' => 50,
+                'lv2_buff_turn' => 3,
+                'lv3_percent' => 1.4,
+                'lv3_ap_cost' => 50,
+                'lv3_buff_turn' => 3,
+                'elemental_id' => 1,
+                'description' => SkillDefinition::SuperNova->description(),
+            ],
 
         ];
 

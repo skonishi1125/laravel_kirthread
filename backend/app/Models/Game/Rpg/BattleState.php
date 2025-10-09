@@ -2621,6 +2621,9 @@ class BattleState extends Model
             case SkillDefinition::EnemyWeaponDemolish :
                 self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
                 break;
+            case SkillDefinition::SuperNova :
+                self::applyDebuffAllAttackAndLog($actor_data, $battle_state_opponents_collection, $pure_damage, $battle_logs_collection, $selected_skill_data->attack_type, $new_buff, true);
+                break;
             default:
                 break;
         }

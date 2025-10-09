@@ -149,6 +149,7 @@ enum SkillDefinition: int
     case EnemyAileCaliber = 1066;
     case EnemyAxeShoot = 1067;
     case EnemySpeedEnt = 1068;
+    case SuperNova = 1069;
 
     public function label(): string
     {
@@ -291,6 +292,7 @@ enum SkillDefinition: int
             self::EnemyAileCaliber => 'エイルカリバー',
             self::EnemyAxeShoot => 'アックスシュート',
             self::EnemySpeedEnt => 'スピードエント',
+            self::SuperNova => 'スーパーノヴァ',
         };
     }
 
@@ -435,6 +437,7 @@ enum SkillDefinition: int
             self::EnemyAileCaliber => '敵の使うエイルカリバー。',
             self::EnemyAxeShoot => '敵の使うアックスシュート。',
             self::EnemySpeedEnt => '敵の使うスピードエント。',
+            self::SuperNova => '星の爆発を思わせるほど強力な魔法。全体 + 複数ステータスのデバフを付与する。',
 
         };
     }
