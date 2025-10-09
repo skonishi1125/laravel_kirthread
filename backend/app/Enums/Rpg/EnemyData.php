@@ -129,7 +129,7 @@ enum EnemyData: int
             self::GrandCube => 'グランドキューブ',
             self::OriginSlum => 'オリジンスルム',
             self::OriginGwappa => 'オリジングワッパ',
-            self::HollowHero => 'ラスボス',
+            self::HollowHero => '黙滅ノ幽帝',
 
             self::HighSrara => 'ハイスララ',
 

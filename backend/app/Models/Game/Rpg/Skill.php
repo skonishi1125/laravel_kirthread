@@ -618,7 +618,7 @@ class Skill extends Model
                     Debugbar::debug(SkillDefinition::CerberusForce->label());
                     $battle_logs_collection->push("{$actor_data->name}は咆哮を上げ、臨戦態勢に入った！");
                     $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
-                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::SirenAura :
                     Debugbar::debug(SkillDefinition::SirenAura->label());
