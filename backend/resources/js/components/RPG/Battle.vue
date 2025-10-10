@@ -1103,8 +1103,12 @@ export default {
                 this.resultLog = response.data[0] || [];
                 this.isFieldCleared = response.data[1] || false;
                 console.dir(response.data);
+                // AncientCastleAltar
                 if (this.fieldId == 11) {
                     this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>祭壇の奥の部屋に、無造作に散らばる財宝を見つけた。</b></p></div>'
+                // VastExpanse
+                } else if (this.fieldId == 12) {
+                    this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>不気味な日記を拾った。（※図書館で読むことができます。）</b></p></div>'
                 }
             }
         );

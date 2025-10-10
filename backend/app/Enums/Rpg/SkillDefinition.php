@@ -136,6 +136,20 @@ enum SkillDefinition: int
     case EnemyWideThrust = 1053;
     case EnemyProtection = 1054;
     case EnemyWindAccel = 1055;
+    case ContraryBeam = 1056;
+    case InverseStrike = 1057;
+    case Puyopuyo = 1058;
+    case SlumPopHeal = 1059;
+    case SlumEscape = 1060;
+    case Running = 1061;
+    case Observe = 1062;
+    case GwappaHealAP = 1063;
+    case GwappaEscape = 1064;
+    case EnemyWeaponDemolish = 1065;
+    case EnemyAileCaliber = 1066;
+    case EnemyAxeShoot = 1067;
+    case EnemySpeedEnt = 1068;
+    case SuperNova = 1069;
 
     public function label(): string
     {
@@ -265,6 +279,20 @@ enum SkillDefinition: int
             self::EnemyWideThrust => 'ワイドスラスト',
             self::EnemyProtection => 'プロテクション',
             self::EnemyWindAccel => 'ウインドアクセル',
+            self::ContraryBeam => 'コントラリビーム', // INT依存の物理攻撃 相手のステータスを+-100
+            self::InverseStrike => 'インバースストライク', // DEF依存の魔法攻撃 相手のステータスを+-100
+            self::Puyopuyo => 'ふよふよする',
+            self::SlumPopHeal => 'スルムポップヒール',
+            self::SlumEscape => 'スルムエスケープ',
+            self::Running => '駆け回る',
+            self::Observe => '観察する',
+            self::GwappaHealAP => 'グワッパAPヒール',
+            self::GwappaEscape => 'グワッパエスケープ',
+            self::EnemyWeaponDemolish => 'ウェポンデモリッシュ',
+            self::EnemyAileCaliber => 'エイルカリバー',
+            self::EnemyAxeShoot => 'アックスシュート',
+            self::EnemySpeedEnt => 'スピードエント',
+            self::SuperNova => 'スーパーノヴァ',
         };
     }
 
@@ -396,6 +424,20 @@ enum SkillDefinition: int
             self::EnemyWideThrust => '敵の使うワイドスラスト。',
             self::EnemyProtection => '敵の使うプロテクション。',
             self::EnemyWindAccel => '敵の使うウインドアクセル。',
+            self::ContraryBeam => '敵単体に、DEF依存の魔法攻撃。',
+            self::InverseStrike => '敵単体に、INT依存の物理攻撃。',
+            self::Puyopuyo => 'ふよふよして何もしない。',
+            self::SlumPopHeal => '親切にもこちらのHPを回復してくれる。',
+            self::SlumEscape => 'スルムが逃走する。',
+            self::Running => '駆け回って何もしない。',
+            self::Observe => 'こちらを観察してきて、何もしない。',
+            self::GwappaHealAP => '親切にもこちらのAPを回復してくれる。',
+            self::GwappaEscape => 'グワッパが逃走する。',
+            self::EnemyWeaponDemolish => '敵の使うウェポンデモリッシュ。',
+            self::EnemyAileCaliber => '敵の使うエイルカリバー。',
+            self::EnemyAxeShoot => '敵の使うアックスシュート。',
+            self::EnemySpeedEnt => '敵の使うスピードエント。',
+            self::SuperNova => '星の爆発を思わせるほど強力な魔法。全体 + 複数ステータスのデバフを付与する。',
 
         };
     }

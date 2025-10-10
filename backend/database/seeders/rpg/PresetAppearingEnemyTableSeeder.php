@@ -726,36 +726,47 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             ],
 
             // 茫洋の地
+            // stage1
             [
                 'field_id' => FieldData::VastExpanse,
                 'stage_id' => 1,
-                'enemy_id' => EnemyData::WreckHero,
+                'enemy_id' => EnemyData::Celavie,
                 'number' => 1,
             ],
-            // [
-            //     'field_id' => FieldData::VastExpanse,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::Celavie,
-            //     'number' => 1,
-            // ],
-            // [
-            //     'field_id' => FieldData::VastExpanse,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::GrandCube,
-            //     'number' => 1,
-            // ],
-            // [
-            //     'field_id' => FieldData::VastExpanse,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::OriginSlum,
-            //     'number' => 1,
-            // ],
-            // [
-            //     'field_id' => FieldData::VastExpanse,
-            //     'stage_id' => 1,
-            //     'enemy_id' => EnemyData::OriginGwappa,
-            //     'number' => 1,
-            // ],
+            // stage2
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 2,
+                'enemy_id' => EnemyData::GrandCube,
+                'number' => 2,
+            ],
+            // stage3
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 3,
+                'enemy_id' => EnemyData::OriginSlum,
+                'number' => 2,
+            ],
+            // stage4
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::OriginSlum,
+                'number' => 1,
+            ],
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 4,
+                'enemy_id' => EnemyData::OriginGwappa,
+                'number' => 2,
+            ],
+            // stage5
+            [
+                'field_id' => FieldData::VastExpanse,
+                'stage_id' => 5,
+                'enemy_id' => EnemyData::HollowHero,
+                'number' => 1,
+            ],
 
         ];
 

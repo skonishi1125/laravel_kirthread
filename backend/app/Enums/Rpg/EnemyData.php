@@ -63,7 +63,7 @@ enum EnemyData: int
     case GrandCube = 121;
     case OriginSlum = 122;
     case OriginGwappa = 123;
-    case WreckHero = 124;
+    case HollowHero = 124;
 
     case HighSrara = 900;
 
@@ -129,7 +129,7 @@ enum EnemyData: int
             self::GrandCube => 'グランドキューブ',
             self::OriginSlum => 'オリジンスルム',
             self::OriginGwappa => 'オリジングワッパ',
-            self::WreckHero => '冥鎖の果て',
+            self::HollowHero => '黙滅ノ幽帝',
 
             self::HighSrara => 'ハイスララ',
 
@@ -198,7 +198,7 @@ enum EnemyData: int
             self::GrandCube => 'グランドキューブ',
             self::OriginSlum => 'オリジンスルム',
             self::OriginGwappa => 'オリジングワッパ',
-            self::WreckHero => 'WreckHero',
+            self::HollowHero => 'HollowHero',
 
             self::HighSrara => 'スララの変異体。バランスの良いパラメータを持つ。',
 
@@ -267,7 +267,7 @@ enum EnemyData: int
             self::GrandCube => 'grandcube.png',
             self::OriginSlum => 'originslum.png',
             self::OriginGwappa => 'origingwappa.png',
-            self::WreckHero => 'wreckhero.png',
+            self::HollowHero => 'hollowhero.png',
 
             self::HighSrara => 'highsrara.png',
 
@@ -398,6 +398,9 @@ enum EnemyData: int
         return [
             self::Celavie->value,
             self::GrandCube->value,
+            self::OriginSlum->value,
+            self::OriginGwappa->value,
+            self::HollowHero->value,
         ];
     }
 }

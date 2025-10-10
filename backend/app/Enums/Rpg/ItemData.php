@@ -10,7 +10,7 @@ enum ItemData: int
     case HighPotion = 4;
     case AllHighPotion = 5;
     case LifeElixir = 6;
-    // case FullLifeElixir = 7;
+    case AllLifeElixir = 7;
     case ResurrectPot = 8;
 
     case ManaDrop = 11;
@@ -44,7 +44,7 @@ enum ItemData: int
             self::HighPotion => 'ハイポーション',
             self::AllHighPotion => 'Aハイポーション',
             self::LifeElixir => 'ライフエリクサ',
-            // self::FullLifeElixir => 'フルライフエリクサ',
+            self::AllLifeElixir => 'Aライフエリクサ',
             self::ResurrectPot => 'リザレクトポット',
 
             self::ManaDrop => 'マナドロップ',
@@ -80,7 +80,7 @@ enum ItemData: int
             self::HighPotion => '高い効力を持つ回復アイテム。仲間1人のHPを100回復。',
             self::AllHighPotion => '全体効果のあるハイポーション。仲間全員のHPを100回復。',
             self::LifeElixir => '服用者の生命力に効果が依存する薬。仲間1人のHPを全回復。',
-            // self::FullLifeElixir => '服用者の生命力を最大限に活性化させる。仲間1人のHPを全回復。',
+            self::AllLifeElixir => '全体効果のあるライフエリクサ。仲間全員のHPを全回復。',
             self::ResurrectPot => '生命力そのものが詰められた特殊なビン。戦闘不能の味方を30パーセントのHPで復活。',
 
             self::ManaDrop => 'マナの詰まった小さな雫。仲間1人のAPを20回復。',
