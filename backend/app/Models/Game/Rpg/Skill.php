@@ -426,13 +426,11 @@ class Skill extends Model
                     // -------------------- 重騎士 --------------------
                 case SkillDefinition::WideGuard :
                     Debugbar::debug(SkillDefinition::WideGuard->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは守りの壁に包まれた！");
-                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方は守りの壁に包まれた！");
                     break;
                 case SkillDefinition::AdvancedGuard :
                     Debugbar::debug(SkillDefinition::AdvancedGuard->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！パーティは堅牢な防壁に包まれた！");
-                    $new_buff['buffed_def'] = (int) ceil($actor_data->value_def * $selected_skill_data->skill_percent);
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！味方は守りの壁に包まれた！");
                     break;
                 case SkillDefinition::CurseEdge :
                     Debugbar::debug(SkillDefinition::CurseEdge->label());

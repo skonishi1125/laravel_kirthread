@@ -1444,6 +1444,10 @@ class BattleState extends Model
                 $calculated_damage = $result['damage'] ?? 0;
                 $is_critical = $result['is_critical'] ?? false;
 
+                Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
+
                 if ($calculated_damage > 0) {
                     Debugbar::warning("【ATTACK】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
                     $opponent_data->value_hp -= $calculated_damage;
@@ -1500,6 +1504,10 @@ class BattleState extends Model
 
                     $calculated_damage = $result['damage'] ?? 0;
                     $is_critical = $result['is_critical'] ?? false;
+
+                    Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                    $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                    Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                     if ($calculated_damage > 0) {
                         Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -1564,6 +1572,10 @@ class BattleState extends Model
 
                         $calculated_damage = $result['damage'] ?? 0;
                         $is_critical = $result['is_critical'] ?? false;
+
+                        Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                        $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                        Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                         if ($calculated_damage > 0) {
                             Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -2281,6 +2293,10 @@ class BattleState extends Model
 
                 $calculated_damage = $result['damage'] ?? 0;
                 $is_critical = $result['is_critical'] ?? false;
+
+                Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                 if ($calculated_damage > 0) {
                     Debugbar::warning("【applyDebuffAllAttackAndLog】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -3066,5 +3082,56 @@ class BattleState extends Model
         }
 
         return false;
+    }
+
+    /**
+     * 対象のplayerデータに、WideGuard AdvancedGuardのバフが付与されているかどうか確認し、そのスキル%を返す
+     */
+    private static function damageCalculateDuringWideGuard(object $player_data): float
+    {
+        Debugbar::debug('hasWideGuardBuff(): -----------------------------');
+        Debugbar::debug($player_data);
+
+        // 対象のスキルID配列
+        $wideguard_skill_ids = [
+            SkillDefinition::WideGuard->value,
+            SkillDefinition::AdvancedGuard->value,
+        ];
+
+        if (! isset($player_data->buffs) || empty($player_data->buffs)) {
+            Debugbar::debug('バフなし。1.0を返します。');
+
+            return 1.0;
+        }
+
+        foreach ($player_data->buffs as $buff) {
+            // 配列・オブジェクトどちらにも対応させるためキャスト
+            $array_buff = (array) $buff;
+            Debugbar::debug($array_buff);
+
+            // スキルID 一致
+            $buffed_skill_id = $buff['buffed_skill_id'] ?? null;
+            if (! in_array($buffed_skill_id, $wideguard_skill_ids, true)) {
+                continue;
+            }
+
+            // 軽減率の計算
+            // MAX 9.5割までの軽減としているが、WideGuard自体が3割までのため問題ないとは思われる
+
+            $p = (float) ($buff['buffed_skill_percent'] ?? 0.0);
+            if ($p > 1.0) {
+                $p /= 100.0;
+            }
+            $p = max(0.0, min(0.95, $p));
+
+            $mult = 1.0 - $p;
+            Debugbar::debug("WideGuard 適用。: skill_id = {$buffed_skill_id}, 軽減%: {$p}, ダメージに掛けられる倍率: {$mult}");
+
+            return $mult; // ← 最初の1件のみ採用
+        }
+
+        Debugbar::debug('バフ中にWideGuard なし。1.0を返します。');
+
+        return 1.0;
     }
 }

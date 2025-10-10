@@ -193,11 +193,7 @@
         .then(response => {
           console.log(`通信OK`);
           // ワンタッチ挟んだ方がいいかも。 メモする時間を与える感じで。
-          alert(`
-            作成完了しました。\n 
-            あなたのemail: ${this.generateCredentialEmail}\n
-            あなたのパスワード: ${this.generateCredentialPassword}\n
-            メッセージを閉じるとページが遷移し、上記の情報は二度と確認することができません。準備出来次第お進みください。
+          alert(`作成完了しました。\n あなたのemail: ${this.generateCredentialEmail}\n あなたのパスワード: ${this.generateCredentialPassword}\n メッセージを閉じるとページが遷移し、上記の情報は二度と確認することができません。準備出来次第お進みください。
           `);
           location.reload(); // リロードする
         })
