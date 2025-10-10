@@ -274,7 +274,7 @@
         sellItemList: [],
         error_message: '',
         modalErrorMessage: null,
-        inputPurchaseItemNumber: 0,
+        inputPurchaseItemNumber: 1,
         purchaseForm: {
           item_id: '',
           name: '',
@@ -369,7 +369,7 @@
         console.log(this.purchaseForm.max_possession_number);
 
         // 別の商品を選択した時に過去の商品のモーダルで設定した内容が出ないよう初期化しておく
-        this.inputPurchaseItemNumber = 0;
+        this.inputPurchaseItemNumber = 1;
         this.error_message = null;
         this.modalErrorMessage = null;
 

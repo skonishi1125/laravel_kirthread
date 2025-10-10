@@ -478,7 +478,7 @@
         <div v-if="battle.status == 'command'" >
           <div class="status-actions">
             <button type="button" class="status-btn" @click="handleCommandSelection('RETURN')" @mouseover="showCommandDescription('RETURN')" @mouseleave="clearAllDescription">
-              やり直す
+              リセット
             </button>
             <button class="status-btn"  @click="displayStatusModal()" @mouseover="showCommandDescription('BUFF')" @mouseleave="clearAllDescription">
               バフの確認

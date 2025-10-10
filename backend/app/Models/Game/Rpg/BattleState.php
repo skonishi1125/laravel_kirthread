@@ -3110,7 +3110,7 @@ class BattleState extends Model
             Debugbar::debug($array_buff);
 
             // スキルID 一致
-            $buffed_skill_id = $buff['buffed_skill_id'] ?? null;
+            $buffed_skill_id = $array_buff['buffed_skill_id'] ?? null;
             if (! in_array($buffed_skill_id, $wideguard_skill_ids, true)) {
                 continue;
             }
@@ -3118,7 +3118,7 @@ class BattleState extends Model
             // 軽減率の計算
             // MAX 9.5割までの軽減としているが、WideGuard自体が3割までのため問題ないとは思われる
 
-            $p = (float) ($buff['buffed_skill_percent'] ?? 0.0);
+            $p = (float) ($array_buff['buffed_skill_percent'] ?? 0.0);
             if ($p > 1.0) {
                 $p /= 100.0;
             }

@@ -15,16 +15,17 @@ enum SkillDefinition: int
     case Transform = 107;
 
     // -------------------- 治療師 --------------------
-    case Healing = 200;
-    case QuickHeal = 201;
-    case SlowHeal = 202;
-    case AllHealing = 203;
-    case QuickAllHealing = 204;
-    case SlowAllHealing = 205;
-    case Resurrection = 208;
-    case MiniVolt = 209;
-    case HolyArrow = 210;
-    case HeavenRay = 211;
+    case MiniVolt = 200;
+    case HolyArrow = 201;
+    case HeavenRay = 202;
+    case Healing = 203;
+    case QuickHeal = 204;
+    case SlowHeal = 205;
+    case AllHealing = 206;
+    case QuickAllHealing = 207;
+    case SlowAllHealing = 208;
+    case Resurrection = 209;
+
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 300;
@@ -315,8 +316,8 @@ enum SkillDefinition: int
             self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に魔法ダメージ。',
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
 
-            self::WideGuard => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを倍率分軽減する。',
-            self::WideGuardPlus => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを倍率分軽減する。',
+            self::WideGuard => '先制発動する。使用ターン中の味方全員が受ける全てのダメージを基礎倍率の分だけ軽減する。',
+            self::WideGuardPlus => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを基礎倍率の分だけ軽減する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
             self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分の防御力に依存して威力が上昇する。',
             self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
