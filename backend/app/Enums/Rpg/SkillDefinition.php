@@ -30,8 +30,8 @@ enum SkillDefinition: int
     case WideGuard = 300;
     case WideGuardPlus = 301;
     case CurseEdge = 302;
-    case BraveSlash = 303;
-    case WideThrust = 304;
+    case WideThrust = 303;
+    case BraveSlash = 304;
     case Protection = 305;
     case OverProtect = 306;
     case BloodMoon = 307;

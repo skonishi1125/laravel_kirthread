@@ -448,7 +448,7 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！天に掲げた斧を振り下ろし、大地を揺らす一撃を放つ！");
                     // (STR + DEF) * %
                     $damage = (int) ceil(
-                        (BattleState::calculateActualStatusValue($actor_data, 'str') + BattleState::calculateActualStatusValue($actor_data, 'def')) 
+                        (BattleState::calculateActualStatusValue($actor_data, 'str') + BattleState::calculateActualStatusValue($actor_data, 'def'))
                         * $selected_skill_data->skill_percent
                     );
                     break;

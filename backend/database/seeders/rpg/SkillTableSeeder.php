@@ -424,7 +424,6 @@ class SkillTableSeeder extends Seeder
                 'elemental_id' => 1,
                 'description' => SkillDefinition::BraveSlash->description(),
             ],
-
             [
                 'id' => SkillDefinition::Protection->value,
                 'name' => SkillDefinition::Protection->label(),

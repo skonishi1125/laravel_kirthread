@@ -39,11 +39,11 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
-            // タイタンブレイク ミドルブロウLv1以上, pLv20以上
+            // タイタンブレイク pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::TitanBreak->value,
-                'requirement_skill_id' => SkillDefinition::MiddleBlow->value,
-                'requirement_skill_level' => 1,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
                 'requirement_party_level' => 20,
             ],
             // トランスフォーム ファイトソウルLv1以上, pLv20以上
@@ -105,7 +105,7 @@ class SkillRequirementTableSeeder extends Seeder
             ],
 
             // -------------------- 重騎士 --------------------
-            // ワイドガード+ ワイドガードLv3, pLv15以上
+            // // ワイドガード+ ワイドガードLv3, pLv15以上
             [
                 'acquired_skill_id' => SkillDefinition::WideGuardPlus->value,
                 'requirement_skill_id' => SkillDefinition::WideGuard->value,
@@ -119,19 +119,19 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 8,
             ],
-            // オーバープロテクト プロテクションSLv1, pLv15以上
-            [
-                'acquired_skill_id' => SkillDefinition::OverProtect->value,
-                'requirement_skill_id' => SkillDefinition::Protection->value,
-                'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
-            ],
             // ブレイヴスラッシュ ワイドスラスト Lv1以上, pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::BraveSlash->value,
                 'requirement_skill_id' => SkillDefinition::WideThrust->value,
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
+            ],
+            // オーバープロテクト プロテクションSLv1, pLv15以上
+            [
+                'acquired_skill_id' => SkillDefinition::OverProtect->value,
+                'requirement_skill_id' => SkillDefinition::Protection->value,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 15,
             ],
             // ブラッドムーン pLv20以上
             [
@@ -140,6 +140,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 20,
             ],
+
             // -------------------- 魔導師 --------------------
             // ポップヒール ミニヒールLv2, pLv1以上
             [
