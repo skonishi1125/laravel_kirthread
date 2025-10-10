@@ -462,39 +462,39 @@ class EnemyActionPatternTableSeeder extends Seeder
             ],
 
             // TraitorLordOfDragon
-            // [
-            //     'enemy_id' => EnemyData::TraitorLordOfDragon,
-            //     'turn_count' => 1,
-            //     'is_use_skill' => true,
-            //     'skill_id' => SkillDefinition::OpenPotal,
-            // ],
-            // [
-            //     'enemy_id' => EnemyData::TraitorLordOfDragon,
-            //     'turn_count' => 2,
-            //     'is_use_skill' => true,
-            //     'skill_id' => SkillDefinition::AncientLightning,
-            // ],
-            // [
-            //     'enemy_id' => EnemyData::TraitorLordOfDragon,
-            //     'turn_count' => 3,
-            //     'is_use_skill' => true,
-            //     'skill_id' => SkillDefinition::DragonBite,
-            // ],
-            // [
-            //     'enemy_id' => EnemyData::TraitorLordOfDragon,
-            //     'turn_count' => 4,
-            //     'is_use_skill' => true,
-            //     'skill_id' => SkillDefinition::DragonHowling,
-            // ],
-            // [
-            //     'enemy_id' => EnemyData::TraitorLordOfDragon,
-            //     'turn_count' => 5,
-            //     'is_use_skill' => true,
-            //     'skill_id' => SkillDefinition::DragonTail,
-            // ],
             [
                 'enemy_id' => EnemyData::TraitorLordOfDragon,
                 'turn_count' => 1,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::OpenPotal,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 2,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::AncientLightning,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 3,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonBite,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 4,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonHowling,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 5,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::DragonTail,
+            ],
+            [
+                'enemy_id' => EnemyData::TraitorLordOfDragon,
+                'turn_count' => 6,
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::BloodSlurp,
             ],
