@@ -384,15 +384,34 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
                     break;
-                case SkillDefinition::AllHealing :
-                    Debugbar::debug(SkillDefinition::AllHealing->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
-                    break;
                 case SkillDefinition::QuickHeal :
                     Debugbar::debug(SkillDefinition::QuickHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
                     $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SlowHeal :
+                    Debugbar::debug(SkillDefinition::SlowHeal->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！腰を据え、丁寧に詠唱を唱えていく。");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::AllHealing :
+                    Debugbar::debug(SkillDefinition::AllHealing->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！癒しの魔力が拡散し、味方に伝わる！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::QuickAllHealing :
+                    Debugbar::debug(SkillDefinition::QuickAllHealing->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::SlowAllHealing :
+                    Debugbar::debug(SkillDefinition::SlowAllHealing->label());
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！腰を据え、丁寧に詠唱を唱えていく。");
+                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::Resurrection :
+                    Debugbar::debug(SkillDefinition::Resurrection->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
                     break;
                 case SkillDefinition::MiniVolt :
                     Debugbar::debug(SkillDefinition::MiniVolt->label());
@@ -409,20 +428,7 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！光の柱が敵全体に降り注ぐ！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
-                case SkillDefinition::LuminousRelieve :
-                    Debugbar::debug(SkillDefinition::LuminousRelieve->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！大きな癒しの力が働く！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
-                    break;
-                case SkillDefinition::AllRelieve :
-                    Debugbar::debug(SkillDefinition::AllRelieve->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方の傷を包み込む...");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 15;
-                    break;
-                case SkillDefinition::Resurrection :
-                    Debugbar::debug(SkillDefinition::Resurrection->label());
-                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
-                    break;
+
                     // -------------------- 重騎士 --------------------
                 case SkillDefinition::WideGuard :
                     Debugbar::debug(SkillDefinition::WideGuard->label());
