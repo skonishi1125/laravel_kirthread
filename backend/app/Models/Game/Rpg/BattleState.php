@@ -2013,7 +2013,7 @@ class BattleState extends Model
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
                 break;
-            case SkillDefinition::AdvancedGuard: // アドバンスドガード
+            case SkillDefinition::WideGuardPlus: // ワイドガード+
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
@@ -3085,7 +3085,7 @@ class BattleState extends Model
     }
 
     /**
-     * 対象のplayerデータに、WideGuard AdvancedGuardのバフが付与されているかどうか確認し、そのスキル%を返す
+     * 対象のplayerデータに、WideGuard WideGuardPlusのバフが付与されているかどうか確認し、そのスキル%を返す
      */
     private static function damageCalculateDuringWideGuard(object $player_data): float
     {
@@ -3095,7 +3095,7 @@ class BattleState extends Model
         // 対象のスキルID配列
         $wideguard_skill_ids = [
             SkillDefinition::WideGuard->value,
-            SkillDefinition::AdvancedGuard->value,
+            SkillDefinition::WideGuardPlus->value,
         ];
 
         if (! isset($player_data->buffs) || empty($player_data->buffs)) {

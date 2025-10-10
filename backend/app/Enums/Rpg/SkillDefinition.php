@@ -28,10 +28,10 @@ enum SkillDefinition: int
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 300;
-    case AdvancedGuard = 301;
+    case WideGuardPlus = 301;
     case CurseEdge = 302;
-    case WideThrust = 303;
-    case BraveSlash = 304;
+    case BraveSlash = 303;
+    case WideThrust = 304;
     case Protection = 305;
     case OverProtect = 306;
     case BloodMoon = 307;
@@ -173,10 +173,10 @@ enum SkillDefinition: int
             self::HeavenRay => 'ヘヴンレイ',
 
             self::WideGuard => 'ワイドガード',
-            self::AdvancedGuard => 'アドバンスドガード',
+            self::WideGuardPlus => 'ワイドガード+',
             self::CurseEdge => 'カースエッジ',
-            self::WideThrust => 'ワイドスラスト',
             self::BraveSlash => 'ブレイヴスラッシュ',
+            self::WideThrust => 'ワイドスラスト',
             self::Protection => 'プロテクション',
             self::OverProtect => 'オーバープロテクト',
             self::BloodMoon => 'ブラッドムーン',
@@ -299,7 +299,7 @@ enum SkillDefinition: int
             self::RapidFist => '目にも止まらぬ速さで、敵単体に高速の六連攻撃！',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
             self::AxeShoot => '横凪ぎの踵落とし。敵全体に高いダメージを与える。',
-            self::HeavyKnuckle => '敵単体に重い拳を撃ち込む。敵単体手に固定のダメージを与える。',
+            self::HeavyKnuckle => '鎧をも砕く鋼鉄の拳を相手に撃ち込む。敵単体に、基礎倍率を基準とした固定ダメージ。',
             self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
             self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
@@ -316,10 +316,10 @@ enum SkillDefinition: int
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
 
             self::WideGuard => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを倍率分軽減する。',
-            self::AdvancedGuard => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを倍率分軽減する。',
+            self::WideGuardPlus => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを倍率分軽減する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
-            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分の防御力に依存して威力が上昇する。',
+            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::Protection => '守護魔法を味方単体に付与し、DEFを暫くの間アップさせる。',
             self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
             self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',
