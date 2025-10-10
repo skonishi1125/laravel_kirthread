@@ -2810,17 +2810,26 @@ class BattleState extends Model
         }
 
         // 非線形のベースダメージ計算 atk² / (atk + def)
-        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_def);
-        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_def}) ");
+        $atk = max(0.0, $pure_damage);
+        $def_pos = max(0.0, (float) $opponent_def);
+        $vuln = max(0.0, (float) -$opponent_def); // デバフで、DEFが負の数となっていた場合はこの変数でキャッチする
+
+        $base_damage = $atk * $atk / max(1.0, $atk + $def_pos);
+        Debugbar::debug("{$atk} x {$atk} / ({$atk} + {$def_pos}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
+
+        // LUC 基礎ボーナス用の乱数（0.0000〜1.0000）※通常, critical共通で再利用
+        $luc_rand = random_int(0, 10000) / 10000;
+
+        // --- 通常計算 ---
         $varied = $base_damage * $variance_rate;
         Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
 
         // LUC 基礎ボーナス
         $perSqrt = 0.01;
-        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1%
         $bonus = 0.0;
         if ($bonus_rate_max > 0) {
             // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
@@ -2828,19 +2837,35 @@ class BattleState extends Model
             // random_valueが 0 の場合、 加算なし
             // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
             // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
-            $random_value = random_int(0, 10000) / 10000;
-            $bonus = $varied * $bonus_rate_max * $random_value;
+            $bonus = $varied * $bonus_rate_max * $luc_rand;
         }
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
+        // DEFがマイナスだった場合、こちらでダメージ調整 最大倍率は2倍とする（上限2.0）
+        $vuln_mult = 1.0 + min($vuln / (100 + $vuln), 1.0);
+        Debugbar::debug("デバフボーナス適用前: {$pre} × mult = {$vuln_mult}");
+        $pre *= $vuln_mult;
+        Debugbar::debug("デバフボーナス適用後: {$pre}");
+
+        // --- クリティカル（正のDEFだけ無視。負のDEFは倍率で残す） ---
         $is_critical = false;
-        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
-        if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pure_damage + $bonus;
+        $critical_chance = min(0.95, 0.001 * max(0, $actor_luc)); // 念のため上限
+        if ((random_int(0, 10000) / 10000) < $critical_chance) {
+            // クリ時の“防御無視ベース”＝atk（正のDEFを除去）
+            $crit_varied = $atk * $variance_rate;
+
+            // LUCボーナスは同じ乱数で再計算（手触りを揃える）
+            $crit_bonus = 0.0;
+            if ($bonus_rate_max > 0) {
+                $crit_bonus = $crit_varied * $bonus_rate_max * $luc_rand;
+            }
+
+            // 負のDEFは“無視しない”ので vuln_mult を掛ける
+            $pre = ($crit_varied + $crit_bonus) * $vuln_mult;
+
             $is_critical = true;
-            Debugbar::warning("Critical! ダメージ: {$pre}");
+            Debugbar::warning("Critical! ({$crit_varied}+{$crit_bonus}) x {$vuln_mult} = {$pre}");
         }
 
         // 最終ダメージ（四捨五入）
@@ -2852,7 +2877,7 @@ class BattleState extends Model
         if ($final_damage < 1) {
             $random = random_int(1, 100);
             $chance = 60; // 60%で1ダメージ
-            if ($chance <= $random) {
+            if ($random <= $chance) {
                 $final_damage = 1;
             } else {
                 $final_damage = 0;
@@ -2884,17 +2909,26 @@ class BattleState extends Model
         }
 
         // 非線形のベースダメージ計算 atk² / (atk + mdef)
-        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_mdef);
-        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_mdef}) ");
+        $atk = max(0.0, $pure_damage);
+        $def_pos = max(0.0, (float) $opponent_mdef);
+        $vuln = max(0.0, (float) -$opponent_mdef); // デバフで、DEFが負の数となっていた場合はこの変数でキャッチする
+
+        $base_damage = $atk * $atk / max(1.0, $atk + $def_pos);
+        Debugbar::debug("{$atk} x {$atk} / ({$atk} + {$def_pos}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
+
+        // LUC 基礎ボーナス用の乱数（0.0000〜1.0000）※通常, critical共通で再利用
+        $luc_rand = random_int(0, 10000) / 10000;
+
+        // --- 通常計算 ---
         $varied = $base_damage * $variance_rate;
         Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
 
         // LUC 基礎ボーナス
         $perSqrt = 0.01;
-        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1%
         $bonus = 0.0;
         if ($bonus_rate_max > 0) {
             // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
@@ -2902,19 +2936,35 @@ class BattleState extends Model
             // random_valueが 0 の場合、 加算なし
             // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
             // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
-            $random_value = random_int(0, 10000) / 10000;
-            $bonus = $varied * $bonus_rate_max * $random_value;
+            $bonus = $varied * $bonus_rate_max * $luc_rand;
         }
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
+        // DEFがマイナスだった場合、こちらでダメージ調整 最大倍率は2倍とする（上限2.0）
+        $vuln_mult = 1.0 + min($vuln / (100 + $vuln), 1.0);
+        Debugbar::debug("デバフボーナス適用前: {$pre} × mult = {$vuln_mult}");
+        $pre *= $vuln_mult;
+        Debugbar::debug("デバフボーナス適用後: {$pre}");
+
+        // --- クリティカル（正のDEFだけ無視。負のDEFは倍率で残す） ---
         $is_critical = false;
-        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
-        if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pure_damage + $bonus;
+        $critical_chance = min(0.95, 0.001 * max(0, $actor_luc)); // 念のため上限
+        if ((random_int(0, 10000) / 10000) < $critical_chance) {
+            // クリ時の“防御無視ベース”＝atk（正のDEFを除去）
+            $crit_varied = $atk * $variance_rate;
+
+            // LUCボーナスは同じ乱数で再計算（手触りを揃える）
+            $crit_bonus = 0.0;
+            if ($bonus_rate_max > 0) {
+                $crit_bonus = $crit_varied * $bonus_rate_max * $luc_rand;
+            }
+
+            // 負のDEFは“無視しない”ので vuln_mult を掛ける
+            $pre = ($crit_varied + $crit_bonus) * $vuln_mult;
+
             $is_critical = true;
-            Debugbar::warning("Critical! ダメージ: {$pre}");
+            Debugbar::warning("Critical! ({$crit_varied}+{$crit_bonus}) x {$vuln_mult} = {$pre}");
         }
 
         // 最終ダメージ（四捨五入）
@@ -2926,7 +2976,7 @@ class BattleState extends Model
         if ($final_damage < 1) {
             $random = random_int(1, 100);
             $chance = 60; // 60%で1ダメージ
-            if ($chance <= $random) {
+            if ($random <= $chance) {
                 $final_damage = 1;
             } else {
                 $final_damage = 0;
