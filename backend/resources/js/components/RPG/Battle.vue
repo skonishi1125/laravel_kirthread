@@ -646,9 +646,8 @@
         </div>
     </div>
     <div class="col-4">
-      <BattleMemo id="battle" :initial-x="60" :initial-y="520" />
+      <BattleMemo id="battle" :rows="12" />
     </div>
-
   </div>
 
 

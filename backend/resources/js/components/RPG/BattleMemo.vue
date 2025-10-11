@@ -1,117 +1,92 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 const props = defineProps({
-  id: { type: String, default: 'battle-memo' },
-  initialX: { type: Number, default: 6 },
-  initialY: { type: Number, default: 520 },
+  id: { type: String, default: 'battle' },     // ローカル保存のキーに使う
+  title: { type: String, default: '戦闘メモ' },
   placeholder: { type: String, default: 'メモを書く…' },
+  rows: { type: Number, default: 10 },          // テキストエリアの行数
+  autosave: { type: Boolean, default: true },   // 自動保存ON/OFF
 })
 
-const x = ref(props.initialX)
-const y = ref(props.initialY)
 const content = ref('')
-const memoEl = ref(null)
-let dragging = false
-let startDx = 0
-let startDy = 0
-
 const key = (k) => `memo:${props.id}:${k}`
 
-function onPointerDown(e) {
-  dragging = true
-  // つかんだ位置と左上の差分を保持
-  startDx = e.clientX - x.value
-  startDy = e.clientY - y.value
-
-  memoEl.value?.setPointerCapture?.(e.pointerId)
-  window.addEventListener('pointermove', onPointerMove)
-  window.addEventListener('pointerup', onPointerUp, { once: true })
-}
-
-function onPointerMove(e) {
-  if (!dragging) return
-  // 画面内にクランプ
-  const el = memoEl.value
-  const maxX = Math.max(0, window.innerWidth - (el?.offsetWidth ?? 0))
-  const maxY = Math.max(0, window.innerHeight - (el?.offsetHeight ?? 0))
-  x.value = Math.min(Math.max(0, e.clientX - startDx), maxX)
-  y.value = Math.min(Math.max(0, e.clientY - startDy), maxY)
-}
-
-function onPointerUp() {
-  dragging = false
-  window.removeEventListener('pointermove', onPointerMove)
-  // 位置を保存（簡易永続化：localStorage）
-  try {
-    localStorage.setItem(key('pos'), JSON.stringify({ x: x.value, y: y.value }))
-  } catch {}
-}
-
+// 初期ロード
 onMounted(() => {
   try {
-    const savedPos = JSON.parse(localStorage.getItem(key('pos')) || 'null')
-    if (savedPos) { x.value = savedPos.x ?? x.value; y.value = savedPos.y ?? y.value }
     const savedText = localStorage.getItem(key('text'))
     if (savedText !== null) content.value = savedText
   } catch {}
 })
 
+// 自動保存（軽量）
 watch(content, (v) => {
+  if (!props.autosave) return
   try { localStorage.setItem(key('text'), v) } catch {}
 })
 
-onBeforeUnmount(() => window.removeEventListener('pointermove', onPointerMove))
+// 便利操作
+const clearMemo = () => {
+  if (!confirm('メモをクリアします。よろしいですか？')) return
+  content.value = ''
+  try { localStorage.removeItem(key('text')) } catch {}
+}
+
+const downloadTxt = () => {
+  const blob = new Blob([content.value ?? ''], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${props.id}-memo.txt`
+  a.click()
+  URL.revokeObjectURL(url)
+}
 </script>
 
 <template>
-  <!-- position: fixed で画面上を自由に移動 -->
-  <div
-    ref="memoEl"
-    class="battle-memo"
-    :style="{ left: x + 'px', top: y + 'px' }"
-  >
-    <div class="memo-header" @pointerdown="onPointerDown">
-      <span>戦闘メモ</span>
+  <div class="memo-card">
+    <div class="memo-header">
+      <span class="memo-title">{{ title }}</span>
+      <div class="memo-actions">
+        <!-- <button type="button" class="btn btn-sm btn-outline-secondary" @click="downloadTxt">DL</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" @click="clearMemo">Clear</button> -->
+      </div>
     </div>
     <textarea
-      class="memo-textarea"
+      class="memo-textarea form-control"
       v-model="content"
+      :rows="rows"
       :placeholder="placeholder"
     />
   </div>
 </template>
 
 <style scoped>
-.battle-memo {
-  position: fixed;
-  z-index: 3000;
-  width: 406px;
-  min-width: 240px;
-  min-height: 160px;
+.memo-card {
   background: #fffdf2;
   border: 1px solid #e6d59c;
   border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  padding: 8px;
+  height: 72%;            /* 親のcol高さに合わせやすい */
+  display: flex;
+  flex-direction: column;
 }
 .memo-header {
-  padding: 6px 10px;
-  font-weight: 600;
-  cursor: move;
-  user-select: none;
-  background: linear-gradient(#fff9d6, #f6e7a8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px 8px;
   border-bottom: 1px solid #e6d59c;
-  border-radius: 10px 10px 0 0;
+  margin-bottom: 8px;
 }
+.memo-title { font-weight: 700; }
+.memo-actions > .btn + .btn { margin-left: 6px; }
 .memo-textarea {
-  width: 100%;
-  height: 200px;
-  resize: both;            /* ユーザーがサイズ変更可 */
-  border: none;
-  outline: none;
-  padding: 10px;
   background: transparent;
-  font-family: inherit;
+  flex: 1 1 auto;
+  resize: none;
   line-height: 1.4;
 }
 </style>
