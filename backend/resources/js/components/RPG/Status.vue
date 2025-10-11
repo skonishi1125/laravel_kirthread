@@ -307,7 +307,7 @@
         <div class="col-12">
           <div>
             <p>
-              <small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</small>
+              <small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。<b style="color:red; font-size: 0.9em">※スクロールできます。</b></small>
             </p>
           </div>
           <hr>
