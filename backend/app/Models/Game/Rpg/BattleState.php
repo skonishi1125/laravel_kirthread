@@ -1444,6 +1444,10 @@ class BattleState extends Model
                 $calculated_damage = $result['damage'] ?? 0;
                 $is_critical = $result['is_critical'] ?? false;
 
+                Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
+
                 if ($calculated_damage > 0) {
                     Debugbar::warning("【ATTACK】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
                     $opponent_data->value_hp -= $calculated_damage;
@@ -1500,6 +1504,10 @@ class BattleState extends Model
 
                     $calculated_damage = $result['damage'] ?? 0;
                     $is_critical = $result['is_critical'] ?? false;
+
+                    Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                    $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                    Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                     if ($calculated_damage > 0) {
                         Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -1564,6 +1572,10 @@ class BattleState extends Model
 
                         $calculated_damage = $result['damage'] ?? 0;
                         $is_critical = $result['is_critical'] ?? false;
+
+                        Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                        $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                        Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                         if ($calculated_damage > 0) {
                             Debugbar::warning("【SKILL】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -2001,7 +2013,7 @@ class BattleState extends Model
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
                 }
                 break;
-            case SkillDefinition::AdvancedGuard: // アドバンスドガード
+            case SkillDefinition::WideGuardPlus: // ワイドガード+
                 foreach ($battle_state_opponents_collection as $opponent_data) {
                     Debugbar::debug("付与対象:{$opponent_data->name}");
                     self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
@@ -2281,6 +2293,10 @@ class BattleState extends Model
 
                 $calculated_damage = $result['damage'] ?? 0;
                 $is_critical = $result['is_critical'] ?? false;
+
+                Debugbar::warning("================= WideGuard考慮前: {$calculated_damage} =================");
+                $calculated_damage = (int) ($calculated_damage * self::damageCalculateDuringWideGuard($opponent_data));
+                Debugbar::warning("================= WideGuard考慮後: {$calculated_damage} =================");
 
                 if ($calculated_damage > 0) {
                     Debugbar::warning("【applyDebuffAllAttackAndLog】ダメージが1以上。味方の現在体力: {$opponent_data->value_hp}");
@@ -2810,17 +2826,26 @@ class BattleState extends Model
         }
 
         // 非線形のベースダメージ計算 atk² / (atk + def)
-        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_def);
-        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_def}) ");
+        $atk = max(0.0, $pure_damage);
+        $def_pos = max(0.0, (float) $opponent_def);
+        $vuln = max(0.0, (float) -$opponent_def); // デバフで、DEFが負の数となっていた場合はこの変数でキャッチする
+
+        $base_damage = $atk * $atk / max(1.0, $atk + $def_pos);
+        Debugbar::debug("{$atk} x {$atk} / ({$atk} + {$def_pos}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
+
+        // LUC 基礎ボーナス用の乱数（0.0000〜1.0000）※通常, critical共通で再利用
+        $luc_rand = random_int(0, 10000) / 10000;
+
+        // --- 通常計算 ---
         $varied = $base_damage * $variance_rate;
         Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
 
         // LUC 基礎ボーナス
         $perSqrt = 0.01;
-        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1%
         $bonus = 0.0;
         if ($bonus_rate_max > 0) {
             // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
@@ -2828,19 +2853,35 @@ class BattleState extends Model
             // random_valueが 0 の場合、 加算なし
             // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
             // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
-            $random_value = random_int(0, 10000) / 10000;
-            $bonus = $varied * $bonus_rate_max * $random_value;
+            $bonus = $varied * $bonus_rate_max * $luc_rand;
         }
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
+        // DEFがマイナスだった場合、こちらでダメージ調整 最大倍率は2倍とする（上限2.0）
+        $vuln_mult = 1.0 + min($vuln / (100 + $vuln), 1.0);
+        Debugbar::debug("デバフボーナス適用前: {$pre} × mult = {$vuln_mult}");
+        $pre *= $vuln_mult;
+        Debugbar::debug("デバフボーナス適用後: {$pre}");
+
+        // --- クリティカル（正のDEFだけ無視。負のDEFは倍率で残す） ---
         $is_critical = false;
-        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
-        if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pure_damage + $bonus;
+        $critical_chance = min(0.95, 0.001 * max(0, $actor_luc)); // 念のため上限
+        if ((random_int(0, 10000) / 10000) < $critical_chance) {
+            // クリ時の“防御無視ベース”＝atk（正のDEFを除去）
+            $crit_varied = $atk * $variance_rate;
+
+            // LUCボーナスは同じ乱数で再計算（手触りを揃える）
+            $crit_bonus = 0.0;
+            if ($bonus_rate_max > 0) {
+                $crit_bonus = $crit_varied * $bonus_rate_max * $luc_rand;
+            }
+
+            // 負のDEFは“無視しない”ので vuln_mult を掛ける
+            $pre = ($crit_varied + $crit_bonus) * $vuln_mult;
+
             $is_critical = true;
-            Debugbar::warning("Critical! ダメージ: {$pre}");
+            Debugbar::warning("Critical! ({$crit_varied}+{$crit_bonus}) x {$vuln_mult} = {$pre}");
         }
 
         // 最終ダメージ（四捨五入）
@@ -2852,7 +2893,7 @@ class BattleState extends Model
         if ($final_damage < 1) {
             $random = random_int(1, 100);
             $chance = 60; // 60%で1ダメージ
-            if ($chance <= $random) {
+            if ($random <= $chance) {
                 $final_damage = 1;
             } else {
                 $final_damage = 0;
@@ -2884,17 +2925,26 @@ class BattleState extends Model
         }
 
         // 非線形のベースダメージ計算 atk² / (atk + mdef)
-        $base_damage = $pure_damage * $pure_damage / ($pure_damage + $opponent_mdef);
-        Debugbar::debug("{$pure_damage} x {$pure_damage} / ({$pure_damage} + {$opponent_mdef}) ");
+        $atk = max(0.0, $pure_damage);
+        $def_pos = max(0.0, (float) $opponent_mdef);
+        $vuln = max(0.0, (float) -$opponent_mdef); // デバフで、DEFが負の数となっていた場合はこの変数でキャッチする
+
+        $base_damage = $atk * $atk / max(1.0, $atk + $def_pos);
+        Debugbar::debug("{$atk} x {$atk} / ({$atk} + {$def_pos}) ");
 
         // ダメージにばらつきを加える（±10%）
         $variance_rate = random_int(95, 105) / 100;
+
+        // LUC 基礎ボーナス用の乱数（0.0000〜1.0000）※通常, critical共通で再利用
+        $luc_rand = random_int(0, 10000) / 10000;
+
+        // --- 通常計算 ---
         $varied = $base_damage * $variance_rate;
         Debugbar::debug("ばらつき結果ダメージ: {$varied} レート: {$variance_rate}");
 
         // LUC 基礎ボーナス
         $perSqrt = 0.01;
-        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1% ぶん上振れ天井を増やす。
+        $bonus_rate_max = $perSqrt * sqrt(max(0, $actor_luc)); // 例: √LUC * 1%
         $bonus = 0.0;
         if ($bonus_rate_max > 0) {
             // 0から10,000までの値を作り、また10,000で割ることで0.0000〜1.0000 までの乱数を作成する
@@ -2902,19 +2952,35 @@ class BattleState extends Model
             // random_valueが 0 の場合、 加算なし
             // random_valueが 0.5 の場合、 100 * 0.15 * 0.5 = 7.5ダメージ増える
             // random_valueが 1 の場合、 100 * 0.15 * 1 = 15ダメージ増える
-            $random_value = random_int(0, 10000) / 10000;
-            $bonus = $varied * $bonus_rate_max * $random_value;
+            $bonus = $varied * $bonus_rate_max * $luc_rand;
         }
         $pre = $varied + $bonus;
         Debugbar::debug("LUCボーナス結果ダメージ: {$pre} ボーナス: {$bonus} レート: {$bonus_rate_max}");
 
-        // LUC クリティカル (防御無視 + LUC基礎ボーナス)
+        // DEFがマイナスだった場合、こちらでダメージ調整 最大倍率は2倍とする（上限2.0）
+        $vuln_mult = 1.0 + min($vuln / (100 + $vuln), 1.0);
+        Debugbar::debug("デバフボーナス適用前: {$pre} × mult = {$vuln_mult}");
+        $pre *= $vuln_mult;
+        Debugbar::debug("デバフボーナス適用後: {$pre}");
+
+        // --- クリティカル（正のDEFだけ無視。負のDEFは倍率で残す） ---
         $is_critical = false;
-        $critical_chance = 0.001 * max(0, $actor_luc); // 確率は LUC 連動（例: LUC 100 で 10%）
-        if (random_int(0, 10000) / 10000 < $critical_chance) {
-            $pre = $pure_damage + $bonus;
+        $critical_chance = min(0.95, 0.001 * max(0, $actor_luc)); // 念のため上限
+        if ((random_int(0, 10000) / 10000) < $critical_chance) {
+            // クリ時の“防御無視ベース”＝atk（正のDEFを除去）
+            $crit_varied = $atk * $variance_rate;
+
+            // LUCボーナスは同じ乱数で再計算（手触りを揃える）
+            $crit_bonus = 0.0;
+            if ($bonus_rate_max > 0) {
+                $crit_bonus = $crit_varied * $bonus_rate_max * $luc_rand;
+            }
+
+            // 負のDEFは“無視しない”ので vuln_mult を掛ける
+            $pre = ($crit_varied + $crit_bonus) * $vuln_mult;
+
             $is_critical = true;
-            Debugbar::warning("Critical! ダメージ: {$pre}");
+            Debugbar::warning("Critical! ({$crit_varied}+{$crit_bonus}) x {$vuln_mult} = {$pre}");
         }
 
         // 最終ダメージ（四捨五入）
@@ -2926,7 +2992,7 @@ class BattleState extends Model
         if ($final_damage < 1) {
             $random = random_int(1, 100);
             $chance = 60; // 60%で1ダメージ
-            if ($chance <= $random) {
+            if ($random <= $chance) {
                 $final_damage = 1;
             } else {
                 $final_damage = 0;
@@ -3016,5 +3082,58 @@ class BattleState extends Model
         }
 
         return false;
+    }
+
+    /**
+     * 対象のplayerデータに、WideGuard WideGuardPlusのバフが付与されているかどうか確認し、軽減率を返す
+     *
+     * 相手の攻撃がCriticalの場合でも、WideGuardの軽減は適用される。
+     */
+    private static function damageCalculateDuringWideGuard(object $player_data): float
+    {
+        Debugbar::debug('hasWideGuardBuff(): -----------------------------');
+        Debugbar::debug($player_data);
+
+        // 対象のスキルID配列
+        $wideguard_skill_ids = [
+            SkillDefinition::WideGuard->value,
+            SkillDefinition::WideGuardPlus->value,
+        ];
+
+        if (! isset($player_data->buffs) || empty($player_data->buffs)) {
+            Debugbar::debug('バフなし。1.0を返します。');
+
+            return 1.0;
+        }
+
+        foreach ($player_data->buffs as $buff) {
+            // 配列・オブジェクトどちらにも対応させるためキャスト
+            $array_buff = (array) $buff;
+            Debugbar::debug($array_buff);
+
+            // スキルID 一致
+            $buffed_skill_id = $array_buff['buffed_skill_id'] ?? null;
+            if (! in_array($buffed_skill_id, $wideguard_skill_ids, true)) {
+                continue;
+            }
+
+            // 軽減率の計算
+            // MAX 9.5割までの軽減としているが、WideGuard自体が3割までのため問題ないとは思われる
+
+            $p = (float) ($array_buff['buffed_skill_percent'] ?? 0.0);
+            if ($p > 1.0) {
+                $p /= 100.0;
+            }
+            $p = max(0.0, min(0.95, $p));
+
+            $mult = 1.0 - $p;
+            Debugbar::debug("WideGuard 適用。: skill_id = {$buffed_skill_id}, 軽減%: {$p}, ダメージに掛けられる倍率: {$mult}");
+
+            return $mult; // ← 最初の1件のみ採用
+        }
+
+        Debugbar::debug('バフ中にWideGuard なし。1.0を返します。');
+
+        return 1.0;
     }
 }

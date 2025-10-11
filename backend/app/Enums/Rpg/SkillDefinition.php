@@ -15,22 +15,20 @@ enum SkillDefinition: int
     case Transform = 107;
 
     // -------------------- 治療師 --------------------
-    case Healing = 200;
-    case QuickHeal = 201;
-    case SlowHeal = 202;
-    case AllHealing = 203;
-    case QuickAllHealing = 204;
-    case SlowAllHealing = 205;
-    case LuminousRelieve = 206; // いらんか？
-    case AllRelieve = 207; // いらんか？
-    case Resurrection = 208;
-    case MiniVolt = 209;
-    case HolyArrow = 210;
-    case HeavenRay = 211;
+    case MiniVolt = 200;
+    case HolyArrow = 201;
+    case HeavenRay = 202;
+    case Healing = 203;
+    case QuickHeal = 204;
+    case SlowHeal = 205;
+    case AllHealing = 206;
+    case QuickAllHealing = 207;
+    case SlowAllHealing = 208;
+    case Resurrection = 209;
 
     // -------------------- 重騎士 --------------------
     case WideGuard = 300;
-    case AdvancedGuard = 301;
+    case WideGuardPlus = 301;
     case CurseEdge = 302;
     case WideThrust = 303;
     case BraveSlash = 304;
@@ -164,23 +162,21 @@ enum SkillDefinition: int
             self::Transform => 'トランスフォーム',
 
             self::Healing => 'ヒーリング',
-            self::QuickHeal => 'クイックヒール',
-            self::SlowHeal => 'スロウヒール',
+            self::QuickHeal => 'クイックヒーリング',
+            self::SlowHeal => 'スロウヒーリング',
             self::AllHealing => 'オールヒーリング',
             self::QuickAllHealing => 'クイックオールヒーリング',
             self::SlowAllHealing => 'スロウオールヒーリング',
-            self::LuminousRelieve => 'ルミナスリリーヴ',
-            self::AllRelieve => 'オールリリーヴ',
             self::Resurrection => 'リザレクション',
             self::MiniVolt => 'ミニボルト',
             self::HolyArrow => 'ホーリーアロー',
             self::HeavenRay => 'ヘヴンレイ',
 
             self::WideGuard => 'ワイドガード',
-            self::AdvancedGuard => 'アドバンスドガード',
+            self::WideGuardPlus => 'ワイドガード+',
             self::CurseEdge => 'カースエッジ',
-            self::WideThrust => 'ワイドスラスト',
             self::BraveSlash => 'ブレイヴスラッシュ',
+            self::WideThrust => 'ワイドスラスト',
             self::Protection => 'プロテクション',
             self::OverProtect => 'オーバープロテクト',
             self::BloodMoon => 'ブラッドムーン',
@@ -303,29 +299,27 @@ enum SkillDefinition: int
             self::RapidFist => '目にも止まらぬ速さで、敵単体に高速の六連攻撃！',
             self::SpinKick => '大きく身体を捻り、勢いをつけたまま敵全体に回転蹴りを放つ。',
             self::AxeShoot => '横凪ぎの踵落とし。敵全体に高いダメージを与える。',
-            self::HeavyKnuckle => '敵単体に重い拳を撃ち込む。敵単体手に固定のダメージを与える。',
+            self::HeavyKnuckle => '鎧をも砕く鋼鉄の拳を相手に撃ち込む。敵単体に、基礎倍率を基準とした固定ダメージ。',
             self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
             self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
 
             self::Healing => '治療師の基礎回復魔法。味方単体のHPを回復する呪文を唱える。',
             self::QuickHeal => '先制発動する。迅速な詠唱で味方単体のHPを回復する。',
-            self::SlowHeal => 'スロウヒール',
+            self::SlowHeal => '最後に行動する。丁寧に詠唱を行い、味方単体のHPを回復する。',
             self::AllHealing => '癒しの魔力を広範囲に拡散し、味方全体のHPを回復する。',
-            self::QuickAllHealing => 'クイックオールヒーリング',
-            self::SlowAllHealing => 'スロウオールヒーリング',
-            self::LuminousRelieve => '聖なる力を込めた魔力を呪文に込める。味方1人のHPを大きく回復させる。',
-            self::AllRelieve => '魔力を大きく消費し、味方全体のHPを大きく回復させる。',
+            self::QuickAllHealing => '先制発動する。癒しの魔力を広範囲に拡散し、味方全体のHPを回復。',
+            self::SlowAllHealing => '最後に行動する。癒しの魔力を広範囲に拡散し、味方全体のHPを回復。',
             self::Resurrection => '聖なる力を戦闘不能の味方に分け与え、戦闘不能状態から復活させる。',
             self::MiniVolt => '魔力を敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
-            self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に射出する。',
+            self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に魔法ダメージ。',
             self::HeavenRay => '光の柱が広範囲に降り注ぎ、敵全体に大ダメージを与える。',
 
-            self::WideGuard => '先制発動する。使用ターン中の味方全員のダメージを軽減する。',
-            self::AdvancedGuard => '先制発動する。魔力を纏い、使用ターン中の味方全員のダメージを大きく軽減。',
+            self::WideGuard => '先制発動する。使用ターン中の味方全員が受ける全てのダメージを基礎倍率の分だけ軽減する。',
+            self::WideGuardPlus => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを基礎倍率の分だけ軽減する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
-            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分の防御力に依存して威力が上昇する。',
+            self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::Protection => '守護魔法を味方単体に付与し、DEFを暫くの間アップさせる。',
             self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
             self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',

@@ -89,40 +89,28 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Desert,
                 'stage_id' => 2,
+                'enemy_id' => EnemyData::Lizard,
+                'number' => 1,
+            ],
+            // stage 3
+            [
+                'field_id' => FieldData::Desert,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::Gao,
                 'number' => 1,
             ],
             [
                 'field_id' => FieldData::Desert,
-                'stage_id' => 2,
+                'stage_id' => 3,
                 'enemy_id' => EnemyData::Lizard,
                 'number' => 1,
             ],
-            //  stage 3
+            //  stage4
             [
                 'field_id' => FieldData::Desert,
-                'stage_id' => 3,
+                'stage_id' => 4,
                 'enemy_id' => EnemyData::Scorpio,
                 'number' => 2,
-            ],
-            // stage 4
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Lizard,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Scorpio,
-                'number' => 1,
-            ],
-            [
-                'field_id' => FieldData::Desert,
-                'stage_id' => 4,
-                'enemy_id' => EnemyData::Lizard,
-                'number' => 1,
             ],
             // stage 5
             [
@@ -273,7 +261,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Coast,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::Ikkaku,
+                'enemy_id' => EnemyData::Clion,
                 'number' => 1,
             ],
 
