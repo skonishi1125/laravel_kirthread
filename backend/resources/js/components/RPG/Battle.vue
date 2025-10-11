@@ -445,7 +445,7 @@
 
           </div>
           <p v-if="battle.status == 'resultLose'">全滅した...</p>
-          <p v-if="battle.status == 'escaped'">{{ this.partyData[0].name }}たちは体制を立て直すため、敵から逃げ出した。</p>
+          <p v-if="battle.status == 'escaped'">体制を立て直すため、敵から逃げ出した。</p>
         </div>
 
         <!-- enemy -->
