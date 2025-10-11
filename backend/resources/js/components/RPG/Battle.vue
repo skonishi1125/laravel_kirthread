@@ -1,3 +1,6 @@
+<script setup>
+  import BattleMemo from '@/components/RPG/BattleMemo.vue'
+</script>
 <style>
 .player-status {
   display: inline-block;
@@ -180,7 +183,7 @@
   background-color: black;
   color: rgb(58, 250, 58);
   padding: 10px 10px;
-  height: 150px;
+  height: 250px;
   overflow-y: scroll !important;
   font-size: 12px;
 }
@@ -442,7 +445,7 @@
 
           </div>
           <p v-if="battle.status == 'resultLose'">全滅した...</p>
-          <p v-if="battle.status == 'escaped'">{{ this.partyData[0].name }}たちは体制を立て直すため、敵から逃げ出した。</p>
+          <p v-if="battle.status == 'escaped'">体制を立て直すため、敵から逃げ出した。</p>
         </div>
 
         <!-- enemy -->
@@ -633,14 +636,24 @@
     </div>
   </div>
 
-  <div class="battlelog_result_wrapper overflow-auto">
-    <ul>
-      <li>【戦闘履歴】</li>
-      <li v-for="log in battleLogHistory" >{{ log }}</li>
-    </ul>
+  <div class="row" style="height: 250px;">
+    <div class="col-8" style=" padding: 0px 0px">
+        <div class="battlelog_result_wrapper overflow-auto">
+            <ul>
+                <li><span style="font-weight: bold; font-size: 14px">【戦闘ログ】</span></li>
+                <li v-for="log in battleLogHistory" >{{ log }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-4">
+      <BattleMemo id="battle" :rows="12" />
+    </div>
   </div>
 
+
 </template>
+
+
 
 <script>
 import $ from 'jquery';
@@ -818,6 +831,9 @@ export default {
     battleCommandSetup() {
       console.log('battleCommandSetup(): ----------------------------------');
       this.hoveredDescription = null; // スキルの説明文を消しておく
+
+    //   console.log('test');
+    //   console.log(this.partyData);
 
       // ESCAPEコマンドを成功しているパーティがいた場合は、逃走画面に。
       if (this.partyData.some(player => player.is_escaped === true)) {
@@ -1195,7 +1211,7 @@ export default {
       logs.forEach(log => {
         this.battleLogHistory.unshift( log );
       });
-      this.battleLogHistory.unshift('------------------------------------------------【ターン終了】------------------------------------------------');
+      this.battleLogHistory.unshift(`------------------------------------------------【ターン ${this.currentTurn - 1} :終了】------------------------------------------------`);
     }
   },
 
