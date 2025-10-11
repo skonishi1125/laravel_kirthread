@@ -85,8 +85,7 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::SpikeWhale,
                 'turn_count' => 1,
-                'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Wave,
+                'is_use_skill' => false,
             ],
             [
                 'enemy_id' => EnemyData::SpikeWhale,
@@ -96,7 +95,8 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::SpikeWhale,
                 'turn_count' => 3,
-                'is_use_skill' => false,
+                'is_use_skill' => true,
+                'skill_id' => SkillDefinition::Wave,
             ],
 
             // IceFairy

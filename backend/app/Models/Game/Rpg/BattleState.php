@@ -3086,7 +3086,7 @@ class BattleState extends Model
 
     /**
      * 対象のplayerデータに、WideGuard WideGuardPlusのバフが付与されているかどうか確認し、軽減率を返す
-     * 
+     *
      * 相手の攻撃がCriticalの場合でも、WideGuardの軽減は適用される。
      */
     private static function damageCalculateDuringWideGuard(object $player_data): float

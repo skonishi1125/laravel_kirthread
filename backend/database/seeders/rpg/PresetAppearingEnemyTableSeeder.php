@@ -261,7 +261,7 @@ class PresetAppearingEnemyTableSeeder extends Seeder
             [
                 'field_id' => FieldData::Coast,
                 'stage_id' => 5,
-                'enemy_id' => EnemyData::Ikkaku,
+                'enemy_id' => EnemyData::Clion,
                 'number' => 1,
             ],
 

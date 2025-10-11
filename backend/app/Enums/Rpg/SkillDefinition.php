@@ -26,7 +26,6 @@ enum SkillDefinition: int
     case SlowAllHealing = 208;
     case Resurrection = 209;
 
-
     // -------------------- 重騎士 --------------------
     case WideGuard = 300;
     case WideGuardPlus = 301;

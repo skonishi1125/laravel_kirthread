@@ -18,12 +18,12 @@ class SkillRequirementTableSeeder extends Seeder
 
         $seeds = [
             // -------------------- 格闘家 --------------------
-            // ヘビーナックル pLv10以上
+            // ヘビーナックル pLv8以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavyKnuckle->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 10,
+                'requirement_party_level' => 8,
             ],
             // ラピッドフィスト ミドルブロウLv1以上, pLv16以上
             [
@@ -110,7 +110,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'acquired_skill_id' => SkillDefinition::WideGuardPlus->value,
                 'requirement_skill_id' => SkillDefinition::WideGuard->value,
                 'requirement_skill_level' => 3,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // カースエッジ Lv8以上
             [
@@ -131,7 +131,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'acquired_skill_id' => SkillDefinition::OverProtect->value,
                 'requirement_skill_id' => SkillDefinition::Protection->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
             // ブラッドムーン pLv20以上
             [
