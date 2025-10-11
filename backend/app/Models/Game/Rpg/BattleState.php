@@ -1455,9 +1455,9 @@ class BattleState extends Model
 
                     // クリティカル メッセージ分岐
                     if ($is_critical) {
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        $battle_logs_collection->push("{$actor_data->name}は襲いかかってきた！致命の一撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
                     } else {
-                        $battle_logs_collection->push("{$actor_data->name}の攻撃！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                        $battle_logs_collection->push("{$actor_data->name}は襲いかかってきた！{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
                     }
 
                     // 相手を倒した時、戦闘不能フラグを有効化し、バフをリセット
@@ -1470,7 +1470,7 @@ class BattleState extends Model
                     }
                 } else {
                     // ダメージを与えられなかった場合
-                    $battle_logs_collection->push("{$actor_data->name}の攻撃！しかし{$opponent_data->name}は攻撃を防いだ！");
+                    $battle_logs_collection->push("{$actor_data->name}は襲いかかってきた！しかし{$opponent_data->name}は攻撃を防いだ！");
                     Debugbar::warning("攻撃が通らなかった。{$opponent_data->name}は当然生存している。味方の残り体力: {$opponent_data->value_hp} 味方やられフラグ: {$opponent_data->is_defeated_flag} ");
                 }
                 break;
@@ -2057,6 +2057,11 @@ class BattleState extends Model
                 } else {
                     Debugbar::debug("{$actor_data->name}はまだ生存。残HP: {$actor_data->value_hp}");
                 }
+                break;
+            case SkillDefinition::BindLeg :
+                $opponent_data = $battle_state_opponents_collection[$opponents_index];
+                // デバフ
+                self::adjustBuffFromSituation($opponent_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, true, $is_enemy);
                 break;
             case SkillDefinition::BreakBowGun : // ブレイクボウガン
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];

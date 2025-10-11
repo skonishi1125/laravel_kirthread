@@ -96,19 +96,19 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 12,
             ],
-            // リザレクション pLv15以上
+            // リザレクション pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::Resurrection->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 15,
+                'requirement_party_level' => 16,
             ],
-            // ホーリーアロー ミニボルト Lv1以上, pLv20以上
+            // ホーリーアロー ミニボルト Lv1以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::HolyArrow->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
                 'requirement_skill_level' => 1,
-                'requirement_party_level' => 20,
+                'requirement_party_level' => 16,
             ],
             // ヘヴンレイ ミニボルト Lv1以上, pLv20以上
             [
@@ -132,6 +132,13 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 8,
+            ],
+            // バインドレッグ Lv12以上
+            [
+                'acquired_skill_id' => SkillDefinition::BindLeg->value,
+                'requirement_skill_id' => null,
+                'requirement_skill_level' => null,
+                'requirement_party_level' => 12,
             ],
             // ブレイヴスラッシュ ワイドスラスト Lv1以上, pLv20以上
             [

@@ -36,7 +36,8 @@ enum SkillDefinition: int
     case BraveSlash = 304;
     case Protection = 305;
     case OverProtect = 306;
-    case BloodMoon = 307;
+    case BindLeg = 307;
+    case BloodMoon = 308;
 
     // -------------------- 魔導師 --------------------
     case PetitBolt = 400;
@@ -183,6 +184,7 @@ enum SkillDefinition: int
             self::WideThrust => 'ワイドスラスト',
             self::Protection => 'プロテクション',
             self::OverProtect => 'オーバープロテクト',
+            self::BindLeg => 'バインドレッグ',
             self::BloodMoon => 'ブラッドムーン',
 
             self::PetitBolt => 'プチボルト',
@@ -328,6 +330,7 @@ enum SkillDefinition: int
             self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::Protection => '守護魔法を味方単体に付与し、DEFを暫くの間アップさせる。',
             self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
+            self::BindLeg => '敵の移動手段を魔法で縛り付ける。数ターンの間、相手のSPDをダウンさせる。Slvに依存して効果が上がる。',
             self::BloodMoon => '一定時間自身の防御力を0にし、その値をSTRに還元する。還元される値はSLvに依存。',
 
             self::PetitBolt => '小さな魔力弾を放ち敵単体に攻撃。低コストな攻撃手段。',
