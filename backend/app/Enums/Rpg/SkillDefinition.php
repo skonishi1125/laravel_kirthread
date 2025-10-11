@@ -11,8 +11,10 @@ enum SkillDefinition: int
     case AxeShoot = 103;
     case HeavyKnuckle = 104;
     case TitanBreak = 105;
-    case FightSoul = 106;
-    case Transform = 107;
+    case Repose = 106;
+    case MindCharge = 107;
+    case FightSoul = 108;
+    case Transform = 109;
 
     // -------------------- 治療師 --------------------
     case MiniVolt = 200;
@@ -158,6 +160,8 @@ enum SkillDefinition: int
             self::AxeShoot => 'アックスシュート',
             self::HeavyKnuckle => 'ヘビーナックル',
             self::TitanBreak => 'タイタンブレイク',
+            self::Repose => 'リポーズ',
+            self::MindCharge => 'マインドチャージ',
             self::FightSoul => 'ファイトソウル',
             self::Transform => 'トランスフォーム',
 
@@ -301,6 +305,8 @@ enum SkillDefinition: int
             self::AxeShoot => '横凪ぎの踵落とし。敵全体に高いダメージを与える。',
             self::HeavyKnuckle => '鎧をも砕く鋼鉄の拳を相手に撃ち込む。敵単体に、基礎倍率を基準とした固定ダメージ。',
             self::TitanBreak => '最も最後に行動するが、その分溜め込んだ膂力で敵単体に大ダメージ。',
+            self::Repose => '心身を休息させ、自身のHPを一定量回復しそのターン中の被ダメージを減らす。回復量はSLvに依存。',
+            self::MindCharge => '次の一撃に備え、ぐっと身体に力を蓄える。次のターンのSTRを高める。',
             self::FightSoul => '気合を高め、自身のSTRを暫くの間上昇させる。',
             self::Transform => '自分のDEFとINTを犠牲に、STRとSPDを飛躍的に上昇させる。上昇値はSLvに依存。',
 

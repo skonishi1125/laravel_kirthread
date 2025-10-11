@@ -832,6 +832,9 @@ export default {
       console.log('battleCommandSetup(): ----------------------------------');
       this.hoveredDescription = null; // スキルの説明文を消しておく
 
+    //   console.log('test');
+    //   console.log(this.partyData);
+
       // ESCAPEコマンドを成功しているパーティがいた場合は、逃走画面に。
       if (this.partyData.some(player => player.is_escaped === true)) {
         this.$store.dispatch('setBattleStatus', 'escaped');

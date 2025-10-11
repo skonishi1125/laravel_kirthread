@@ -1945,6 +1945,18 @@ class BattleState extends Model
                     Debugbar::debug("{$opponent_data->name}はまだ生存。残HP: {$opponent_data->value_hp}");
                 }
                 break;
+            case SkillDefinition::Repose :
+                // 回復
+                $actor_data->value_hp += $heal_point;
+                if ($actor_data->value_hp > $actor_data->max_value_hp) {
+                    $actor_data->value_hp = $actor_data->max_value_hp;
+                }
+                $battle_logs_collection->push("{$actor_data->name}のHPが{$heal_point}ポイント回復！");
+
+                // 一時バフ付与
+                self::adjustBuffFromSituation($actor_data, $new_buff, $battle_logs_collection, $selected_skill_data->target_range, false, $is_enemy);
+
+                break;
             case SkillDefinition::RapidFist : // ラピッドフィスト
                 $opponent_data = $battle_state_opponents_collection[$opponents_index];
                 // 6回攻撃なので、一旦forで回す

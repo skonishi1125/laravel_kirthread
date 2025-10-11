@@ -348,6 +348,18 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！重い拳が敵の装甲を貫通する！");
                     $damage = (int) ceil(100 * $selected_skill_data->skill_percent); // 固定値 * スキル%
                     break;
+                case SkillDefinition::Repose :
+                    Debugbar::debug(SkillDefinition::Repose->label());
+                    $battle_logs_collection->push("{$actor_data->name}は心を無にし、その身体を休ませた！");
+                    $heal_point = (int) (50 * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_def'] = (int) ceil(40 * $selected_skill_data->skill_percent);
+                    $new_buff['buffed_int'] = (int) ceil(40 * $selected_skill_data->skill_percent);
+                    break;
+                case SkillDefinition::MindCharge :
+                    Debugbar::debug(SkillDefinition::MindCharge->label());
+                    $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！身体を研ぎ澄まし、次のターンの技の威力が上昇する！");
+                    $new_buff['buffed_str'] = (int) ceil($actor_data->value_str * $selected_skill_data->skill_percent);
+                    break;
                 case SkillDefinition::FightSoul :
                     Debugbar::debug(SkillDefinition::FightSoul->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を発動！心の底の熱い闘志を燃やす！");
