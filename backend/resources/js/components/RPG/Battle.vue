@@ -1,3 +1,6 @@
+<script setup>
+  import BattleMemo from '@/components/RPG/BattleMemo.vue'
+</script>
 <style>
 .player-status {
   display: inline-block;
@@ -180,7 +183,7 @@
   background-color: black;
   color: rgb(58, 250, 58);
   padding: 10px 10px;
-  height: 150px;
+  height: 250px;
   overflow-y: scroll !important;
   font-size: 12px;
 }
@@ -633,14 +636,25 @@
     </div>
   </div>
 
-  <div class="battlelog_result_wrapper overflow-auto">
-    <ul>
-      <li>【戦闘履歴】</li>
-      <li v-for="log in battleLogHistory" >{{ log }}</li>
-    </ul>
+  <div class="row" style="height: 250px;">
+    <div class="col-8" style=" padding: 0px 0px">
+        <div class="battlelog_result_wrapper overflow-auto">
+            <ul>
+                <li>【戦闘履歴】</li>
+                <li v-for="log in battleLogHistory" >{{ log }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-4">
+      <BattleMemo id="battle" :initial-x="60" :initial-y="520" />
+    </div>
+
   </div>
 
+
 </template>
+
+
 
 <script>
 import $ from 'jquery';
@@ -1195,7 +1209,7 @@ export default {
       logs.forEach(log => {
         this.battleLogHistory.unshift( log );
       });
-      this.battleLogHistory.unshift('------------------------------------------------【ターン終了】------------------------------------------------');
+      this.battleLogHistory.unshift(`------------------------------------------------【ターン ${this.currentTurn - 1} :終了】------------------------------------------------`);
     }
   },
 
