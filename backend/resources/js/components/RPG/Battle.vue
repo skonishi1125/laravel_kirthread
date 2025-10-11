@@ -640,7 +640,7 @@
     <div class="col-8" style=" padding: 0px 0px">
         <div class="battlelog_result_wrapper overflow-auto">
             <ul>
-                <li>【戦闘履歴】</li>
+                <li><span style="font-weight: bold; font-size: 14px">【戦闘ログ】</span></li>
                 <li v-for="log in battleLogHistory" >{{ log }}</li>
             </ul>
         </div>
