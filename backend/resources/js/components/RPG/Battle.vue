@@ -620,12 +620,12 @@
               <p style="font-weight: bold; font-size: 14px;">{{ partyMember.name }}</p>
               <div class="progress" style="width: 150px; margin-bottom: 5px">
                 <div class="progress-bar bg-success" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_hp, partyMember.max_value_hp) + '%' }" aria-valuenow="partyMember.value_hp" aria-valuemin="0" :aria-valuemax="partyMember.max_value_hp">
-                  HP: {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
+                  {{ partyMember.value_hp }} / {{ partyMember.max_value_hp }}
                 </div>
               </div>
               <div class="progress" style="width: 150px">
                 <div class="progress-bar" role="progressbar" :style="{ width: calculatePercentage(partyMember.value_ap, partyMember.max_value_ap) + '%' }" aria-valuenow="partyMember.value_ap" aria-valuemin="0" :aria-valuemax="partyMember.max_value_ap">
-                  AP: {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
+                  {{ partyMember.value_ap }} / {{ partyMember.max_value_ap }}
                 </div>
               </div>
             </div>

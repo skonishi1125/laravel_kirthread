@@ -128,7 +128,7 @@
                     <div v-else-if="confirmModalFIeld.id == 10">
                       <label class="control-label">
                         <p style="color: gray;">
-                          長い旅の末に、とうとう伝承にまつわる城に辿り着いた。
+                          長い旅の末、遂に伝承にまつわる城に辿り着いた。
                         </p>
                         探索を開始しますか？
                         <br>

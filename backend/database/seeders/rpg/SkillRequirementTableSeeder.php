@@ -30,14 +30,14 @@ class SkillRequirementTableSeeder extends Seeder
                 'acquired_skill_id' => SkillDefinition::Repose->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 8,
+                'requirement_party_level' => 6,
             ],
             // マインドチャージ pLv10以上
             [
                 'acquired_skill_id' => SkillDefinition::MindCharge->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
-                'requirement_party_level' => 8,
+                'requirement_party_level' => 10,
             ],
             // ラピッドフィスト ミドルブロウLv1以上, pLv16以上
             [

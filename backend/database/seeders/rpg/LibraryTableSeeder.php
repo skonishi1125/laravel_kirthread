@@ -91,14 +91,14 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 古城の祭壇
-        $ancientcastlealtar_preface = '<p>上層の最奥、脈打つ気配の潜んだ部屋。室内にはいくつか銅像が祀られており、祭壇としての体裁を備えている。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋だろう。ここで目撃された生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p>';
+        $ancientcastlealtar_preface = '<p>(自分たちが調査ギルドに報告しようと考えている内容を記した手記だ。)</p><div style="color: darkslategray;"><p>古城上層の最奥には、脈打つ気配の潜んだ部屋があった。中には銅像が祀られ、祭壇としての体裁が備えられていた。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋と思われる。目撃した生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p></div>';
         $ancientcastlealtar_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAltarAppearingEnemies(),
             $ancientcastlealtar_preface
         );
 
         // 茫洋の地
-        $vastexpanse_preface = '<p>茫洋の地</p>';
+        $vastexpanse_preface = '<p>(自分たちが調査ギルドに報告しようと考えている内容を記した手記だ。)</p><div style="color: darkslategray;"><p>耕作地の地下、青白く光るポータルを抜けた先の空間。自然の気配は一切なく、空も地も境を失ったように淡く光を帯びており、現世から切り離された別界のようであった。</p><p>この空間に出現する魔物は一様ではない。強力な個体が多数確認されたが、なかには我々に敵意を示さぬ存在もいた。むしろ、傷を癒し、道を示すような行動を取るものすらいた。彼らは明らかに人間と魔物の対立という理から外れた、特異な性質を持つ魔物である。</p><p>また、この空間で人とも魔物とも形容し難い存在を確認した。その力は圧倒的で、もし我々の住む外界に存在していたなら、この大陸そのものを制圧できるほどの力だっただろう。幸いにも、我々はそれを打ち倒すことができた。</p></div><p>(――手記を記した直後、僅かな違和感を感じたことを思い出した。<br>あれほどの存在を討ち倒した自分たちの力そのものに、異質さを感じたのだ。<br>伝承に謳われる財宝を手にすることで得た富、当然付いてくるであろう名声。<br>そして圧倒的な力を備えた今ならば、本当にどんな願いも叶えられるかもしれない。)</p>';
         $vastexpanse_content = $this->buildEnemyHTMLElement(
             EnemyData::vastExpanseAppearingEnemies(),
             $vastexpanse_preface
@@ -194,13 +194,13 @@ class LibraryTableSeeder extends Seeder
                 'name' => '管轄外資料の混入について',
                 'book_category' => Library::CATEGORY_ADVENTURE,
                 'content' => '<p>図書館　蔵書管理係です。<br>平素は当館をご利用賜り、厚く御礼申し上げます。</p><p>このたび館内書架におきまして、当館の受入基準および管轄外に属する書籍・文書が混入していた事案を確認いたしました。該当資料は当館識別票を有しておらず、目録情報・装丁・所蔵印等に不整合が認められます。</p><p>ご来館の皆様におかれましては、当該資料を発見された際にはその場でお近くの司書まで速やかにお知らせください。</p><p>あわせて、蔵書の無断搬入・移動等の不審な行為または不審な人物をお見かけになった場合もお伝えください。安全で快適な閲覧環境維持のため、皆様のご理解とご協力を賜れますと幸甚に存じます。</p><p>引き続き当館をよろしくお願い申し上げます。</p>',
-                'required_clears' => 8,
+                'required_clear_field_id' => FieldData::CastleTown,
             ],
             [
                 'id' => 14,
                 'name' => '奇妙なカカシ',
                 'book_category' => Library::CATEGORY_ADVENTURE,
-                'content' => '<p>(とある冒険家の、体験記のようだ。)</p><p>古城の周りが開拓されたもんだから、危険を承知でぶらついてきたんだ。</p><p>城下町の近くの、すっかり荒れた土地にさ。変なカカシがつっ立って、野良の魔物にがじがじと齧られたりして痛めつけられてやんの。するとだぜ。<b>暫くした後めちゃくちゃにキレ出して、その魔物たちをとんでもない力でぶっ飛ばしちまったんだ。</b></p><p>その後他の魔物がひょっこり出てきて、そのカカシの近くをうろついてるんだ。その魔物たちは、なんともなかったな。</p><p>ありゃあほんとに、触らぬ神に祟りなしって言葉が似合う体験だったなあ。<br>あいつと対面する時は、<b>何もせずやり過ごす</b>のが一番いいだろうな。</p>',
+                'content' => '<p>(とある冒険家の、体験記のようだ。)</p><p>古城の周りが開拓されたもんだから、危険を承知でぶらついてきたんだ。</p><p>城下町の近くの、すっかり荒れた耕作地にさ。変なカカシがつっ立って、野良の魔物にがじがじと齧られたりして痛めつけられてやんの。するとだぜ。<b>暫くした後めちゃくちゃにキレ出して、その魔物たちをとんでもない力でぶっ飛ばしちまったんだ。</b></p><p>その後他の魔物がひょっこり出てきて、そのカカシの近くをうろついてるんだ。その魔物たちは、なんともなかったな。</p><p>ありゃあほんとに、触らぬ神に祟りなしって言葉が似合う体験だったなあ。<br>あいつと対面する時は、<b>何もせずやり過ごす</b>のが一番いいだろうな。</p>',
                 'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
             [
@@ -377,23 +377,16 @@ class LibraryTableSeeder extends Seeder
             // 未完成無し
             [
                 'id' => 217,
-                'name' => '調査報告書: '.FieldData::AncientCastleAltar->label(),
+                'name' => '手記: '.FieldData::AncientCastleAltar->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastlealtar_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
             // 未完成無し
-            // [
-            //     'id' => 218,
-            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-            //     'book_category' => Library::CATEGORY_ENEMY,
-            //     'content' => $vastexpanse_preface.$caution,
-            //     'required_clears' => 11,
-            // ],
             [
-                'id' => 219,
-                'name' => '調査報告書: '.FieldData::VastExpanse->label(),
+                'id' => 218,
+                'name' => '手記: '.FieldData::VastExpanse->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $vastexpanse_content,
                 'required_clears' => null,
