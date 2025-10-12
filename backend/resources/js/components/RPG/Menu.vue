@@ -124,7 +124,7 @@
             <div class="col-12">
               <div>
                 <p><small>
-                  街に辿り着いた。さて、何をすべきだろう？<br>
+                  街に到着した。さて、何をすべきだろうか。<br>
                 </small></p>
                 <hr>
                 <small style="color: gray">

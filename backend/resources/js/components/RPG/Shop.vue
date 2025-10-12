@@ -98,7 +98,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>不要なアイテムはあったっけ。(所持金: <b>{{ money }}</b> G)</small></p>
+            <p><small>不要なアイテムはあっただろうか？(所持金: <b>{{ money }}</b> G)</small></p>
           </div>
           <hr>
           <span v-if="after_sell.after_sell_flag" style="color: blue">

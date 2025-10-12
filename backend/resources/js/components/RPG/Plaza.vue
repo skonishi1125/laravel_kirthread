@@ -79,7 +79,7 @@
       <div class="row sub-sucreen-text-space">
         <div class="col-12">
           <div>
-            <p><small>広場に到着した。どこに向かおうか。</small></p>
+            <p><small>広場に到着した。用があるのは...</small></p>
           </div>
           <hr>
           <div style="font-size: 0.9em;">
@@ -214,7 +214,7 @@
         switch (facility) {
           case 'Library':
             this.facilityInfo.name = '図書館';
-            this.facilityInfo.description = '冒険に役立つ書籍はもちろん、この地にまつわる民話を閲読できます。';
+            this.facilityInfo.description = '大陸にまつわる伝承や、冒険に役立つ書籍を閲読できます。';
             break;
           case 'Bbs':
             this.facilityInfo.name = '冒険者掲示板';
@@ -230,11 +230,11 @@
             break;
           case 'Job':
             this.facilityInfo.name = '日雇いギルド';
-            this.facilityInfo.description = '簡単な仕事をひたすらこなし、報酬を得ることができます。';
+            this.facilityInfo.description = '仕事をひたすらこなし、お金を得ることができます。';
             break;
           case 'Adventure':
             this.facilityInfo.name = '中央通り表門';
-            this.facilityInfo.description = '冒険に出かけることができます。';
+            this.facilityInfo.description = '街から離れ、冒険に出かけることができます。';
         }
       }
 

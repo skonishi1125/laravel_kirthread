@@ -54,6 +54,9 @@
           <div>
             <p><small>どこに向かおうか。</small></p>
             <hr>
+            <small style="color: gray">
+              (行き先を左クリックで選択してください。)
+            </small>
           </div>
         </div>
       </div>
