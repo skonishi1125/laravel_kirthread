@@ -91,14 +91,14 @@ class LibraryTableSeeder extends Seeder
         );
 
         // 古城の祭壇
-        $ancientcastlealtar_preface = '<p>上層の最奥、脈打つ気配の潜んだ部屋。室内にはいくつか銅像が祀られており、祭壇としての体裁を備えている。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋だろう。ここで目撃された生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p>';
+        $ancientcastlealtar_preface = '<p>(自分たちが調査ギルドに報告しようと考えている内容を記した手記だ。)</p><div style="color: darkslategray;"><p>古城上層の最奥には、脈打つ気配の潜んだ部屋があった。中には銅像が祀られ、祭壇としての体裁が備えられていた。崩れた他区画と比べて異様に整えられていることから、城が人の手に渡っていた時期に改修された部屋と思われる。目撃した生命体には罰せられた痕が残っており、生々しい傷跡は罪の重さを彷彿とさせる。</p></div>';
         $ancientcastlealtar_content = $this->buildEnemyHTMLElement(
             EnemyData::ancientCastleAltarAppearingEnemies(),
             $ancientcastlealtar_preface
         );
 
         // 茫洋の地
-        $vastexpanse_preface = '<p>茫洋の地</p>';
+        $vastexpanse_preface = '<p>(自分たちが調査ギルドに報告しようと考えている内容を記した手記だ。)</p><div style="color: darkslategray;"><p>耕作地の地下、青白く光るポータルを抜けた先の空間。自然の気配は一切なく、空も地も境を失ったように淡く光を帯びており、現世から切り離された別界のようであった。</p><p>この空間に出現する魔物は一様ではない。強力な個体が多数確認されたが、なかには我々に敵意を示さぬ存在もいた。むしろ、傷を癒し、道を示すような行動を取るものすらいた。彼らは明らかに人間と魔物の対立という理から外れた、特異な性質を持つ魔物である。</p><p>また、この空間で人とも魔物とも形容し難い存在を確認した。その力は圧倒的で、もし我々の住む外界に存在していたなら、この大陸そのものを制圧できるほどの力だっただろう。幸いにも、我々はそれを打ち倒すことができた。</p></div><p>(――手記を記した直後、僅かな違和感を感じたことを思い出した。<br>あれほどの存在を討ち倒した自分たちの力そのものに、異質さを感じたのだ。<br>伝承に謳われる財宝を手にすることで得た富、当然付いてくるであろう名声。<br>そして圧倒的な力を備えた今ならば、本当にどんな願いも叶えられるかもしれない。)</p>';
         $vastexpanse_content = $this->buildEnemyHTMLElement(
             EnemyData::vastExpanseAppearingEnemies(),
             $vastexpanse_preface
@@ -377,23 +377,16 @@ class LibraryTableSeeder extends Seeder
             // 未完成無し
             [
                 'id' => 217,
-                'name' => '調査報告書: '.FieldData::AncientCastleAltar->label(),
+                'name' => '手記: '.FieldData::AncientCastleAltar->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $ancientcastlealtar_content,
                 'required_clears' => null,
                 'required_clear_field_id' => FieldData::AncientCastleAltar,
             ],
             // 未完成無し
-            // [
-            //     'id' => 218,
-            //     'name' => '(未完成)調査報告書: '.FieldData::VastExpanse->label(),
-            //     'book_category' => Library::CATEGORY_ENEMY,
-            //     'content' => $vastexpanse_preface.$caution,
-            //     'required_clears' => 11,
-            // ],
             [
-                'id' => 219,
-                'name' => '調査報告書: '.FieldData::VastExpanse->label(),
+                'id' => 218,
+                'name' => '手記: '.FieldData::VastExpanse->label(),
                 'book_category' => Library::CATEGORY_ENEMY,
                 'content' => $vastexpanse_content,
                 'required_clears' => null,
