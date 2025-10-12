@@ -1123,7 +1123,7 @@ export default {
                 if (this.fieldId == 11) {
                     this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>祭壇の奥の部屋に、無造作に散らばる財宝を見つけた。</b></p></div>'
                 // VastExpanse
-                } else if (this.fieldId == 12) {
+                } else if (this.fieldId == 12 && this.stageId == 5) {
                     this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>不気味な日記を拾った。（※図書館で読むことができます。）</b></p></div>'
                 }
             }
