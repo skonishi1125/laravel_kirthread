@@ -643,7 +643,7 @@ class EnemyTableSeeder extends Seeder
                 'value_spd' => 100,
                 'value_luc' => 0,
                 'exp' => 2500,
-                'drop_money' => 3000,
+                'drop_money' => 1500,
                 'portrait_image_path' => EnemyData::StoneGolem->image_path(),
                 'description' => EnemyData::StoneGolem->description(),
                 'is_boss' => true,

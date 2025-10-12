@@ -432,7 +432,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::HolyArrow :
                     Debugbar::debug(SkillDefinition::HolyArrow->label());
-                    $battle_logs_collection->push("{$actor_data->name}はマナから光の弓矢を創り出し、相手に目掛けて射出した！");
+                    $battle_logs_collection->push("{$actor_data->name}は光の弓矢を創り出し、相手に目掛けて射出した！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 40;
                     break;
                 case SkillDefinition::HeavenRay :
