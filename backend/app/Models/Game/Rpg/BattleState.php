@@ -2475,8 +2475,9 @@ class BattleState extends Model
                     $opponent_data->value_hp -= $calculated_damage;
                     Debugbar::warning("攻撃した。味方の残り体力: {$opponent_data->value_hp}");
 
+                    $opponent_data->buffs = [];
                     // ダメージ メッセージ
-                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受けた！");
+                    $battle_logs_collection->push("{$opponent_data->name}は{$calculated_damage}のダメージを受け、付与されていた全てのバフが消え去った！");
 
                     // 敵を倒した場合
                     if ($opponent_data->value_hp <= 0) {
