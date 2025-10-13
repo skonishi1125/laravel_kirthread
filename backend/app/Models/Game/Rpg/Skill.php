@@ -560,6 +560,7 @@ class Skill extends Model
                             $siren_aura_percent = $buff->buffed_skill_percent;
                         }
                     }
+                    // デフォルト: 30回復
                     $heal_point = (int) ceil(30 * $selected_skill_data->skill_percent); // 固定値 * スキル%
                     // SirenAuraが付与されている場合、回復%を上げる
                     if ($has_siren_aura) {
