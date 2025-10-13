@@ -22,10 +22,8 @@ enum SkillDefinition: int
     case HeavenRay = 202;
     case Healing = 203;
     case QuickHeal = 204;
-    case SlowHeal = 205;
     case AllHealing = 206;
     case QuickAllHealing = 207;
-    case SlowAllHealing = 208;
     case Resurrection = 209;
 
     // -------------------- 重騎士 --------------------
@@ -168,10 +166,8 @@ enum SkillDefinition: int
 
             self::Healing => 'ヒーリング',
             self::QuickHeal => 'クイックヒーリング',
-            self::SlowHeal => 'スロウヒーリング',
             self::AllHealing => 'オールヒーリング',
             self::QuickAllHealing => 'クイックオールヒーリング',
-            self::SlowAllHealing => 'スロウオールヒーリング',
             self::Resurrection => 'リザレクション',
             self::MiniVolt => 'ミニボルト',
             self::HolyArrow => 'ホーリーアロー',
@@ -314,10 +310,8 @@ enum SkillDefinition: int
 
             self::Healing => '治療師の基礎回復魔法。味方単体のHPを回復する呪文を唱える。',
             self::QuickHeal => '先制発動する。迅速な詠唱で味方単体のHPを回復する。',
-            self::SlowHeal => '最後に行動する。丁寧に詠唱を行い、味方単体のHPを回復する。',
             self::AllHealing => '癒しの魔力を広範囲に拡散し、味方全体のHPを回復する。',
             self::QuickAllHealing => '先制発動する。癒しの魔力を広範囲に拡散し、味方全体のHPを回復。',
-            self::SlowAllHealing => '最後に行動する。癒しの魔力を広範囲に拡散し、味方全体のHPを回復。',
             self::Resurrection => '聖なる力を戦闘不能の味方に分け与え、戦闘不能状態から復活させる。',
             self::MiniVolt => '魔力を敵単体に放ち攻撃する、治療師の扱う護身用魔法。',
             self::HolyArrow => '光の弓矢を聖なる魔力で具現化し、敵単体に魔法ダメージ。',

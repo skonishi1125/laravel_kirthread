@@ -394,33 +394,28 @@ class Skill extends Model
                 case SkillDefinition::Healing :
                     Debugbar::debug(SkillDefinition::Healing->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
+                    $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.1 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::QuickHeal :
                     Debugbar::debug(SkillDefinition::QuickHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
-                    break;
-                case SkillDefinition::SlowHeal :
-                    Debugbar::debug(SkillDefinition::SlowHeal->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！腰を据え、丁寧に詠唱を唱えていく。");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
+                    $heal_point = (int) ceil((50 * $selected_skill_data->skill_percent) + (0.1 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::AllHealing :
                     Debugbar::debug(SkillDefinition::AllHealing->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！癒しの魔力が拡散し、味方に伝わる！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
+                    $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.05 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::QuickAllHealing :
                     Debugbar::debug(SkillDefinition::QuickAllHealing->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}！手慣れた様子で、素早く詠唱した！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
+                    $heal_point = (int) ceil((50 * $selected_skill_data->skill_percent) + (0.05 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
-                case SkillDefinition::SlowAllHealing :
-                    Debugbar::debug(SkillDefinition::SlowAllHealing->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！腰を据え、丁寧に詠唱を唱えていく。");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent);
-                    break;
+
                 case SkillDefinition::Resurrection :
                     Debugbar::debug(SkillDefinition::Resurrection->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！聖なる力が味方を包み込む...");
@@ -516,7 +511,8 @@ class Skill extends Model
                     // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::MiniHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
+                    $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.1 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::PopHeal :
                     // 回復量 = (INT * ダメージ%)
