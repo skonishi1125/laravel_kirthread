@@ -574,12 +574,6 @@ class EnemyActionPatternTableSeeder extends Seeder
                 'enemy_id' => EnemyData::OriginSlum,
                 'turn_count' => 3,
                 'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Puyopuyo,
-            ],
-            [
-                'enemy_id' => EnemyData::OriginSlum,
-                'turn_count' => 4,
-                'is_use_skill' => true,
                 'skill_id' => SkillDefinition::SlumEscape,
             ],
 
@@ -605,12 +599,6 @@ class EnemyActionPatternTableSeeder extends Seeder
             [
                 'enemy_id' => EnemyData::OriginGwappa,
                 'turn_count' => 4,
-                'is_use_skill' => true,
-                'skill_id' => SkillDefinition::Running,
-            ],
-            [
-                'enemy_id' => EnemyData::OriginGwappa,
-                'turn_count' => 5,
                 'is_use_skill' => true,
                 'skill_id' => SkillDefinition::GwappaEscape,
             ],
