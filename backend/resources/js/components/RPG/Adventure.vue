@@ -54,6 +54,9 @@
           <div>
             <p><small>どこに向かおうか。</small></p>
             <hr>
+            <small style="color: gray">
+              (行き先を左クリックで選択してください。)
+            </small>
           </div>
         </div>
       </div>
@@ -97,7 +100,7 @@
                     <div v-if="confirmModalFIeld.id == 12">
                       <label class="control-label">
                         <p style="color: gray;">
-                          怪しい書物通りに耕作地の地下を探索したところ、青白く光るポータルを見つけた...
+                          怪しい書物通りに耕作地の地下を探索したところ、薄青く輝くポータルを見つけた...
                         </p>
                         入ってみますか？
                         <br>

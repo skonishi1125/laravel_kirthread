@@ -75,23 +75,9 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 6,
             ],
-            // スロウヒーリング Lv8以上
-            [
-                'acquired_skill_id' => SkillDefinition::SlowHeal->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
-                'requirement_party_level' => 8,
-            ],
             // クイックオールヒーリング Lv12以上
             [
                 'acquired_skill_id' => SkillDefinition::QuickAllHealing->value,
-                'requirement_skill_id' => null,
-                'requirement_skill_level' => null,
-                'requirement_party_level' => 12,
-            ],
-            // スロウオールヒーリング Lv12以上
-            [
-                'acquired_skill_id' => SkillDefinition::SlowAllHealing->value,
                 'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 12,
@@ -110,20 +96,20 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
-            // ヘヴンレイ ミニボルト Lv1以上, pLv20以上
+            // ヘヴンレイ ミニボルト Lv1以上, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
-                'requirement_skill_level' => 2,
-                'requirement_party_level' => 20,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 16,
             ],
 
             // -------------------- 重騎士 --------------------
-            // // ワイドガード+ ワイドガードLv3, pLv15以上
+            // // ワイドガード+ ワイドガードLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::WideGuardPlus->value,
                 'requirement_skill_id' => SkillDefinition::WideGuard->value,
-                'requirement_skill_level' => 3,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
             // カースエッジ Lv8以上
@@ -147,7 +133,7 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => 1,
                 'requirement_party_level' => 20,
             ],
-            // オーバープロテクト プロテクションSLv1, pLv15以上
+            // オーバープロテクト プロテクションSLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::OverProtect->value,
                 'requirement_skill_id' => SkillDefinition::Protection->value,

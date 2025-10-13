@@ -65,7 +65,7 @@
         <div class="col-12">
           <div>
             <p>
-              <small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。</small>
+              <small style="color:gray">(メンバーのステータス及びスキルの確認・ポイントの振り分けができます。)</small>
             </p>
           </div>
           <hr>
@@ -307,7 +307,9 @@
         <div class="col-12">
           <div>
             <p>
-              <small>メンバーのステータス及びスキルの確認・ポイントの振り分けができます。<b style="color:red; font-size: 0.9em">※スクロールできます。</b></small>
+              <small style="color:gray">
+                (メンバーのステータス及びスキルの確認・ポイントの振り分けができます。<b style="color:red; font-size: 0.9em">※スクロールできます。</b>)
+            </small>
             </p>
           </div>
           <hr>
@@ -570,8 +572,8 @@
                         【例】<br>
                         ●<span class="badge badge-light badge-light-physical">物理</span><span class="badge badge-primary">攻撃</span>, 基礎倍率200%のスキル<br>
                         　→通常攻撃(基礎倍率100%)の倍程度のダメージ。<br>
-                        ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
-                        　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。
+                        <!-- ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
+                        　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。 -->
                       </p>
                     </div>
                   </div>

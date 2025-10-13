@@ -55,8 +55,8 @@ class Role extends Model
 
     public const MEDIC_DEFAULT_STATUS = [
         'value_hp' => 30,
-        'value_ap' => 20,
-        'value_str' => 10,
+        'value_ap' => 25,
+        'value_str' => 5,
         'value_def' => 15,
         'value_int' => 20,
         'value_spd' => 10,
