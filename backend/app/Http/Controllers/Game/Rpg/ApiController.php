@@ -966,6 +966,7 @@ class ApiController extends Controller
         $is_beat_boss = $battle_state_enemies_collection->contains(function ($enemy) {
             return $enemy->is_boss === true;
         });
+        $is_cleared = true;
         if ($is_beat_boss) {
             $battle_logs_collection->push('ボスを討伐し、この周辺の地形の探索を終えた！');
             // 重複チェックし、存在しなければクリアしたフィールドを保存。
@@ -973,6 +974,7 @@ class ApiController extends Controller
                 $savedata->savedata_cleared_fields()->create([
                     'field_id' => $battle_state->current_field_id,
                 ]);
+                $is_cleared = false;
             }
             Debugbar::debug("ボス討伐処理完了。savedata_id: {$savedata->id} field_id: {$battle_state->current_field_id}");
         } else {
@@ -993,7 +995,8 @@ class ApiController extends Controller
         // vueに渡すデータ
         $vue_data = collect()
             ->push($battle_logs_collection)
-            ->push($is_beat_boss);
+            ->push($is_beat_boss)
+            ->push($is_cleared);
 
         return $vue_data;
 
