@@ -493,6 +493,9 @@ class LibraryTableSeeder extends Seeder
             HTML;
     }
 
+    /**
+     * 敵の詳細情報を記載したHTML要素を生成する
+     */
     private function renderEnemyListItem(Enemy $enemy): string
     {
         $name = e($enemy->name);
