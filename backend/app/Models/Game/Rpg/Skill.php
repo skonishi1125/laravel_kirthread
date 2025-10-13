@@ -443,7 +443,7 @@ class Skill extends Model
                     break;
                 case SkillDefinition::WideGuardPlus :
                     Debugbar::debug(SkillDefinition::WideGuardPlus->label());
-                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！強き心を持ち、味方を守りの壁に包み込む！");
+                    $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！強き心を持ち、味方を守りの壁で包み込む！");
                     break;
                 case SkillDefinition::CurseEdge :
                     Debugbar::debug(SkillDefinition::CurseEdge->label());

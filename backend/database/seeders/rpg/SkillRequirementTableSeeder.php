@@ -100,16 +100,16 @@ class SkillRequirementTableSeeder extends Seeder
             [
                 'acquired_skill_id' => SkillDefinition::HeavenRay->value,
                 'requirement_skill_id' => SkillDefinition::MiniVolt->value,
-                'requirement_skill_level' => 2,
-                'requirement_party_level' => 20,
+                'requirement_skill_level' => 1,
+                'requirement_party_level' => 16,
             ],
 
             // -------------------- 重騎士 --------------------
-            // // ワイドガード+ ワイドガードLv3, pLv16以上
+            // // ワイドガード+ ワイドガードLv1, pLv16以上
             [
                 'acquired_skill_id' => SkillDefinition::WideGuardPlus->value,
                 'requirement_skill_id' => SkillDefinition::WideGuard->value,
-                'requirement_skill_level' => 3,
+                'requirement_skill_level' => 1,
                 'requirement_party_level' => 16,
             ],
             // カースエッジ Lv8以上

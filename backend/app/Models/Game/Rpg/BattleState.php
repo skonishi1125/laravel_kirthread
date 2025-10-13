@@ -2041,9 +2041,9 @@ class BattleState extends Model
                 if ($skill_level == 1) {
                     $self_harm_damage = (int) ceil($max_value_hp * 0.2);
                 } elseif ($skill_level == 2) {
-                    $self_harm_damage = (int) ceil($max_value_hp * 0.25);
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.225);
                 } elseif ($skill_level == 3) {
-                    $self_harm_damage = (int) ceil($max_value_hp * 0.3);
+                    $self_harm_damage = (int) ceil($max_value_hp * 0.25);
                 }
                 $actor_data->value_hp -= $self_harm_damage;
                 $battle_logs_collection->push("{$actor_data->name}は代償として、{$self_harm_damage}の自傷ダメージを受けた！");
