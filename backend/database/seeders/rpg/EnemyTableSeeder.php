@@ -799,7 +799,7 @@ class EnemyTableSeeder extends Seeder
                 'id' => EnemyData::TraitorLordOfDragon,
                 'name' => EnemyData::TraitorLordOfDragon->label(),
                 // 'value_hp' => 1,
-                'value_hp' => 9000,
+                'value_hp' => 9999,
                 'value_ap' => 1000,
                 'value_str' => 120,
                 'value_def' => 20,
