@@ -1060,6 +1060,10 @@ class BattleState extends Model
                             Debugbar::debug('AttackMist');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
                             break;
+                        case ItemData::AttackPerfume->value:
+                            Debugbar::debug('AttackPerfume');
+                            $new_buff['buffed_str'] = $selected_item_data->fixed_value;
+                            break;
                         case ItemData::DefenceGummy->value:
                             Debugbar::debug('DefenceGummy');
                             $new_buff['buffed_def'] = $selected_item_data->fixed_value;
@@ -1068,12 +1072,20 @@ class BattleState extends Model
                             Debugbar::debug('DefenceMist');
                             $new_buff['buffed_def'] = $selected_item_data->fixed_value;
                             break;
+                        case ItemData::DefencePerfume->value:
+                            Debugbar::debug('DefencePerfume');
+                            $new_buff['buffed_def'] = $selected_item_data->fixed_value;
+                            break;
                         case ItemData::IntGummy->value:
                             Debugbar::debug('IntGummy');
                             $new_buff['buffed_int'] = $selected_item_data->fixed_value;
                             break;
                         case ItemData::IntMist->value:
                             Debugbar::debug('IntMist');
+                            $new_buff['buffed_int'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::IntPerfume->value:
+                            Debugbar::debug('IntPerfume');
                             $new_buff['buffed_int'] = $selected_item_data->fixed_value;
                             break;
                     }
