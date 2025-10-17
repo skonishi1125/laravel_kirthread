@@ -560,7 +560,9 @@ class BattleState extends Model
                     case 'ATTACK':
                         Debugbar::warning("【ATTACK】{$actor_data->name} ");
                         // コマンド対象となる相手をランダムに指定
+                        // 攻撃は、execCommandAttack側で戦闘不能だった場合opponents_indexを変更している
                         $opponents_index = rand(0, $battle_state_players_collection->count() - 1);
+                        Debugbar::warning($battle_state_players_collection[$opponents_index]->name.'に対して攻撃');
                         self::execCommandAttack($actor_data, $battle_state_players_collection, true, $opponents_index, $battle_logs_collection);
                         break;
                     case 'SKILL':
@@ -592,20 +594,17 @@ class BattleState extends Model
 
                                     // 全indexの中から、生存しているものだけ抽出
                                     $alive_indexes = [];
-
                                     foreach ($battle_state_opponents_collection as $i => $opponent) {
                                         if ($opponent->is_defeated_flag === false) {
                                             $alive_indexes[] = $i;
                                         }
                                     }
-
                                     // 全員戦闘不能チェック
                                     if (empty($alive_indexes)) {
                                         Debugbar::warning('全員戦闘不能: 対象なし');
 
                                         return;
                                     }
-
                                     // 生存インデックスからランダム選出
                                     $opponents_index = $alive_indexes[array_rand($alive_indexes)];
 
