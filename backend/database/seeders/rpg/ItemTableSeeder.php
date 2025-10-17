@@ -135,7 +135,7 @@ class ItemTableSeeder extends Seeder
                 'buff_turn' => null,
                 'elemental_id' => 0,
                 'max_possession_number' => 5,
-                'price' => 700,
+                'price' => 300,
                 'description' => ItemData::LifeElixir->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
