@@ -64,7 +64,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::IceAndSnow,
                 'name' => FieldData::IceAndSnow->label(),
                 'background_image_path' => FieldData::IceAndSnow->image_path(),
-                'difficulty' => 5,
+                'difficulty' => 4,
                 'required_clears' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -74,7 +74,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::NightForest,
                 'name' => FieldData::NightForest->label(),
                 'background_image_path' => FieldData::NightForest->image_path(),
-                'difficulty' => 5,
+                'difficulty' => 4,
                 'required_clears' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -83,7 +83,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::DecayedFarmland,
                 'name' => FieldData::DecayedFarmland->label(),
                 'background_image_path' => FieldData::DecayedFarmland->image_path(),
-                'difficulty' => 7,
+                'difficulty' => 6,
                 'required_clears' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -92,7 +92,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::CastleTown,
                 'name' => FieldData::CastleTown->label(),
                 'background_image_path' => FieldData::CastleTown->image_path(),
-                'difficulty' => 6,
+                'difficulty' => 5,
                 'required_clears' => 6,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -101,7 +101,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::AncientCastle,
                 'name' => FieldData::AncientCastle->label(),
                 'background_image_path' => FieldData::AncientCastle->image_path(),
-                'difficulty' => 7,
+                'difficulty' => 6,
                 /**
                  * ステージをクリアしても開放されないように、99としておく。
                  * 詳細には城下町クリア、で開放。
@@ -114,7 +114,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::AncientCastleAltar,
                 'name' => FieldData::AncientCastleAltar->label(),
                 'background_image_path' => FieldData::AncientCastleAltar->image_path(),
-                'difficulty' => 7,
+                'difficulty' => 6,
                 /**
                  * ステージをクリアしても開放されないように、99としておく。
                  * 詳細には古城クリア、で開放。
@@ -127,7 +127,7 @@ class FieldTableSeeder extends Seeder
                 'id' => FieldData::VastExpanse,
                 'name' => FieldData::VastExpanse->label(),
                 'background_image_path' => FieldData::VastExpanse->image_path(),
-                'difficulty' => 7,
+                'difficulty' => 6,
                 /**
                  * ステージ全てをクリアしても開放されないように、99としておく。
                  * 詳細には古城クリア && 耕作地クリア && 書籍を読んだら、という感じ。

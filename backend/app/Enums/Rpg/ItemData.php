@@ -21,10 +21,13 @@ enum ItemData: int
 
     case AttackGummy = 21;
     case AttackMist = 22;
-    case DefenceGummy = 23;
-    case DefenceMist = 24;
-    case IntGummy = 25;
-    case IntMist = 26;
+    case AttackPerfume = 23;
+    case DefenceGummy = 24;
+    case DefenceMist = 25;
+    case DefencePerfume = 26;
+    case IntGummy = 27;
+    case IntMist = 28;
+    case IntPerfume = 29;
 
     case MiniBomb = 101;
     case Bomb = 102;
@@ -55,10 +58,13 @@ enum ItemData: int
 
             self::AttackGummy => 'アタックグミ',
             self::AttackMist => 'アタックミスト',
+            self::AttackPerfume => 'アタックパフューム',
             self::DefenceGummy => 'ディフェンスグミ',
             self::DefenceMist => 'ディフェンスミスト',
+            self::DefencePerfume => 'ディフェンスパフューム',
             self::IntGummy => 'イントグミ',
             self::IntMist => 'イントミスト',
+            self::IntPerfume => 'イントパフューム',
 
             self::MiniBomb => 'ミニボム',
             self::Bomb => 'ボム',
@@ -92,10 +98,13 @@ enum ItemData: int
             // %のものを出すと、最後まで支えて良さそうだ
             self::AttackGummy => '食べると一定時間STRが20ポイント上昇するグミ。',
             self::AttackMist => '周囲に振り撒くことで、しばらくの間味方全員のSTRが20ポイント上昇。',
+            self::AttackPerfume => '攻撃の香水を振り撒き、しばらくの間味方全員のSTRが50ポイント上昇。',
             self::DefenceGummy => '食べると一定時間DEFが20ポイント上昇するグミ。',
-            self::DefenceMist => '周囲に振り撒くことで、しばらくの間味方全員のDEFが20ポイント上昇。',
+            self::DefenceMist => '周囲に振り撒くことで、しばらくの間味方全員のDEFが50ポイント上昇。',
+            self::DefencePerfume => '護りの香水を振り撒き、しばらくの間味方全員のDEFが20ポイント上昇。',
             self::IntGummy => '食べると一定時間INTが20ポイント上昇するグミ。',
             self::IntMist => '周囲に振り撒くことで、しばらくの間味方全員のINTが20ポイント上昇。',
+            self::IntPerfume => '知恵の香水を振り撒き、しばらくの間味方全員のINTが50ポイント上昇。',
 
             self::MiniBomb => '小さいが火力は充分。敵単体に物理属性のダメージを与えることができる。',
             self::Bomb => 'まさしく爆弾そのもの。敵単体に物理属性の大ダメージ。',

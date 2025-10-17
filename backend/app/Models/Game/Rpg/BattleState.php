@@ -560,7 +560,9 @@ class BattleState extends Model
                     case 'ATTACK':
                         Debugbar::warning("【ATTACK】{$actor_data->name} ");
                         // コマンド対象となる相手をランダムに指定
+                        // 攻撃は、execCommandAttack側で戦闘不能だった場合opponents_indexを変更している
                         $opponents_index = rand(0, $battle_state_players_collection->count() - 1);
+                        Debugbar::warning($battle_state_players_collection[$opponents_index]->name.'に対して攻撃');
                         self::execCommandAttack($actor_data, $battle_state_players_collection, true, $opponents_index, $battle_logs_collection);
                         break;
                     case 'SKILL':
@@ -578,7 +580,7 @@ class BattleState extends Model
                             case EffectType::Special->value:
                                 // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
                                 Debugbar::warning('特殊系スキル。');
-                                // 対象グループ自体はis_target_enemyで指定
+                                // 対象グループ自体はis_target_enemyで指定 seederで指定がない場合、defaultはtrue
                                 if ($selected_skill_data->is_target_enemy) {
                                     Debugbar::warning('対象グループをプレイヤー側に指定。');
                                     $battle_state_opponents_collection = $battle_state_players_collection;
@@ -588,9 +590,24 @@ class BattleState extends Model
                                 }
                                 // スキルの範囲に応じて、$opponent_index を指定
                                 if ($selected_skill_data->target_range === TargetRange::Single->value) {
-                                    Debugbar::warning(TargetRange::Single->label());
-                                    // 対象グループのindexをランダムに取得しておく
-                                    $opponents_index = rand(0, $battle_state_opponents_collection->count() - 1);
+                                    Debugbar::warning('特殊系スキル: '.TargetRange::Single->label());
+
+                                    // 全indexの中から、生存しているものだけ抽出
+                                    $alive_indexes = [];
+                                    foreach ($battle_state_opponents_collection as $i => $opponent) {
+                                        if ($opponent->is_defeated_flag === false) {
+                                            $alive_indexes[] = $i;
+                                        }
+                                    }
+                                    // 全員戦闘不能チェック
+                                    if (empty($alive_indexes)) {
+                                        Debugbar::warning('全員戦闘不能: 対象なし');
+
+                                        return;
+                                    }
+                                    // 生存インデックスからランダム選出
+                                    $opponents_index = $alive_indexes[array_rand($alive_indexes)];
+
                                 } else {
                                     Debugbar::warning(TargetRange::All->label());
                                 }
@@ -916,6 +933,8 @@ class BattleState extends Model
             Debugbar::warning('【敵】execCommandSkill(): ----------------------');
             Debugbar::warning($selected_skill_data);
 
+            // 対象が戦闘不能となっていた場合
+
             // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
             Skill::decideExecSkill($selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
 
@@ -1041,6 +1060,10 @@ class BattleState extends Model
                             Debugbar::debug('AttackMist');
                             $new_buff['buffed_str'] = $selected_item_data->fixed_value;
                             break;
+                        case ItemData::AttackPerfume->value:
+                            Debugbar::debug('AttackPerfume');
+                            $new_buff['buffed_str'] = $selected_item_data->fixed_value;
+                            break;
                         case ItemData::DefenceGummy->value:
                             Debugbar::debug('DefenceGummy');
                             $new_buff['buffed_def'] = $selected_item_data->fixed_value;
@@ -1049,12 +1072,20 @@ class BattleState extends Model
                             Debugbar::debug('DefenceMist');
                             $new_buff['buffed_def'] = $selected_item_data->fixed_value;
                             break;
+                        case ItemData::DefencePerfume->value:
+                            Debugbar::debug('DefencePerfume');
+                            $new_buff['buffed_def'] = $selected_item_data->fixed_value;
+                            break;
                         case ItemData::IntGummy->value:
                             Debugbar::debug('IntGummy');
                             $new_buff['buffed_int'] = $selected_item_data->fixed_value;
                             break;
                         case ItemData::IntMist->value:
                             Debugbar::debug('IntMist');
+                            $new_buff['buffed_int'] = $selected_item_data->fixed_value;
+                            break;
+                        case ItemData::IntPerfume->value:
+                            Debugbar::debug('IntPerfume');
                             $new_buff['buffed_int'] = $selected_item_data->fixed_value;
                             break;
                     }

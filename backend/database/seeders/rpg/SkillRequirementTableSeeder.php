@@ -60,10 +60,10 @@ class SkillRequirementTableSeeder extends Seeder
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 20,
             ],
-            // トランスフォーム ファイトソウルLv1以上, pLv20以上
+            // トランスフォーム pLv20以上
             [
                 'acquired_skill_id' => SkillDefinition::Transform->value,
-                'requirement_skill_id' => SkillDefinition::FightSoul->value,
+                'requirement_skill_id' => null,
                 'requirement_skill_level' => null,
                 'requirement_party_level' => 20,
             ],

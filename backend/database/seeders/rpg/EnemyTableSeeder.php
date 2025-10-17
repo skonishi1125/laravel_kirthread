@@ -799,7 +799,7 @@ class EnemyTableSeeder extends Seeder
                 'id' => EnemyData::TraitorLordOfDragon,
                 'name' => EnemyData::TraitorLordOfDragon->label(),
                 // 'value_hp' => 1,
-                'value_hp' => 9000,
+                'value_hp' => 9999,
                 'value_ap' => 1000,
                 'value_str' => 120,
                 'value_def' => 20,
@@ -822,7 +822,7 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::Celavie,
                 'name' => EnemyData::Celavie->label(),
-                'value_hp' => 4000,
+                'value_hp' => 1,
                 'value_ap' => 10, // HailShot 2発分
                 'value_str' => 200,
                 'value_def' => 250,
@@ -839,7 +839,7 @@ class EnemyTableSeeder extends Seeder
             [
                 'id' => EnemyData::GrandCube,
                 'name' => EnemyData::GrandCube->label(),
-                'value_hp' => 2800,
+                'value_hp' => 2,
                 'value_ap' => 100,
                 'value_str' => 120,
                 'value_def' => 50,
