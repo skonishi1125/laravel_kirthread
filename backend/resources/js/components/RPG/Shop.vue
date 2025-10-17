@@ -169,7 +169,7 @@
                   <!-- Date -->
                   <div class="form-group">
                   <label class="control-label">
-                      {{ purchaseForm.name }}をいくつ購入しますか？<br>
+                      {{ purchaseForm.name }}をいくつ購入しますか？(所持金: {{ money }} G)
                   </label>
                   <div class="input-group input-group-sm mb-3">
                     <div class="input-group-prepend">

@@ -1121,15 +1121,17 @@ export default {
                 this.resultLog = response.data[0] || [];
                 this.isFieldCleared = response.data[1] || false;
                 this.isAlreadyCleared = response.data[2] || false;
-                console.dir(response.data, this.isAlreadyCleared);
+                console.log(this.isAlreadyCleared, this.fieldId, this.stageId);
                 // AncientCastleAltar
                 if (this.fieldId == 11 && this.isAlreadyCleared == false) {
                     this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>祭壇の奥の部屋に、無造作に散らばる財宝を見つけた。</b></p></div>'
                 // VastExpanse
-                } else if (this.fieldId == 12 && this.stageId == 5 && this.isAlreadyCleared == false) {
-                    this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>不気味な日記を拾った。（※図書館で読むことができます。）</b></p></div>'
                 } else if (this.isAlreadyCleared == false) {
-                    this.treasureMessageHtml = '<div class="log-item"><p style="color: gray"><b>※クリアしたことで、図書館で読める書籍が増えました。</b></p></div>'
+                    if (this.fieldId == 12) {
+                        this.treasureMessageHtml = '<div class="log-item"><p style="color: blue"><b>不気味な日記を拾った。（※図書館で読むことができます。）</b></p></div>'
+                    } else {
+                        this.treasureMessageHtml = '<div class="log-item"><p style="color: gray"><b>※クリアしたことで、図書館で読める書籍が増えました。</b></p></div>'
+                    }
                 }
             }
         );
