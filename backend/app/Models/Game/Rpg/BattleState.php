@@ -578,7 +578,7 @@ class BattleState extends Model
                             case EffectType::Special->value:
                                 // ----------------- 特殊系スキル(is_target_enemyで判定する) -----------------
                                 Debugbar::warning('特殊系スキル。');
-                                // 対象グループ自体はis_target_enemyで指定
+                                // 対象グループ自体はis_target_enemyで指定 seederで指定がない場合、defaultはtrue
                                 if ($selected_skill_data->is_target_enemy) {
                                     Debugbar::warning('対象グループをプレイヤー側に指定。');
                                     $battle_state_opponents_collection = $battle_state_players_collection;
@@ -588,9 +588,27 @@ class BattleState extends Model
                                 }
                                 // スキルの範囲に応じて、$opponent_index を指定
                                 if ($selected_skill_data->target_range === TargetRange::Single->value) {
-                                    Debugbar::warning(TargetRange::Single->label());
-                                    // 対象グループのindexをランダムに取得しておく
-                                    $opponents_index = rand(0, $battle_state_opponents_collection->count() - 1);
+                                    Debugbar::warning('特殊系スキル: '.TargetRange::Single->label());
+
+                                    // 全indexの中から、生存しているものだけ抽出
+                                    $alive_indexes = [];
+
+                                    foreach ($battle_state_opponents_collection as $i => $opponent) {
+                                        if ($opponent->is_defeated_flag === false) {
+                                            $alive_indexes[] = $i;
+                                        }
+                                    }
+
+                                    // 全員戦闘不能チェック
+                                    if (empty($alive_indexes)) {
+                                        Debugbar::warning('全員戦闘不能: 対象なし');
+
+                                        return;
+                                    }
+
+                                    // 生存インデックスからランダム選出
+                                    $opponents_index = $alive_indexes[array_rand($alive_indexes)];
+
                                 } else {
                                     Debugbar::warning(TargetRange::All->label());
                                 }
@@ -915,6 +933,8 @@ class BattleState extends Model
         } else {
             Debugbar::warning('【敵】execCommandSkill(): ----------------------');
             Debugbar::warning($selected_skill_data);
+
+            // 対象が戦闘不能となっていた場合
 
             // スキルごとに効果・ログ・ダメージ計算・バフ付与などを行う
             Skill::decideExecSkill($selected_skill_data, $actor_data, $battle_state_opponents_collection, $is_enemy, $opponents_index, $battle_logs_collection);
