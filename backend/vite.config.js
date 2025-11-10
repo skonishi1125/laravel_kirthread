@@ -18,4 +18,13 @@ export default defineConfig({
         }),
         vue(),
     ],
+    build: {
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,  // ← console.log系を削除
+                drop_debugger: true, // ← debuggerも削除
+            },
+        },
+    },
 });

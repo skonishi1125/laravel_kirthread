@@ -5,7 +5,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DQ8aKzuc.js",
+    "file": "assets/app-BDQmYrCo.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -20,31 +20,31 @@
     ]
   },
   "resources/js/selfmade/csv_download.js": {
-    "file": "assets/csv_download-B4tSiEMh.js",
+    "file": "assets/csv_download-DX1a52k1.js",
     "name": "csv_download",
     "src": "resources/js/selfmade/csv_download.js",
     "isEntry": true
   },
   "resources/js/selfmade/game/panel.js": {
-    "file": "assets/panel-BqYylSjD.js",
+    "file": "assets/panel-BBBZION9.js",
     "name": "panel",
     "src": "resources/js/selfmade/game/panel.js",
     "isEntry": true
   },
   "resources/js/selfmade/reaction.js": {
-    "file": "assets/reaction-BXCl3ODx.js",
+    "file": "assets/reaction-BkQbSS12.js",
     "name": "reaction",
     "src": "resources/js/selfmade/reaction.js",
     "isEntry": true
   },
   "resources/js/selfmade/script.js": {
-    "file": "assets/script-C_zgHiFS.js",
+    "file": "assets/script-BINwvySv.js",
     "name": "script",
     "src": "resources/js/selfmade/script.js",
     "isEntry": true
   },
   "resources/js/selfmade/stopwatch.js": {
-    "file": "assets/stopwatch-BxJJ_54V.js",
+    "file": "assets/stopwatch-D-Ha9ZXz.js",
     "name": "stopwatch",
     "src": "resources/js/selfmade/stopwatch.js",
     "isEntry": true
