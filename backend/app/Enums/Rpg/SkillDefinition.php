@@ -363,7 +363,7 @@ enum SkillDefinition: int
             self::SpeedEnt => '味方1人のSPDを暫くの間向上させる。',
             self::SonicTrimming => '行動をアルゴリズム化して動きを最適化する呪文。味方全員のSPDを暫くの間向上させる。',
             self::LuckEnt => '味方1人のLUCを暫くの間大幅に向上させる。',
-            self::FortuneStar => 'なんだかいい日になるような気がする。味方全員のLUCが大幅に向上する。',
+            self::FortuneStar => '幸運の星をパーティの味方につけることで、全員のLUCを大幅に向上させる。',
 
             self::Bite => '相手単体に噛みつき物理攻撃する。',
             self::Rampage => '大暴れして、相手全体に物理攻撃。',
