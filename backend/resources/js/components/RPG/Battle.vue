@@ -426,7 +426,7 @@
             <hr>
             <span v-if="hoveredEnemy" style="font-weight: bold;">{{ hoveredEnemy.name }}</span>
           </div>
-          <p v-if="battle.status == 'partySelect'">対象の <span style="color:green;">味方</span> を選択してください</p>
+          <p v-if="battle.status == 'partySelect'">対象の <span style="color:green;">味方</span> を選択してください。</p>
           <p v-if="battle.status == 'exec'">戦闘開始します。</p>
           <div v-if="battle.status == 'outputLog'" class="log-container">
             <div v-for="(log, index) in battleLog" :key="index" class="log-item">

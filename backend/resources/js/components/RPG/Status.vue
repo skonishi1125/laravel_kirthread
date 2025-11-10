@@ -568,12 +568,13 @@
                     <div class="col-12 mb-3">
                       <p style="font-size: 14px">
                         <b>※基礎倍率</b><br>
-                        ステータスの値を100%とした、スキル使用時の効果倍率。<br>
+                        スキル発動時に参照される、効果量の基準となる倍率。<br>
+                        ステータス値や補正値に掛け合わせて、最終的なダメージ・回復量が決定されます。<br>
                         【例】<br>
                         ●<span class="badge badge-light badge-light-physical">物理</span><span class="badge badge-primary">攻撃</span>, 基礎倍率200%のスキル<br>
-                        　→通常攻撃(基礎倍率100%)の倍程度のダメージ。<br>
-                        <!-- ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率50%のスキル<br>
-                        　→基礎倍率100%の魔法スキルのダメージの半分程度の回復量。 -->
+                        　→通常攻撃(100%)の倍程度のダメージ。<br>
+                        ●<span class="badge badge-light badge-light-magic">魔法</span><span class="badge badge-success">回復</span>, 基礎倍率200%のスキル<br>
+                        　→スキルに個別設定された基礎回復量(100%)の倍 + ステータスに依存した回復量。
                       </p>
                     </div>
                   </div>
