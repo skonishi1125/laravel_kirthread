@@ -1024,6 +1024,7 @@ class Skill extends Model
                     $battle_logs_collection->push("{$actor_data->name}はなんと自身の腕に噛みつき、血を啜って回復した！");
                     $heal_point = (int) 1000;
                     $new_buff['buffed_def'] = (int) (-150);
+                    $new_buff['buffed_int'] = (int) (-300);
                     break;
                 case SkillDefinition::DragonBite :
                     Debugbar::warning(SkillDefinition::DragonBite->label());
