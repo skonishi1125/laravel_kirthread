@@ -39,15 +39,12 @@
 
 <template>
     <div class="app-root">
-        <!-- titleなど? 現状デバッグ要素の表示 -->
         <div class="container" style="background-color: whitesmoke; border: 1px solid black; min-width: 1280px">
             <div class="row">
                 <div class="col-12" style="text-align: center;">
-                    <!-- メニュー: ステータス画面デバッグ  -->
-                    <h4>
-                    App.vue
-                      <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small>
-                    </h4>
+                    <h6 style="margin: 5px 0px;">
+                        <b>Epic Liquidation</b>
+                    </h6>
                 </div>
             </div>
         </div>
@@ -62,6 +59,10 @@
 <script>
     import { mapState } from 'vuex';
     export default {
+        // <!-- メニュー: ステータス画面デバッグ  -->
+        // <h4>App.vue
+        //   <small style="font-size: 12px;">{{ screen.current }}.{{ status.status }} 戦闘状況: {{ battleCommands }}</small>
+        // </h4> 
         data() { // script内で使用する変数を定義する。
             return {}
         },
