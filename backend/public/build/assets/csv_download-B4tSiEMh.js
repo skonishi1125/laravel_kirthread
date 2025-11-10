@@ -1,1 +1,0 @@
-document.addEventListener("DOMContentLoaded",function(n){document.getElementById("csv-download").addEventListener("click",function(e){confirm("今までのあなたの投稿をcsv形式でダウンロードしますか？")||e.preventDefault()},!1)},!1);

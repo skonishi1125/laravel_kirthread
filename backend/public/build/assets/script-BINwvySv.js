@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",(function(e){let t=document.getElementsByClassName("trash");for(let n=0;n<t.length;n++)t[n].addEventListener("click",(function(e){confirm("本当に削除しますか？")||e.preventDefault()}),!1)}),!1);
