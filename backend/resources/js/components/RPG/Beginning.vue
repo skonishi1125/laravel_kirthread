@@ -235,8 +235,13 @@
 
             <div class="modal-body">
             <p>
-                以下のメンバーで確定してよろしいですか？ <br> 
-                ※進行途中で変更することはできません
+                以下のメンバーで確定してよろしいですか？ 
+                <br> 
+                <small style="color: red">※ゲーム途中で職業・名前を変更することはできません。</small>
+                <span v-if="isNotice == true">
+                    <br>
+                    <small style="color: blue">※回復スキルを持たないメンバーのため、厳しい戦いとなりそうです...</small>
+                </span>
             </p>
             <ul>
                 <span v-for="member in beginning.selectedRoleInformations">
@@ -344,6 +349,7 @@
         displayCurrentDecidedMemberNumber: 1,
         createdPartyMembers: [],
         errorMessage: null,
+        isNotice: false, // 格重理のPTだった場合、きついよという表示を出してやるフラグ
       }
     },
     computed: {
@@ -427,6 +433,23 @@
           console.log('2以下なので処理開始。');
         } else {
           console.log('2以上');
+          const selectedRoleIds = this.beginning.selectedRoleInformations.map(r => r.roleId);
+          const target = [1, 3, 6]; // 格・重・理
+
+          // 両方の配列が同じ要素を持つかどうか
+          const isSameMembers =
+            selectedRoleIds.length === target.length &&
+            selectedRoleIds.every(id => target.includes(id)) &&
+            target.every(id => selectedRoleIds.includes(id));
+
+          if (isSameMembers) {
+            this.isNotice = true;
+          } else {
+            this.isNotice = false;
+          }
+
+          console.log(this.isNotice);
+
           this.displayConfirmModal();
         }
       },
