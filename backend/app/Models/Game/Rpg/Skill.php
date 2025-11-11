@@ -518,7 +518,7 @@ class Skill extends Model
                     // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PopHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方に気力を与える！");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 5;
+                    $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.05 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::CrashBlast :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ50
@@ -570,7 +570,23 @@ class Skill extends Model
                 case SkillDefinition::FairyFog :
                     Debugbar::debug(SkillDefinition::FairyFog->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！妖精たちの発する癒しの霧が味方の傷を包み込む...");
-                    $heal_point = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 10;
+                    // 固定回復 * スキル%に、INTで上昇する値を足す
+                    $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.1 * BattleState::calculateActualStatusValue($actor_data, 'int')));
+
+                    $has_siren_aura = false;
+                    $siren_aura_percent = 0;
+                    foreach ($actor_data->buffs as $buff) {
+                        $buff = (object) $buff; // 配列・オブジェクトどちらにも対応させるためキャスト
+                        if ($buff->buffed_skill_id == SkillDefinition::SirenAura->value) {
+                            $has_siren_aura = true;
+                            $siren_aura_percent = $buff->buffed_skill_percent;
+                        }
+                    }
+                    // SirenAuraが付与されている場合、回復量を * 1.5
+                    if ($has_siren_aura) {
+                        $heal_point = (int) ceil($heal_point * 1.5);
+                    }
+
                     break;
                 case SkillDefinition::BreakBowGun :
                     Debugbar::debug(SkillDefinition::BreakBowGun->label());

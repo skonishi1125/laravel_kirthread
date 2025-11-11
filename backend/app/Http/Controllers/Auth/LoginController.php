@@ -77,7 +77,7 @@ class LoginController extends Controller
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
         // NOTE: PHPStanで警告を受けたので、以下の条件分岐だけ消した。
-        // "method_exists($this, 'hasTooManyLoginAttempts') && " 
+        // "method_exists($this, 'hasTooManyLoginAttempts') && "
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
 
