@@ -155,7 +155,7 @@ enum EnemyData: int
             self::MageSrara => 'スララの変異体。冒険者の落とした杖を振り回して簡易的な魔法を覚えた。',
             self::Clion => 'ふよふよと浮遊する生命体。鈍足だが吐き出す泡は強力なので、使われる前に各個撃破しよう。',
             self::Ikkaku => '立派なツノから呼ばれる雷魔法は単体攻撃、全体攻撃の2種類があるため注意。ツルツルした見た目だが、ガラスのように脆い。',
-            self::SpikeWhale => '海岸のボス。一定のタイミングで大波を呼んでくるので、タイミングを覚えて身構えよう。',
+            self::SpikeWhale => '海岸のボス。DEFは低めだがHPは多いため、持久戦を覚悟しよう。一定のタイミングで大波を呼んでくるため、タイミングをメモして防御できると戦いやすい。',
 
             self::Eripen => '首回りの氷が襟に見えることからこの名前をつけられた。準備をしたのち、滑って突進してくるので身構えること。',
             self::IceFairy => '冷たい大気と魔法の残り香が混ざり合って生まれた魔物。見た目に反して打たれ強くすばしっこい。あられを飛ばす全体攻撃を得意とする。APが少なく2回しか撃つことができないため、防御や弱体スキルでやり過ごしてから迎撃しよう。',
@@ -219,7 +219,7 @@ enum EnemyData: int
             self::Bou => 'bou.png',
             self::IwaMet => 'iwamet.png',
             self::Norawani => 'norawani.png',
-            self::MagmaDile => 'MagmaDile.png',
+            self::MagmaDile => 'magmadile.png',
 
             self::MageSrara => 'magesrara.png',
             self::Clion => 'clion.png',
