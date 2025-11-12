@@ -18,13 +18,14 @@
     <meta property="og:image" content="{{ asset('image/ogp/game.png') }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:description" content="ブラウザですぐ遊べるRPGゲームです。自由な育成と物語を楽しめます。">
-
+    <link rel="icon" href="{{ asset('favicon_game.ico') }}">
     {{-- 結構大きく乗るので、本格的な画像を用意するまではコメントアウトでもいいかも。
       <meta name="twitter:card" content="summary_large_image">
       <meta name="twitter:title" content="{{ config('app.game_name') }} - {{ config('app.name') }}">
       <meta name="twitter:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
       <meta name="twitter:image" content="{{ asset('image/ogp/game.png') }}"> 
     --}}
+
   @elseif (Request::routeIs('show') )
     <meta property="og:title" content="{{ config('app.name')}} - {{ $post->user->name }}さんの投稿">
     <meta property="og:type" content="website">
@@ -36,6 +37,7 @@
     @endif
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:description" content="{{ $post->message ?? $post->user->name . 'さんの投稿' }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
   @else
     <meta property="og:title" content="{{ config('app.name') }}">
     <meta property="og:type" content="website">
@@ -43,9 +45,17 @@
     <meta property="og:image" content="{{ asset('image/ogp/default.png') }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
     <meta property="og:description" content="かあスレッドはシンプルな掲示板サイトです。">
+    <link rel="icon" href="{{ asset('favicon.ico') }}">
   @endif
   <title>
-    @if (config('app.env') !== 'production') {{ config('app.env') }} @endif {{ config('app.name') }}
+    @if (config('app.env') !== 'production')
+        {{ config('app.env') }} 
+    @endif 
+    @if(Request::Is('game/rpg*'))
+        {{ config('app.game_name') }} - {{ config('app.name') }}
+    @else
+        {{ config('app.name') }}
+    @endif
   </title>
 
   {{-- css/jsをviteで読み込む --}}
@@ -56,7 +66,6 @@
   <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <link rel="icon" href="{{ asset('favicon.ico') }}">
 </head>
 
 <body>
