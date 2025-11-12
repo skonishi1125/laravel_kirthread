@@ -112,7 +112,7 @@
           },
           {
             title: "クレジット",
-            content: "<div class='col-12' style='padding: 20px; text-align: center;'><p><b>Epic Liquidation</b></p><div style='font-size: 0.95em; color: gray; font-style: italic;'><ul style='list-style: none; padding-left: 0;'><li> ストーリー・シナリオ: 降諏かあ</li><li> キャラクター・敵・背景イラスト: 降諏かあ</li><li>UI/UXデザイン・フロントエンド実装(Vue.js): 降諏かあ</li><li>DB設計・サーバーサイド実装(Laravel): 降諏かあ</li><li>インフラ構築・運用(AWS): 降諏かあ</li><li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li></ul></div><p class='text-muted' style='font-size: 0.9em;'>© 2025 <a href='https://x.com/skirplus' target='_blank'>降諏かあ</a>. All rights reserved.<br><br>本作の権利はすべて作者に帰属します。<br>自作発言や、作者を偽る形での利用・転載はお控えください。<br>All rights to this game and its content are reserved by the creator.<br>Unauthorized reproduction, redistribution, or misrepresentation of authorship is strictly prohibited.</p></div>" 
+            content: "<div class='col-12' style='padding: 20px; text-align: center;'><p><b>Epic Reckoning</b></p><div style='font-size: 0.95em; color: gray; font-style: italic;'><ul style='list-style: none; padding-left: 0;'><li> ストーリー・シナリオ: 降諏かあ</li><li> キャラクター・敵・背景イラスト: 降諏かあ</li><li>UI/UXデザイン・フロントエンド実装(Vue.js): 降諏かあ</li><li>DB設計・サーバーサイド実装(Laravel): 降諏かあ</li><li>インフラ構築・運用(AWS): 降諏かあ</li><li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li></ul></div><p class='text-muted' style='font-size: 0.9em;'>© 2025 <a href='https://x.com/skirplus' target='_blank'>降諏かあ</a>. All rights reserved.<br><br>本作の権利はすべて作者に帰属します。<br>自作発言や、作者を偽る形での利用・転載はお控えください。<br>All rights to this game and its content are reserved by the creator.<br>Unauthorized reproduction, redistribution, or misrepresentation of authorship is strictly prohibited.</p></div>" 
           },
         ],
         modalItem: {

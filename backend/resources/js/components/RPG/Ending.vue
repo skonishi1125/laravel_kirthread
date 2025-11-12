@@ -317,7 +317,7 @@
       <div class="row">
         <div class="col-12" style="padding: 20px; text-align: center;">
           <div>
-            <p><b>Epic Liquidation</b></p>
+            <p><b>Epic Reckoning</b></p>
             <div style="font-size: 0.95em; color: gray; font-style: italic;">
               <ul style='list-style: none; padding-left: 0;'>
                 <li> ストーリー・シナリオ: 降諏かあ</li>
@@ -363,7 +363,7 @@
       <div class="row">
         <div class="col-12" style="padding: 20px; text-align: center;">
           <div>
-            <p><b>Epic Liquidation</b></p>
+            <p><b>Epic Reckoning</b></p>
             <div style="font-size: 0.95em; color: gray; font-style: italic;">
               <ul style='list-style: none; padding-left: 0;'>
                 <li> ストーリー・シナリオ: 降諏かあ</li>

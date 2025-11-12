@@ -18,7 +18,7 @@
     <div class="row" style="margin-top: 100px; text-align: center;">
       <div class="col-sm-12">
         <p class="mb-5">
-          <b>Epic Liquidation</b>
+          <b>Epic Reckoning</b>
         </p>
         <span v-if="status == 'ready'">
           <div class="title-select-btn">

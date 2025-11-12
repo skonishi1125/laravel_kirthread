@@ -43,7 +43,7 @@
             <div class="row">
                 <div class="col-12" style="text-align: center;">
                     <h6 style="margin: 5px 0px;">
-                        <b>Epic Liquidation</b>
+                        <b>Epic Reckoning</b>
                     </h6>
                 </div>
             </div>
