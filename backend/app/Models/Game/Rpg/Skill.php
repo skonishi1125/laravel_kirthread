@@ -537,7 +537,9 @@ class Skill extends Model
                 case SkillDefinition::Meditation :
                     Debugbar::debug(SkillDefinition::Meditation->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を行った！");
-                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent);
+                    // 序盤はステータス補正だけだと弱いので、最低保証をつけてやる
+                    $minimum_int = 20;
+                    $new_buff['buffed_int'] = (int) ceil($actor_data->value_int * $selected_skill_data->skill_percent) + $minimum_int;
                     break;
                 case SkillDefinition::BattleMage :
                     Debugbar::debug(SkillDefinition::BattleMage->label());
