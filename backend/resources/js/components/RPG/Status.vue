@@ -224,7 +224,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <h6 class="modal-title"><b>ステータス 【{{ modalStatusName }}】</b></h6>
-                <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               </div>
 
               <div class="modal-body">
@@ -503,7 +503,7 @@
                     {{ modalSkillInfo.target_range }}
                   </span>
                 </h6>
-                <button type="button" class="close" data-dismiss="modal" aria-rabel="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
               </div>
   
               <div class="modal-body">
