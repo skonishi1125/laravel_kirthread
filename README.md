@@ -32,7 +32,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 #### 稼働環境
 * Amazon Linux 2023
-* mysql  Ver 8.0.39 for Linux on x86_64 (MySQL Community Server - GPL)
+* MySQL  Ver 8.0.39 for Linux on x86_64 (MySQL Community Server - GPL)
 * nginx version: nginx/1.24.0
 
 ### その他
@@ -40,12 +40,12 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 * Let's Encryptを使用
 
 #### ドメイン
-* conoha -> 移管してAmazon Route53で管理中。
+* conoHa -> 移管してAmazon Route 53で管理中。
 
 #### インフラ周り
 * Amazon VPC
 * Amazon EC2
-* Amazon Route53
+* Amazon Route 53
 * Amazon Billing and Cost Management
 
 #### 開発に使用しているツール等
