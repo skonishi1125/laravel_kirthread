@@ -322,8 +322,8 @@
               <ul style='list-style: none; padding-left: 0;'>
                 <li> ストーリー・シナリオ: 降諏かあ</li>
                 <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
-                <li>UI/UXデザイン・フロントエンド実装(Vue.js): 降諏かあ</li>
-                <li>DB設計・サーバーサイド実装(Laravel): 降諏かあ</li>
+                <li>UI/UX・フロントエンド(Vue.js): 降諏かあ</li>
+                <li>DB設計・サーバーサイド(Laravel): 降諏かあ</li>
                 <li>インフラ構築・運用(AWS): 降諏かあ</li>
                 <li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li>
               </ul>
@@ -368,8 +368,8 @@
               <ul style='list-style: none; padding-left: 0;'>
                 <li> ストーリー・シナリオ: 降諏かあ</li>
                 <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
-                <li>UI/UXデザイン・フロントエンド実装(Vue.js): 降諏かあ</li>
-                <li>DB設計・サーバーサイド実装(Laravel): 降諏かあ</li>
+                <li>UI/UX・フロントエンド(Vue.js): 降諏かあ</li>
+                <li>DB設計・サーバーサイド(Laravel): 降諏かあ</li>
                 <li>インフラ構築・運用(AWS): 降諏かあ</li>
                 <li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li>
               </ul>
@@ -392,7 +392,7 @@
         <div class="col-12 my-5">
           <div class="answer-option-form">
             <!-- TODO: モーダルを開いて感謝イラストを出すとかする -->
-            <button class="btn btn-outline-info" style="width: 100px">おまけ</button>
+            <button class="btn btn-outline-info" style="width: 100px" @click="openBonusModal">おまけ</button>
             <button class="btn btn-outline-success" @click="returnTitle">タイトルに戻る</button>
           </div>
         </div>
@@ -402,6 +402,82 @@
   </div>
 
   <teleport to="body">
+    <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" id="modal-bonus">
+        <div class="modal-xl modal-dialog" style="max-width: 1140px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"><b>おまけ</b></h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="bonus-wrapper mx-auto">
+                        <div class="bonus-item mb-4 mx-5">
+                            <p>ここまで遊んでいただき、本当にありがとうございます！</p>
+                            <br>
+                            <p style="font-weight:bold; text-align:center;">ラフとか小話</p>
+                        </div>
+
+                        <!-- 1枚目 -->
+                        <div class="bonus-item mb-4 mx-5">
+                            <img
+                                class="img-fluid d-block mx-auto mb-2"
+                                style="max-width: 80%;"
+                                :src="'/image/rpg/bonus/bonus_1.png'"
+                                alt="bonus_1"
+                            >
+                            <p class="mb-0">
+                                ステータス・中心広場のラフです。<br>
+                                画面はほぼ全て、スクリーンショットを撮ってからiPadでざっくり書きこみ、それをHTMLで起こすという工程で作ってました。
+                            </p>
+                        </div>
+
+                        <!-- 2枚目 -->
+                        <div class="bonus-item mb-4 mx-5">
+                            <img
+                                class="img-fluid d-block mx-auto mb-2"
+                                style="max-width: 80%;"
+                                :src="'/image/rpg/bonus/bonus_2.png'"
+                                alt="bonus_2"
+                            >
+                            <p class="mb-0">
+                                各画面のラフ + 戦闘 + 職業を考えた時のメモです。<br>
+                                最初は店員のイラストも書いて、クリックするたび状況によって色々話す内容が変わったり、
+                                クリックしすぎると怒られるみたいな昔懐かしブラウザゲーム感も出してみたかったのですが、
+                                やってるうちにゲーム自体の完成が遠のいていく気しかしなくなったのでやめてしまいました。無念。<br>
+                            </p>
+                        </div>
+
+                        <!-- 3枚目 -->
+                        <div class="bonus-item mb-2 mx-5">
+                            <img
+                                class="img-fluid d-block mx-auto mb-2"
+                                style="max-width: 80%;"
+                                :src="'/image/rpg/bonus/bonus_3.png'"
+                                alt="bonus_3"
+                            >
+                            <p class="mb-0">
+                                24年4月ごろに書いた、魔導師のイラストです。<br>
+                                この頃は世界樹シリーズや同人系のツクール作品をたくさんやっていた時期で、
+                                「自分もなんかマイキャラ作りたい！」という経緯で描かれたなんちゃって三面図なので、このゲームのためのものではありません。
+                                ゲームを作ろうと思ったのは24年8月ごろになります。作ったキャラクターをゲームに使う日が来るとは、わからないものです。<br>
+                                世界樹の話を出したのでついでに言うと、戦闘画面もまんま世界樹ベースですね。
+                                他にもスキルとして自分が遊んだ作品で好きだった技名を引っ張ってきてたりもします。
+                                「これあれじゃん」となったスキル名は、多分あれです。
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary btn-sm" @click="closeBonusModal">とじる</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <div class="modal fade" id="modal-ending-confirm" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -521,6 +597,14 @@
 
       closeConfirmModal() {
         $('#modal-ending-confirm').modal('hide');
+      },
+
+      openBonusModal() {
+        $('#modal-bonus').modal('show');
+      },
+
+      closeBonusModal() {
+        $('#modal-bonus').modal('hide');
       },
 
       transitionEnding() {
