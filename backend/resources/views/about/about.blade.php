@@ -12,7 +12,7 @@
         <div class="card-body">
 
           <div class="col-12">
-            <h5><b>githubリポジトリ</b></h5>
+            <h5><b>GitHubリポジトリ</b></h5>
             <a href="https://github.com/skonishi1125/laravel_kirthread">https://github.com/skonishi1125/laravel_kirthread</a>
             <div class="py-2"></div>
 

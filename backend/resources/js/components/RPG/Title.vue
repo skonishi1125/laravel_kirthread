@@ -80,8 +80,8 @@
 
             <div class="modal-body">
             <p>
-                ゲームを遊ぶ前に<a target="_blank" href="/register">新規登録</a>または<a target="_blank" href="/login">ログイン</a>が必要です。<br>
-                各手続きが面倒な方は「すぐ作る」ボタンから、登録兼ログインも可能です。
+                ゲームを遊ぶ前に、データを保管するためのユーザー登録が必要です。<br>
+                各手続きが面倒な方は「すぐ作る」ボタンから、登録兼ログインができます。
             </p>
             <div style="text-align: center;" >
                 <button class="btn btn-sm btn-success" @click="generateCredential">
@@ -96,31 +96,37 @@
             <div v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
                 <hr>
                 <div>
-                <p>
-                    以下の情報で作成します。<small>(一部編集可能)</small><br>
-                    <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
-                    <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sample.com</b></small> <br>
-                    <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
-                    <br>
-                    <div v-if="errorMessage !== null">
-                    <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
-                    </div>
-                </p>
+                    <p>
+                        以下の情報で作成します。<br>
+                        <small>(一部編集可能なため、希望される場合は修正ください。)</small>
+                    </p>
+                    <p>
+                        <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
+                        <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sugutuku.com</b></small> <br>
+                        <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
+                        <br>
+                        <div v-if="errorMessage !== null">
+                        <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
+                        </div>
+                    </p>
                 </div>
                 <div style="text-align: center;">
-                <button class="btn btn-sm btn-primary" @click="createUser">こちらの情報でログイン</button>
+                <button class="btn btn-sm btn-primary" @click="createUser">こちらの情報で作成し、ゲームを開始する</button>
                 </div>
             </div>
             <hr>
             <p>
                 <small>
                 ※"すぐ作る"について<br>
-                登録に必要なemailとパスワードを自動生成し、ユーザー情報を作成します。<br>
-                作られたemailとパスワードは画面に表示されますが、メモを忘れると以降ログインができなくなります。<br>
-                「とりあえずサービスを触ってみたい！」と言う目的の方はこちらをぜひお試しください。<br>
+                emailとパスワードをランダムに生成し、登録に必要なユーザー情報を作成します。<br>
+                作成したemailとパスワードは画面に表示されますが、メモを忘れると以降ログインができなくなります。<br>
+                <span style="color:red">「とりあえずゲームを触りたい！」と言う目的の方は是非こちらをご利用ください！</span><br>
                 <br>
                 ※かあスレッドについて<br>
-                基本的に掲示板ベースのwebサービスです。詳しくは<a target="_blank" href="/about">こちら</a>を参照ください。<br>
+                自分の学習用に作った掲示板サイトです。詳しくは<a target="_blank" href="/about">こちら</a>を参照ください。<br>
+                <br>
+                ※従来の機能を利用する場合は、<a target="_blank" href="/register">新規登録</a>または<a target="_blank" href="/login">ログイン</a>からどうぞ。
+
                 </small>
             </p>
             </div>
@@ -140,7 +146,8 @@
         status: "",
         userId: null,
         passwordCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%',
-        generateCredentialName: '登録くん',
+        generateDefaultName: 'すぐつく',
+        generateCredentialName: '',
         generateCredentialEmail: null,
         generateCredentialEmailString: null,
         generateCredentialPassword: null,
@@ -173,6 +180,10 @@
         // ランダムなID用の文字列生成
         this.generateCredentialEmailString = Math.random().toString(36).substring(2, 12); // 10桁のランダム文字
 
+        // ユーザー名を一意にするため, ランダムな4文字の文字列
+        const generateRandomUsernameString = Math.random().toString(36).substring(2, 6); // 10桁のランダム文字
+        this.generateCredentialName = this.generateDefaultName + '_' + generateRandomUsernameString;
+
          // ランダムな8桁のパスワードを生成
          this.generateCredentialPassword = '';
           for (let i = 0; i < 8; i++) {
@@ -183,7 +194,7 @@
         // todo: ランダムで作った文字列が重複している可能性が0ではないのでチェックした方がいいかもしれない
       },
       createUser(){
-        this.generateCredentialEmail = `sugutuku_${this.generateCredentialEmailString}@sample.com`;
+        this.generateCredentialEmail = `sugutuku_${this.generateCredentialEmailString}@sugutuku.com`;
         // axios.postで登録
         axios.post(`/api/game/rpg/title/create_rpg_user`, {
           name: this.generateCredentialName,
