@@ -151,14 +151,14 @@
         </div>
         <!-- 名前と確定ボタンの記入フォーム -->
         <div>
-          <form class="form-horizontal" role="form">
+          <form class="form-horizontal" role="form" @submit.prevent>
             <div class="form-group">
             <label class="col-md-12 control-rabel">名前<small>※最大6文字</small></label>
               <div class="col-md-8">
                 <div class="input-group">
                   <input type="text" class="form-control" maxlength="6" v-model="partyName">
                   <span class="input-group-btn">
-                    <button class="btn btn-info" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)">決定</button>
+                    <button class="btn btn-info" style="margin-left: 10px;" type="button" @click="setPlayerData(roleData[beginning.currentDisplayRoleIndex]['id'],roleData[beginning.currentDisplayRoleIndex]['class_japanese'], partyName)" :disabled="isPartyNameInvalid">決定</button>
                   </span>
 
                 </div>
@@ -359,7 +359,11 @@
       return {
         backgroundImage: `url(/image/rpg/character/portrait/${this.roleData[this.beginning.currentDisplayRoleIndex]['portrait_image_path']})`
       }
-    }
+    },
+      isPartyNameInvalid() {
+        // partyNameが空欄登録されるのを防ぐ。
+        return this.partyName.trim() === '';
+      },
     },
     created() { // DOMに依存しない処理を書く(state処理など。)
       this.$store.dispatch('setScreen', 'beginning');
