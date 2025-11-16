@@ -320,12 +320,13 @@
             <p><b>Epic Reckoning</b></p>
             <div style="font-size: 0.95em; color: gray; font-style: italic;">
               <ul style='list-style: none; padding-left: 0;'>
-                <li> ストーリー・シナリオ: 降諏かあ</li>
-                <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
+                <li> シナリオ設定: 降諏かあ</li>
+                <li>レベルデザイン・デバッグ: 降諏かあ</li>
                 <li>UI/UX・フロントエンド(Vue.js): 降諏かあ</li>
                 <li>DB設計・サーバーサイド(Laravel): 降諏かあ</li>
                 <li>インフラ構築・運用(AWS): 降諏かあ</li>
-                <li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li>
+                <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
+                <li>テストプレイ: 本サイト利用者の皆さん</li>
               </ul>
             </div>
             <p class='text-muted' style='font-size: 0.9em;'>
@@ -366,12 +367,13 @@
             <p><b>Epic Reckoning</b></p>
             <div style="font-size: 0.95em; color: gray; font-style: italic;">
               <ul style='list-style: none; padding-left: 0;'>
-                <li> ストーリー・シナリオ: 降諏かあ</li>
-                <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
+                <li> シナリオ設定: 降諏かあ</li>
+                <li>レベルデザイン・デバッグ: 降諏かあ</li>
                 <li>UI/UX・フロントエンド(Vue.js): 降諏かあ</li>
                 <li>DB設計・サーバーサイド(Laravel): 降諏かあ</li>
                 <li>インフラ構築・運用(AWS): 降諏かあ</li>
-                <li>デバッグ・テストプレイ他: 降諏かあ, 本サイト利用者の皆さん</li>
+                <li> キャラクター・敵・背景イラスト: 降諏かあ</li>
+                <li>テストプレイ: 本サイト利用者の皆さん</li>
               </ul>
             </div>
             <p class='text-muted' style='font-size: 0.9em;'>
