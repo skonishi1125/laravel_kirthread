@@ -26,9 +26,9 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 #### Vue
 * Vue.js v3.4
-* node.js v20.17.0 (npm導入用)
+* Node.js v20.17.0 (npm導入用)
 * npm v10.8.2
-* vite v5.4.2 (laravel-mixから移行)
+* Vite v5.4.2 (laravel-mixから移行)
 
 #### 稼働環境
 * Amazon Linux 2023
@@ -40,7 +40,7 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 * Let's Encryptを使用
 
 #### ドメイン
-* conoHa -> 移管してAmazon Route 53で管理中。
+* ConoHa -> 移管してAmazon Route 53で管理中。
 
 #### インフラ周り
 * Amazon VPC
