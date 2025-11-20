@@ -109,11 +109,8 @@
                 <a href="{{ route('game') }}" class="nav-link">ゲーム</a>
               </li>
             @else
-              @if (isset(Auth::user()->icon))
-                <img class="profile-icon" src="{{ asset('storage/icons/' . Auth::user()->icon) }}">
-              @else
-                <img class="profile-icon" src="{{ asset('storage/icons/default.png' . Auth::user()->icon) }}">
-              @endif
+              @if (Auth::user()->is_guest)
+              <img class="profile-icon" src="{{ asset('storage/icons/default.png' . Auth::user()->icon) }}">
               <li class="nav-item dropdown">
 
                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -122,27 +119,53 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="{{ route('config_index') }}">
-                    {{ __('Config') }}
-                  </a>
-                  <a class="dropdown-item" href="{{ route('profile_show', ['user_id' => Auth::id()]) }}">
-                    プロフィール
-                  </a>
-                  <a class="dropdown-item" href="{{ route('game') }}">ゲーム</a>
-                  <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
-                  <a id="csv-download" class="dropdown-item"
-                    href="{{ route('study_download_post_csv', ['user_id' => Auth::id()]) }}">
-                    CSVでDL
+                  <a class="dropdown-item" href="{{ route('upgrade') }}">
+                      本登録
                   </a>
                   <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                     {{ __('Logout') }}
                   </a>
-
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                   </form>
                 </div>
               </li>
+
+              @else
+                @if (isset(Auth::user()->icon))
+                  <img class="profile-icon" src="{{ asset('storage/icons/' . Auth::user()->icon) }}">
+                @else
+                  <img class="profile-icon" src="{{ asset('storage/icons/default.png' . Auth::user()->icon) }}">
+                @endif
+                <li class="nav-item dropdown">
+
+                  <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                    {{ Auth::user()->name }} <span class="caret"></span>
+                  </a>
+
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{{ route('config_index') }}">
+                      {{ __('Config') }}
+                    </a>
+                    <a class="dropdown-item" href="{{ route('profile_show', ['user_id' => Auth::id()]) }}">
+                      プロフィール
+                    </a>
+                    <a class="dropdown-item" href="{{ route('game') }}">ゲーム</a>
+                    <a class="dropdown-item" href="{{ route('about') }}">かあスレッドとは</a>
+                    <a id="csv-download" class="dropdown-item"
+                      href="{{ route('study_download_post_csv', ['user_id' => Auth::id()]) }}">
+                      CSVでDL
+                    </a>
+                    <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                      {{ __('Logout') }}
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                      @csrf
+                    </form>
+                  </div>
+                </li>
+              @endif
             @endguest
           </ul>
         </div>
