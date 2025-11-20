@@ -3,7 +3,12 @@
   cursor: pointer;
 }
 .btn-status-modal {
-  border: 1px dotted black;
+  margin-bottom: 2px;
+  border: 1px solid gray;
+  font-size: 0.8em;
+}
+.btn-status-modal:hover {
+  background-color: rgb(198, 198, 198);
 }
 .badge-light-status {
   color: white;
