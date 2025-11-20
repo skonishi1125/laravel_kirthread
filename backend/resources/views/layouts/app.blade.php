@@ -17,12 +17,12 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('image/ogp/game.png') }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
-    <meta property="og:description" content="ブラウザですぐ遊べるRPGゲームです。自由な育成と物語を楽しめます。">
+    <meta property="og:description" content="コマンド選択式のブラウザRPGゲームです。キャラクターの育成と物語を楽しめます。">
     <link rel="icon" href="{{ asset('favicon_game.ico') }}">
     {{-- 結構大きく乗るので、本格的な画像を用意するまではコメントアウトでもいいかも。
       <meta name="twitter:card" content="summary_large_image">
       <meta name="twitter:title" content="{{ config('app.game_name') }} - {{ config('app.name') }}">
-      <meta name="twitter:description" content="ブラウザですぐ遊べるRPG風ゲームです。自由な育成と進行が楽しめます。">
+      <meta name="twitter:description" content="コマンド選択式のブラウザRPGゲームです。キャラクターの育成と物語を楽しめます。">
       <meta name="twitter:image" content="{{ asset('image/ogp/game.png') }}"> 
     --}}
 
