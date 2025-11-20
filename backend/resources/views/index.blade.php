@@ -32,7 +32,7 @@
                 </ul>
               </div>
             @endif
-            @if (Auth::check() )
+            @if (Auth::check() && !Auth::user()->is_guest )
               <p>{{ Auth::user()->name }} さん、こんにちは。</p>
               <form action="{{ route('store') }}" method="post" enctype="multipart/form-data">
                 @CSRF
@@ -56,7 +56,11 @@
               </form>
 
               @else
-              <label for="post-message">投稿するには<a href="{{ route('login') }}">ログイン</a>が必要です。</label>
+                @if (Auth::check() && Auth::user()->is_guest)
+                  <label for="post-message">投稿するにはゲストアカウントを<a href="{{ route('guest_upgrade_get') }}">本登録</a>する必要があります。</label>
+                @else
+                  <label for="post-message">投稿するには<a href="{{ route('login') }}">ログイン</a>が必要です。</label>
+                @endif
               @endif
             </div>
 

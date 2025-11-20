@@ -119,7 +119,7 @@
                 </a>
 
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="{{ route('upgrade') }}">
+                  <a class="dropdown-item" href="{{ route('guest_upgrade_get') }}">
                       本登録
                   </a>
                   <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

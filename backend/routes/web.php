@@ -107,14 +107,11 @@ Route::group(['middleware' => 'auth'], function () {
     // ajax
     Route::post('/ajax', 'PostController@ajaxReaction');
 
-    // GET: 本登録フォーム
-    Route::get('/upgrade', 'GuestController@showUpgradeForm',)
-        ->name('upgrade');
-
-    // POST: 本登録処理
-    Route::post('/upgrade',  'GuestController@showUpgradeForm')
-        ->name('upgrade_post')
-        ->middleware('auth');
+    // ゲスト登録関連
+    Route::get('/guest/upgrade', 'GuestController@showUpgradeForm')
+        ->name('guest_upgrade_get');
+    Route::post('/guest/upgrade', 'GuestController@postForm')
+        ->name('guest_upgrade_post');
 
 });
 

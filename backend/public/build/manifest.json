@@ -31,6 +31,12 @@
     "src": "resources/js/selfmade/game/panel.js",
     "isEntry": true
   },
+  "resources/js/selfmade/guest/password_validate.js": {
+    "file": "assets/password_validate-Dc7fr9iz.js",
+    "name": "password_validate",
+    "src": "resources/js/selfmade/guest/password_validate.js",
+    "isEntry": true
+  },
   "resources/js/selfmade/reaction.js": {
     "file": "assets/reaction-BkQbSS12.js",
     "name": "reaction",

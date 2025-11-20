@@ -13,6 +13,7 @@ export default defineConfig({
               'resources/js/selfmade/csv_download.js',
               'resources/js/selfmade/reaction.js',
               'resources/js/selfmade/game/panel.js',
+              'resources/js/selfmade/guest/password_validate.js',
             ],
             refresh: true,
         }),

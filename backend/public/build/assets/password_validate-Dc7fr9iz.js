@@ -1,0 +1,1 @@
+document.getElementById("password").addEventListener("input",(function(){const t=this.value,e=document.getElementById("passwordError");t.length>0&&t.length<8?(e.textContent="パスワードは8文字以上で入力してください。",e.style.display="block",this.classList.add("is-invalid")):(e.textContent="",e.style.display="none",this.classList.remove("is-invalid"))}));
