@@ -72,67 +72,89 @@
   <!-- すぐつく機能 -->
   <teleport to="body">
     <div class="modal fade" id="modal-login" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title">遊ぶ前に</h5>
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content shadow-sm">
+
+          <!-- ヘッダー -->
+          <div class="modal-header">
+            <h5 class="modal-title font-weight-bold">ゲームを遊ぶ前に</h5>
+          </div>
+
+          <!-- 本文 -->
+          <div class="modal-body">
+
+            <div style="text-align: center;">
+              <p class="mb-2">
+                おなまえを入力してください。
+              </p>
+  
+              <p class="text-muted small mb-4">
+                ※ゲーム本編とは関連はなく、プレイデータを管理するために使用します。
+              </p>
             </div>
 
-            <div class="modal-body">
-            <p>
-                ゲームを遊ぶ前に、データを保管するためのユーザー登録が必要です。<br>
-                各手続きが面倒な方は「すぐ作る」ボタンから、登録兼ログインができます。
-            </p>
-            <div style="text-align: center;" >
-                <button class="btn btn-sm btn-success" @click="generateCredential">
-                <span v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
-                    再生成する
-                </span>
-                <span v-else>
-                    すぐ作る
-                </span>
-                </button>
-            </div>
-            <div v-if="generateCredentialEmailString !== null && generateCredentialPassword !== null">
-                <hr>
-                <div>
-                    <p>
-                        以下の情報で作成します。<br>
-                        <small>(一部編集可能なため、希望される場合は修正ください。)</small>
-                    </p>
-                    <p>
-                        <small>ユーザーネーム: </small><input type="text" maxlength="10" v-model="generateCredentialName"><br>
-                        <small>email: <b>sugutuku_<input  type="text" maxlength="10" v-model="generateCredentialEmailString">@sugutuku.com</b></small> <br>
-                        <small>パスワード: </small><input  type="text" maxlength="16" v-model="generateCredentialPassword"><br>
-                        <br>
-                        <div v-if="errorMessage !== null">
-                        <small style="color:red">このメールアドレスはすでに使われています。 再生成または別のアドレスの記入をお試しください。</small>
-                        </div>
-                    </p>
-                </div>
-                <div style="text-align: center;">
-                <button class="btn btn-sm btn-primary" @click="createUser">こちらの情報で作成し、ゲームを開始する</button>
-                </div>
-            </div>
-            <hr>
-            <p>
-                <small>
-                ※"すぐ作る"について<br>
-                emailとパスワードをランダムに生成し、登録に必要なユーザー情報を作成します。<br>
-                作成したemailとパスワードは画面に表示されますが、メモを忘れると以降ログインができなくなります。<br>
-                <span style="color:red">「とりあえずゲームを触りたい！」と言う目的の方は是非こちらをご利用ください！</span><br>
-                <br>
-                ※かあスレッドについて<br>
-                自分の学習用に作った掲示板サイトです。詳しくは<a target="_blank" href="/about">こちら</a>を参照ください。<br>
-                <br>
-                ※従来の機能を利用する場合は、<a target="_blank" href="/register">新規登録</a>または<a target="_blank" href="/login">ログイン</a>からどうぞ。
+            <input 
+              type="text" 
+              maxlength="10"
+              v-model="userName"
+              class="form-control w-75 mx-auto mb-4 text-center"
+              placeholder="おなまえ（10文字以内）"
+            >
 
-                </small>
-            </p>
+            <div class="text-center" style="height: 20px;">
+              <small v-if="errorMessage" class="text-danger">{{ errorMessage }}</small>
             </div>
+
+            <!-- ロード表示（スピナー + メッセージ） -->
+            <div v-if="isLoading" class="text-center mt-3">
+              <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div class="mt-2">
+                <small class="text-secondary">データ保存中です。画面を更新します…</small>
+              </div>
+            </div>
+
+            <!-- ボタン（処理中はdisabled＆文言変更） -->
+            <div class="text-center mt-3">
+              <button 
+                class="btn btn-primary px-4"
+                @click="createUser"
+                :disabled="isLoading"
+              >
+                <span v-if="!isLoading">ゲームを始める</span>
+                <span v-else>処理中...</span>
+              </button>
+            </div>
+
+          </div>
+
+          <div class="px-4 py-3 border-top bg-light">
+
+            <p class="small mb-2">
+              <strong>※本ページの登録について</strong><br>
+              ゲームの進行管理に必要となるユーザー情報をゲストとして作成します。<br>
+              <span class="text-danger">
+                「とりあえずゲームを触りたい！」という方は本機能を是非ご利用ください！
+              </span>
+            </p>
+
+            <p class="small mb-2">
+              <strong>※本サイトについて</strong><br>
+              自分の学習用に運用している掲示板サイトです。詳しくは
+              <a target="_blank" href="/about">こちら</a> をご覧ください。
+            </p>
+
+            <p class="small mb-0">
+              <strong>※従来の会員登録を利用する場合</strong><br>
+              <a target="_blank" href="/register">新規登録</a> ページまたは 
+              <a target="_blank" href="/login">ログイン</a> ページからどうぞ。
+            </p>
+
+          </div>
 
         </div>
-        </div>
+      </div>
     </div>
   </teleport> 
 </template>
@@ -146,11 +168,8 @@
         status: "",
         userId: null,
         passwordCharacters: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%',
-        generateDefaultName: 'すぐつく',
-        generateCredentialName: '',
-        generateCredentialEmail: null,
-        generateCredentialEmailString: null,
-        generateCredentialPassword: null,
+        userName: 'かあスレくん',
+        isLoading: false,
         errorMessage: null,
         dataMoney: null,
         dataParties: [],
@@ -176,40 +195,24 @@
             }
         });
       },
-      generateCredential() {
-        // ランダムなID用の文字列生成
-        this.generateCredentialEmailString = Math.random().toString(36).substring(2, 12); // 10桁のランダム文字
-
-        // ユーザー名を一意にするため, ランダムな4文字の文字列
-        const generateRandomUsernameString = Math.random().toString(36).substring(2, 6); // 10桁のランダム文字
-        this.generateCredentialName = this.generateDefaultName + '_' + generateRandomUsernameString;
-
-         // ランダムな8桁のパスワードを生成
-         this.generateCredentialPassword = '';
-          for (let i = 0; i < 8; i++) {
-            const randomIndex = Math.floor(Math.random() * this.passwordCharacters.length);
-            this.generateCredentialPassword += this.passwordCharacters[randomIndex];
-          }
-
-        // todo: ランダムで作った文字列が重複している可能性が0ではないのでチェックした方がいいかもしれない
-      },
       createUser(){
-        this.generateCredentialEmail = `sugutuku_${this.generateCredentialEmailString}@sugutuku.com`;
-        // axios.postで登録
+        this.isLoading = true;
+        // 空文字 or null or undefined の判定
+        if (!this.userName || this.userName.trim() === '') {
+          this.userName = 'かあスレくん';
+        }
         axios.post(`/api/game/rpg/title/create_rpg_user`, {
-          name: this.generateCredentialName,
-          email: this.generateCredentialEmail,
-          password: this.generateCredentialPassword,
+          name: this.userName,
         })
         .then(response => {
           console.log(`通信OK`);
-          // ワンタッチ挟んだ方がいいかも。 メモする時間を与える感じで。
-          alert(`作成完了しました。\n あなたのemail: ${this.generateCredentialEmail}\n あなたのパスワード: ${this.generateCredentialPassword}\n メッセージを閉じるとページが遷移し、上記の情報は二度と確認することができません。準備出来次第お進みください。
-          `);
-          location.reload(); // リロードする
+          setTimeout(() => {
+            location.reload();
+          }, 800); // スピナー表示の演出用
         })
         .catch(error => {
           console.log(`通信失敗。`);
+          this.isLoading = false; // エラー時は元に戻す
           if (error.response && error.response.data) {
             this.errorMessage = error.response.data.message;
           } else {

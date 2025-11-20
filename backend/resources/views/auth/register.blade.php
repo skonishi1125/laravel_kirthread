@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -86,7 +86,7 @@
                     </form>
                 </div>
                 <p style="text-align: center; margin-top: 10px; font-size: 12px;">
-                  ※このサイトなに？という方は<a href="{{ route('about') }}">こちらのページ</a>を参照ください
+                    ※情報の取り扱いや本サイトの詳細は<a href="{{ route('about') }}">こちらのページ</a>をご参照ください。
                 </p>
             </div>
         </div>

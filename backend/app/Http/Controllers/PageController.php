@@ -8,12 +8,15 @@ class PageController extends Controller
     {
         $twitter_url = 'https://twitter.com/skirplus';
 
+        // 25.11.20 Xの仕様が変わり、映らなくなった
         // envにiframelyのkeyが指定されている場合のみ、画面に整形されたツイート画面を出す
-        if (! is_null(config('services.iframely'))) {
-            $twitter_iframely_data = self::convertUrlToIframelyData($twitter_url);
-        } else {
-            $twitter_iframely_data = null;
-        }
+        // if (! is_null(config('services.iframely'))) {
+        //     $twitter_iframely_data = self::convertUrlToIframelyData($twitter_url);
+        // } else {
+        //     $twitter_iframely_data = null;
+        // }
+
+        $twitter_iframely_data = null;
 
         return view('about/about')
             ->with('twitter_iframely_data', $twitter_iframely_data);

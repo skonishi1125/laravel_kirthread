@@ -5,7 +5,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-n3sFfIWe.js",
+    "file": "assets/app-CF2hAcr3.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -29,6 +29,12 @@
     "file": "assets/panel-BBBZION9.js",
     "name": "panel",
     "src": "resources/js/selfmade/game/panel.js",
+    "isEntry": true
+  },
+  "resources/js/selfmade/guest/password_validate.js": {
+    "file": "assets/password_validate-Dc7fr9iz.js",
+    "name": "password_validate",
+    "src": "resources/js/selfmade/guest/password_validate.js",
     "isEntry": true
   },
   "resources/js/selfmade/reaction.js": {

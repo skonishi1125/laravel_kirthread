@@ -84,7 +84,7 @@ return [
     ],
     'string' => ':attributeには文字列を指定してください。',
     'timezone' => ':attributeには正しい形式のタイムゾーンを指定してください。',
-    'unique' => 'その:attributeはすでに使われています。',
+    'unique' => '記入された:attributeはすでに登録されています。',
     'uploaded' => ':attributeのアップロードに失敗しました。',
     'url' => ':attributeには正しい形式のURLを指定してください。',
     'starts_with' => 'YouTubeは正しいURLから記述してください。例: https://www.youtube.com/...',
