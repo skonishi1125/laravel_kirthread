@@ -17,7 +17,7 @@
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="{{ asset('image/ogp/game.png') }}">
     <meta property="og:site_name" content="{{ config('app.name') }}">
-    <meta property="og:description" content="コマンド選択式のブラウザRPGゲームです。キャラクターの育成と物語を楽しめます。">
+    <meta property="og:description" content="コマンド選択式のブラウザRPGゲームです。キャラクターの育成と物語をお楽しみください。">
     <link rel="icon" href="{{ asset('favicon_game.ico') }}">
     {{-- 結構大きく乗るので、本格的な画像を用意するまではコメントアウトでもいいかも。
       <meta name="twitter:card" content="summary_large_image">
