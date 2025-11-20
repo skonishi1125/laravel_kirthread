@@ -25,6 +25,8 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class ApiController extends Controller
 {
@@ -53,25 +55,39 @@ class ApiController extends Controller
 
     }
 
-    // すぐ作る機能で作成
+    /**
+     * ゲーム画面からの会員登録エンドポイント
+     */
     public function createRpgUser(Request $request)
     {
-        Debugbar::debug('createRpgUser():------------------------');
+        Debugbar::debug('createRpgUser:------------------------');
+        try {
+            $validated = $request->validate([
+                'name' => ['nullable', 'string', 'max:10'],
+            ]);
+        } catch (ValidationException $e) {
+            Debugbar::debug('validationエラー');
 
-        // メールアドレスチェック
-        $is_exist_email = User::where('email', $request->email)->exists();
-        if ($is_exist_email) {
             return response()->json([
-                'message' => 'このemailはすでに使われています。 再生成または別のアドレスの記入をお試しください。',
-            ], 409);
+                'message' => 'おなまえに使えない文字が含まれています。',
+            ], 422);
         }
 
-        \DB::transaction(function () use ($request) {
-            Debugbar::debug("{$request['name']}");
+        // ?:(エルビス演算子)で、左が空の場合デフォルト名を入れる
+        // * 1: nameがない場合、''
+        // * 2: trimした結果、''
+        $name = trim($validated['name'] ?? '') ?: 'かあスレくん';
+
+        \DB::transaction(function () use ($name) {
+            // ゲスト用の一意なメールアドレス, パスワード生成
+            $email = 'guest+'.Str::uuid().'@guest.kir-thread.site';
+            $raw_password = Str::random(32);
+
             $create_user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => \Hash::make($request->password),
+                'name' => $name,
+                'email' => $email,
+                'password' => \Hash::make($raw_password),
+                'is_guest' => true,
             ]);
             Debugbar::debug('ユーザー作成OK');
             // プロフィールも一緒に作る
