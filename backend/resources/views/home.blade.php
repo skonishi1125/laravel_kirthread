@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container my-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    ログインに成功しました。数秒後にページ移動します...
+                    ログインに成功しました。トップページへ移動します...
                 </div>
             </div>
         </div>
