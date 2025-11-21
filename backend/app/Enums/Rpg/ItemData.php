@@ -80,7 +80,7 @@ enum ItemData: int
     public function description(): string
     {
         return match ($this) {
-            self::MiniPotion => 'お得な初心者必需品。仲間1人のHPを15pt回復。',
+            self::MiniPotion => 'お得な初心者必需品。仲間1人のHPを30pt回復。',
             self::Potion => '基本の回復アイテム。仲間1人のHPを50pt回復。',
             self::AllPotion => '全体効果のあるポーション。仲間全員のHPを50pt回復。',
             self::HighPotion => '高い効力を持つ回復アイテム。仲間1人のHPを100pt回復。',
@@ -95,7 +95,7 @@ enum ItemData: int
             self::ManaElixir => 'マナの液体を高純度に抽出したもの。仲間1人のAPを100pt回復。',
             self::FullManaElixir => 'マナの液体をさらに高純度に抽出。仲間1人のAPを全回復。',
 
-            // %のものを出すと、最後まで支えて良さそうだ
+            // %のものを出すと、最後まで使えて良さそうだが。
             self::AttackGummy => '食べると一定時間STRが20pt上昇するグミ。',
             self::AttackMist => '周囲に振り撒くことで、しばらくの間味方全員のSTRが20pt上昇。',
             self::AttackPerfume => '攻撃の香水を振り撒き、しばらくの間味方全員のSTRが50pt上昇。',
