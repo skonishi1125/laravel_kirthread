@@ -415,10 +415,11 @@
                       'btn-outline-success': parentSkill.effect_type === 2,
                       'btn-outline-warning': parentSkill.effect_type === 3,
                     }"
-                    @click="displaySkillConfirmModal(parentSkill)"
-                    @mouseover="showSkillInformation(parentSkill)"
+                    @click="onSkillClick(parentSkill)"
+                    @mouseover="!isTouchDevice && showSkillInformation(parentSkill)"
                     :disabled="!parentSkill.is_learned"
                   >
+                    <!-- 表示は既存のまま -->
                     <span v-if="parentSkill.is_learned">{{ parentSkill.skill_name }} <small>(SLv:<b>{{ parentSkill.skill_level }}</b>)</small></span>
                     <span v-else="parentSkill.is_learned">???</span>
                   </button>
@@ -433,10 +434,9 @@
                           'btn-outline-success': childSkill.effect_type === 2,
                           'btn-outline-warning': childSkill.effect_type === 3,
                         }"
-                        @click="displaySkillConfirmModal(childSkill)"
-                        @mouseover="showSkillInformation(childSkill)"
+                        @click="onSkillClick(childSkill)"
+                        @mouseover="!isTouchDevice && showSkillInformation(childSkill)"
                         :disabled="!childSkill.is_learned"
-
                       >
                         <span v-if="childSkill.is_learned">{{ childSkill.skill_name }}<small>(SLv:<b>{{ childSkill.skill_level }}</b>)</small></span>
                         <span v-else="childSkill.is_learned">???</span>
@@ -630,6 +630,8 @@
         modalStatusBaseValue: null,
         inputFreelyStatusPoints: 0,
         modalSkillInfo: {},
+        isTouchDevice: false,
+        lastTappedSkillId: null, // スマホ用：直前にタップしたスキル
       }
     },
     computed: {
@@ -643,6 +645,7 @@
     },
     mounted() {
       console.log(`Status.vue ${this.status.status}`);
+      this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     },
     methods: {
       getPartiesInformation() { 
@@ -733,6 +736,23 @@
         } else {
           console.log('ステータスポイントなし');
           this.modalErrorMessage = 'ステータスポイントが不足しています。';
+        }
+      },
+      // 追加：スキルボタンのクリックをラップ
+      onSkillClick(skill) {
+        if (this.isTouchDevice) {
+          // スマホ：1タップ目 → 説明表示、2タップ目 → モーダル表示
+          if (this.lastTappedSkillId === skill.skill_id) {
+            // 同じスキルを2回タップしたらモーダル表示
+            this.displaySkillConfirmModal(skill);
+          } else {
+            // 別のスキル or 初回タップ → 説明だけ更新
+            this.lastTappedSkillId = skill.skill_id;
+            this.showSkillInformation(skill);
+          }
+        } else {
+          // PC：今までどおりクリックで即モーダル表示
+          this.displaySkillConfirmModal(skill);
         }
       },
       showSkillInformation(skill) {
