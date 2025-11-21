@@ -320,7 +320,7 @@ enum SkillDefinition: int
             self::WideGuard => '先制発動する。使用ターン中の味方全員が受ける全てのダメージを基礎倍率の分だけ軽減する。',
             self::WideGuardPlus => '先制発動する。使用ターン中の味方全員が受ける、全てのダメージを基礎倍率の分だけ軽減する。',
             self::CurseEdge => '自身のHPを一定量消費し、敵単体に攻撃する。HPの消費量はSLvに依存する。',
-            self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分の防御力に依存して威力が上昇する。',
+            self::BraveSlash => '正義心を膂力とし、敵単体に攻撃。自分のDEFに依存して威力が上昇する。',
             self::WideThrust => '手持ちの斧で力強く薙ぎ払い、敵全体にダメージを与える。',
             self::Protection => '守護魔法を味方単体に付与し、DEFを暫くの間アップさせる。',
             self::OverProtect => '広範囲に拡大した守護魔法を唱え、味方全員のDEFを暫くの間アップさせる。',
