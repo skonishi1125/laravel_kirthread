@@ -508,22 +508,20 @@ class Skill extends Model
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 30;
                     break;
                 case SkillDefinition::MiniHeal :
-                    // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::MiniHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}は{$selected_skill_data->name}を唱えた！");
                     // 固定回復 * スキル%に、INTで上昇する値を足す。
                     $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.1 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::PopHeal :
-                    // 回復量 = (INT * ダメージ%)
                     Debugbar::debug(SkillDefinition::PopHeal->label());
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！癒しの力が味方に気力を与える！");
+                    // 固定回復 * スキル%に、INTで上昇する値を足す。
                     $heal_point = (int) ceil((30 * $selected_skill_data->skill_percent) + (0.05 * BattleState::calculateActualStatusValue($actor_data, 'int')));
                     break;
                 case SkillDefinition::CrashBlast :
                     // 威力 = (INT * ダメージ%) + 基礎ダメージ50
                     Debugbar::debug(SkillDefinition::CrashBlast->label());
-                    // レベルごとに文章を変えられたら熱い
                     $battle_logs_collection->push("{$actor_data->name}の{$selected_skill_data->name}！収束したマナが敵の目前で爆発する！");
                     $damage = (int) ceil(BattleState::calculateActualStatusValue($actor_data, 'int') * $selected_skill_data->skill_percent) + 50;
                     break;
