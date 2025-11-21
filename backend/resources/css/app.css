@@ -3,6 +3,11 @@ body {
   font-size: 110%;
 }
 
+/* ゲームページのとき、ヘッダーの中身の幅をゲームと揃える */
+.is-rpg {
+  width: 1280px !important;
+}
+
 .profile-icon {
     display: inline;
     width: 40px;
