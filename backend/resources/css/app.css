@@ -30,7 +30,7 @@ body {
 
 /* ゲームページのとき、ヘッダーの中身の幅をゲームと揃える */
 .is-rpg {
-  width: 1280px !important;
+  min-width: 1280px !important;
 }
 
 .profile-icon {
