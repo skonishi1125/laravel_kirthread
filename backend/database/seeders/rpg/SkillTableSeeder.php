@@ -33,7 +33,7 @@ class SkillTableSeeder extends Seeder
                 'lv1_ap_cost' => 4,
                 'lv2_percent' => 1.4,
                 'lv2_ap_cost' => 4,
-                'lv3_percent' => 1,8,
+                'lv3_percent' => 1.8,
                 'lv3_ap_cost' => 5,
                 'elemental_id' => 1,
                 'description' => SkillDefinition::MiddleBlow->description(),
