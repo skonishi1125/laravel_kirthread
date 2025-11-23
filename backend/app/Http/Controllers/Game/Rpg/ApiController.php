@@ -95,8 +95,8 @@ class ApiController extends Controller
                 'user_id' => $create_user->id,
                 'message' => 'よろしくお願いします。',
             ]);
-            // 作成したユーザーでログイン
-            Auth::login($create_user);
+            // 作成したユーザーでログイン 暫くログインできるようにしておく
+            Auth::login($create_user, true);
         });
 
         // 成功メッセージまたはユーザー情報を返す
