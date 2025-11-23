@@ -55,7 +55,7 @@ class ItemTableSeeder extends Seeder
                 'buff_turn' => null,
                 'elemental_id' => 0,
                 'max_possession_number' => 5,
-                'price' => 100,
+                'price' => 80,
                 'description' => ItemData::Potion->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
