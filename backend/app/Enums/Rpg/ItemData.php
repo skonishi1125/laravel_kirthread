@@ -87,7 +87,7 @@ enum ItemData: int
             self::AllHighPotion => '全体効果のあるハイポーション。仲間全員のHPを100pt回復。',
             self::LifeElixir => '服用者の生命力に効果が依存する薬。仲間1人のHPを全回復。',
             self::AllLifeElixir => '全体効果のあるライフエリクサ。仲間全員のHPを全回復。',
-            self::ResurrectPot => '生命力そのものが詰められた特殊なビン。戦闘不能の味方を30%のHPで復活。',
+            self::ResurrectPot => '生命力そのものが詰められた特殊なビン。戦闘不能の味方を復活。',
 
             self::ManaDrop => 'マナの詰まった小さな雫。仲間1人のAPを20pt回復。',
             // self::AllManaDrop => 'マナドロップを広く拡散できるようにしたアイテム。仲間全員のAPを20回復。',
