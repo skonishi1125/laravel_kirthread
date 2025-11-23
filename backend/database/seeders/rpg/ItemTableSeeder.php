@@ -196,7 +196,7 @@ class ItemTableSeeder extends Seeder
                 'buff_turn' => null,
                 'elemental_id' => 0,
                 'max_possession_number' => 3,
-                'price' => 250,
+                'price' => 150,
                 'description' => ItemData::ManaDrop->description(),
                 'is_buyable' => true,
                 'is_battle_available' => true,
