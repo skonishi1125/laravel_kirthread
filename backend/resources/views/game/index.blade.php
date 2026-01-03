@@ -14,18 +14,44 @@
           <p class="text-muted mb-3">5分は暇をつぶすことができるかも</p>
 
           <ul class="list-unstyled mb-4">
+              
+              {{-- アクション --}}
+              <li class="mb-3">
+                <a href="https://unityroom.com/games/relic_guardian" target="_blank" class="game-list-item d-block p-3 rounded border">
+                  <div class="d-flex flex-column">
+                    <span class="game-title">Relic Guardian</span>
+                    <span class="game-desc">
+                      2Dアクション。育成してクリスタルを時間いっぱい護り切れ！<br>
+                      ※unityroomへと遷移します。
+                    </span>
+                  </div>
+                </a>
+              </li>
 
-            {{-- RPG --}}
-            <li class="mb-3">
-              <a href="{{ route('game_rpg_index') }}" class="game-list-item d-block p-3 rounded border">
-                <div class="d-flex flex-column">
-                  <span class="game-title">{{ config('app.game_name') }}</span>
-                  <span class="game-desc">
-                    コマンド選択式のブラウザ短編RPG。
-                  </span>
-                </div>
-              </a>
-            </li>
+              {{-- STG --}}
+              <li class="mb-3">
+                <a href="https://unityroom.com/games/251130_cosmo_phoot" target="_blank" class="game-list-item d-block p-3 rounded border">
+                  <div class="d-flex flex-column">
+                    <span class="game-title">Cosmo Phoot</span>
+                    <span class="game-desc">
+                      全3面のシューティングゲーム。アイテムを取って強化を進めよう。<br>
+                      ※unityroomへと遷移します。
+                    </span>
+                  </div>
+                </a>
+              </li>
+
+              {{-- RPG --}}
+              <li class="mb-3">
+                <a href="{{ route('game_rpg_index') }}" class="game-list-item d-block p-3 rounded border">
+                  <div class="d-flex flex-column">
+                    <span class="game-title">{{ config('app.game_name') }}</span>
+                    <span class="game-desc">
+                      コマンド選択式のブラウザ短編RPG。
+                    </span>
+                  </div>
+                </a>
+              </li>
 
             {{-- 2色パネル --}}
             <li class="mb-3">
