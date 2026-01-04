@@ -62,6 +62,8 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 
 https://github.com/user-attachments/assets/1794f4f1-28f8-4542-9ee8-fc96699af2cb
 
+https://kir-thread.site/game/rpg
+
 ブラウザゲーム「Epic Reckoning」を公開しています。
 
 コマンド選択式のブラウザRPGです。
