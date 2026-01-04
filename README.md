@@ -58,6 +58,22 @@ https://github.com/skonishi1125/laravel_kirthread/wiki/%E7%92%B0%E5%A2%83%E6%A7%
 * Larastan (Level5で設定中)
   * https://github.com/skonishi1125/laravel_kirthread/pull/65
 
+## ゲームについて
+
+https://github.com/user-attachments/assets/1794f4f1-28f8-4542-9ee8-fc96699af2cb
+
+ブラウザゲーム「Epic Reckoning」を公開しています。
+
+コマンド選択式のブラウザRPGです。
+
+スマホでも動作しますが、PCの方が遊びやすいです。
+
+個人情報が不要な、簡易登録機能を用意していますので是非お試しください！
+
+
+
+
+
 
 
 
