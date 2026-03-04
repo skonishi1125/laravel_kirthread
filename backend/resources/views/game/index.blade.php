@@ -14,7 +14,19 @@
           <p class="text-muted mb-3">5分は暇をつぶすことができるかも</p>
 
           <ul class="list-unstyled mb-4">
-              
+              {{-- TD --}}
+              <li class="mb-3">
+                <a href="https://unityroom.com/games/260303_td_gunshi" target="_blank" class="game-list-item d-block p-3 rounded border">
+                  <div class="d-flex flex-column">
+                    <span class="game-title">節約！軍師ちゃん</span>
+                    <span class="game-desc">
+                      タワーディフェンスゲーム。ケチりつつクリアも目指してお金を稼ごう！<br>
+                      ※unityroomのページを開きます。
+                    </span>
+                  </div>
+                </a>
+              </li>
+
               {{-- アクション --}}
               <li class="mb-3">
                 <a href="https://unityroom.com/games/relic_guardian" target="_blank" class="game-list-item d-block p-3 rounded border">
@@ -22,7 +34,7 @@
                     <span class="game-title">Relic Guardian</span>
                     <span class="game-desc">
                       2Dアクション。育成してクリスタルを時間いっぱい護り切れ！<br>
-                      ※unityroomへと遷移します。
+                      ※unityroomのページを開きます。
                     </span>
                   </div>
                 </a>
@@ -35,7 +47,7 @@
                     <span class="game-title">Cosmo Phoot</span>
                     <span class="game-desc">
                       全3面のシューティングゲーム。アイテムを取って強化を進めよう。<br>
-                      ※unityroomへと遷移します。
+                      ※unityroomのページを開きます。
                     </span>
                   </div>
                 </a>
