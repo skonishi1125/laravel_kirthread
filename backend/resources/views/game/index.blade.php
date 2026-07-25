@@ -15,6 +15,26 @@
 
           <ul class="list-unstyled mb-4">
 
+              {{-- 3D Action --}}
+              <li class="mb-3">
+                <div class="game-list-item d-block p-3 rounded border position-relative">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="d-flex flex-column pr-3">
+                      <a href="{{ asset('storage/KirThread_KnightOfJail.zip') }}" class="game-title text-dark stretched-link" style="text-decoration: none;" download="KirThread_KnightOfJail.zip">
+                        Knight of Jail
+                      </a>
+                      <span class="game-desc mt-1">
+                        3Dアクション。囚われた騎士が敵を倒して牢獄の脱出を目指します。<br>
+                        ※クリックするとゲームの zip ファイルがダウンロードされます。(約1.44GB)
+                      </span>
+                    </div>
+                    <a href="https://github.com/skonishi1125/ue5_linear_dungeon" class="position-relative" style="z-index: 2;" target="_blank" rel="noopener noreferrer">
+                      <img src="{{ asset('image/GitHub_Invertocat_Black_Clearspace.png') }}" alt="GitHub Repository" width="32" height="32">
+                    </a>
+                  </div>
+                </div>
+              </li>
+
               {{-- TD --}}
               <li class="mb-3">
                 <div class="game-list-item d-block p-3 rounded border position-relative">
