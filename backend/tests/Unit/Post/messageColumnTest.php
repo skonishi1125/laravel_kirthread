@@ -8,12 +8,6 @@ use Tests\TestCase;
 
 class messageColumnTest extends TestCase
 {
-    /**
-     * @test
-     *
-     * @...とつけることで、testと認識する
-     * これがなかったら関数名にtestとつけないと認識されない
-     */
     public function test_post_message_nullable_youtube()
     {
         // 何か文字列が入っていた時、messagesはnullでも良い

@@ -20,7 +20,7 @@ class ConfigController extends Controller
     public function store(Request $request)
     {
 
-        /** @var \App\User $user */
+        /** @var User $user */
         $user = Auth::user();
         $validate = $request->validate([
             'message' => 'nullable|max:255',

@@ -21,8 +21,8 @@ use App\Models\Game\Rpg\Skill;
 use App\Models\Profile;
 use App\User;
 use Auth;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Exception;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -193,16 +193,16 @@ class ApiController extends Controller
                 // 想定していないケースの場合に500エラーを返す
                 // if (this.currentDecidedMemberIndex <= 3) にすれば検証できる
                 if (count($selected_info) > 3) {
-                    throw new \Exception('選択されたデータが3件以上存在します。もう一度お試しください。');
+                    throw new Exception('選択されたデータが3件以上存在します。もう一度お試しください。');
                 }
                 // 適当なデータを1件作れば検証できる
                 if (! $savedata->parties->isEmpty()) {
-                    throw new \Exception('すでにパーティメンバーが作成されています。ページ更新をお試しください。');
+                    throw new Exception('すでにパーティメンバーが作成されています。ページ更新をお試しください。');
                 }
                 foreach ($selected_info as $party) {
                     // inputのmaxlengthを調整すれば検証できる
                     if (mb_strlen($party['partyName']) > 6) {
-                        throw new \Exception('パーティメンバーの名前は6文字以下でなければなりません。もう一度お試しください。');
+                        throw new Exception('パーティメンバーの名前は6文字以下でなければなりません。もう一度お試しください。');
                     }
 
                     $created_party = Party::generateRpgPartyMember($savedata->id, $party['roleId'], $party['partyName']);
@@ -211,7 +211,7 @@ class ApiController extends Controller
                     $created_parties->push($created_party);
                 }
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debugbar::debug('createParties() でエラーが発生しました。');
             \Log::error("{$e->getMessage()} {$e->getFile()}:{$e->getLine()}");
 
@@ -452,11 +452,11 @@ class ApiController extends Controller
             DB::transaction(function () use ($party, $input_point, $status_type) {
                 // 存在しないスキルが選択された場合、エラーを返す
                 if (is_null($party)) {
-                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+                    throw new Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
                 }
                 $party->allocateStatusPoint($input_point, $status_type);
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debugbar::debug('incrementStatus でエラーが発生しました。');
 
             return response()->json([
@@ -482,11 +482,11 @@ class ApiController extends Controller
             DB::transaction(function () use ($learned_skill, $learned_party) {
                 // 存在しないスキルが選択された場合、エラーを返す
                 if (is_null($learned_skill) || is_null($learned_party)) {
-                    throw new \Exception('指定したスキルとパーティメンバーの情報が存在しませんでした。もう一度お試しください。');
+                    throw new Exception('指定したスキルとパーティメンバーの情報が存在しませんでした。もう一度お試しください。');
                 }
                 Skill::learnPartySkill($learned_party, $learned_skill);
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debugbar::debug('learnSkill() でエラーが発生しました。');
 
             return response()->json([
@@ -852,7 +852,7 @@ class ApiController extends Controller
                     $current_party_level = $player_data->level;
                     $new_level = null;
 
-                    DebugBar::debug("経験値:{$per_exp}を振り分けます。現在経験値: {$player_data->total_exp}");
+                    Debugbar::debug("経験値:{$per_exp}を振り分けます。現在経験値: {$player_data->total_exp}");
 
                     // 経験値テーブルと現在の総合獲得経験値を比較して、そのレベルにする
                     foreach ($exp_tables as $exp_table) {
@@ -965,7 +965,7 @@ class ApiController extends Controller
                 Debugbar::debug('現在の戦闘データを削除しました。');
 
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debugbar::debug('戦闘完了アクションで不具合。');
             \Log::error('resultWinBattle() でエラーが発生しました。', ['error' => $e->getMessage()]);
 
@@ -1443,7 +1443,7 @@ class ApiController extends Controller
         );
 
         // TOP10のランキング取得
-        $job_ranking = Job::orderBy('total_count', 'DESC')->limit(10)->get();
+        $job_ranking = Job::orderBy('total_count', 'desc')->limit(10)->get();
 
         $vue_data = collect()
             ->push($job)
@@ -1525,13 +1525,13 @@ class ApiController extends Controller
         try {
             DB::transaction(function () use ($party, $savedata, $payment_money) {
                 if (is_null($party)) {
-                    throw new \Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
+                    throw new Exception('パーティメンバーの情報を参照できませんでした。リロードをお試しください。');
                 }
                 $party->resetStautsAndSkillPoint();
                 $savedata->money = $savedata->money - $payment_money;
                 $savedata->save();
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Debugbar::debug('resetStatusAndSkillPoint でエラーが発生しました。');
 
             return response()->json([

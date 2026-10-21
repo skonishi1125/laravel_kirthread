@@ -123,7 +123,7 @@ class Savedata extends Model
         if (Auth::check() == false) {
             return null;
         } else {
-            /** @var \App\User $user */
+            /** @var User $user */
             $user = Auth::user();
 
             return $user->rpg_savedata;

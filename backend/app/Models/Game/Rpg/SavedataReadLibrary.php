@@ -17,7 +17,7 @@ class SavedataReadLibrary extends Model
     ];
 
     /**
-     * @return belongsTo<Library, $this>
+     * @return BelongsTo<Library, $this>
      */
     public function library(): BelongsTo
     {
@@ -25,7 +25,7 @@ class SavedataReadLibrary extends Model
     }
 
     /**
-     * @return belongsTo<Savedata, $this>
+     * @return BelongsTo<Savedata, $this>
      */
     public function savedata(): BelongsTo
     {

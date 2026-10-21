@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
@@ -46,7 +47,7 @@ class LoginController extends Controller
      *
      * ゲームからログインに遷移してきた場合のケースを考慮して書き換えている。
      *
-     * @return \Illuminate\View\View
+     * @return View
      */
     public function showLoginForm()
     {

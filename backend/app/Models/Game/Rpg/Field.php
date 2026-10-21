@@ -52,7 +52,7 @@ class Field extends Model
     /**
      * セーブデータに応じて、現在選択可能なフィールドの一覧を取得する
      *
-     * @return Collection<int,\App\Models\Game\Rpg\Field>
+     * @return Collection<int,Field>
      */
     public static function acquireCurrentSelectableFieldList(Savedata $savedata)
     {
