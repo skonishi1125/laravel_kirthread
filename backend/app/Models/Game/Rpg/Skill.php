@@ -5,7 +5,7 @@ namespace App\Models\Game\Rpg;
 use App\Constants\Rpg\BattleData;
 use App\Enums\Rpg\EffectType;
 use App\Enums\Rpg\SkillDefinition;
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

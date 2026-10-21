@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 
 class DataHelper
 {

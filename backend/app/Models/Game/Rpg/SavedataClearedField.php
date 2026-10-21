@@ -24,7 +24,7 @@ class SavedataClearedField extends Model
      */
 
     /**
-     * @return belongsTo<Field, $this>
+     * @return BelongsTo<Field, $this>
      */
     public function field(): BelongsTo
     {
@@ -32,7 +32,7 @@ class SavedataClearedField extends Model
     }
 
     /**
-     * @return belongsTo<Savedata, $this>
+     * @return BelongsTo<Savedata, $this>
      */
     public function savedata(): BelongsTo
     {

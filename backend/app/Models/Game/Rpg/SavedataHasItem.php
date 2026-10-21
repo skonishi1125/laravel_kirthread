@@ -17,7 +17,7 @@ class SavedataHasItem extends Model
     ];
 
     /**
-     * @return belongsTo<Item, $this>
+     * @return BelongsTo<Item, $this>
      */
     public function item(): BelongsTo
     {
@@ -25,7 +25,7 @@ class SavedataHasItem extends Model
     }
 
     /**
-     * @return belongsTo<Savedata, $this>
+     * @return BelongsTo<Savedata, $this>
      */
     public function savedata(): BelongsTo
     {

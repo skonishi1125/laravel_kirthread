@@ -10,7 +10,7 @@ use App\Enums\Rpg\ItemData;
 use App\Enums\Rpg\SkillDefinition;
 use App\Enums\Rpg\TargetRange;
 use App\Helpers\DataHelper;
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -104,7 +104,7 @@ class BattleState extends Model
             $player_data['player_index'] = $player_index; // 味方のパーティ中での並び。
 
             $players_collection->push($player_data);
-            DebugBar::debug("{$player_data['name']} 登録完了。");
+            Debugbar::debug("{$player_data['name']} 登録完了。");
         }
 
         return $players_collection;

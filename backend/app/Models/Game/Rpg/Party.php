@@ -2,7 +2,7 @@
 
 namespace App\Models\Game\Rpg;
 
-use Barryvdh\Debugbar\Facades\Debugbar;
+use Fruitcake\LaravelDebugbar\Facades\Debugbar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,7 +53,7 @@ class Party extends Model
     }
 
     /**
-     * @return belongsTo<Role, $this>
+     * @return BelongsTo<Role, $this>
      */
     public function role(): BelongsTo
     {
