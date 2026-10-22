@@ -6,13 +6,15 @@ https://kir-thread.site/
 
 ## 稼働環境・ツール
 
-24.8.24 にインフラ周りを刷新。  
-関連PR : https://github.com/skonishi1125/laravel_kirthread/pull/34
+### 主な更新履歴
+* 2024.8.24: インフラ周りを刷新（[PR #34](https://github.com/skonishi1125/laravel_kirthread/pull/34)）
+* 2026.10.21: 脆弱性対応として PHP 8.2から8.5、Laravel 11から13へ更新（[PR #122](https://github.com/skonishi1125/laravel_kirthread/pull/122)）
+* 2026.10.22: PHP 8.5.12へのセキュリティアップデートを反映（[PR #123](https://github.com/skonishi1125/laravel_kirthread/pull/123)）
 
 ### アプリケーション
-* PHP v8.2.21
-* Laravel Framework 11.21.0
-* Composer version 2.7.8
+* PHP v8.5.12
+* Laravel Framework 13.38.0
+* Composer version 2.10.3
 * Vue.js v3.4
 * Vite v5.4.2 (laravel-mixから移行)
 * Node.js v20.17.0 (npm導入用)
